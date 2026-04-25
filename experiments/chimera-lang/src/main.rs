@@ -71,7 +71,7 @@ impl<'a> std::fmt::Display for OracleResultWrapper<'a> {
                             let mut v_cell = comfy_table::Cell::new(&v_str);
 
                             // Colorize
-                            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
+                            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Green (True -> Green, False -> Yellow)
                             if v_str == "1" || v_str.eq_ignore_ascii_case("true") {
                                 v_cell = v_cell.fg(comfy_table::Color::Green);
                             } else if v_str == "0" || v_str.eq_ignore_ascii_case("false") {
@@ -315,7 +315,7 @@ fn main() -> Result<()> {
 
             let mut val_cell = comfy_table::Cell::new(&val_str);
 
-            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
+            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Green (True -> Green, False -> Yellow)
             if val_str == "1" || val_str.eq_ignore_ascii_case("true") {
                 val_cell = val_cell.fg(comfy_table::Color::Green);
             } else if val_str == "0" || val_str.eq_ignore_ascii_case("false") {

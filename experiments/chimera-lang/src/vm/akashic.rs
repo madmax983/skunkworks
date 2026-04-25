@@ -86,7 +86,7 @@ impl std::fmt::Display for AkashicRecords {
             "STABLE"
         };
         let integrity_color = if self.corrupted {
-            comfy_table::Color::Red
+            comfy_table::Color::Yellow
         } else {
             comfy_table::Color::Green
         };

@@ -360,9 +360,9 @@ fn run_cli_list(json_mode: bool) -> Result<()> {
         let is_verified = commit.hash.chars().next().unwrap_or('0').is_numeric(); // Arbitrary check
         let verified_str = if is_verified { "True" } else { "False" };
 
-        // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
+        // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Green (True -> Green, False -> Yellow)
         let verified_cell = if is_verified {
-            comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Cyan)
+            comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Green)
         } else {
             comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Yellow)
         };
