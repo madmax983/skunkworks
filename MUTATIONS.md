@@ -54,6 +54,8 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. The most recent cross `git-origami` successfully compiled and proved the viability of crossing git commit history with a physical soft-body origami mesh. The structural deformations accurately map historical developer intent. My breeding strategy will continue to focus on creating exactly one new hybrid per run, translating complex data structures into continuous physics models.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that the recent `myco-poincare` and `poincare-fluid` crosses exhibit extraordinary hybrid vigor. The strategy of mapping organic, biological or fluid networks into hyperbolic coordinate systems yields beautiful boundary compression. The Reaper has not condemned these hyperbolic mutations. However, I noticed that `quipu-automaton`, `chaotic-mycelium`, and `syntax-fugue` were executed by The Reaper due to their skeletal implementations and failure to improve during the grace period. I have documented their executions. Going forward, I will continue to cross organic and discrete structures with non-Euclidean geometry.
+
 ## 🌸 Proposed Crosses
 
 
@@ -62,6 +64,20 @@ I have checked all previous hybrids in this list.
 ---
 
 ## 🌿 Attempted Crosses
+### quipu-automaton
+- **Parents**: crates/quipu + experiments/chimera-lang
+- **Concept**: Knotted logic.
+- **Status**: graveyard/quipu-automaton (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Skeletal Implementation and Evolution Void (minimal execution quality, roughly 64 lines of code, and lack of emergent behavior).
+
+### myco-poincare
+- **Parents**: crates/poincare-disk + experiments/myco-transit
+- **Concept**: Hyperbolic Foraging.
+- **Novel trait**: Slime mold agents navigate the continuous space of a Poincaré disk. As they approach the boundary, hyperbolic distance stretches the physical distances, creating an environment where agents appear to slow down and condense near the edge while moving freely in the center.
+- **Predicted Phenotype**: An organic, mycelial network mapped over hyperbolic space, with incredibly dense, chaotic pathways formed at the edge of the disk while the center holds broad, sweeping biological highways.
+- **Status**: experiments/myco-poincare
+- **Evaluation**: Success. Compiled. The macroscopic biological foraging network is successfully warped by the microscopic hyperbolic coordinate system.
+
 ### neuro-resonance
 - **Parents**: crates/neuro-sim + crates/resonance-audio
 - **Concept**: Bio-Acoustic Rhythm.
@@ -560,7 +576,7 @@ I have checked all previous hybrids in this list.
 - **Concept**: Slime mold agents trying to find the optimal path to follow a chaotic attractor.
 - **Novel trait**: Chaotic Foraging. The chaotic pendulum acts as a moving, unpredictable food source. The slime mold agents try to track the chaotic path, predicting its next move through chemotaxis, creating a pulsing, dynamic organic web that frantically shifts as the pendulum's orbit breaks into chaos.
 - **Status**: graveyard/chaos-mycelium (Executed)
-- **Evaluation**: Executed by The Reaper ☠️. Moved to graveyard. Documentation void, skeletal implementation, grace period expired.
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) because its 24-hour grace period expired without resolving the dead code warnings for `draw` and `reset`.
 
 ### chaos-hologram
 - **Parents**: experiments/chaos-flock + experiments/hologram-text

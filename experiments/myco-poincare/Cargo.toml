@@ -1,0 +1,13 @@
+[package]
+name = "myco-poincare"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+poincare-disk = { path = "../../crates/poincare-disk" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+rayon = "1.7.0"
+tui-shared = { workspace = true }
