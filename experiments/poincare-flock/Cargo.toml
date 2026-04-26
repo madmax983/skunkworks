@@ -1,0 +1,10 @@
+[package]
+name = "poincare-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+poincare-disk = { path = "../../crates/poincare-disk" }
+flocking = { path = "../../crates/flocking" }
+glam = "0.27"
+locus = { path = "../../crates/locus" }
