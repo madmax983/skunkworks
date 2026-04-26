@@ -17,8 +17,8 @@ use std::{
 };
 
 use neuro_sim::Network;
-use resonance_audio::physics::{PhysicsGrid, Material};
 use rand::Rng;
+use resonance_audio::physics::{Material, PhysicsGrid};
 
 const GRID_W: usize = 100;
 const GRID_H: usize = 50;
@@ -97,7 +97,11 @@ fn main() -> Result<()> {
             terminal.draw(|f| {
                 let size = f.area();
                 let canvas = ratatui::widgets::canvas::Canvas::default()
-                    .block(Block::default().borders(Borders::ALL).title("Neuro Resonance (Press 'p' to pluck, 'q' to quit)"))
+                    .block(
+                        Block::default()
+                            .borders(Borders::ALL)
+                            .title("Neuro Resonance (Press 'p' to pluck, 'q' to quit)"),
+                    )
                     .x_bounds([0.0, GRID_W as f64])
                     .y_bounds([0.0, GRID_H as f64])
                     .paint(|ctx| {
@@ -105,15 +109,31 @@ fn main() -> Result<()> {
                             for x in 0..GRID_W {
                                 let pressure = grid.get(x, y);
                                 if pressure.abs() > 0.1 {
-                                    let color = if pressure > 0.0 { Color::Cyan } else { Color::Magenta };
-                                    ctx.print(x as f64, (GRID_H - y) as f64, Span::styled("·", Style::default().fg(color)));
+                                    let color = if pressure > 0.0 {
+                                        Color::Cyan
+                                    } else {
+                                        Color::Magenta
+                                    };
+                                    ctx.print(
+                                        x as f64,
+                                        (GRID_H - y) as f64,
+                                        Span::styled("·", Style::default().fg(color)),
+                                    );
                                 }
                             }
                         }
 
                         for &(id, x, y) in &neuron_positions {
-                            let color = if network.is_spiking(id) { Color::White } else { Color::Yellow };
-                            ctx.print(x as f64, (GRID_H - y) as f64, Span::styled("O", Style::default().fg(color)));
+                            let color = if network.is_spiking(id) {
+                                Color::White
+                            } else {
+                                Color::Yellow
+                            };
+                            ctx.print(
+                                x as f64,
+                                (GRID_H - y) as f64,
+                                Span::styled("O", Style::default().fg(color)),
+                            );
                         }
                     });
 

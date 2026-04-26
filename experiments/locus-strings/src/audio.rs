@@ -116,7 +116,11 @@ impl AudioModel {
 
     fn handle_command(&mut self, cmd: AudioCommand) {
         match cmd {
-            AudioCommand { frequency, decay, amplitude } => {
+            AudioCommand {
+                frequency,
+                decay,
+                amplitude,
+            } => {
                 let idx = self.next_voice;
                 self.voices[idx].reset(frequency, self.sample_rate, decay, amplitude);
                 self.next_voice = (self.next_voice + 1) % MAX_VOICES;
