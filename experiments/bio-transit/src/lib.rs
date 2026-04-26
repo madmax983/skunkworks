@@ -1,23 +1,76 @@
+//! # Bio-Transit
+//!
+//! A procedural simulation mapping the behavior of *Physarum polycephalum* (slime mold)
+//! onto urban transit network design.
+//!
+//! This crate provides the foundational simulation data structures:
+//! * [`Agent`]: The individual "Commuter" driven by pheromone trails and destination bias.
+//! * [`TrailMap`]: The spatial grid storing pheromone concentration.
+//! * [`Simulation`]: The overarching environment that steps the logic over time.
+//!
+//! Agents deposit pheromones on the `TrailMap` as they travel between randomly
+//! assigned "Home" and "Work" [`City`] points, creating emergent paths that subsequent
+//! agents follow.
+
 use macroquad::prelude::*;
 use rayon::prelude::*;
 
-#[derive(Clone, Copy, PartialEq)]
+/// Represents the daily phase of an [`Agent`].
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum AgentState {
+    /// Agent is currently moving towards its work city.
     CommutingToWork,
+    /// Agent is currently moving towards its home city.
     CommutingHome,
 }
 
+/// A simulated Physarum commuter.
+///
+/// The agent traverses the space using a combination of local pheromone sensing
+/// (following paths laid by others) and a global "GPS" pull towards its target
+/// (either home or work).
+///
+/// # Examples
+///
+/// ```
+/// use bio_transit::{Agent, AgentState};
+/// use macroquad::math::Vec2;
+///
+/// let home = Vec2::new(10.0, 10.0);
+/// let work = Vec2::new(90.0, 90.0);
+///
+/// // Create a new agent starting at home, facing right (angle 0.0)
+/// let agent = Agent::new(home, 0.0, home, work);
+///
+/// assert_eq!(agent.state, AgentState::CommutingToWork);
+/// ```
 #[derive(Clone, Copy)]
 pub struct Agent {
+    /// The current 2D spatial position.
     pub pos: Vec2,
+    /// The current facing direction in radians.
     pub angle: f32,
+    /// The designated "Home" coordinates.
     pub home: Vec2,
+    /// The designated "Work" coordinates.
     pub work: Vec2,
+    /// The current commuter phase (heading home or to work).
     pub state: AgentState,
+    /// Mask used to distinguish agent types (currently unused).
     pub species_mask: u32,
 }
 
 impl Agent {
+    /// Spawns a new agent.
+    ///
+    /// The agent defaults to the [`AgentState::CommutingToWork`] phase.
+    ///
+    /// # Arguments
+    ///
+    /// * `pos` - The initial starting position.
+    /// * `angle` - Initial facing direction in radians.
+    /// * `home` - The coordinate of the home city.
+    /// * `work` - The coordinate of the work city.
     pub fn new(pos: Vec2, angle: f32, home: Vec2, work: Vec2) -> Self {
         Self {
             pos,
@@ -29,6 +82,33 @@ impl Agent {
         }
     }
 
+    /// Steps the agent forward in time based on sensor readings and target bias.
+    ///
+    /// The agent senses the [`TrailMap`] at three points (left, center, right) relative
+    /// to its current heading. It turns toward the strongest pheromone concentration,
+    /// while continuously nudging its angle toward its current target destination
+    /// to prevent infinite loops.
+    ///
+    /// # Arguments
+    ///
+    /// * `map` - The grid providing the pheromone trails to sense.
+    /// * `settings` - The global simulation settings defining sensor range and turn angles.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bio_transit::{Agent, TrailMap, Settings};
+    /// use macroquad::math::Vec2;
+    ///
+    /// let mut agent = Agent::new(Vec2::new(50.0, 50.0), 0.0, Vec2::new(10.0, 10.0), Vec2::new(90.0, 90.0));
+    /// let map = TrailMap::new(100, 100);
+    /// let settings = Settings::default();
+    ///
+    /// let old_pos = agent.pos;
+    /// agent.update(&map, &settings);
+    ///
+    /// assert_ne!(old_pos, agent.pos);
+    /// ```
     pub fn update(&mut self, map: &TrailMap, settings: &Settings) {
         let sensor_angle = settings.sensor_angle;
         let sensor_dist = settings.sensor_dist;
@@ -119,13 +199,40 @@ impl Agent {
     }
 }
 
+/// A 2D spatial grid storing pheromone concentration.
+///
+/// Think of this as the "canvas" the agents draw on. It handles depositing
+/// pheromones and the global diffusion/decay step that blurs the trails over time.
+///
+/// # Examples
+///
+/// ```
+/// use bio_transit::{TrailMap, Settings};
+///
+/// let mut map = TrailMap::new(100, 100);
+///
+/// // Deposit pheromone at (50, 50)
+/// map.deposit(50, 50, 1.0);
+///
+/// // Step the diffusion
+/// let settings = Settings::default();
+/// map.diffuse_and_decay(&settings);
+///
+/// // The pheromone will have decayed and spread slightly
+/// assert!(map.grid[50 * 100 + 50] < 1.0); // Center decayed
+/// assert!(map.grid[50 * 100 + 51] > 0.0); // Spread to right neighbor
+/// ```
 pub struct TrailMap {
+    /// The width of the simulation grid.
     pub width: usize,
+    /// The height of the simulation grid.
     pub height: usize,
+    /// The flattened 1D array representing the 2D grid of concentrations (0.0 to 1.0).
     pub grid: Vec<f32>,
 }
 
 impl TrailMap {
+    /// Creates a new, empty map initialized with zero pheromones.
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             width,
@@ -134,6 +241,15 @@ impl TrailMap {
         }
     }
 
+    /// Deposits pheromones at a specific coordinate.
+    ///
+    /// Concentration is clamped to a maximum of 1.0. Safe against out-of-bounds coords.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` - The grid X coordinate.
+    /// * `y` - The grid Y coordinate.
+    /// * `amount` - How much pheromone to add.
     pub fn deposit(&mut self, x: usize, y: usize, amount: f32) {
         let idx = y * self.width + x;
         if idx < self.grid.len() {
@@ -141,6 +257,25 @@ impl TrailMap {
         }
     }
 
+    /// Applies a 3x3 box blur to spread pheromones, followed by global decay.
+    ///
+    /// This runs in parallel using `rayon`.
+    ///
+    /// # Arguments
+    ///
+    /// * `settings` - Global tuning containing the `decay_rate`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bio_transit::{TrailMap, Settings};
+    ///
+    /// let mut map = TrailMap::new(10, 10);
+    /// map.deposit(5, 5, 1.0);
+    /// map.diffuse_and_decay(&Settings::default());
+    ///
+    /// assert!(map.grid[55] < 1.0); // Pheromone decayed
+    /// ```
     pub fn diffuse_and_decay(&mut self, settings: &Settings) {
         let mut next_grid = vec![0.0; self.grid.len()];
         let w = self.width;
@@ -170,17 +305,36 @@ impl TrailMap {
     }
 }
 
+/// A randomly placed point of interest representing Home/Work destinations.
 pub struct City {
+    /// The location on the map.
     pub pos: Vec2,
+    /// The visual radius (for rendering).
     pub radius: f32,
+    /// The visual color (for rendering).
     pub color: Color,
 }
 
+/// Global parameters driving the Physarum logic.
+///
+/// # Examples
+///
+/// ```
+/// use bio_transit::Settings;
+///
+/// let settings = Settings::default();
+/// assert_eq!(settings.move_speed, 1.0);
+/// ```
 pub struct Settings {
+    /// Angle in radians separating the three sensors.
     pub sensor_angle: f32,
+    /// Distance in pixels the sensors reach forward.
     pub sensor_dist: f32,
+    /// Angle in radians an agent turns when it detects a trail.
     pub turn_angle: f32,
+    /// Units an agent moves forward each tick.
     pub move_speed: f32,
+    /// Factor by which pheromones diminish each tick.
     pub decay_rate: f32,
 }
 
@@ -196,14 +350,47 @@ impl Default for Settings {
     }
 }
 
+/// The overarching simulation environment.
+///
+/// Handles orchestrating the parallel updates of all agents and the diffusion
+/// of the `TrailMap`.
+///
+/// # Examples
+///
+/// ```
+/// use bio_transit::Simulation;
+///
+/// // Create a small simulation with 10 agents
+/// let mut sim = Simulation::new(100, 100, 10);
+///
+/// // Step the simulation forward one tick
+/// sim.step();
+/// ```
 pub struct Simulation {
+    /// The active commuters.
     pub agents: Vec<Agent>,
+    /// The spatial grid.
     pub map: TrailMap,
+    /// The available destination nodes.
     pub cities: Vec<City>,
+    /// Tuning parameters for the logic.
     pub settings: Settings,
 }
 
 impl Simulation {
+    /// Instantiates a new environment, randomly scattering cities and assigning
+    /// agents to them.
+    ///
+    /// # Arguments
+    ///
+    /// * `width` - The width of the simulation space in pixels.
+    /// * `height` - The height of the simulation space in pixels.
+    /// * `num_agents` - Number of commuters to spawn.
+    ///
+    /// # Panics
+    ///
+    /// While it attempts to bound parameters, it assumes the `width` and `height`
+    /// are reasonable enough to place at least 5 randomly generated cities safely.
     pub fn new(width: usize, height: usize, num_agents: usize) -> Self {
         let map = TrailMap::new(width, height);
         let mut agents = Vec::with_capacity(num_agents);
@@ -258,6 +445,11 @@ impl Simulation {
         }
     }
 
+    /// Advances the simulation by a single tick.
+    ///
+    /// 1. Updates agent positions in parallel.
+    /// 2. Deposits agent trails sequentially.
+    /// 3. Diffuses and decays the `TrailMap` in parallel.
     pub fn step(&mut self) {
         // Update agents in parallel
         let map = &self.map;
