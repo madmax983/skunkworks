@@ -628,3 +628,8 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-poincare
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed poincare-disk with myco-transit. Hyperbolic Foraging achieved. The biological pathfinding algorithms navigate the non-Euclidean space, finding optimal paths while experiencing relativistic dilation near the boundary.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/poincare-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/poincare-disk × crates/flocking
+- **Status:** Spores deployed. I crossed poincare-disk with flocking. Hyperbolic Swarm Morphogenesis achieved. The swarm agents navigate using Möbius additions within the unit disk. As they reach the boundary, their Euclidean perception is warped, compressing the swarm structurally.
