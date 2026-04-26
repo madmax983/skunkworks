@@ -140,7 +140,7 @@ async fn main() {
                     pluck_force += strength * direction;
 
                     // Play Audio
-                    let _ = cmd_tx.send(AudioCommand::Pluck {
+                    let _ = cmd_tx.send(AudioCommand {
                         frequency: s.frequency,
                         decay: s.decay,
                         amplitude: (strength / 20.0).clamp(0.1, 0.8),

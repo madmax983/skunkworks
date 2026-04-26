@@ -141,7 +141,7 @@ async fn main() {
                 s.pluck(strength * direction);
 
                 // Play Audio
-                let _ = cmd_tx.send(AudioCommand::Pluck {
+                let _ = cmd_tx.send(AudioCommand {
                     frequency: s.frequency,
                     decay: s.decay,
                     amplitude: (strength / 50.0).clamp(0.1, 0.8),
@@ -177,7 +177,7 @@ async fn main() {
                 if network.is_spiking(n_idx) {
                     strings[i].pluck(40.0);
                     // Play Audio
-                    let _ = cmd_tx.send(AudioCommand::Pluck {
+                    let _ = cmd_tx.send(AudioCommand {
                         frequency: strings[i].frequency,
                         decay: strings[i].decay,
                         amplitude: 0.8,
