@@ -159,7 +159,7 @@ impl std::fmt::Display for Fossil {
         } else if integrity > 50.0 {
             Color::Yellow
         } else {
-            Color::Red
+            Color::Cyan
         };
 
         table.add_row(vec![
