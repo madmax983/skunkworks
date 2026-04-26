@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-lattice**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Grace period: 24h.
+- **poincare-flock**: Specimen condemned. Diagnosis: Skeletal Implementation / Documentation Void. Grace period: 24h.
 
 ## Pardoned
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -44,6 +44,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **ferrous-lattice**: Executed. Grace period expired. Terminal Genericism unresolved.
 - **mnem-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings and unused variables during its grace period. Biomass returned to the void.
 - **chaos-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings during grace period. Biomass returned to the void.
 - **syntax-fugue**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing `std::io::Read` trait for file reading. Failed to adapt during grace period. Biomass returned to the void.
