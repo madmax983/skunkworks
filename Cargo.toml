@@ -3,7 +3,7 @@ resolver = "2"
 members = [
     "crates/*",
     "experiments/*",
-    "graveyard/mnem-hologram",
+
     "experiments/myco-ddos",
 
     "experiments/chron-fluid",

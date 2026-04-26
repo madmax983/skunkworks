@@ -127,7 +127,7 @@ async fn main() {
                 // Amplitude based on pluck strength
                 let amp = (strength / 50.0).clamp(0.2, 0.9);
 
-                let _ = cmd_tx.send(AudioCommand::Pluck {
+                let _ = cmd_tx.send(AudioCommand {
                     frequency: freq,
                     decay,
                     amplitude: amp,

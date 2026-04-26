@@ -218,7 +218,7 @@ async fn main() {
                         let direction = if agent.x > string_x { 1.0 } else { -1.0 };
                         s.pluck(strength * direction);
 
-                        let _ = cmd_tx.send(AudioCommand::Pluck {
+                        let _ = cmd_tx.send(AudioCommand {
                             frequency: s.frequency,
                             decay: s.decay,
                             amplitude: (strength / 50.0).clamp(0.1, 0.8),

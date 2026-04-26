@@ -127,7 +127,7 @@ async fn main() {
                     // We perturb the particle back based on string tension
                     p.vel.x -= strength * direction * 0.5;
 
-                    let _ = cmd_tx.send(AudioCommand::Pluck {
+                    let _ = cmd_tx.send(AudioCommand {
                         frequency: s.frequency,
                         decay: s.decay,
                         amplitude: (strength / 50.0).clamp(0.1, 0.8),
