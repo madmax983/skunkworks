@@ -241,6 +241,11 @@ fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_fo
             let inv_s_mag = 1.0 / s_sq.sqrt();
             desired *= max_force * inv_s_mag;
         }
+
+        if !desired.x.is_finite() || !desired.y.is_finite() {
+            return Vec2::zero();
+        }
+
         desired
     } else {
         Vec2::zero()
@@ -445,6 +450,23 @@ mod tests {
         // Assert compute steering won't panic or return NaN when d_sq == 0.
         let force = compute_steering(Vec2::zero(), Vec2::new(1.0, 1.0), 5.0, 1.0);
         assert_eq!(force, Vec2::zero());
+    }
+
+    #[test]
+    fn test_compute_steering_infinity_nan_protection() {
+        // Test that compute_steering gracefully collapses to Vec2::zero() when max_speed
+        // or max_force is Infinity and results in non-finite outputs, shielding the
+        // flocking simulation from NaN poisoning.
+        let force = compute_steering(
+            Vec2::new(1.0, 1.0),
+            Vec2::zero(),
+            f64::INFINITY,
+            f64::INFINITY,
+        );
+        assert_eq!(force, Vec2::zero());
+
+        let force2 = compute_steering(Vec2::new(1.0, 1.0), Vec2::new(f64::NAN, f64::NAN), 1.0, 1.0);
+        assert_eq!(force2, Vec2::zero());
     }
 
     #[test]
