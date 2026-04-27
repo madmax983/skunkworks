@@ -598,7 +598,8 @@ fn exec_quipu(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         vm.output.push(format!("🧶 Quipu logic tied: {:?}", val));
     } else {
-        vm.output.push("🧶 Quipu logic failed: stack underflow".to_string());
+        vm.output
+            .push("🧶 Quipu logic failed: stack underflow".to_string());
     }
     None
 }

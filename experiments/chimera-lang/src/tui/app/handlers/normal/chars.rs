@@ -630,165 +630,197 @@ fn handle_char_s(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     Ok(false)
 }
 
-fn handle_char_space(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    if let ViewMode::Evolution = app_state.view_mode {
-        if let Some(engine) = &mut app_state.evolution_state.engine {
-            engine.step(vm);
-        }
-        return Ok(true);
+fn handle_space_evolution(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    if let Some(engine) = &mut app_state.evolution_state.engine {
+        engine.step(vm);
     }
-
-    #[cfg(feature = "nova")]
-    if let ViewMode::Babel = app_state.view_mode {
-        // Run Parse
-        vm.stack
-            .push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
-        let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::ParserRegex, &[]);
-        vm.stack
-            .push(crate::vm::Value::Str(app_state.babel_input.clone()));
-        let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Parse, &[]);
-
-        if let Some(res) = vm.stack.pop() {
-            app_state.babel_result = format!("{}", res);
-        } else {
-            app_state.babel_result = "Stack Empty/Error".to_string();
-        }
-        return Ok(true);
-    }
-
-    if let ViewMode::Grid = app_state.view_mode {
-        if let Some(c) = app_state.palette_char {
-            let (x, y) = app_state.grid_cursor;
-            vm.grid[y][x] = crate::vm::Value::Str(c.to_string());
-        } else {
-            vm.step();
-        }
-    } else {
-        #[cfg(feature = "nova")]
-        if let ViewMode::Arena = app_state.view_mode {
-            if let Some(arena) = &mut vm.arena {
-                arena.tick();
-            }
-        } else if let ViewMode::Pandemonium = app_state.view_mode {
-            let cx = app_state.pandemonium_cursor.0;
-            let cy = app_state.pandemonium_cursor.1;
-
-            let mut best_dist = 1.0;
-            let mut target = None;
-
-            let mut linear_idx = 0;
-            for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
-                for (g_idx, _) in strand.genes.iter().enumerate() {
-                    let t = (linear_idx as f64) * 0.1;
-                    let gr = t * 0.5;
-                    let gx = gr * t.cos();
-                    let gy = gr * t.sin();
-
-                    let dist = ((gx - cx).powi(2) + (gy - cy).powi(2)).sqrt();
-                    if dist < best_dist {
-                        best_dist = dist;
-                        target = Some((s_idx, g_idx));
-                    }
-                    linear_idx += 1;
-                }
-            }
-
-            if let Some((s, g)) = target {
-                match app_state.pandemonium_selected_tool {
-                    0 => crate::vm::pandemonium::apply_mutation(vm, s, g),
-                    1 => crate::vm::pandemonium::apply_scramble(
-                        vm,
-                        s,
-                        g,
-                        app_state.pandemonium_radius,
-                    ),
-                    2 => {
-                        crate::vm::pandemonium::apply_purge(vm, s, g, app_state.pandemonium_radius)
-                    }
-                    3 => crate::vm::pandemonium::apply_duplicate(vm, s, g),
-                    4 => {
-                        crate::vm::pandemonium::apply_storm(vm, s, g, app_state.pandemonium_radius)
-                    }
-                    _ => {}
-                }
-                app_state.status_msg = format!("Pandemonium applied at {},{}", s, g);
-            }
-        } else if let ViewMode::Fishing = app_state.view_mode {
-            if app_state.fishing_cast {
-                // Reel
-                if app_state.fishing_hooked {
-                    app_state.fishing_bobber_y += 4.0;
-                    app_state.fishing_tension += 0.05; // Reeling increases tension
-
-                    if app_state.fishing_bobber_y > 90.0 {
-                        // Caught!
-                        app_state.status_msg = "CAUGHT A FISH!".to_string();
-                        app_state.fishing_cast = false;
-                        app_state.fishing_hooked = false;
-                        app_state.fishing_tension = 0.0;
-                        // Maybe give energy?
-                        vm.energy += 10;
-                    }
-                } else {
-                    // Just pull empty line
-                    app_state.fishing_cast = false;
-                    app_state.status_msg = "Reeled in empty.".to_string();
-                }
-            } else {
-                // Cast
-                app_state.fishing_cast = true;
-                app_state.fishing_bobber_y = 50.0;
-                app_state.fishing_tension = 0.0;
-                app_state.status_msg = "Casted line...".to_string();
-            }
-        } else if let ViewMode::Kaleidoscope = app_state.view_mode {
-            // Paint
-            let (x, y) = app_state.grid_cursor;
-            let r = match app_state.kaleidoscope_hue_idx {
-                0 => 255,
-                1 => 255,
-                2 => 0,
-                3 => 0,
-                4 => 0,
-                5 => 255,
-                _ => 255,
-            };
-            let g = match app_state.kaleidoscope_hue_idx {
-                0 => 0,
-                1 => 255,
-                2 => 255,
-                3 => 255,
-                4 => 0,
-                5 => 0,
-                _ => 255,
-            };
-            let b = match app_state.kaleidoscope_hue_idx {
-                0 => 0,
-                1 => 0,
-                2 => 0,
-                3 => 255,
-                4 => 255,
-                5 => 255,
-                _ => 255,
-            };
-
-            // Adjust for lightness (Light=0, Normal=1, Dark=2)
-            let (r, g, b) = match app_state.kaleidoscope_light_idx {
-                0 => (r + (255 - r) / 2, g + (255 - g) / 2, b + (255 - b) / 2), // Light
-                2 => (r / 2, g / 2, b / 2),                                     // Dark
-                _ => (r, g, b),                                                 // Normal
-            };
-
-            vm.chroma_grid[y][x].fg = Some((r as u8, g as u8, b as u8));
-        } else {
-            vm.step();
-        }
-        #[cfg(not(feature = "nova"))]
-        vm.step();
-    }
-    Ok(false)
 }
 
+#[cfg(feature = "nova")]
+fn handle_space_babel(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    // Run Parse
+    vm.stack
+        .push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
+    let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::ParserRegex, &[]);
+    vm.stack
+        .push(crate::vm::Value::Str(app_state.babel_input.clone()));
+    let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Parse, &[]);
+
+    if let Some(res) = vm.stack.pop() {
+        app_state.babel_result = format!("{}", res);
+    } else {
+        app_state.babel_result = "Stack Empty/Error".to_string();
+    }
+}
+
+fn handle_space_grid(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    if let Some(c) = app_state.palette_char {
+        let (x, y) = app_state.grid_cursor;
+        vm.grid[y][x] = crate::vm::Value::Str(c.to_string());
+    } else {
+        vm.step();
+    }
+}
+
+#[cfg(feature = "nova")]
+fn handle_space_arena(vm: &mut ChimeraVM, _app_state: &mut AppState) {
+    if let Some(arena) = &mut vm.arena {
+        arena.tick();
+    }
+}
+
+#[cfg(feature = "nova")]
+fn handle_space_pandemonium(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    let cx = app_state.pandemonium_cursor.0;
+    let cy = app_state.pandemonium_cursor.1;
+
+    let mut best_dist = 1.0;
+    let mut target = None;
+
+    let mut linear_idx = 0;
+    for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+        for (g_idx, _) in strand.genes.iter().enumerate() {
+            let t = (linear_idx as f64) * 0.1;
+            let gr = t * 0.5;
+            let gx = gr * t.cos();
+            let gy = gr * t.sin();
+
+            let dist = ((gx - cx).powi(2) + (gy - cy).powi(2)).sqrt();
+            if dist < best_dist {
+                best_dist = dist;
+                target = Some((s_idx, g_idx));
+            }
+            linear_idx += 1;
+        }
+    }
+
+    if let Some((s, g)) = target {
+        match app_state.pandemonium_selected_tool {
+            0 => crate::vm::pandemonium::apply_mutation(vm, s, g),
+            1 => crate::vm::pandemonium::apply_scramble(vm, s, g, app_state.pandemonium_radius),
+            2 => crate::vm::pandemonium::apply_purge(vm, s, g, app_state.pandemonium_radius),
+            3 => crate::vm::pandemonium::apply_duplicate(vm, s, g),
+            4 => crate::vm::pandemonium::apply_storm(vm, s, g, app_state.pandemonium_radius),
+            _ => {}
+        }
+        app_state.status_msg = format!("Pandemonium applied at {},{}", s, g);
+    }
+}
+
+#[cfg(feature = "nova")]
+fn handle_space_fishing(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    if app_state.fishing_cast {
+        // Reel
+        if app_state.fishing_hooked {
+            app_state.fishing_bobber_y += 4.0;
+            app_state.fishing_tension += 0.05; // Reeling increases tension
+
+            if app_state.fishing_bobber_y > 90.0 {
+                // Caught!
+                app_state.status_msg = "CAUGHT A FISH!".to_string();
+                app_state.fishing_cast = false;
+                app_state.fishing_hooked = false;
+                app_state.fishing_tension = 0.0;
+                // Maybe give energy?
+                vm.energy += 10;
+            }
+        } else {
+            // Just pull empty line
+            app_state.fishing_cast = false;
+            app_state.status_msg = "Reeled in empty.".to_string();
+        }
+    } else {
+        // Cast
+        app_state.fishing_cast = true;
+        app_state.fishing_bobber_y = 50.0;
+        app_state.fishing_tension = 0.0;
+        app_state.status_msg = "Casted line...".to_string();
+    }
+}
+
+#[cfg(feature = "nova")]
+fn handle_space_kaleidoscope(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    // Paint
+    let (x, y) = app_state.grid_cursor;
+    let r = match app_state.kaleidoscope_hue_idx {
+        0 => 255,
+        1 => 255,
+        2 => 0,
+        3 => 0,
+        4 => 0,
+        5 => 255,
+        _ => 255,
+    };
+    let g = match app_state.kaleidoscope_hue_idx {
+        0 => 0,
+        1 => 255,
+        2 => 255,
+        3 => 255,
+        4 => 0,
+        5 => 0,
+        _ => 255,
+    };
+    let b = match app_state.kaleidoscope_hue_idx {
+        0 => 0,
+        1 => 0,
+        2 => 0,
+        3 => 255,
+        4 => 255,
+        5 => 255,
+        _ => 255,
+    };
+
+    // Adjust for lightness (Light=0, Normal=1, Dark=2)
+    let (r, g, b) = match app_state.kaleidoscope_light_idx {
+        0 => (r + (255 - r) / 2, g + (255 - g) / 2, b + (255 - b) / 2), // Light
+        2 => (r / 2, g / 2, b / 2),                                     // Dark
+        _ => (r, g, b),                                                 // Normal
+    };
+
+    vm.chroma_grid[y][x].fg = Some((r as u8, g as u8, b as u8));
+}
+
+fn handle_char_space(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
+    match app_state.view_mode {
+        ViewMode::Evolution => {
+            handle_space_evolution(vm, app_state);
+            Ok(true)
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Babel => {
+            handle_space_babel(vm, app_state);
+            Ok(true)
+        }
+        ViewMode::Grid => {
+            handle_space_grid(vm, app_state);
+            Ok(false)
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Arena => {
+            handle_space_arena(vm, app_state);
+            Ok(false)
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Pandemonium => {
+            handle_space_pandemonium(vm, app_state);
+            Ok(false)
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Fishing => {
+            handle_space_fishing(vm, app_state);
+            Ok(false)
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Kaleidoscope => {
+            handle_space_kaleidoscope(vm, app_state);
+            Ok(false)
+        }
+        _ => {
+            vm.step();
+            Ok(false)
+        }
+    }
+}
 fn handle_char_f(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
     if let ViewMode::Ecology = app_state.view_mode {
