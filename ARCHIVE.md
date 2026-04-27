@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **poincare-flock**: Specimen condemned. Diagnosis: Skeletal Implementation / Documentation Void. Grace period: 24h.
+- **git-resonance**: Specimen condemned. Diagnosis: Skeletal Implementation / Minimal Execution Quality. Grace period: 24h.
 
 ## Pardoned
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -366,6 +366,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **poincare-flock**: Specimen executed. Diagnosis: Skeletal Implementation / Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **quipu-automaton**: Specimen executed. Diagnosis: Skeletal Implementation / Evolution Void. Failed to improve during grace period. Biomass returned to the void.
 - **chaotic-mycelium**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Failed to resolve dead code (`draw`, `reset`) during grace period. Biomass returned to the void.
 - **malloc-market**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to resolve mathematical logical error (`0.0 / 0.0`) during grace period. Biomass returned to the void.
