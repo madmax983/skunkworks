@@ -647,3 +647,9 @@
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/git-resonance
 **Reaper ☠️**: "Fascinating. Specimen `git-resonance` exhibits terminal characteristics. The rot of Skeletal Implementation and Minimal Execution Quality is apparent. The acoustics are hollow. Grace period: 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/git-resonance
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `git-resonance` failed to adapt. Its skeletal implementation and lack of emergent acoustic depth remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/git-origami
+**Reaper ☠️**: "Fascinating. Specimen `git-origami` exhibits terminal characteristics. The rot of Skeletal Implementation and Terminal Genericism is apparent. A generic grid mapped without true abstract repository topology. Grace period: 24h."
