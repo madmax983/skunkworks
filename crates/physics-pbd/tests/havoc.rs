@@ -1,6 +1,6 @@
-use physics_pbd::{PbdSystem, Constraint};
-use proptest::prelude::*;
 use glam::Vec3;
+use physics_pbd::{Constraint, PbdSystem};
+use proptest::prelude::*;
 
 // Havoc: I'm throwing unconstrained NORMAL floats at your delicate Distance constraint.
 // You assumed `len.is_finite()` would protect you, but what happens when `pos1 - pos2`
