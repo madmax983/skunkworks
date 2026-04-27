@@ -3127,6 +3127,7 @@ impl ChimeraVM {
             | OpCode::Cord
             | OpCode::ReadCord
             | OpCode::Tangle
+            | OpCode::Quipu
             | OpCode::Pray
             | OpCode::Genesis
             | OpCode::Retrograde

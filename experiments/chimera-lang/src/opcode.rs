@@ -2595,6 +2595,11 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     Unknot,
+    /// **`Nova`** Runs a Quipu block.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Quipu,
     /// **`Nova`** Selects the active Quipu Cord.
     ///
     /// **Stack:** `[ ..., cord_idx ] -> [ ... ]`
