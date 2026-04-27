@@ -1,0 +1,10 @@
+[package]
+name = "neuro-poincare"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+neuro-sim = { path = "../../crates/neuro-sim" }
+poincare-disk = { path = "../../crates/poincare-disk" }
+macroquad = "0.4.4"
+rand = "0.8"
