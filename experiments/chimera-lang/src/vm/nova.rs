@@ -331,6 +331,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::EgregoreDictate => super::nova_egregore::exec_egregore_dictate(vm),
         OpCode::EgregoreQuery => super::nova_egregore::exec_egregore_query(vm),
         OpCode::EgregoreSummon => super::nova_egregore::exec_egregore_summon(vm),
+        OpCode::Quipu => exec_quipu(vm),
         OpCode::Knot => super::nova_quipu::exec_knot(vm),
         OpCode::Unknot => super::nova_quipu::exec_unknot(vm),
         OpCode::Cord => super::nova_quipu::exec_cord(vm),
@@ -590,6 +591,15 @@ fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         "OFF"
     };
     vm.output.push(format!("PROLOGUE: Rune Logic {}", status));
+    None
+}
+
+fn exec_quipu(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        vm.output.push(format!("🧶 Quipu logic tied: {:?}", val));
+    } else {
+        vm.output.push("🧶 Quipu logic failed: stack underflow".to_string());
+    }
     None
 }
 

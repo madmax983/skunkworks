@@ -166,6 +166,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_chaos_instr(instr)?);
                 }
             }
+            Rule::quipu_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_quipu_instr(instr)?);
+                }
+            }
             Rule::reactor_block => {
                 let content =
                     extract_block_content_preserve_whitespace(inner_block.as_str(), "reactor");
@@ -214,6 +219,35 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
                     vec![Nucleotide::String(id.to_string())],
                 ));
             }
+        }
+        _ => {}
+    }
+    Ok(genes)
+}
+
+fn compile_quipu_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair.into_inner().next().unwrap();
+
+    match inner.as_rule() {
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+            genes.push(Gene::new(OpCode::Quipu, vec![]));
+        }
+        Rule::string => {
+            let s = inner.as_str();
+            let content = s[1..s.len() - 1].to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
+            genes.push(Gene::new(OpCode::Quipu, vec![]));
+        }
+        Rule::identifier => {
+            let id = inner.as_str();
+            genes.push(Gene::new(
+                OpCode::Push,
+                vec![Nucleotide::String(id.to_string())],
+            ));
+            genes.push(Gene::new(OpCode::Quipu, vec![]));
         }
         _ => {}
     }
@@ -463,6 +497,26 @@ genetics {
         assert_eq!(genes[5].op, OpCode::Push);
         assert_eq!(genes[5].args[0], Nucleotide::String("b".to_string()));
         assert_eq!(genes[6].op, OpCode::Recombine);
+    }
+
+    #[test]
+    fn test_quipu_block() {
+        let code = r#"
+quipu {
+    100
+    "knot"
+}
+"#;
+        let dna = compile(code).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::Number(100));
+        assert_eq!(genes[1].op, OpCode::Quipu);
+
+        assert_eq!(genes[2].op, OpCode::Push);
+        assert_eq!(genes[2].args[0], Nucleotide::String("knot".to_string()));
+        assert_eq!(genes[3].op, OpCode::Quipu);
     }
 
     #[test]
