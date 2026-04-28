@@ -1338,7 +1338,7 @@ sequenceDiagram
     end
 ```
 
-### Nova Feature: Metazoa (ADR 029)
+### Nova Feature: Metazoa (ADR 029, ADR 089)
 
 The Metazoa system enables multicellularity by allowing the VM to spawn independent `Organelle` agents that can bond into `Tissue` structures.
 
@@ -1346,9 +1346,15 @@ The Metazoa system enables multicellularity by allowing the VM to spawn independ
 classDiagram
     direction TB
     class ChimeraVM {
+        <<Module: vm.rs>>
         +Vec~Organelle~ organelles
         +HashMap~usize, Tissue~ tissues
         +step()
+    }
+
+    class OrganelleSystem {
+        <<Module: organelles.rs>>
+        +process_organelles()
     }
 
     class Organelle {
@@ -1374,6 +1380,8 @@ classDiagram
 
     ChimeraVM *-- Organelle : Owns
     ChimeraVM *-- Tissue : Owns
+    ChimeraVM --> OrganelleSystem : Delegates processing (ADR 089)
+    OrganelleSystem --> Organelle : Manages
     Tissue o-- Organelle : References
     Organelle ..> OrganelleType : Is-A
 ```
