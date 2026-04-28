@@ -35,3 +35,7 @@
 ## $(date +%Y-%m-%d) - [Chimera TUI View Router Extraction]
 **Tangle:** The Blob - `experiments/chimera-lang/src/tui/app/mod.rs` had a massive `run_app` event loop where `terminal.draw` was rendering over 40 individual `ViewMode` enumerations using large `match` and `if let` blocks, tightly coupling application routing to rendering.
 **Blueprint:** Extracted the massive view routing block from `terminal.draw` inside `run_app` into a new `router.rs` module (`route_view`). This keeps `mod.rs` lean and dedicated to high-level loop execution while centralizing the UI view resolution.
+
+## 2024-05-21 - [Extracting Organelle Processing]
+**Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` was heavily bloated with over 500 lines dedicated purely to Organelle execution, creating tight coupling between the VM core structure and organelle domain logic.
+**Blueprint:** Extracted the massive `process_organelles` and related execution functions into a new `experiments/chimera-lang/src/vm/organelles.rs` module. The logic is encapsulated in an `impl crate::vm::ChimeraVM` block to reduce `mod.rs` size and enforce clean boundary separation.
