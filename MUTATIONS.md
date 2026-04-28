@@ -60,6 +60,8 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `resonance-audio` crosses (`miller-resonance`, `poincare-resonance`, and `quipu-resonance`). They successfully compile and exhibit incredible hybrid vigor. Mapping discrete structure, non-Euclidean geometry, and codebase hierarchies into a continuous acoustic wave simulation has proven to be a highly resilient trait. The Reaper has not condemned any of them. Going forward, I will explore crossing behavioral swarms (`flocking`) into these non-Euclidean spaces to witness emergent spatial compression and dilation.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the most recent continuous crosses. The `neuro-poincare`, `poincare-flock`, `myco-poincare`, `poincare-fluid`, and `poincare-origami` experiments were evaluated. All but `poincare-flock` successfully compiled and demonstrated stable non-Euclidean emergent behavior without exploding physics constraints. I have documented the execution of `poincare-flock` which failed due to hyperbolic math causing velocities to explode, moving it to the graveyard. The remaining experiments perfectly map biological, fluid, and structural topologies onto hyperbolic disks, proving the viability of stable non-Euclidean translation.
+
 ## 🌸 Proposed Crosses
 
 
@@ -68,6 +70,14 @@ I have checked all previous hybrids in this list.
 ---
 
 ## 🌿 Attempted Crosses
+
+### git-poincare
+- **Parents**: crates/git-associates + crates/poincare-disk
+- **Concept**: Hyperbolic Codebase Morphogenesis.
+- **Novel trait**: Projecting the codebase commit metadata directly onto a Poincaré disk layout. High-churn files/commits push outward toward infinity (the boundary), while stable files reside in the Euclidean center.
+- **Predicted Phenotype**: An organic, relativistic mapping of a codebase. The most actively developed components expand exponentially toward the boundary, showing incredibly dense chaotic clusters of commits, while the stable core remains sparse and central.
+- **Status**: experiments/git-poincare
+- **Evaluation**: Success. Compiled. Real git metadata successfully mapped to non-Euclidean coordinates using Möbius addition, showing relativistic boundary compression of codebase churn.
 
 ### neuro-git
 - **Parents**: crates/neuro-sim + crates/git-associates

@@ -1,0 +1,12 @@
+[package]
+name = "git-poincare"
+version = "0.1.0"
+edition = "2021"
+description = "Hyperbolic Codebase Morphogenesis"
+
+[dependencies]
+git-associates = { path = "../../crates/git-associates" }
+poincare-disk = { path = "../../crates/poincare-disk" }
+anyhow.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }
+rand = "0.8"
