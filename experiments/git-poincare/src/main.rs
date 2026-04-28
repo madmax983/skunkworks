@@ -12,7 +12,7 @@
 
 use anyhow::Result;
 use git_associates::GitModel;
-use poincare_disk::{Point, mobius_add};
+use poincare_disk::{mobius_add, Point};
 use rand::Rng;
 use std::env;
 
@@ -31,7 +31,10 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    println!("Mapping {} commits into the Poincaré Disk:\n", history.len());
+    println!(
+        "Mapping {} commits into the Poincaré Disk:\n",
+        history.len()
+    );
 
     // We will start mapping from the center
     let mut current_point = Point::new(0.0, 0.0);
@@ -56,15 +59,14 @@ fn main() -> Result<()> {
         // We'll calculate a step size that pushes the point based on the churn size.
         // Step size must be < 1.0 to stay within the unit disk.
         // We use a logarithmic scale to prevent massive commits from instantly hitting the boundary.
-        let step_magnitude = (1.0 - (1.0 / (1.0 + (churn / 100.0).ln()))).max(0.01).min(0.99);
+        let step_magnitude = (1.0 - (1.0 / (1.0 + (churn / 100.0).ln())))
+            .max(0.01)
+            .min(0.99);
 
         // We pick a random angle to spread the commits out, creating an organic cluster
         let angle = rng.gen_range(0.0..std::f64::consts::TAU);
 
-        let step_point = Point::new(
-            step_magnitude * angle.cos(),
-            step_magnitude * angle.sin(),
-        );
+        let step_point = Point::new(step_magnitude * angle.cos(), step_magnitude * angle.sin());
 
         // Hyperbolic displacement: Instead of standard vector addition, we use mobius_add.
         // This ensures the point will *never* exceed the boundary |z| < 1, but will get exponentially compressed.
