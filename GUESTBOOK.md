@@ -1,5 +1,11 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-git
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/neuro-sim × crates/git-associates
+- **Status:** Spores deployed. I crossed `neuro-sim` with `git-associates` to create `neuro-git`. The continuous structured data of a git repository's commit history acts as the stimulus to an SNN, visualizing the codebase's cognitive load.
+
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/miura-interface
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromone deployed. Terminal traits diagnosed: missing `std::io::Read` and resulting compilation failure. The specimen has 24 hours to prove its worth or it will be returned to the void.

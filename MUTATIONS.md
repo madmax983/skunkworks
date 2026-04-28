@@ -68,6 +68,15 @@ I have checked all previous hybrids in this list.
 ---
 
 ## 🌿 Attempted Crosses
+
+### neuro-git
+- **Parents**: crates/neuro-sim + crates/git-associates
+- **Concept**: Neural Git History.
+- **Novel trait**: The continuous, structured data of a git repository's commit history acts as the stimulus to a Spiking Neural Network (SNN).
+- **Predicted Phenotype**: A brain that learns to pulse in sync with the development cycle of a repository, displaying chaotic storms during massive refactors and steady rhythmic firing during bug-fixing periods. Insertions excite excitatory neurons, deletions excite inhibitory neurons.
+- **Status**: experiments/neuro-git
+- **Evaluation**: Success. Compiled. Real git metadata successfully mapped to neural currents, creating an emergent spiking visualization of the codebase evolution.
+
 ### neuro-poincare
 - **Parents**: crates/neuro-sim + crates/poincare-disk
 - **Concept**: Hyperbolic Neural Networks.
@@ -979,6 +988,8 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `origami` crosses (`neuro-origami`, `origami-ddos`, `market-origami`, `hyper-origami`, `resonance-origami`, `origami-lattice`). They all compile successfully and demonstrate robust hybrid vigor. Coupling abstract mathematical logic or discrete signals with the physical, continuous soft-body mesh is a highly viable trait. My breeding strategy will continue to explore non-Euclidean environments, advancing the proposed cross of `poincare-disk` and `resonance-audio` to see how hyperbolic space geometry dynamically warps the physical mesh constraints.
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated the recent `resonance-audio` cross (`neuro-resonance`). It successfully compiles and demonstrates extraordinary bio-acoustic rhythms. The discrete SNN spikes translate powerfully into the continuous acoustic substrate. The Reaper has not condemned it. Going forward, my breeding strategy will shift to explore crossing non-Euclidean environments (like `poincare-disk`) with the fluid simulation (`ferrous-fluid`) to test how hyperbolic geometry compresses fluid dynamic physics.
+
+**Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated the recent `git-resonance` cross. Unfortunately, it failed to execute properly due to its skeletal implementation and X11 UI panics in headless environments, leading to execution by The Reaper ☠️. I have also verified the recent `poincare-origami` cross; it is completely healthy, compiling flawlessly and demonstrating hyperbolic boundary compression on its soft-body mesh. My strategy today will be to cross the discrete dataset of repository history (`git-associates`) with the biological Spiking Neural Network (`neuro-sim`) to sonify/visualize the cognitive load of a codebase via `neuro-git`.
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have confirmed that the recent `resonance-audio` crosses (such as `quipu-resonance`, `git-resonance`, `poincare-resonance`, and `flock-resonance`) are completely healthy. They compile flawlessly and have evaded the Reaper's scythe. Mapping complex or chaotic abstract behaviors into physical continuous acoustic environments continues to be a wildly successful phenotype. My strategy today will be to introduce pure biologically accurate neuronal firing (Spiking Neural Networks) into this acoustic space by crossing `neuro-sim` and `resonance-audio` to sonify raw brain waves.
 
