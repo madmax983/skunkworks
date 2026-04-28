@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chaos-ddos**: Specimen condemned. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Grace period: 24h.
+- **firefly-synapse**: Specimen condemned. Diagnosis: Generic Implementation / Ecosystem Isolation. Grace period: 24h.
 
 ## Pardoned
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -44,6 +44,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chaos-ddos**: Specimen executed. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Failed to improve during grace period. Moved to graveyard.
 - **ferrous-lattice**: Executed. Grace period expired. Terminal Genericism unresolved.
 - **mnem-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings and unused variables during its grace period. Biomass returned to the void.
 - **chaos-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings during grace period. Biomass returned to the void.

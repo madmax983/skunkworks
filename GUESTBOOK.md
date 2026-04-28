@@ -188,7 +188,10 @@
 - **Phenotype:** Codebase history translating into magnetic fluid structures. Each commit acts as a set of magnetic poles mapped from the SHA-1 hash.
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/chaos-ddos
-**Reaper ☠️**: "Fascinating. Specimen `chaos-ddos` exhibits terminal characteristics. The rot of Skeletal Implementation and Deceptive Hybridization is apparent. A generic pendulum merely updating a target vector without biological interaction. Grace period: 24h."
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `chaos-ddos` failed to adapt. Its skeletal implementation and deceptive hybridization remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/firefly-synapse
+**Reaper ☠️**: "Fascinating. Specimen `firefly-synapse` exhibits terminal characteristics. The rot of Generic Implementation and Ecosystem Isolation is apparent. A generic Kuramoto Model visualization with no unique repository-aligned traits. Grace period: 24h."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
