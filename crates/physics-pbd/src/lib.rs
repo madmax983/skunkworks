@@ -354,7 +354,7 @@ impl PbdSystem {
         stiffness: f32,
     ) {
         if !factor.is_finite() {
-            panic!("NaN detected - invalid factor");
+            return;
         }
         let target_len = min_len + (max_len - min_len) * factor;
         Self::solve_distance(particles, p1, p2, target_len, stiffness);
@@ -390,7 +390,7 @@ impl PbdSystem {
         }
 
         if !target_len.is_finite() || !stiffness.is_finite() {
-            panic!("NaN detected in constraint parameters");
+            return;
         }
 
         // Optimization: Access particle data once to minimize bounds checks.
@@ -408,9 +408,12 @@ impl PbdSystem {
         }
 
         let delta = pos1 - pos2;
+        if !delta.is_finite() {
+            return;
+        }
         let len = delta.length();
         if !len.is_finite() {
-            panic!("NaN detected in particle distance");
+            return;
         }
         if len < f32::EPSILON {
             return;
@@ -685,7 +688,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "NaN detected")]
     fn test_nan_propagation() {
         let mut system = PbdSystem::new();
         let p1 = system.add_particle(Vec3::ZERO, 1.0);
@@ -773,7 +775,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "NaN detected")]
     fn test_actuator_nan_factor_robustness() {
         let mut system = PbdSystem::new();
         let p1 = system.add_particle(Vec3::ZERO, 1.0);

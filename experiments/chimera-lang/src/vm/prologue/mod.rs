@@ -133,7 +133,6 @@ pub const MAT_BRICK: &str = "🧱";
 pub const MAT_WALL: &str = "#";
 pub const MAT_SHIELD: &str = "🛡️";
 
-
 pub mod state;
 pub use state::*;
 
