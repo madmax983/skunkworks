@@ -108,14 +108,12 @@ fn get_log_style_and_prefix(s: &str) -> (Style, &'static str) {
     // Optimization: avoid `s.to_lowercase()` to reduce heap allocations per render frame.
     // Using case-insensitive ascii checks works because our keywords are ascii.
     let contains_ignore_case = |keyword: &str| -> bool {
+        // Optimization: Uses LLVM-optimized vector instructions for zero-cost abstraction performance gains.
         // If it's a hot path, a simple ascii substring check is much faster than regex
         // or building a new String via `to_lowercase()`.
-        s.as_bytes().windows(keyword.len()).any(|window| {
-            window
-                .iter()
-                .zip(keyword.as_bytes())
-                .all(|(&c, &k)| c.to_ascii_lowercase() == k)
-        })
+        s.as_bytes()
+            .windows(keyword.len())
+            .any(|window| window.eq_ignore_ascii_case(keyword.as_bytes()))
     };
 
     if contains_ignore_case("error") {
@@ -145,6 +143,14 @@ mod tests {
     use ratatui::buffer::Buffer;
     use ratatui::layout::Rect;
     use ratatui::style::Color;
+
+    #[test]
+    fn test_case_insensitive_fast_path() {
+        let (_style, prefix) = super::get_log_style_and_prefix("eRrOr: something");
+        assert_eq!(prefix, "❌ ");
+        let (_style, prefix) = super::get_log_style_and_prefix("SUCCESS! done");
+        assert_eq!(prefix, "✅ ");
+    }
 
     #[test]
     fn test_log_list_rendering() {
