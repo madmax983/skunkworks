@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-origami**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Grace period: 24h.
+- **chaos-ddos**: Specimen condemned. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Grace period: 24h.
 
 ## Pardoned
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -366,6 +366,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **hyper-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **git-origami**: Specimen executed. Diagnosis: Documentation Void / Fragile Pathing / Terminal Genericism. Lacks a README.md and relies on hardcoded paths to load Git data. Failed to improve during grace period. Moved to graveyard.
 - **git-resonance**: Specimen executed. Diagnosis: Skeletal Implementation / Minimal Execution Quality. Failed to improve during grace period. Biomass returned to the void.
 - **poincare-flock**: Specimen executed. Diagnosis: Skeletal Implementation / Documentation Void. Failed to improve during grace period. Moved to graveyard.
