@@ -33,11 +33,9 @@ pub fn spawn_gear(
     radius: f32,
     mass_density: f32,
 ) -> Entity {
-    let mut shapes = Vec::new();
-
     // Main disk (rim)
     // Reduce radius slightly to allow teeth to sit on it
-    shapes.push((Vect::ZERO, 0.0, Collider::ball(radius - 0.5)));
+    let mut shapes = vec![(Vect::ZERO, 0.0, Collider::ball(radius - 0.5))];
 
     // Teeth
     // Calculate tooth dimensions based on circumference
@@ -87,34 +85,29 @@ pub fn spawn_gear(
 }
 
 pub fn spawn_anchor(commands: &mut Commands, position: Vec2) -> Entity {
-    let mut shapes = Vec::new();
-
     // Anchor geometry is specific to the escape wheel size.
     // Assuming escape wheel is roughly radius 5.0 nearby below.
-
-    // Left pallet
-    shapes.push((
-        Vect::new(-1.5, -2.0),
-        0.5, // Tilted
-        Collider::cuboid(0.2, 0.2),
-    ));
-
-    // Right pallet
-    shapes.push((
-        Vect::new(1.5, -2.0),
-        -0.5, // Tilted opposite
-        Collider::cuboid(0.2, 0.2),
-    ));
-
-    // Arms connecting to pivot
-    shapes.push((Vect::new(-2.5, -1.5), 0.5, Collider::cuboid(0.2, 2.0)));
-    shapes.push((Vect::new(2.5, -1.5), -0.5, Collider::cuboid(0.2, 2.0)));
-
-    // Pendulum Rod (upwards or downwards) - let's make it a pendulum swinging below
-    shapes.push((Vect::new(0.0, -8.0), 0.0, Collider::cuboid(0.2, 8.0)));
-
-    // Bob
-    shapes.push((Vect::new(0.0, -16.0), 0.0, Collider::ball(2.0)));
+    let shapes = vec![
+        // Left pallet
+        (
+            Vect::new(-1.5, -2.0),
+            0.5, // Tilted
+            Collider::cuboid(0.2, 0.2),
+        ),
+        // Right pallet
+        (
+            Vect::new(1.5, -2.0),
+            -0.5, // Tilted opposite
+            Collider::cuboid(0.2, 0.2),
+        ),
+        // Arms connecting to pivot
+        (Vect::new(-2.5, -1.5), 0.5, Collider::cuboid(0.2, 2.0)),
+        (Vect::new(2.5, -1.5), -0.5, Collider::cuboid(0.2, 2.0)),
+        // Pendulum Rod (upwards or downwards) - let's make it a pendulum swinging below
+        (Vect::new(0.0, -8.0), 0.0, Collider::cuboid(0.2, 8.0)),
+        // Bob
+        (Vect::new(0.0, -16.0), 0.0, Collider::ball(2.0)),
+    ];
 
     commands
         .spawn((
