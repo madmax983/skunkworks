@@ -31,7 +31,7 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
 
     // Flash background if tension is critical
     if app_state.fishing_tension > 0.9 && vm.tick_counter % 4 < 2 {
-        block = block.style(Style::default().bg(Color::Red));
+        block = block.border_style(Style::default().fg(Color::Red).add_modifier(Modifier::BOLD));
     }
 
     let scene_chunks = Layout::default()
