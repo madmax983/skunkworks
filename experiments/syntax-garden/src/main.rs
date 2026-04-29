@@ -24,11 +24,9 @@ use turtle::Turtle;
 
 struct App {
     turtle: Turtle,
-    genome: String,
     camera: (f64, f64),
     zoom: f64,
     parsing_path: String,
-    status: String,
 }
 
 impl App {
@@ -43,19 +41,12 @@ impl App {
         let mut turtle = Turtle::new(0.0, 0.0, 90.0, 25.0, 5.0);
         turtle.process_str(&genome);
 
-        let genome_len = genome.len();
         Ok(Self {
             turtle,
-            genome,
             camera: (0.0, 0.0),
             zoom: 1.0,
             parsing_path: path.to_string(),
-            status: format!("Parsed {} chars from {}", genome_len, path),
         })
-    }
-
-    fn on_resize(&mut self) {
-        // Maybe recenter?
     }
 }
 

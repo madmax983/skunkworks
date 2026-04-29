@@ -3,15 +3,12 @@ use std::fs;
 use syn::Item;
 use walkdir::WalkDir;
 
-pub struct GardenParser {
-    pub axiom: String,
-}
+#[derive(Default)]
+pub struct GardenParser {}
 
 impl GardenParser {
     pub fn new() -> Self {
-        Self {
-            axiom: String::new(),
-        }
+        Self::default()
     }
 
     pub fn parse_directory(&mut self, path: &str) -> Result<String> {
