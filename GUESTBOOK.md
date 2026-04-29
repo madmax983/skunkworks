@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/poincare-lattice
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/miller-lattice × crates/poincare-disk
+- **Status:** Spores deployed. The rigid, hierarchical codebase directory structure from `miller-lattice` is directly projected onto the continuous 2D non-Euclidean space of `poincare-disk`. The resulting hyperbolic codebase morphogenesis visually organizes the codebase via hyperbolic perspective, compressing deep nestings toward the boundary.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-git
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/neuro-sim × crates/git-associates
