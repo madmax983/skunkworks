@@ -35,3 +35,7 @@
 **[NaN Poisoning Protection in Math]**
 **Learning:** In physics simulations (like the `flocking` crate), calculations like `compute_steering` are vulnerable to `f64::NAN` or `f64::INFINITY` propagation if inputs (like `max_speed`, `max_force`, or `current_vel`) are extreme. This 'NaN poisoning' spreads rapidly and breaks the entire simulation state.
 **Action:** Mitigate this by verifying `.is_finite()` on the resulting vectors (e.g. `!desired.x.is_finite()`) and gracefully collapsing back to a zero vector (`Vec2::zero()`) to prevent the glitch from escaping the core calculation function.
+
+**[Rayon Par_chunks_exact_mut Panic]**
+**Learning:** `rayon::iter::par_chunks_exact_mut` will panic if the `chunk_size` provided to it is 0. This happens when the dimensions of a simulation (like Gray-Scott) are initialized to 0 and the simulation step is called using the `parallel` feature.
+**Action:** When implementing mathematical structures with variable size that can be chunked and processed in parallel, ensure to check and early return if the size or width is 0 before calling `.par_chunks_exact_mut()` or `.chunks_exact_mut()` with a `0` chunk size.
