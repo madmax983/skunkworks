@@ -353,9 +353,9 @@ impl AudioModel {
                 // Only clone grid if channel can receive it to avoid needless allocations
                 if !self.snapshot_tx.is_full() {
                     let _ = self.snapshot_tx.try_send(AudioSnapshot {
-                        pressure: self.grid.u.clone(),
-                        materials: self.grid.materials.clone(),
-                        energy: self.grid.energy_map.clone(),
+                        pressure: self.grid.u.to_vec(),
+                        materials: self.grid.materials.to_vec(),
+                        energy: self.grid.energy_map.to_vec(),
                     });
                 }
             }
