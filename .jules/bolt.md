@@ -21,3 +21,11 @@
 **[Optimizing Git-Associates Hunk Extraction]**
 **Learning:** We replaced nested `filter_map(...).collect()` iterator chains in `extract_hunks` with pre-allocated vectors (`Vec::with_capacity`), ensuring proper heap capacity reservation before iterative pushing.
 **Action:** When extracting data from nested sources (e.g., git patch hunks and lines), always check if `num_hunks` and `lines_count` properties are available to pre-allocate exact capacities. Avoid blind `.collect()` as it may rely on inaccurate iterator size bounds and force unnecessary reallocations.
+
+**[Fast Hashes]
+**Learning:** For mappings involving small integer-based keys (like `LatticePoint`s representing 3D coordinates), the default `std::collections::HashMap` uses cryptographic hashing (`SipHash`) which is slow.
+**Action:** Swap `HashMap` with `rustc_hash::FxHashMap` for these specific workloads to significantly boost spatial lookup and connectivity check performance.
+
+**[Explicit Slicing over Cloning]
+**Learning:** Calling `.clone()` on slices (`&[T]`) inside hot paths can obscure the fact that a full dynamic memory allocation is occurring.
+**Action:** Replace `.clone()` on arrays/slices with `.to_vec()` when a new memory allocation is genuinely needed to safely cross thread/channel boundaries. This explicitly documents the heap overhead.
