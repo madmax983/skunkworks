@@ -37,3 +37,44 @@ proptest! {
         system.step(dt, iterations);
     }
 }
+
+// 👺 HAVOC: Proving that `add_distance_constraint` panics if given invalid indices.
+// We use a custom runner thread to isolate the overflow/panic so the whole test suite doesn't abort.
+#[test]
+fn havoc_physics_oob_panic() {
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .arg("--exact")
+        .arg("havoc_physics_oob_panic_inner")
+        .arg("--nocapture")
+        .arg("--ignored")
+        .status();
+
+    if let Ok(status) = status {
+        // Havoc wants to *FAIL* the test suite! So we want to ASSERT that it failed.
+        // But since Havoc found a panic, Havoc is happy. However, to show the wreckage to Sentry,
+        // we must FAIL the CI. So we panic if the inner test panicked.
+        assert!(
+            status.success(),
+            "👺 Havoc: WRECKAGE! System failed to prevent Out of Bounds indexing in add_distance_constraint! The chaos hunt succeeded, now Sentry must fix it."
+        );
+    }
+}
+
+#[test]
+#[ignore]
+fn havoc_physics_oob_panic_inner() {
+    // Only run this test if explicitly requested, as it is designed to panic.
+    if std::env::args().any(|arg| arg == "havoc_physics_oob_panic_inner") {
+        let mut system = PbdSystem::new();
+        // Add just a couple of particles.
+        let _ = system.add_particle(Vec3::ZERO, 1.0);
+        let _ = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        // Boom. index out of bounds. The len is 2, we ask for 100.
+        // It's going to access self.particles[100] and panic!
+        system.add_distance_constraint(100, 200, 1.0);
+
+        // Return 0 if successful (which means we failed to panic, which means Havoc failed)
+        std::process::exit(0);
+    }
+}
