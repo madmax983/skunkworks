@@ -23,7 +23,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{canvas::Canvas, Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
+    widgets::{canvas::Canvas, Block, Borders, List, ListItem, ListState, Paragraph, Wrap, Table, Row, Cell},
     Terminal,
 };
 use std::io::{self, Read};
@@ -322,17 +322,74 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         .selected()
         .and_then(|i| app.snapshot.entities.get(i));
 
-    let details_text = if let Some(entity) = selected_entity {
-        serde_json::to_string_pretty(entity).unwrap_or_default()
+    if let Some(entity) = selected_entity {
+        let mut rows = Vec::new();
+
+        rows.push(Row::new(vec![
+            Cell::from("kind").style(Style::default().fg(Color::Cyan)),
+            Cell::from(entity.kind.clone()),
+        ]));
+
+        if let Some(id) = &entity.id {
+            rows.push(Row::new(vec![
+                Cell::from("id").style(Style::default().fg(Color::Cyan)),
+                Cell::from(id.clone()),
+            ]));
+        }
+
+        if let Some(pos) = &entity.position {
+            rows.push(Row::new(vec![
+                Cell::from("position").style(Style::default().fg(Color::Cyan)),
+                Cell::from(format!("({:.2}, {:.2})", pos.x, pos.y)),
+            ]));
+        }
+
+        if let Some(vel) = &entity.velocity {
+            rows.push(Row::new(vec![
+                Cell::from("velocity").style(Style::default().fg(Color::Cyan)),
+                Cell::from(format!("({:.2}, {:.2})", vel.x, vel.y)),
+            ]));
+        }
+
+        if let Some(display) = &entity.display {
+            rows.push(Row::new(vec![
+                Cell::from("display").style(Style::default().fg(Color::Cyan)),
+                Cell::from(display.clone()),
+            ]));
+        }
+
+        for (k, v) in &entity.props {
+            let v_str = match v {
+                tui_shared::semantic::PropValue::Int(i) => i.to_string(),
+                tui_shared::semantic::PropValue::Float(f) => format!("{:.2}", f),
+                tui_shared::semantic::PropValue::Bool(b) => b.to_string(),
+                tui_shared::semantic::PropValue::Text(t) => t.to_string(),
+            };
+
+            let mut value_style = Style::default();
+            if v_str.eq_ignore_ascii_case("true") {
+                value_style = value_style.fg(Color::Green);
+            } else if v_str.eq_ignore_ascii_case("false") {
+                value_style = value_style.fg(Color::Blue);
+            }
+
+            rows.push(Row::new(vec![
+                Cell::from(format!("props.{}", k)).style(Style::default().fg(Color::Cyan)),
+                Cell::from(v_str).style(value_style),
+            ]));
+        }
+
+        let details = Table::new(rows, [Constraint::Percentage(30), Constraint::Percentage(70)])
+            .header(Row::new(vec!["Property", "Value"]).style(Style::default().add_modifier(Modifier::BOLD)))
+            .block(Block::default().borders(Borders::ALL).title(" Details "));
+
+        f.render_widget(details, details_area);
     } else {
-        "Select an entity to view details".to_string()
-    };
-
-    let details = Paragraph::new(details_text)
-        .block(Block::default().borders(Borders::ALL).title(" Details "))
-        .wrap(Wrap { trim: false });
-
-    f.render_widget(details, details_area);
+        let details = Paragraph::new("Select an entity to view details")
+            .block(Block::default().borders(Borders::ALL).title(" Details "))
+            .wrap(Wrap { trim: false });
+        f.render_widget(details, details_area);
+    }
 }
 
 mod atty {
