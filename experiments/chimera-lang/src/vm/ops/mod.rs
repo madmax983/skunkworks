@@ -18,3 +18,6 @@ pub mod io;
 pub mod math;
 pub mod misc;
 pub mod stack;
+
+#[cfg(feature = "nova")]
+pub mod nova_dispatch;
