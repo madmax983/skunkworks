@@ -1,6 +1,6 @@
-⚡ Bolt: Replace manual case-insensitive matching with eq_ignore_ascii_case
+🛡️ Sentry: [test coverage improvement]
 
-💡 What: Replaced a manual `.iter().zip().all()` byte comparison loop with `s.as_bytes().windows(keyword.len()).any(|w| w.eq_ignore_ascii_case(keyword.as_bytes()))` inside `contains_ignore_case` in `tui-shared/src/log_list.rs`.
-🎯 Why: The manual loop in `contains_ignore_case` is executed on every string character for case-insensitive styling checks during every TUI render frame. This acts as a bottleneck.
-📊 Impact: Expected to reduce CPU cycle usage in the hot render loop by leveraging LLVM-optimized vector instructions for slice comparison, providing a true zero-cost abstraction without fighting the borrow checker.
-🔬 Measurement: Verified locally using `rustc` with `black_box` iteration benchmarking, showing ~36% speed improvement over the `zip().all()` manual approach.
+🎯 Target: `crates/gray-scott/src/lib.rs` (GrayScott::update_parallel)
+💣 Risk: `rayon::iter::par_chunks_exact_mut` will panic if the `chunk_size` provided to it is 0. This happens when the dimensions of a simulation (like Gray-Scott) are initialized to 0 and the simulation step is called using the `parallel` feature.
+🧪 Strategy: Added early return when `w == 0 || h == 0` in `update_parallel`, similar to the sequential version. The existing `test_zero_dimensions` unit test failed with the parallel feature, which is now fixed.
+🔬 Verification: `cargo test -p gray-scott --features parallel`

@@ -296,6 +296,9 @@ impl GrayScott {
     fn update_parallel(&mut self, feed: f32, kill: f32, dt: f32) {
         let w = self.width;
         let h = self.height;
+        if w == 0 || h == 0 {
+            return;
+        }
         let diff_u = self.diff_u;
         let diff_v = self.diff_v;
 
