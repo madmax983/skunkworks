@@ -22,20 +22,24 @@
 ## 2024-06-15 - [Misc Ops Extraction]
 **Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` still contained loosely coupled execution logic and operations for miscellaneous and esoteric behavior (`exec_prion_op`, `exec_transposon`, `exec_scavenge_op`, `exec_digest_op`, `exec_havoc_op`, `exec_char_op`, `exec_mutagen_op`, `exec_findall_op`, `handle_unknown_opcode`), representing roughly 500 lines of unrelated domain code.
 **Blueprint:** Extracted these remaining miscellaneous operations into a newly created `experiments/chimera-lang/src/vm/ops/misc.rs` file. Added `misc` to `experiments/chimera-lang/src/vm/ops/mod.rs`. This cleanly delegates the remaining execution methods into a separate file, resolving the final remnants of the 'Blob' within the main `mod.rs`.
-## $(date +%Y-%m-%d) - [Editing Handler Normalization]
+## 2026-04-29 - [Editing Handler Normalization]
 **Tangle:** The Sprawl / The Blob - `experiments/chimera-lang/src/tui/app/handlers/editing/enter.rs` had a bloated `match` block spanning hundreds of lines. Over 30 different `ViewMode` variants duplicated identical fallback logic (`InputMode::Normal` and `input_buffer.clear()`). The matching logic for `apply_grid_edit` was also loosely repeated.
 **Blueprint:** Removed the explicitly duplicated no-op variants, allowing them to cleanly fall through to the default `_ =>` handler. Consolidated `Babel` and `Weaver` which shared buffer-preserving logic. Grouped the `apply_grid_edit` logic variants into grouped arms guarded by their appropriate `#[cfg]` feature flags. This significantly reduces line count, enhances readability, and concentrates specific business logic.
 
-## $(date +%Y-%m-%d) - [Chimera TUI Blob Elimination]
+## 2026-04-29 - [Chimera TUI Blob Elimination]
 **Tangle:** The Blob - `experiments/chimera-lang/src/tui/mod.rs` retained a ~4,500 line duplication of the `run_app` event loop logic despite previous extractions into `tui/app/mod.rs`. This meant the application was maintaining massive duplicated match blocks inside `tui/mod.rs` while the refactored handlers in `tui/app/handlers/` remained disconnected.
 **Blueprint:** Eliminated the monolithic 4,500+ line `run_app` function and all of its duplicated `match` blocks and view rendering routing from `tui/mod.rs`. Redirected the `run_tui` loop to properly consume the cleanly modularized `app::run_app` execution logic. `tui/mod.rs` now correctly acts as a small facade (reduced to ~200 lines) maintaining shared UI utilities (`apply_glitch_fx`, `parse_grid_value`).
 ## 2026-04-19 - [Extracted Value struct in penrose-genes]
 **Tangle:** Circular dependency found in `penrose-genes` between `vm.rs` and `penrose.rs` via `Value` enum. `vm.rs` imported `PenroseTiling` from `penrose.rs`, and `penrose.rs` imported `Value` from `vm.rs`.
 **Blueprint:** Extracted the `Value` enum into a new `value.rs` module, breaking the cyclic dependency. `vm.rs` and `penrose.rs` now both rely on `value.rs`.
-## $(date +%Y-%m-%d) - [Chimera TUI View Router Extraction]
+## 2026-04-29 - [Chimera TUI View Router Extraction]
 **Tangle:** The Blob - `experiments/chimera-lang/src/tui/app/mod.rs` had a massive `run_app` event loop where `terminal.draw` was rendering over 40 individual `ViewMode` enumerations using large `match` and `if let` blocks, tightly coupling application routing to rendering.
 **Blueprint:** Extracted the massive view routing block from `terminal.draw` inside `run_app` into a new `router.rs` module (`route_view`). This keeps `mod.rs` lean and dedicated to high-level loop execution while centralizing the UI view resolution.
 
 ## 2024-05-21 - [Extracting Organelle Processing]
 **Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` was heavily bloated with over 500 lines dedicated purely to Organelle execution, creating tight coupling between the VM core structure and organelle domain logic.
 **Blueprint:** Extracted the massive `process_organelles` and related execution functions into a new `experiments/chimera-lang/src/vm/organelles.rs` module. The logic is encapsulated in an `impl crate::vm::ChimeraVM` block to reduce `mod.rs` size and enforce clean boundary separation.
+
+## 2026-04-29 - [Nova Dispatch Extraction]
+**Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` still contained the massive `exec_nova_dispatch` match block with over 400 lines of dispatch logic for Nova opcodes, cluttering the central VM module.
+**Blueprint:** Extracted `exec_nova_dispatch` from `mod.rs` into its own `experiments/chimera-lang/src/vm/ops/nova_dispatch.rs` file. This cleanly isolates the extensive Nova feature dispatch logic into a dedicated file, significantly reducing the line count of the core VM `mod.rs` and better encapsulating the Nova domain logic routing.

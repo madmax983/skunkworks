@@ -1,6 +1,6 @@
-🛡️ Sentry: [test coverage improvement]
+🗺️ Atlas: [Extraction of exec_nova_dispatch from mod.rs]
 
-🎯 Target: `crates/gray-scott/src/lib.rs` (GrayScott::update_parallel)
-💣 Risk: `rayon::iter::par_chunks_exact_mut` will panic if the `chunk_size` provided to it is 0. This happens when the dimensions of a simulation (like Gray-Scott) are initialized to 0 and the simulation step is called using the `parallel` feature.
-🧪 Strategy: Added early return when `w == 0 || h == 0` in `update_parallel`, similar to the sequential version. The existing `test_zero_dimensions` unit test failed with the parallel feature, which is now fixed.
-🔬 Verification: `cargo test -p gray-scott --features parallel`
+🕸️ Tangle: The structural problem was that `experiments/chimera-lang/src/vm/mod.rs` was heavily bloated, largely due to `exec_nova_dispatch` being a monolithic 400+ line `match` block tightly coupling Nova logic into the main VM definition.
+📐 Blueprint: Extracted `exec_nova_dispatch` from `mod.rs` into a new `experiments/chimera-lang/src/vm/ops/nova_dispatch.rs` module under the existing `impl crate::vm::ChimeraVM` block, and imported it via `vm/ops/mod.rs`.
+🧱 Stability: Reduced coupling between core VM execution and Nova expansion, significantly improving modularity and reducing the line count of the core `mod.rs` file.
+🔬 Verification: Builds successfully, strict separation enforced. Tested via `cargo check` and `cargo test -p chimera-lang` to verify zero regressions.
