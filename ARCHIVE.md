@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-sandpile**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Panics in headless environments and lacks depth. Grace period: 24h.
+- **waggle-dance**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Panics in headless environments (`XOpenDisplay() failed!`) and functions as a disconnected generic swarm sketch. Grace period: 24h.
 
 ## Pardoned
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -44,6 +44,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-sandpile**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Panics in headless environments and lacks integration. Failed to improve during grace period. Moved to graveyard.
 - **chaos-ddos**: Specimen executed. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Failed to improve during grace period. Moved to graveyard.
 - **ferrous-lattice**: Executed. Grace period expired. Terminal Genericism unresolved.
 - **mnem-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings and unused variables during its grace period. Biomass returned to the void.
