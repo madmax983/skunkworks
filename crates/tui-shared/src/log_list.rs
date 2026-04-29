@@ -15,6 +15,8 @@ use ratatui::{
     widgets::{Block, Borders, List, ListItem, Widget},
 };
 
+use std::borrow::Cow;
+
 /// A widget that displays a list of log messages with automatic color coding.
 ///
 /// Use [`LogList::new`] to create a new instance, passing a vector of strings.
@@ -43,8 +45,6 @@ use ratatui::{
 /// let mut buffer = Buffer::empty(area);
 /// widget.render(area, &mut buffer);
 /// ```
-use std::borrow::Cow;
-
 pub struct LogList<'a> {
     items: Vec<Cow<'a, str>>,
     block: Option<Block<'a>>,

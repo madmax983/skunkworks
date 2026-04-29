@@ -15,8 +15,8 @@
 
 use anyhow::Result;
 use cgmath::Vector3;
-use std::collections::{HashSet, VecDeque};
 use rustc_hash::FxHashMap;
+use std::collections::{HashSet, VecDeque};
 use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 
