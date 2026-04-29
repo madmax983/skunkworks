@@ -14,6 +14,8 @@ use ratatui::{
     widgets::{Block, Borders, Widget},
 };
 
+use std::borrow::Cow;
+
 /// A reusable Button component for TUI applications.
 ///
 /// The button accepts a label, optional icon, custom block borders,
@@ -37,8 +39,6 @@ use ratatui::{
 /// let mut buffer = Buffer::empty(area);
 /// button.render(area, &mut buffer);
 /// ```
-use std::borrow::Cow;
-
 pub struct Button<'a> {
     label: Cow<'a, str>,
     style: Style,

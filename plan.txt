@@ -1,4 +1,0 @@
-1. Implement the faster `eq_ignore_ascii_case` inside `contains_ignore_case` in `tui-shared/src/log_list.rs`.
-   - The current `.iter().zip(..).all(...)` manually checks equality and is slow.
-   - `s_bytes.windows(k_bytes.len()).any(|w| w.eq_ignore_ascii_case(k_bytes))` is slightly faster, but what if we just use `str::to_ascii_lowercase().contains(keyword)`? Wait, that creates an allocation.
-   - Using `.windows(keyword.len()).any(|w| w.eq_ignore_ascii_case(keyword.as_bytes()))` is idiomatic, faster, and concise. Wait, no, we just benchmarked it and it's slightly faster.
