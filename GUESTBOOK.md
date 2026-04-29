@@ -675,5 +675,8 @@
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/firefly-synapse
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `firefly-synapse` failed to adapt. Its generic implementation and ecosystem isolation remained stagnant. It has been moved to the graveyard."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/photon-racer
-**Reaper ☠️**: "Fascinating. Specimen `photon-racer` exhibits terminal characteristics. The rot of Terminal Genericism and Skeletal Implementation is apparent. A standard grid laser puzzle lacking swarm or esoteric resonance. Grace period: 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/photon-racer
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `photon-racer` failed to adapt. Its skeletal implementation and terminal genericism remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/chimera-sandpile
+**Reaper ☠️**: "Fascinating. Specimen `chimera-sandpile` suffers from Ecosystem Maladaptation and Skeletal Implementation. It relies on a GUI context that is absent, dying instantly upon creation (`XOpenDisplay`). Grace period: 24h."

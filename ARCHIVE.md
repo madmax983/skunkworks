@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **photon-racer**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / TUI Misuse. Grace period: 24h.
+- **chimera-sandpile**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Panics in headless environments and lacks depth. Grace period: 24h.
 
 ## Pardoned
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -367,6 +367,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **photon-racer**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / TUI Misuse. Failed to improve during grace period. Moved to graveyard.
 - **firefly-synapse**: Specimen executed. Diagnosis: Generic Implementation / Ecosystem Isolation. Grace period expired. Moved to graveyard.
 - **hyper-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **git-origami**: Specimen executed. Diagnosis: Documentation Void / Fragile Pathing / Terminal Genericism. Lacks a README.md and relies on hardcoded paths to load Git data. Failed to improve during grace period. Moved to graveyard.
