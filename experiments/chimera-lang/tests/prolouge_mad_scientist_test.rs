@@ -291,4 +291,28 @@ mod tests {
         );
         assert_eq!(genes[1].op, OpCode::ParserRegex);
     }
+    #[test]
+    fn test_prolouge_compiler_prolog() {
+        let source = r#"
+        prolog {
+            parent(john).
+        }
+        "#;
+        let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    }
+    #[test]
+    fn test_prolouge_compiler_raku() {
+        let source = r#"
+        raku {
+            >>+<<
+        }
+        "#;
+        let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::HyperAdd);
+    }
 }
