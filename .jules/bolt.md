@@ -29,3 +29,7 @@
 **[Explicit Slicing over Cloning]
 **Learning:** Calling `.clone()` on slices (`&[T]`) inside hot paths can obscure the fact that a full dynamic memory allocation is occurring.
 **Action:** Replace `.clone()` on arrays/slices with `.to_vec()` when a new memory allocation is genuinely needed to safely cross thread/channel boundaries. This explicitly documents the heap overhead.
+
+**Bolt Optimization: Removing heap allocations in TUI render hot paths**
+**Learning:** Using the `format!` macro inside `Widget::render` methods to combine strings for Ratatui `Line::from()` causes an unnecessary `String` heap allocation on every single frame.
+**Action:** Replace `format!("{} {}", a, b)` with `Line::from(vec![Span::raw(a), Span::raw(" "), Span::raw(b)])`. While `vec!` still allocates a vector of pointers, it bypasses the significant overhead of string formatting and allocation machinery.

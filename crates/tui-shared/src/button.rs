@@ -10,7 +10,7 @@ use ratatui::{
     buffer::Buffer,
     layout::Rect,
     style::{Color, Modifier, Style},
-    text::Line,
+    text::{Line, Span},
     widgets::{Block, Borders, Widget},
 };
 
@@ -250,7 +250,11 @@ impl<'a> Widget for Button<'a> {
         };
 
         let line = if let Some(icon) = self.icon {
-            Line::from(format!("{} {}", icon, self.label))
+            Line::from(vec![
+                Span::raw(icon),
+                Span::raw(" "),
+                Span::raw(self.label.as_ref()),
+            ])
         } else {
             Line::from(self.label.as_ref())
         };
