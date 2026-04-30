@@ -28,7 +28,7 @@ proptest! {
         let p1 = system.add_particle(Vec3::new(p1_pos_x, p1_pos_y, p1_pos_z), p1_mass);
         let p2 = system.add_particle(Vec3::new(p2_pos_x, p2_pos_y, p2_pos_z), p2_mass);
 
-        system.add_distance_constraint(p1, p2, target_len);
+        let _ = system.add_distance_constraint(p1, p2, target_len);
 
         if let Some(Constraint::Distance { stiffness: s, .. }) = system.constraints.first_mut() {
             *s = stiffness;
@@ -72,7 +72,7 @@ fn havoc_physics_oob_panic_inner() {
 
         // Boom. index out of bounds. The len is 2, we ask for 100.
         // It's going to access self.particles[100] and panic!
-        system.add_distance_constraint(100, 200, 1.0);
+        let _ = system.add_distance_constraint(100, 200, 1.0);
 
         // Return 0 if successful (which means we failed to panic, which means Havoc failed)
         std::process::exit(0);

@@ -221,9 +221,14 @@ impl PbdSystem4D {
     /// // Constrain them to exactly 5.0 units apart (their current distance)
     /// system.add_distance_constraint(p1, p2, 1.0);
     /// ```
-    pub fn add_distance_constraint(&mut self, p1: usize, p2: usize, stiff: f32) {
+    pub fn add_distance_constraint(
+        &mut self,
+        p1: usize,
+        p2: usize,
+        stiff: f32,
+    ) -> Result<(), &'static str> {
         if p1 >= self.particles.len() || p2 >= self.particles.len() {
-            return;
+            return Err("Particle index out of bounds");
         }
         let dist = self.particles[p1]
             .pos
@@ -235,6 +240,7 @@ impl PbdSystem4D {
             rest_length: dist,
             stiffness: stiff,
         });
+        Ok(())
     }
 
     /// Creates a dynamically sizing actuator constraint between two particles.
@@ -271,7 +277,10 @@ impl PbdSystem4D {
         max_len: f32,
         stiff: f32,
         initial_factor: f32,
-    ) {
+    ) -> Result<(), &'static str> {
+        if p1 >= self.particles.len() || p2 >= self.particles.len() {
+            return Err("Particle index out of bounds");
+        }
         self.constraints.push(Constraint4D::Actuator {
             p1,
             p2,
@@ -280,6 +289,7 @@ impl PbdSystem4D {
             factor: initial_factor,
             stiffness: stiff,
         });
+        Ok(())
     }
 
     /// Forces a specific particle to remain pinned at a designated 4D coordinate.
@@ -303,6 +313,9 @@ impl PbdSystem4D {
     /// system.add_pin_constraint(p1, Vec4::new(5.0, 5.0, 0.0, 0.0));
     /// ```
     pub fn add_pin_constraint(&mut self, p: usize, pos: Vec4) -> Result<(), &'static str> {
+        if p >= self.particles.len() {
+            return Err("Particle index out of bounds");
+        }
         if !pos.is_finite() {
             return Err("Pin position must be finite");
         }
@@ -546,7 +559,7 @@ mod tests {
         // Inject NaN into target length by computing distance with NaN position
         system.particles[p1].pos = Vec4::new(f32::NAN, 0.0, 0.0, 0.0);
 
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
         system.step(0.1, 10, 1.0);
     }
 
@@ -560,7 +573,7 @@ mod tests {
             .unwrap();
 
         // Setup constraint with valid parameters
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
 
         // Inject NaN position after constraint creation
         system.particles[p1].pos = Vec4::new(f32::NAN, 0.0, 0.0, 0.0);
@@ -577,7 +590,7 @@ mod tests {
             .add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0)
             .unwrap();
 
-        system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0, 1.0);
+        let _ = system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0, 1.0);
 
         // Inject NaN factor directly via constraints list
         if let Constraint4D::Actuator { factor, .. } = &mut system.constraints[0] {
@@ -617,7 +630,7 @@ mod tests {
             .unwrap();
 
         // Two infinite mass (inv_mass = 0) particles shouldn't move
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
         system.step(0.1, 10, 1.0);
 
         assert_eq!(system.particles[p1].pos, Vec4::zero());
@@ -631,7 +644,7 @@ mod tests {
         let p2 = system.add_particle(Vec4::zero(), 1.0).unwrap();
 
         // Distance is already zero, length is < EPSILON
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
         system.step(0.1, 10, 1.0);
 
         // Particles shouldn't move because direction isn't well defined when exactly overlapping
@@ -662,7 +675,7 @@ mod tests {
             .add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0)
             .unwrap();
 
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
 
         // Let's directly call solve_distance to just test the specific branches
         // without worrying about the full step() integration.
@@ -682,7 +695,7 @@ mod tests {
             .unwrap();
         let p2 = system.add_particle(Vec4::zero(), 0.0).unwrap(); // Infinite mass
 
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
 
         PbdSystem4D::solve_distance(&mut system.particles, p1, p2, 1.0, 1.0);
 
@@ -696,7 +709,7 @@ mod tests {
     fn test_solve_distance_out_of_bounds() {
         let mut system = PbdSystem4D::new();
         // Invalid index
-        system.add_distance_constraint(99, 100, 1.0);
+        let _ = system.add_distance_constraint(99, 100, 1.0);
 
         // Should not panic, just return early
         system.step(0.1, 10, 1.0);
@@ -711,7 +724,7 @@ mod tests {
             .add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0)
             .unwrap();
 
-        system.add_distance_constraint(p1, p2, f32::NAN);
+        let _ = system.add_distance_constraint(p1, p2, f32::NAN);
         system.step(0.1, 10, 1.0);
     }
 }

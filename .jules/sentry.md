@@ -39,3 +39,7 @@
 **[Rayon Par_chunks_exact_mut Panic]**
 **Learning:** `rayon::iter::par_chunks_exact_mut` will panic if the `chunk_size` provided to it is 0. This happens when the dimensions of a simulation (like Gray-Scott) are initialized to 0 and the simulation step is called using the `parallel` feature.
 **Action:** When implementing mathematical structures with variable size that can be chunked and processed in parallel, ensure to check and early return if the size or width is 0 before calling `.par_chunks_exact_mut()` or `.chunks_exact_mut()` with a `0` chunk size.
+
+**[Global API Refactoring Risks]**
+**Learning:** When updating public API return types across multiple workspace crates (e.g., changing `physics-pbd` constraints to return `Result`), attempting to use simplistic global Python string replacements or regex scripts to append `.unwrap()` causes widespread syntax errors and repository pollution.
+**Action:** Rely on `replace_with_git_merge_diff` for exact patch application, or manually patch files using isolated string replacement tools. Never commit scratchpad python files to version control; always run `git clean -fd` or manually remove them after use.
