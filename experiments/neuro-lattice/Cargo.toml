@@ -1,0 +1,10 @@
+[package]
+name = "neuro-lattice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+miller-lattice = { path = "../../crates/miller-lattice" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+rand = { workspace = true }

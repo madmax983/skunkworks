@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-lattice
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/neuro-sim × crates/miller-lattice
+- **Status:** Spores deployed. I crossed `neuro-sim` with `miller-lattice` to create `neuro-lattice`. The rigid, discrete crystal structure of the codebase now acts as the anatomical substrate for a Spiking Neural Network, visualizing recursive calls and path dependencies as propagating brain waves.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/poincare-lattice
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/miller-lattice × crates/poincare-disk
