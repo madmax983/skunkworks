@@ -1,7 +1,7 @@
+use ::rand::Rng;
 use macroquad::prelude::*;
 use miller_lattice::Crystal;
 use neuro_sim::Network;
-use ::rand::Rng;
 use std::path::Path;
 
 fn window_conf() -> Conf {
@@ -103,8 +103,16 @@ async fn main() {
             let p_atom = &crystal.atoms[parent_idx];
             let c_atom = &crystal.atoms[child_idx];
 
-            let p1 = vec3(p_atom.position.x as f32, p_atom.position.y as f32, p_atom.position.z as f32);
-            let p2 = vec3(c_atom.position.x as f32, c_atom.position.y as f32, c_atom.position.z as f32);
+            let p1 = vec3(
+                p_atom.position.x as f32,
+                p_atom.position.y as f32,
+                p_atom.position.z as f32,
+            );
+            let p2 = vec3(
+                c_atom.position.x as f32,
+                c_atom.position.y as f32,
+                c_atom.position.z as f32,
+            );
 
             let is_spiking_c = network.is_spiking(child_idx);
 
@@ -119,7 +127,11 @@ async fn main() {
 
         // Draw Atoms (Neurons)
         for (i, atom) in crystal.atoms.iter().enumerate() {
-            let pos = vec3(atom.position.x as f32, atom.position.y as f32, atom.position.z as f32);
+            let pos = vec3(
+                atom.position.x as f32,
+                atom.position.y as f32,
+                atom.position.z as f32,
+            );
 
             let is_spiking = network.is_spiking(i);
 
@@ -146,7 +158,11 @@ async fn main() {
             Color::new(0.8, 0.8, 0.9, 1.0),
         );
         draw_text(
-            &format!("Neurons: {} | Synapses: {}", num_atoms, network.synapses.len()),
+            &format!(
+                "Neurons: {} | Synapses: {}",
+                num_atoms,
+                network.synapses.len()
+            ),
             20.0,
             60.0,
             20.0,
