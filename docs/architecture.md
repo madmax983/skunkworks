@@ -1481,7 +1481,7 @@ stateDiagram-v2
     }
 ```
 
-### Nova Feature: Prologue System (ADR 042)
+### Nova Feature: Prologue System (ADR 042, ADR 091)
 
 The Prologue system enables visual, grid-based logic execution, allowing for the creation of digital circuits and autonomous agents.
 
@@ -1495,6 +1495,7 @@ classDiagram
     }
 
     class PrologueState {
+        <<Module: prologue/state.rs>>
         +bool active
         +HashSet runes
         +Vec~Vec~Option~Value~~~ signal_grid
@@ -1508,6 +1509,7 @@ classDiagram
     }
 
     class PrologueAgent {
+        <<Module: prologue/state.rs>>
         +usize x
         +usize y
         +Value state

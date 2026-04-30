@@ -3,7 +3,7 @@
 Date: 2026-04-29
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `experiments/chimera-lang/src/vm/mod.rs` file was heavily bloated, largely due to `exec_nova_dispatch` being a monolithic 400+ line `match` block. This block tightly coupled Nova expansion logic into the main Virtual Machine definition, creating an architectural bottleneck. Any modification to Nova-specific execution logic required touching the core VM definition file, increasing the risk of regressions and making the `mod.rs` file difficult to navigate and maintain.
