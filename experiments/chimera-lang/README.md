@@ -259,7 +259,7 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.d
 cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna
 
 # Headless mode (no TUI)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna -- --headless
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna --headless
 ```
 
 ## Nova Features
@@ -380,7 +380,7 @@ fn main() {
 See `examples/story_demo.rs` for a full example of an interactive TUI usage. Note that it launches a blocking interactive TUI and cannot run headlessly.
 
 > 🚨 **REQUIRES FEATURE NOVA** 🚨
-> Advanced features (including the compiler and `incubate`) require the `nova` feature flag.
+> Advanced features (including the compiler, `incubate`, and `story_demo`) require the `nova` feature flag.
 
 ```bash
 cargo run -p chimera-lang --features nova --example story_demo
