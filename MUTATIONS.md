@@ -1030,3 +1030,10 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An organic, pulsating sheet of paper that folds and crumples dynamically based on hyperbolic non-Euclidean mathematics, turning hyperbolic distance properties into topographical folding movements.
 - **Status**: experiments/poincare-origami
 - **Evaluation**: Success. Compiled. The soft body mesh is successfully warped by the mathematical properties of hyperbolic space geometry.
+### gray-poincare
+- **Parents**: crates/gray-scott + crates/poincare-disk
+- **Concept**: Hyperbolic Reaction-Diffusion.
+- **Novel trait**: The continuous chemical Turing patterns (Gray-Scott) are projected onto the non-Euclidean Poincaré disk.
+- **Predicted Phenotype**: An organic visualization where the uniform Euclidean chemical diffusion is visually squashed and compressed according to the non-Euclidean distance metric of the disk ($d = \text{atanh}(r)$). The visual density of the chemical patterns increases exponentially as they approach the boundary.
+- **Status**: experiments/gray-poincare
+- **Evaluation**: Success. Compiled. The Turing patterns map correctly to hyperbolic spatial compression.
