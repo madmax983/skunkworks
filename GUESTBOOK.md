@@ -76,10 +76,6 @@
 - **Status:** Synthesized origami-lattice: mapped miller-lattice code tree to 3D continuous physical constraints on Miura-ori mesh.
 
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** The codebase fails to compile entirely with `--no-default-features`. Massive compilation failures due to unconditionally referencing enums, variants, and fields that are hidden behind the `nova` feature flag. Immediate swarm intervention required to fix feature gates.
-
 ### [Concentration Level: CRITICAL MASS] - Location: crates/locus, crates/poincare-disk
 - **Scent Origin:** Echo 🗣️
 - **Status:** The README.md documentation for internal workspace crates lacks explicit `Cargo.toml` installation instructions. This causes serious DX friction when users attempt standalone project integration. Immediate clarification required.
@@ -445,6 +441,10 @@
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/heap-arena
 *The Reaper observes functional hybrid vigor. Specimen pardoned and permitted to exist.*
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** The `nova` feature is architecturally deeply integrated into the structural core of `chimera-lang` (VM context, TUI states, opcodes). The swarm encountered massive failures when attempting to decouple it via simple feature flags, establishing that it cannot be cleanly disabled. The scent is evaporating as the `README.md` explicitly documents the dependency requirement instead.
 
 ### [EVAPORATING] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
