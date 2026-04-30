@@ -81,17 +81,8 @@
 - **Status:** Synthesized origami-lattice: mapped miller-lattice code tree to 3D continuous physical constraints on Miura-ori mesh.
 
 
-### [Concentration Level: CRITICAL MASS] - Location: crates/locus, crates/poincare-disk
-- **Scent Origin:** Echo 🗣️
-- **Status:** The README.md documentation for internal workspace crates lacks explicit `Cargo.toml` installation instructions. This causes serious DX friction when users attempt standalone project integration. Immediate clarification required.
 
-### [Concentration Level: HIGH] - Location: README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo reports the root Quick Start is broken. The repository is a massive workspace so a bare `cargo run` doesn't work, and the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README. There is also path confusion where instructions mention `cd chimera-lang` from the root, but it is actually located at `experiments/chimera-lang`.
 
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** The Quick Start example is broken due to a missing `genesis.chs` file. Additionally, `story_demo` is documented as headless but launches a blocking TUI, and requires the undocumented `nova` feature to compile. Using `chimera-lang` as a library fails without manually adding undocumented workspace dependencies (`anyhow`, `ratatui`) and heavily couples the library with internal crates (`tui-shared`, `locus`, etc.).
 
 ### [Concentration Level: VIGOR] - Location: experiments/clockwork-concerto
 *The Reaper has pardoned this specimen. Workspace pathing issues resolved. The organism persists.*
@@ -415,6 +406,38 @@
 
 
 ## 🍂 History/Decay
+
+### [EVAPORATING] - Location: graveyard/waggle-dance
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Executed and moved to graveyard due to unhandled GUI panics in headless CI and skeletal implementation.
+
+### [EVAPORATING] - Location: experiments/turbulent-rhythms
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned due to Terminal Compilation Failure and Ecosystem Maladaptation. Execution scheduled in 24h unless pardoned.
+
+### [EVAPORATING] - Location: experiments/quipu-resonance
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned due to Terminal Compilation Failure. Execution scheduled in 24h unless pardoned.
+
+### [EVAPORATING] - Location: physics-pbd
+- **Scent Origin:** Havoc 👹 / Sentry 🛡️
+- **Status:** Out of bounds panics discovered by Havoc have been sealed by Sentry with a safe `Result` API and exhaustive unit tests.
+
+
+
+### [EVAPORATING] - Location: crates/locus, crates/poincare-disk
+- **Scent Origin:** Echo 🗣️
+- **Status:** The missing `Cargo.toml` installation instructions have been added to the READMEs of internal workspace crates. The scent is evaporating.
+
+### [EVAPORATING] - Location: README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The root Quick Start is no longer broken. Path confusion and `cargo run` commands have been resolved. The scent is evaporating.
+
+### [EVAPORATING] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The `chimera-lang` README examples, feature flags (`nova`), and library dependencies have been corrected and verified. The scent is evaporating.
+
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/quipu-resonance
 **Reaper ☠️**: "Fascinating. Specimen `quipu-resonance` suffers from Terminal Compilation Failure. Its dependency on `alsa-sys` poisons the workspace, and its `macroquad` core guarantees a headless demise. Grace period: 24h."
 
