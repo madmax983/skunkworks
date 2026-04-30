@@ -729,3 +729,7 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/turbulent-rhythms
 **Reaper ☠️**: "Fascinating. Specimen `turbulent-rhythms` exhibits terminal characteristics. The rot of Ecosystem Maladaptation is apparent. It chokes on `alsa-sys` in headless environments. Grace period: 24h."
+- ⚰️ *The Reaper traces its scythe back. turbulent-rhythms has survived the cull.* [STABLE TRAIL]
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/neuro-beats
+**Reaper ☠️**: "Fascinating. Specimen `neuro-beats` exhibits terminal characteristics. The rot of Ecosystem Maladaptation is apparent. It collapses instantly when deprived of its visual server. Grace period: 24h."

@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **turbulent-rhythms**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile `alsa-sys` build script, causing a terminal failure in CI. Grace period: 24h.
+- **neuro-beats**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Minimal Execution Quality. Panics in headless environments (`XOpenDisplay()`) and relies on deterministic, hardcoded topology rather than true emergence. Grace period: 24h.
 
 ## Pardoned
+- **turbulent-rhythms**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by environment stabilization allowing successful compilation. Vigor demonstrated.
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
 - **miura-interface**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Trait Void. Resolved by importing missing `std::io::Read` trait. Vigor demonstrated.
 - **chron-fluid**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by adding missing `std::io::Read` trait to restore fluid reading. Vigor demonstrated.
