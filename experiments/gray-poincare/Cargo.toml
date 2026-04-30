@@ -1,0 +1,12 @@
+[package]
+name = "gray-poincare"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+poincare-disk = { path = "../../crates/poincare-disk" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+tui-shared = { workspace = true }
