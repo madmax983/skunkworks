@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **waggle-dance**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Panics in headless environments (`XOpenDisplay() failed!`) and functions as a disconnected generic swarm sketch. Grace period: 24h.
+- **turbulent-rhythms**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Causes workspace resolution failures and panics due to Bevy 0.13 conflicts and missing ALSA headers without feature flags. Grace period: 24h.
+
 
 ## Pardoned
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -368,6 +369,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **waggle-dance**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to adapt during grace period. Biomass returned to the void.
 - **photon-racer**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / TUI Misuse. Failed to improve during grace period. Moved to graveyard.
 - **firefly-synapse**: Specimen executed. Diagnosis: Generic Implementation / Ecosystem Isolation. Grace period expired. Moved to graveyard.
 - **hyper-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.

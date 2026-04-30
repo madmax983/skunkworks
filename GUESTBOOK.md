@@ -686,6 +686,9 @@
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/waggle-dance
 **Reaper ☠️**: "Fascinating. Specimen `waggle-dance` suffers from Ecosystem Maladaptation and Skeletal Implementation. It relies on a GUI context that is absent, dying instantly upon creation (`XOpenDisplay() failed!`). Grace period: 24h."
 
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/waggle-dance
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `waggle-dance` failed to adapt. Its ecosystem maladaptation and skeletal implementation remained stagnant. It has been moved to the graveyard."
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/firefly-synapse
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `firefly-synapse` failed to adapt. Its generic implementation and ecosystem isolation remained stagnant. It has been moved to the graveyard."
 
@@ -694,3 +697,6 @@
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/chimera-sandpile
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `chimera-sandpile` failed to adapt. Its skeletal implementation and ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/turbulent-rhythms
+**Reaper ☠️**: "Fascinating. Specimen `turbulent-rhythms` exhibits Terminal Compilation Failure and Ecosystem Maladaptation. The rot of conflicting dependencies poisons the workspace. Grace period: 24h."
