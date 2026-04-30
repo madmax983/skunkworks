@@ -48,7 +48,7 @@ fn test_havoc_distance_nan() {
     let p1 = system.add_particle(glam::Vec3::new(f32::MAX, 0.0, 0.0), 1.0);
     let p2 = system.add_particle(glam::Vec3::new(-f32::MAX, 0.0, 0.0), 1.0);
     // This will calculate `dist = Infinity` and eventually inject a NaN.
-    system.add_distance_constraint(p1, p2, 1.0);
+    let _ = system.add_distance_constraint(p1, p2, 1.0);
     system.step(0.1, 1);
 }
 
@@ -59,7 +59,7 @@ fn test_havoc_distance_nan_2() {
     let p1 = system.add_particle(glam::Vec3::new(0.0, 0.0, 0.0), 1.0);
     let p2 = system.add_particle(glam::Vec3::new(0.0, 0.0, 0.0), 1.0);
     // Explicitly injecting NaN
-    system.add_distance_constraint(p1, p2, f32::NAN);
+    let _ = system.add_distance_constraint(p1, p2, f32::NAN);
     system.step(0.1, 1);
 }
 

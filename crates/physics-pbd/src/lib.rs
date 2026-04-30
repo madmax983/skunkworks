@@ -198,7 +198,15 @@ impl PbdSystem {
     /// let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
     /// system.add_distance_constraint(p1, p2, 0.5);
     /// ```
-    pub fn add_distance_constraint(&mut self, p1: usize, p2: usize, stiff: f32) {
+    pub fn add_distance_constraint(
+        &mut self,
+        p1: usize,
+        p2: usize,
+        stiff: f32,
+    ) -> Result<(), &'static str> {
+        if p1 >= self.particles.len() || p2 >= self.particles.len() {
+            return Err("Particle index out of bounds");
+        }
         assert!(stiff.is_finite(), "Stiffness must be finite");
         let dist = self.particles[p1].pos.distance(self.particles[p2].pos);
         self.constraints.push(Constraint::Distance {
@@ -207,6 +215,7 @@ impl PbdSystem {
             rest_length: dist,
             stiffness: stiff,
         });
+        Ok(())
     }
 
     /// Adds an actuator constraint between two particles.
@@ -228,7 +237,10 @@ impl PbdSystem {
         min_len: f32,
         max_len: f32,
         stiff: f32,
-    ) {
+    ) -> Result<(), &'static str> {
+        if p1 >= self.particles.len() || p2 >= self.particles.len() {
+            return Err("Particle index out of bounds");
+        }
         assert!(
             min_len.is_finite() && max_len.is_finite() && stiff.is_finite(),
             "Constraint parameters must be finite"
@@ -241,6 +253,7 @@ impl PbdSystem {
             factor: 1.0, // Start fully extended
             stiffness: stiff,
         });
+        Ok(())
     }
 
     /// Pins a particle to a specific position.
@@ -255,9 +268,13 @@ impl PbdSystem {
     /// let p = system.add_particle(Vec3::ZERO, 1.0);
     /// system.add_pin_constraint(p, Vec3::new(5.0, 5.0, 5.0));
     /// ```
-    pub fn add_pin_constraint(&mut self, p: usize, pos: Vec3) {
+    pub fn add_pin_constraint(&mut self, p: usize, pos: Vec3) -> Result<(), &'static str> {
+        if p >= self.particles.len() {
+            return Err("Particle index out of bounds");
+        }
         assert!(pos.is_finite(), "Pin position must be finite");
         self.constraints.push(Constraint::Pin { p, pos });
+        Ok(())
     }
 
     /// Advances the simulation by `dt` seconds, applying integration and resolving constraints.
@@ -450,7 +467,7 @@ mod tests {
         for i in 1..count {
             let pos = start_pos + Vec3::new(i as f32, 0.0, 0.0);
             let p = system.add_particle(pos, 1.0);
-            system.add_distance_constraint(prev, p, 1.0);
+            let _ = system.add_distance_constraint(prev, p, 1.0);
             prev = p;
         }
 
@@ -527,7 +544,7 @@ mod tests {
         let p1 = system.add_particle(pos, 1.0);
 
         // Pin it to (0,0,0)
-        system.add_pin_constraint(p1, Vec3::ZERO);
+        let _ = system.add_pin_constraint(p1, Vec3::ZERO);
 
         system.step(0.1, 5);
 
@@ -540,7 +557,7 @@ mod tests {
     fn test_add_pin_constraint_nan_pos() {
         let mut system = PbdSystem::new();
         let p1 = system.add_particle(Vec3::ZERO, 1.0);
-        system.add_pin_constraint(p1, Vec3::NAN);
+        let _ = system.add_pin_constraint(p1, Vec3::NAN);
     }
 
     #[test]
@@ -697,7 +714,7 @@ mod tests {
         system.particles[p1].pos = Vec3::NAN;
 
         // p1 connected to p2
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
 
         system.step(0.1, 10);
     }
@@ -708,7 +725,7 @@ mod tests {
         let p1 = system.add_particle(Vec3::ZERO, 1.0);
         let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
 
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
 
         // Remove the particles (hacky: standard Vec::pop)
         // Note: this invalidates indices p1(0) and p2(1).
@@ -767,7 +784,7 @@ mod tests {
         // and verify solver robustness
         system.particles[p1].inv_mass = f32::NAN;
 
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
         system.step(0.1, 10);
 
         // p2 should remain finite
@@ -780,7 +797,7 @@ mod tests {
         let p1 = system.add_particle(Vec3::ZERO, 1.0);
         let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
 
-        system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0);
+        let _ = system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0);
 
         // Inject NaN factor
         if let Constraint::Actuator { factor, .. } = &mut system.constraints[0] {
@@ -788,5 +805,32 @@ mod tests {
         }
 
         system.step(0.1, 10);
+    }
+
+    #[test]
+    fn test_add_distance_constraint_out_of_bounds() {
+        let mut system = PbdSystem::new();
+        assert_eq!(
+            system.add_distance_constraint(99, 100, 1.0),
+            Err("Particle index out of bounds")
+        );
+    }
+
+    #[test]
+    fn test_add_actuator_constraint_out_of_bounds() {
+        let mut system = PbdSystem::new();
+        assert_eq!(
+            system.add_actuator_constraint(99, 100, 1.0, 2.0, 1.0),
+            Err("Particle index out of bounds")
+        );
+    }
+
+    #[test]
+    fn test_add_pin_constraint_out_of_bounds() {
+        let mut system = PbdSystem::new();
+        assert_eq!(
+            system.add_pin_constraint(99, Vec3::ZERO),
+            Err("Particle index out of bounds")
+        );
     }
 }

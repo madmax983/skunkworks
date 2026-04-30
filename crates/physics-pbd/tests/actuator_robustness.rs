@@ -10,7 +10,7 @@ fn test_actuator_nan_injection_robustness() {
 
     // Inject NaN into min_len (via add_actuator_constraint)
     // This should be safely ignored by the solver.
-    system.add_actuator_constraint(p1, p2, f32::NAN, 2.0, 0.5);
+    let _ = system.add_actuator_constraint(p1, p2, f32::NAN, 2.0, 0.5);
 
     // Step the simulation
     // Previously this would propagate NaN to particle positions.

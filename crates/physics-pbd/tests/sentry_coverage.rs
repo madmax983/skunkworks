@@ -15,7 +15,7 @@ fn test_distance_both_infinite_mass() {
     let p2 = system.add_particle(Vec3::new(2.0, 0.0, 0.0), 0.0);
 
     // This should hit the `(w1 + w2).abs() < f32::EPSILON` check and return early
-    system.add_distance_constraint(p1, p2, 1.0);
+    let _ = system.add_distance_constraint(p1, p2, 1.0);
     system.step(0.1, 10);
 
     // They shouldn't have moved
@@ -29,7 +29,7 @@ fn test_pin_zombie() {
     let p1 = system.add_particle(Vec3::ZERO, 1.0);
 
     // Add pin constraint to p1
-    system.add_pin_constraint(p1, Vec3::new(5.0, 5.0, 5.0));
+    let _ = system.add_pin_constraint(p1, Vec3::new(5.0, 5.0, 5.0));
 
     // Remove the particle
     system.particles.pop();
@@ -63,7 +63,7 @@ fn test_solve_distance_w1_w2_infinite() {
     system.particles[p1].inv_mass = f32::INFINITY;
     system.particles[p2].inv_mass = f32::INFINITY;
 
-    system.add_distance_constraint(p1, p2, 1.0);
+    let _ = system.add_distance_constraint(p1, p2, 1.0);
 
     // step should return early because (w1 + w2).is_finite() is false
     system.step(0.1, 1);
@@ -77,7 +77,7 @@ fn test_add_actuator_factor_nan() {
     let p1 = system.add_particle(Vec3::ZERO, 1.0);
     let p2 = system.add_particle(Vec3::new(2.0, 0.0, 0.0), 1.0);
 
-    system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0);
+    let _ = system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0);
 
     // Make factor NaN
     if let Constraint::Actuator { factor, .. } = &mut system.constraints[0] {
@@ -92,7 +92,7 @@ fn test_actuator_nan_factor_panic() {
     let p1 = system.add_particle(Vec3::ZERO, 1.0);
     let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
 
-    system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0);
+    let _ = system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0);
 
     if let Constraint::Actuator { factor, .. } = &mut system.constraints[0] {
         *factor = f32::NAN;
@@ -108,7 +108,7 @@ fn test_add_distance_constraint_nan_stiffness() {
     let mut system = PbdSystem::new();
     let p1 = system.add_particle(Vec3::ZERO, 1.0);
     let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
-    system.add_distance_constraint(p1, p2, f32::NAN);
+    let _ = system.add_distance_constraint(p1, p2, f32::NAN);
 }
 
 #[test]
@@ -117,7 +117,7 @@ fn test_add_actuator_constraint_nan_params() {
     let mut system = PbdSystem::new();
     let p1 = system.add_particle(Vec3::ZERO, 1.0);
     let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
-    system.add_actuator_constraint(p1, p2, f32::NAN, 2.0, 1.0);
+    let _ = system.add_actuator_constraint(p1, p2, f32::NAN, 2.0, 1.0);
 }
 
 #[test]
@@ -163,7 +163,7 @@ fn test_solve_distance_zero_distance() {
     let p1 = system.add_particle(Vec3::ZERO, 1.0);
     let p2 = system.add_particle(Vec3::ZERO, 1.0);
 
-    system.add_distance_constraint(p1, p2, 1.0);
+    let _ = system.add_distance_constraint(p1, p2, 1.0);
 
     system.step(0.1, 1);
 

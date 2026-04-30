@@ -14,7 +14,7 @@ proptest! {
         let mut system = PbdSystem4D::new();
         let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
         let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        system.add_distance_constraint(p1, p2, stiffness);
+        let _ = system.add_distance_constraint(p1, p2, stiffness);
 
         system.step(dt, iterations, friction);
     }
@@ -27,7 +27,7 @@ proptest! {
         let mut system = PbdSystem4D::new();
         let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
         let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        system.add_actuator_constraint(p1, p2, 0.5, 1.5, stiff, 0.5);
+        let _ = system.add_actuator_constraint(p1, p2, 0.5, 1.5, stiff, 0.5);
 
         system.step(0.1, 1, 0.98);
     }
@@ -40,7 +40,7 @@ proptest! {
         let mut system = PbdSystem4D::new();
         let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
         let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        system.add_distance_constraint(p1, p2, 1.0);
+        let _ = system.add_distance_constraint(p1, p2, 1.0);
 
         system.step(0.016, 1, friction);
     }
