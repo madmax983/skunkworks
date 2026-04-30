@@ -292,6 +292,51 @@ mod tests {
         assert_eq!(genes[1].op, OpCode::ParserRegex);
     }
     #[test]
+    fn test_prolouge_compiler_origami() {
+        let source = r#"
+        origami {
+            50
+            fold
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::Number(50));
+        assert_eq!(genes[1].op, OpCode::Origami);
+    }
+
+    #[test]
+    fn test_origami_execution() {
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(50)],
+            },
+            Gene {
+                op: OpCode::Origami,
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(Dna {
+            evolution_config: None,
+            helix: Helix {
+                strands: vec![chimera_lang::ast::Strand { genes }],
+            },
+        });
+
+        vm.step(); // Push 50
+        vm.step(); // Origami fold
+
+        assert!(vm
+            .output
+            .iter()
+            .any(|s| s.contains("Origami: Folded Miura-ori mesh")));
+        assert!(vm.output.iter().any(|s| s.contains("extension 0.5")));
+    }
+
+    #[test]
     fn test_prolouge_compiler_prolog() {
         let source = r#"
         prolog {

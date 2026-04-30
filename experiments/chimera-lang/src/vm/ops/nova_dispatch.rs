@@ -286,6 +286,7 @@ impl crate::vm::ChimeraVM {
             | OpCode::Reincarnate
             | OpCode::Piet
             | OpCode::Befunge
+            | OpCode::Origami
             | OpCode::Terraform
             | OpCode::SenseBiome
             | OpCode::RetinaDraw
