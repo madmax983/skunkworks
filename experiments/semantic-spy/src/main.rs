@@ -23,7 +23,10 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{canvas::Canvas, Block, Borders, List, ListItem, ListState, Paragraph, Wrap, Table, Row, Cell},
+    widgets::{
+        canvas::Canvas, Block, Borders, Cell, List, ListItem, ListState, Paragraph, Row, Table,
+        Wrap,
+    },
     Terminal,
 };
 use std::io::{self, Read};
@@ -379,9 +382,15 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
             ]));
         }
 
-        let details = Table::new(rows, [Constraint::Percentage(30), Constraint::Percentage(70)])
-            .header(Row::new(vec!["Property", "Value"]).style(Style::default().add_modifier(Modifier::BOLD)))
-            .block(Block::default().borders(Borders::ALL).title(" Details "));
+        let details = Table::new(
+            rows,
+            [Constraint::Percentage(30), Constraint::Percentage(70)],
+        )
+        .header(
+            Row::new(vec!["Property", "Value"])
+                .style(Style::default().add_modifier(Modifier::BOLD)),
+        )
+        .block(Block::default().borders(Borders::ALL).title(" Details "));
 
         f.render_widget(details, details_area);
     } else {

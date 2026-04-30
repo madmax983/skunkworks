@@ -284,6 +284,7 @@ mod nova_orca_midi_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_orca_test;
+pub mod nova_origami;
 #[cfg(feature = "nova")]
 pub mod nova_paleontology;
 #[cfg(feature = "nova")]

@@ -1381,6 +1381,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Orca,
 
+    // Origami Features (Nova)
+    /// **`Nova`** Folds a Miura-ori mesh using a given extension factor from the stack.
+    ///
+    /// **Stack:** `[ ..., extension_factor ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Origami,
+
     // Catalyst Features (Nova)
     /// **`Nova`** Creates a new Catalyst from a strand.
     ///

@@ -402,6 +402,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Catalyze => super::catalyst::catalyze(vm),
         OpCode::Piet => exec_piet(vm),
         OpCode::Befunge => exec_befunge(vm),
+        OpCode::Origami => super::nova_origami::exec_origami(vm),
         OpCode::Chronostasis => super::nova_chronos::exec_chronostasis(vm),
         OpCode::Simulate => super::nova_simulation::exec_simulate(vm),
         OpCode::SensePigment => exec_sense_pigment(vm),

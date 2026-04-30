@@ -35,6 +35,7 @@ serde_json = "1.0"
 strum = "0.26"
 strum_macros = "0.26"
 poincare-disk = { path = "../../crates/poincare-disk" }
+origami = { path = "../../crates/origami" }
 comfy-table = "7.2.2"
 rodio = { version = "0.17", optional = true }
 hyper-system = { path = "../../crates/hyper-system", default-features = false }
