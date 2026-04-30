@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **quipu-resonance**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile `alsa-sys` build script, and relies on `macroquad` resulting in headless panics. Grace period: 24h.
+- **turbulent-rhythms**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile `alsa-sys` build script, causing a terminal failure in CI. Grace period: 24h.
 
 ## Pardoned
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -44,6 +44,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **quipu-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile `alsa-sys` build script and relies on `macroquad` resulting in headless panics. Grace period expired. Moved to graveyard.
 - **chimera-sandpile**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Panics in headless environments and lacks integration. Failed to improve during grace period. Moved to graveyard.
 - **chaos-ddos**: Specimen executed. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Failed to improve during grace period. Moved to graveyard.
 - **ferrous-lattice**: Executed. Grace period expired. Terminal Genericism unresolved.
