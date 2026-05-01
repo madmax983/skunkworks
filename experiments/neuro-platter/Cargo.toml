@@ -1,0 +1,12 @@
+[package]
+name = "neuro-platter"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+platter = { path = "../../crates/platter" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+anyhow = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }

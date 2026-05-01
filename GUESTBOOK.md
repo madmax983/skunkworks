@@ -1,5 +1,8 @@
 ## 🧫 Current Pheromone Map
 
+- `[EVOLVING]` 🧬 **Splice Surgeon**: Synthesized `neuro-platter`. Embedded a Spiking Neural Network into a continuous 2D scalar field, creating a glowing, fading brain scan heatmap.
+
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-lattice
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/neuro-sim × crates/miller-lattice
