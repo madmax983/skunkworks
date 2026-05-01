@@ -345,29 +345,36 @@ impl GitModel {
         let mut hunks = Vec::with_capacity(num_hunks);
 
         for h_idx in 0..num_hunks {
-            if let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) {
-                let mut lines = Vec::with_capacity(lines_count);
+            let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) else {
+                continue;
+            };
 
-                for l_idx in 0..lines_count {
-                    if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                        let content = String::from_utf8_lossy(line.content()).into_owned();
-                        let change = match line.origin() {
-                            '+' => Some(LineChange::Added(content)),
-                            '-' => Some(LineChange::Removed(content)),
-                            ' ' => Some(LineChange::Context(content)),
-                            _ => None,
-                        };
-                        if let Some(c) = change {
-                            lines.push(c);
-                        }
-                    }
-                }
+            let mut lines = Vec::with_capacity(lines_count);
 
-                hunks.push(Hunk {
-                    header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
-                    lines,
-                });
+            for l_idx in 0..lines_count {
+                let Ok(line) = patch.line_in_hunk(h_idx, l_idx) else {
+                    continue;
+                };
+
+                let content = String::from_utf8_lossy(line.content()).into_owned();
+                let change = match line.origin() {
+                    '+' => Some(LineChange::Added(content)),
+                    '-' => Some(LineChange::Removed(content)),
+                    ' ' => Some(LineChange::Context(content)),
+                    _ => None,
+                };
+
+                let Some(c) = change else {
+                    continue;
+                };
+
+                lines.push(c);
             }
+
+            hunks.push(Hunk {
+                header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
+                lines,
+            });
         }
 
         hunks
