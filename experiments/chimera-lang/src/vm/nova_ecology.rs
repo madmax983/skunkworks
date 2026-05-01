@@ -45,7 +45,7 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
         #[cfg(feature = "cortex")]
         {
             vm.activation_levels.push(0);
-            vm.synapse_map.push(Vec::new());
+            vm.synapse_map.push(Vec::with_capacity(4));
         }
 
         vm.organelle_id_counter += 1;

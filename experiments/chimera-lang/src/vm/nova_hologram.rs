@@ -159,7 +159,7 @@ pub fn exec_refract(
         #[cfg(feature = "cortex")]
         {
             vm.activation_levels.push(0);
-            vm.synapse_map.push(Vec::new());
+            vm.synapse_map.push(Vec::with_capacity(4));
         }
 
         let new_idx = vm.dna.helix.strands.len() - 1;

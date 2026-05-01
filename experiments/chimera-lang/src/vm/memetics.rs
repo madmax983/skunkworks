@@ -90,7 +90,7 @@ pub fn exec_memetics_op(
                         #[cfg(feature = "cortex")]
                         {
                             vm.activation_levels.push(0);
-                            vm.synapse_map.push(Vec::new());
+                            vm.synapse_map.push(Vec::with_capacity(4));
                         }
 
                         let mut rng = rand::thread_rng();

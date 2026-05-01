@@ -203,7 +203,7 @@ pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     #[cfg(feature = "cortex")]
                     {
                         vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::new());
+                        vm.synapse_map.push(Vec::with_capacity(4));
                     }
 
                     let new_idx = vm.dna.helix.strands.len() - 1;
@@ -339,7 +339,7 @@ pub fn exec_frankenstein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 #[cfg(feature = "cortex")]
                 {
                     vm.activation_levels.push(0);
-                    vm.synapse_map.push(Vec::new());
+                    vm.synapse_map.push(Vec::with_capacity(4));
                 }
                 let new_idx = vm.dna.helix.strands.len() - 1;
 
@@ -417,7 +417,7 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     #[cfg(feature = "cortex")]
                     {
                         vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::new());
+                        vm.synapse_map.push(Vec::with_capacity(4));
                     }
                     let child_1 = vm.dna.helix.strands.len() - 1;
                     vm.cladistics.register_strand(
@@ -436,7 +436,7 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     #[cfg(feature = "cortex")]
                     {
                         vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::new());
+                        vm.synapse_map.push(Vec::with_capacity(4));
                     }
                     let child_2 = vm.dna.helix.strands.len() - 1;
                     vm.cladistics.register_strand(
@@ -564,7 +564,7 @@ pub fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     #[cfg(feature = "cortex")]
                     {
                         vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::new());
+                        vm.synapse_map.push(Vec::with_capacity(4));
                     }
                     let new_idx = vm.dna.helix.strands.len() - 1;
 
@@ -787,7 +787,7 @@ pub fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     #[cfg(feature = "cortex")]
                     {
                         vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::new());
+                        vm.synapse_map.push(Vec::with_capacity(4));
                     }
 
                     let new_strand_idx = vm.dna.helix.strands.len() - 1;
@@ -971,7 +971,7 @@ pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     #[cfg(feature = "cortex")]
                     {
                         vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::new());
+                        vm.synapse_map.push(Vec::with_capacity(4));
                     }
 
                     let new_idx = vm.dna.helix.strands.len() - 1;
@@ -1161,7 +1161,7 @@ pub fn exec_mitosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     #[cfg(feature = "cortex")]
                     {
                         vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::new());
+                        vm.synapse_map.push(Vec::with_capacity(4));
                     }
 
                     // Inherit epigenetics
@@ -1528,7 +1528,7 @@ pub fn exec_compile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                                 #[cfg(feature = "cortex")]
                                 {
                                     vm.activation_levels.push(0);
-                                    vm.synapse_map.push(Vec::new());
+                                    vm.synapse_map.push(Vec::with_capacity(4));
                                 }
                                 let new_idx = vm.dna.helix.strands.len() - 1;
 
@@ -1744,7 +1744,7 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             #[cfg(feature = "cortex")]
             {
                 vm.activation_levels.push(0);
-                vm.synapse_map.push(Vec::new());
+                vm.synapse_map.push(Vec::with_capacity(4));
             }
 
             // Reset Execution
