@@ -386,6 +386,7 @@ fn compile_orca_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     ));
     genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
     genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
+    #[cfg(feature = "nova")]
     genes.push(Gene::new(OpCode::Orca, vec![]));
     Ok(genes)
 }
@@ -401,10 +402,12 @@ fn compile_elektra_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(9)])); // 9V default
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
+        #[cfg(feature = "elektra")]
         genes.push(Gene::new(OpCode::Battery, vec![]));
     } else if kind == "ground" {
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
+        #[cfg(feature = "elektra")]
         genes.push(Gene::new(OpCode::Ground, vec![]));
     } else {
         // generic
