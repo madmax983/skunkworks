@@ -2301,7 +2301,7 @@ impl ChimeraVM {
             #[cfg(feature = "cortex")]
             {
                 self.activation_levels.push(0);
-                self.synapse_map.push(Vec::new());
+                self.synapse_map.push(Vec::with_capacity(4));
             }
             let new_idx = self.dna.helix.strands.len() - 1;
             Ok(new_idx)

@@ -399,7 +399,7 @@ fn perform_miracle(vm: &mut ChimeraVM, id: i64) {
                 #[cfg(feature = "cortex")]
                 {
                     vm.activation_levels.push(0);
-                    vm.synapse_map.push(Vec::new());
+                    vm.synapse_map.push(Vec::with_capacity(4));
                 }
             }
         }

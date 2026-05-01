@@ -580,7 +580,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             #[cfg(feature = "cortex")]
             {
                 vm.activation_levels.push(0);
-                vm.synapse_map.push(Vec::new());
+                vm.synapse_map.push(Vec::with_capacity(4));
             }
             let new_idx = vm.dna.helix.strands.len() - 1;
             vm.cladistics.register_strand(

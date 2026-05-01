@@ -561,7 +561,7 @@ fn trace_circuit(vm: &mut ChimeraVM, start_y: usize, start_x: usize) -> usize {
         #[cfg(feature = "cortex")]
         {
             vm.activation_levels.push(0);
-            vm.synapse_map.push(Vec::new());
+            vm.synapse_map.push(Vec::with_capacity(4));
         }
         return vm.dna.helix.strands.len() - 1;
     }
