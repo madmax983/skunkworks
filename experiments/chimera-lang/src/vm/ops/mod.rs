@@ -12,6 +12,7 @@
 //! * [`stack`] - Stack manipulation operations (e.g., push, pop, dup, swap).
 
 pub mod bio;
+pub mod core_dispatch;
 pub mod flow;
 pub mod grid;
 pub mod io;

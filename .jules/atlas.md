@@ -43,3 +43,6 @@
 ## 2026-04-29 - [Nova Dispatch Extraction]
 **Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` still contained the massive `exec_nova_dispatch` match block with over 400 lines of dispatch logic for Nova opcodes, cluttering the central VM module.
 **Blueprint:** Extracted `exec_nova_dispatch` from `mod.rs` into its own `experiments/chimera-lang/src/vm/ops/nova_dispatch.rs` file. This cleanly isolates the extensive Nova feature dispatch logic into a dedicated file, significantly reducing the line count of the core VM `mod.rs` and better encapsulating the Nova domain logic routing.
+## 2024-05-22 - [Extracted Core Op Dispatch]
+**Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` retained the core operational dispatch block (`exec_core_op`), a lengthy `match` structure acting as a central router for basic opcodes. This cluttered the central module unnecessarily.
+**Blueprint:** Extracted `exec_core_op` into a dedicated file `experiments/chimera-lang/src/vm/ops/core_dispatch.rs`. This cleanly isolates the core execution dispatch logic and further reduces the footprint of the central `mod.rs`.
