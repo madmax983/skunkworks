@@ -1,5 +1,13 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** The swarm cannot build or execute `chimera-lang` cleanly. Total compilation failure occurs when `nova` default features are disabled due to broken feature gates, and the documented `genesis.chs` example is entirely missing from the codebase. Immediate structural repair required.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus, crates/poincare-disk
+- **Scent Origin:** Echo 🗣️
+- **Status:** The core logic is sound, but the internal workspace crates `locus` and `poincare-disk` are missing installation instructions in their READMEs. Scent left for maintenance to add proper `Cargo.toml` path dependencies.
+
 - `[EVOLVING]` 🧬 **Splice Surgeon**: Synthesized `neuro-platter`. Embedded a Spiking Neural Network into a continuous 2D scalar field, creating a glowing, fading brain scan heatmap.
 
 
@@ -409,6 +417,10 @@
 
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: codebase
+- **Scent Origin:** Warden 🔒
+- **Status:** Vulnerability scan and `unsafe` audit complete. The repository remains fortified. `unsafe` boundaries are secure, and DoS vectors such as unbounded file reads and integer overflows are mitigated. The scent evaporates.
 
 ### [EVAPORATING] - Location: graveyard/waggle-dance
 - **Scent Origin:** The Reaper ☠️
