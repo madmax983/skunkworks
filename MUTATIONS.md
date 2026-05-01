@@ -70,6 +70,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### neuro-platter
+- **Parents**: crates/neuro-sim + crates/platter
+- **Concept**: Spiking Heatmap Scan.
+- **Novel trait**: Spiking neurons are embedded into a 2D scalar field. Spikes saturate the field, and the field decays over time.
+- **Predicted Phenotype**: A visual "brain scan" or heatmap. Discrete biological spikes leave continuous, fading trails in the 2D grid, visualizing the echo of thoughts.
+- **Status**: experiments/neuro-platter
+- **Evaluation**: Success. Compiled. The sharp, discrete nature of SNN spikes effectively maps into a beautiful, lingering continuous field decay.
+
 ### git-poincare
 - **Parents**: crates/git-associates + crates/poincare-disk
 - **Concept**: Hyperbolic Codebase Morphogenesis.
