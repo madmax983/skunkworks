@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **neuro-beats**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Minimal Execution Quality. Panics in headless environments (`XOpenDisplay()`) and relies on deterministic, hardcoded topology rather than true emergence. Grace period: 24h.
+- **ferrous-strings**: Specimen condemned. Diagnosis: Vestigial Organs / Skeletal Implementation. The core coupling method `magnetize_platter` is unused, breaking the physical simulation feedback loop. Grace period: 24h.
+
 
 ## Pardoned
 - **turbulent-rhythms**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by environment stabilization allowing successful compilation. Vigor demonstrated.
@@ -45,6 +46,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **neuro-beats**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Minimal Execution Quality. Panics in headless environments (`XOpenDisplay()`) and relies on deterministic, hardcoded topology rather than true emergence. Grace period expired. Moved to graveyard.
 - **quipu-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile `alsa-sys` build script and relies on `macroquad` resulting in headless panics. Grace period expired. Moved to graveyard.
 - **chimera-sandpile**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Panics in headless environments and lacks integration. Failed to improve during grace period. Moved to graveyard.
 - **chaos-ddos**: Specimen executed. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Failed to improve during grace period. Moved to graveyard.

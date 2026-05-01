@@ -746,5 +746,8 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 **Reaper ☠️**: "Fascinating. Specimen `turbulent-rhythms` exhibits terminal characteristics. The rot of Ecosystem Maladaptation is apparent. It chokes on `alsa-sys` in headless environments. Grace period: 24h."
 - ⚰️ *The Reaper traces its scythe back. turbulent-rhythms has survived the cull.* [STABLE TRAIL]
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/neuro-beats
-**Reaper ☠️**: "Fascinating. Specimen `neuro-beats` exhibits terminal characteristics. The rot of Ecosystem Maladaptation is apparent. It collapses instantly when deprived of its visual server. Grace period: 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/neuro-beats
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `neuro-beats` failed to adapt. Its ecosystem maladaptation and minimal execution quality remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/ferrous-strings
+**Reaper ☠️**: "Fascinating. Specimen `ferrous-strings` exhibits terminal characteristics. The rot of Vestigial Organs is apparent. The strings do not emit magnetism because the `magnetize_platter` organ is entirely unused. The bidirectional coupling is a lie. Grace period: 24h."
