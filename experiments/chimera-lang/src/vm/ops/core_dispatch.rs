@@ -2,7 +2,11 @@ use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
 impl crate::vm::ChimeraVM {
-    pub(crate) fn exec_core_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<Option<(usize, usize)>> {
+    pub(crate) fn exec_core_op(
+        &mut self,
+        op: OpCode,
+        args: &[Nucleotide],
+    ) -> Option<Option<(usize, usize)>> {
         match op {
             OpCode::Push => Some(self.exec_stack_op(op, args)),
             OpCode::Add

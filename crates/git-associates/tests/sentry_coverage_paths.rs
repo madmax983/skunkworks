@@ -35,7 +35,8 @@ fn test_edge_cases_paths_and_timestamp() {
     let tree = repo.find_tree(oid).unwrap();
 
     let sig = Signature::now("Test", "test@example.com").unwrap();
-    repo.commit(Some("HEAD"), &sig, &sig, "init", &tree, &[]).unwrap();
+    repo.commit(Some("HEAD"), &sig, &sig, "init", &tree, &[])
+        .unwrap();
 
     let model = GitModel::open(&temp_dir).unwrap();
     let _diff = model.diff_workdir().unwrap();
