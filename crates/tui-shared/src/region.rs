@@ -3,21 +3,21 @@
 //! Provides the [`Region`] struct to define named bounds on the screen.
 //!
 //! Regions are the "where" in your TUI story. They provide layout context to an LLM reading
-//! the [`crate::semantic::Snapshot`], acting like named bounds or panels.
+//! the [`crate::Snapshot`], acting like named bounds or panels.
 
 use serde::{Deserialize, Serialize};
 
 /// A named rectangular boundary on the screen indicating a specific functional area.
 ///
 /// Regions are the "where" in your TUI story. They provide layout context to an LLM reading
-/// the [`crate::semantic::Snapshot`], acting like named bounds or panels. For instance, knowing
-/// there's an "inventory panel" helps the LLM understand *why* certain [`crate::semantic::Entity`]
+/// the [`crate::Snapshot`], acting like named bounds or panels. For instance, knowing
+/// there's an "inventory panel" helps the LLM understand *why* certain [`crate::Entity`]
 /// instances are positioned where they are.
 ///
 /// # Examples
 ///
 /// ```
-/// use tui_shared::semantic::Region;
+/// use tui_shared::Region;
 ///
 /// let chat = Region::new("chat_box", 0, 20, 80, 5)
 ///     .describe("Area where messages appear");
@@ -53,7 +53,7 @@ impl Region {
     /// ## Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Region;
+    /// use tui_shared::Region;
     ///
     /// let region = Region::new("minimap", 0, 0, 20, 10);
     /// ```
@@ -73,7 +73,7 @@ impl Region {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Region;
+    /// use tui_shared::Region;
     ///
     /// let region = Region::new("stats", 80, 0, 20, 24)
     ///     .describe("Shows player statistics");

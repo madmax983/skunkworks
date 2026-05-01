@@ -3,7 +3,7 @@
 //! Provides the [`Action`] struct to define available user interactions in a semantic snapshot.
 //!
 //! Actions are the "verbs" of your TUI. By registering actions inside a
-//! [`crate::semantic::Snapshot`], you tell the LLM (or a blind user interpreting the structure)
+//! [`crate::Snapshot`], you tell the LLM (or a blind user interpreting the structure)
 //! what affordances are currently available on the screen, like moving, selecting, or quitting.
 
 use serde::{Deserialize, Serialize};
@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 /// A possible user action available in the current semantic state.
 ///
 /// Actions are the "verbs" of your TUI. By registering actions inside a
-/// [`crate::semantic::Snapshot`], you tell the LLM (or a blind user interpreting the structure)
+/// [`crate::Snapshot`], you tell the LLM (or a blind user interpreting the structure)
 /// what affordances are currently available on the screen, like moving, selecting, or quitting.
 ///
 /// If an action has an associated `key`, it also tells the system *how* to invoke it.
@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 /// # Examples
 ///
 /// ```
-/// use tui_shared::semantic::Action;
+/// use tui_shared::Action;
 ///
 /// let jump = Action::new("jump")
 ///     .key("space")
@@ -47,7 +47,7 @@ impl Action {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Action;
+    /// use tui_shared::Action;
     /// let quit = Action::new("quit");
     /// ```
     pub fn new(name: impl Into<String>) -> Self {
@@ -63,7 +63,7 @@ impl Action {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Action;
+    /// use tui_shared::Action;
     /// let action = Action::new("attack").describe("Attack the nearest enemy");
     /// ```
     pub fn describe(mut self, desc: impl Into<String>) -> Self {
@@ -76,7 +76,7 @@ impl Action {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Action;
+    /// use tui_shared::Action;
     /// let action = Action::new("jump").key("Space");
     /// ```
     pub fn key(mut self, key: impl Into<String>) -> Self {

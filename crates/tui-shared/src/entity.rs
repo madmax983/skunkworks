@@ -3,7 +3,7 @@
 //! Provides the [`Entity`] struct for describing the "nouns" of your TUI story.
 //!
 //! Entities represent anything that has a presence in the interface, whether it's a
-//! game character, a button, or a data point. By grouping them into a [`crate::semantic::Snapshot`],
+//! game character, a button, or a data point. By grouping them into a [`crate::Snapshot`],
 //! you describe the world state to an LLM.
 
 pub use locus::Vec2;
@@ -14,7 +14,7 @@ use std::collections::BTreeMap;
 ///
 /// Entities are the "nouns" of your TUI story. They represent anything that has a presence
 /// in the interface, whether it's a game character, a button, or a data point. By grouping
-/// them into a [`crate::semantic::Snapshot`], you describe the world state to an LLM.
+/// them into a [`crate::Snapshot`], you describe the world state to an LLM.
 ///
 /// Entities can have a physical location ([`Vec2`]), a velocity, a display character, and
 /// an arbitrary set of properties defined using [`PropValue`]s.
@@ -22,7 +22,7 @@ use std::collections::BTreeMap;
 /// # Examples
 ///
 /// ```
-/// use tui_shared::semantic::Entity;
+/// use tui_shared::Entity;
 ///
 /// let player = Entity::new("hero")
 ///     .with_id("p1")
@@ -57,7 +57,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Entity;
+    /// use tui_shared::Entity;
     /// let player = Entity::new("player");
     /// ```
     pub fn new(kind: impl Into<String>) -> Self {
@@ -81,7 +81,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Entity;
+    /// use tui_shared::Entity;
     /// let e = Entity::new("player").with_id("player_1");
     /// ```
     pub fn with_id(mut self, id: impl Into<String>) -> Self {
@@ -94,7 +94,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Entity;
+    /// use tui_shared::Entity;
     /// let e = Entity::new("ball").at(5.0, 5.0);
     /// ```
     pub fn at(mut self, x: f64, y: f64) -> Self {
@@ -114,7 +114,7 @@ impl Entity {
     /// ## Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Entity;
+    /// use tui_shared::Entity;
     /// let e = Entity::new("bullet")
     ///     .at(10.0, 10.0)
     ///     .moving(1.0, 0.0);
@@ -129,7 +129,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Entity;
+    /// use tui_shared::Entity;
     /// let e = Entity::new("wall").display("#");
     /// ```
     pub fn display(mut self, c: impl Into<String>) -> Self {
@@ -142,7 +142,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::semantic::Entity;
+    /// use tui_shared::Entity;
     /// let enemy = Entity::new("orc")
     ///     .with_prop("health", 100)
     ///     .with_prop("elite", true);
@@ -165,7 +165,7 @@ impl Entity {
 /// ## Examples
 ///
 /// ```
-/// use tui_shared::semantic::PropValue;
+/// use tui_shared::PropValue;
 /// let text_prop: PropValue = "poisoned".into();
 /// let int_prop: PropValue = 42.into();
 /// ```

@@ -1,4 +1,4 @@
-use tui_shared::semantic::{Action, Entity, PropValue, Region, Snapshot};
+use tui_shared::{Action, Entity, PropValue, Region, Snapshot};
 
 #[test]
 fn test_semantic_coverage() {

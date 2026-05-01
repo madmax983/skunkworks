@@ -67,7 +67,15 @@
 pub(crate) mod bobber;
 pub(crate) mod button;
 pub(crate) mod log_list;
-pub mod semantic;
+pub mod action;
+pub mod entity;
+pub mod region;
+pub mod snapshot;
+
+pub use action::Action;
+pub use entity::{Entity, PropValue};
+pub use region::Region;
+pub use snapshot::Snapshot;
 pub(crate) mod tension_bar;
 
 pub use bobber::Bobber;
