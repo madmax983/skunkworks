@@ -1,6 +1,6 @@
-use git_associates::{GitModel, model::LineChange};
+use git2::{Oid, Repository, Signature};
+use git_associates::{model::LineChange, GitModel};
 use std::fs;
-use git2::{Repository, Signature, Oid};
 use std::path::Path;
 
 #[test]
@@ -28,7 +28,9 @@ fn test_hunk_origin_cases() {
     let oid = index.write_tree().unwrap();
     let tree = repo.find_tree(oid).unwrap();
     let sig = Signature::now("Test", "test@example.com").unwrap();
-    let parent_commit = repo.commit(Some("HEAD"), &sig, &sig, "init", &tree, &[]).unwrap();
+    let parent_commit = repo
+        .commit(Some("HEAD"), &sig, &sig, "init", &tree, &[])
+        .unwrap();
 
     // Context, added, removed
     fs::write(&file_path, "a\nadded\nc\n").unwrap();
@@ -36,7 +38,8 @@ fn test_hunk_origin_cases() {
     let oid = index.write_tree().unwrap();
     let tree = repo.find_tree(oid).unwrap();
     let parent = repo.find_commit(parent_commit).unwrap();
-    repo.commit(Some("HEAD"), &sig, &sig, "mod", &tree, &[&parent]).unwrap();
+    repo.commit(Some("HEAD"), &sig, &sig, "mod", &tree, &[&parent])
+        .unwrap();
 
     let model = GitModel::open(&temp_dir).unwrap();
     let history = model.history_with_diffs(1).unwrap();
@@ -62,16 +65,35 @@ fn test_hunk_origin_cases() {
 // Ensure the git_associates::model types format traits run
 #[test]
 fn test_model_formatting() {
-    use git_associates::model::{Commit, CommitStats, FileChange, DiffStats, Hunk, LineChange};
-    let c = Commit { hash: "".into(), short_hash: "".into(), author: "".into(), message: "".into(), timestamp: chrono::Utc::now(), parents: vec![], stats: None, files: vec![] };
+    use git_associates::model::{Commit, CommitStats, DiffStats, FileChange, Hunk, LineChange};
+    let c = Commit {
+        hash: "".into(),
+        short_hash: "".into(),
+        author: "".into(),
+        message: "".into(),
+        timestamp: chrono::Utc::now(),
+        parents: vec![],
+        stats: None,
+        files: vec![],
+    };
     let _ = format!("{:?}", c);
     let s = CommitStats::default();
     let _ = format!("{:?}", s);
-    let fc = FileChange { path: "".into(), extension: "".into(), insertions: 0, deletions: 0, is_binary: false, hunks: vec![] };
+    let fc = FileChange {
+        path: "".into(),
+        extension: "".into(),
+        insertions: 0,
+        deletions: 0,
+        is_binary: false,
+        hunks: vec![],
+    };
     let _ = format!("{:?}", fc);
     let ds = DiffStats::default();
     let _ = format!("{:?}", ds);
-    let h = Hunk { header: "".into(), lines: vec![] };
+    let h = Hunk {
+        header: "".into(),
+        lines: vec![],
+    };
     let _ = format!("{:?}", h);
     let lc = LineChange::Added("".into());
     let _ = format!("{:?}", lc);

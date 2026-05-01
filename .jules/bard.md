@@ -95,3 +95,7 @@
 ## 2026-06-25 - The Gray-Scott Story
 **Confusion:** The `crates/gray-scott` directory lacked a `README.md` entirely. While the source code (`lib.rs`) was heavily documented, new users exploring the codebase from the filesystem wouldn't find a quick overview, making it harder to understand the crate's purpose without reading the code.
 **Clarification:** Created a `README.md` for `gray-scott` that summarizes its purpose (simulating the Gray-Scott reaction-diffusion system), explains its features (like the optional `parallel` feature using `rayon`), and provides a clean, copy-pasteable minimal example of a "Cell Division" simulation. This ensures "The README Run" passes smoothly.
+
+## 2026-06-25 - The Locus Topology Variants
+**Confusion:** The variants for the `Topology` enum in `crates/locus/src/topology.rs` (`CylinderH`, `CylinderV`, `Klein`, `Mobius`, `Sphere`, `Projective`, `Hyperbolic`) were present but did not have their own explicit `/// # Examples` doctests showing `Topology::normalize()` behavior.
+**Clarification:** Explicit executable doctests using `assert_eq!` were added for each of these variants to clearly demonstrate how coordinate wrapping, bounding, and mirroring behave across various topological mappings.
