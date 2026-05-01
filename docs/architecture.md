@@ -793,7 +793,7 @@ classDiagram
     }
 
     class CoreOps {
-        <<Module: ops/core.rs>>
+        <<Module: ops/core_dispatch.rs>>
         +exec_core_op()
     }
 
