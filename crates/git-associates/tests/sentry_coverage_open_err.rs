@@ -1,4 +1,4 @@
-use git2::{Oid, Repository, Signature};
+use git2::{Repository, Signature};
 use git_associates::{model::LineChange, GitModel};
 use std::fs;
 use std::path::Path;
