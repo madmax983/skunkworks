@@ -186,7 +186,7 @@ pub(crate) fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
                 Line::from(format!("V: {:.2} mV", neuron.v)),
                 Line::from(format!("I_inj: {:.2}", neuron.i_inj)),
                 Line::from(" "),
-                Line::from(format!("Last Spike: {}", neuron.last_spike)),
+                Line::from(vec![Span::raw("Last Spike: "), Span::raw(neuron.last_spike.to_string())]),
             ];
             let info = Paragraph::new(details)
                 .block(Block::default().borders(Borders::ALL).title("Biophysics"));
@@ -527,14 +527,14 @@ pub(crate) fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &A
                 Style::default().add_modifier(Modifier::BOLD),
             )),
             Line::from(" "),
-            Line::from(format!("Generation: {}", engine.generation)),
-            Line::from(format!("Best Fitness: {}", engine.best_fitness)),
+            Line::from(vec![Span::raw("Generation: "), Span::raw(engine.generation.to_string())]),
+            Line::from(vec![Span::raw("Best Fitness: "), Span::raw(engine.best_fitness.to_string())]),
             Line::from(format!(
                 "Challenge: {}",
                 app_state.evolution_state.challenge
             )),
-            Line::from(format!("Population: {}", engine.population.len())),
-            Line::from(format!("Auto-Run: {}", app_state.evolution_state.auto_run)),
+            Line::from(vec![Span::raw("Population: "), Span::raw(engine.population.len().to_string())]),
+            Line::from(vec![Span::raw("Auto-Run: "), Span::raw(app_state.evolution_state.auto_run.to_string())]),
             Line::from(" "),
             Line::from("Controls:"),
             Line::from("  Space: Step Generation"),
@@ -694,8 +694,8 @@ pub(crate) fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     let mut info = vec![
         Line::from("GENETIC ECOLOGY"),
         Line::from(" "),
-        Line::from(format!("Organisms: {}", vm.organelles.len())),
-        Line::from(format!("Shared Energy: {}", vm.energy)),
+        Line::from(vec![Span::raw("Organisms: "), Span::raw(vm.organelles.len().to_string())]),
+        Line::from(vec![Span::raw("Shared Energy: "), Span::raw(vm.energy.to_string())]),
         Line::from(" "),
     ];
 
@@ -704,10 +704,10 @@ pub(crate) fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     let mut found = false;
     for org in &vm.organelles {
         if org.context_loc == (cy, cx) {
-            info.push(Line::from(format!("Name: {}", org.name)));
-            info.push(Line::from(format!("ID: {}", org.id)));
+            info.push(Line::from(vec![Span::raw("Name: "), Span::raw(org.name.to_string())]));
+            info.push(Line::from(vec![Span::raw("ID: "), Span::raw(org.id.to_string())]));
             info.push(Line::from(format!("Type: {:?}", org.kind)));
-            info.push(Line::from(format!("Energy: {}", org.energy)));
+            info.push(Line::from(vec![Span::raw("Energy: "), Span::raw(org.energy.to_string())]));
             info.push(Line::from(format!("Traits: {:?}", org.traits)));
             found = true;
             break;
@@ -718,7 +718,7 @@ pub(crate) fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         info.push(Line::from("No organism at cursor."));
         if let crate::vm::Value::Int(n) = vm.grid[cy][cx] {
             if n > 0 {
-                info.push(Line::from(format!("Food Energy: {}", n)));
+                info.push(Line::from(vec![Span::raw("Food Energy: "), Span::raw(n.to_string())]));
             }
         }
     }
@@ -828,10 +828,10 @@ pub(crate) fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     // Find organelle at cursor
     let (cx, cy) = app_state.grid_cursor;
     if let Some(org) = vm.organelles.iter().find(|o| o.context_loc == (cy, cx)) {
-        info.push(Line::from(format!("Name: {}", org.name)));
-        info.push(Line::from(format!("ID: {}", org.id)));
+        info.push(Line::from(vec![Span::raw("Name: "), Span::raw(org.name.to_string())]));
+        info.push(Line::from(vec![Span::raw("ID: "), Span::raw(org.id.to_string())]));
         if let Some(tid) = org.tissue_id {
-            info.push(Line::from(format!("Tissue ID: {}", tid)));
+            info.push(Line::from(vec![Span::raw("Tissue ID: "), Span::raw(tid.to_string())]));
         } else {
             info.push(Line::from("Tissue: None"));
         }
@@ -1022,10 +1022,10 @@ pub(crate) fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     ];
 
     if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
-        info.push(Line::from(format!("Strand: {}", app_state.selected_strand)));
+        info.push(Line::from(vec![Span::raw("Strand: "), Span::raw(app_state.selected_strand.to_string())]));
         if let Some(gene) = strand.genes.get(app_state.selected_gene) {
             info.push(Line::from(" "));
-            info.push(Line::from(format!("Selected Gene: {}", gene.op)));
+            info.push(Line::from(vec![Span::raw("Selected Gene: "), Span::raw(gene.op.to_string())]));
             info.push(Line::from(format!("Args: {:?}", gene.args)));
         }
     }
@@ -1121,7 +1121,7 @@ pub(crate) fn render_biolum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
         Line::from("BIOLUM SENSOR"),
         Line::from(" "),
         Line::from(format!("Pos: {},{}", cx, cy)),
-        Line::from(format!("Intensity: {}", intensity)),
+        Line::from(vec![Span::raw("Intensity: "), Span::raw(intensity.to_string())]),
         Line::from(format!("Color: ({}, {}, {})", r, g, b)),
         Line::from(" "),
         Line::from("Opcodes:"),
@@ -1208,9 +1208,9 @@ pub(crate) fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         Line::from("MORPHOGEN GRADIENTS"),
         Line::from(" "),
         Line::from(format!("Pos: {},{}", cx, cy)),
-        Line::from(format!("Ch A (Red):   {}", h[0])),
-        Line::from(format!("Ch B (Green): {}", h[1])),
-        Line::from(format!("Ch C (Blue):  {}", h[2])),
+        Line::from(vec![Span::raw("Ch A (Red):   "), Span::raw(h[0].to_string())]),
+        Line::from(vec![Span::raw("Ch B (Green): "), Span::raw(h[1].to_string())]),
+        Line::from(vec![Span::raw("Ch C (Blue):  "), Span::raw(h[2].to_string())]),
         Line::from(" "),
         Line::from("Opcodes:"),
         Line::from("  Morphogen(ch, amt)"),
@@ -1385,8 +1385,8 @@ pub(crate) fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     let mut info = vec![Line::from(format!("Cursor: {},{}", cx, cy))];
 
     if let Some(node) = vm.biomesh.nodes.get(&(cy, cx)) {
-        info.push(Line::from(format!("Node ID: {}", node.id)));
-        info.push(Line::from(format!("Buffer Size: {}", node.buffer.len())));
+        info.push(Line::from(vec![Span::raw("Node ID: "), Span::raw(node.id.to_string())]));
+        info.push(Line::from(vec![Span::raw("Buffer Size: "), Span::raw(node.buffer.len().to_string())]));
         info.push(Line::from("Connections:"));
         for (ny, nx) in &node.connections {
             info.push(Line::from(format!("  -> {},{}", nx, ny)));
@@ -1394,7 +1394,7 @@ pub(crate) fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         if !node.buffer.is_empty() {
             info.push(Line::from("Buffer Head:"));
             if let Some(val) = node.buffer.front() {
-                info.push(Line::from(format!("  {}", val)));
+                info.push(Line::from(vec![Span::raw("  "), Span::raw(val.to_string())]));
             }
         }
     } else {
