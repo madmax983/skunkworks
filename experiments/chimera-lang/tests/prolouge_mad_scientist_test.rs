@@ -15,6 +15,24 @@ mod tests {
     }
 
     #[test]
+    fn test_prolouge_compiler_mosaic() {
+        let source = r#"
+        mosaic {
+            "DRAW RECT"
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("            \"DRAW RECT\"".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::MosaicDraw);
+    }
+
+    #[test]
     fn test_prolouge_compiler_brainfuck_and_tui() {
         let source = r#"
         brainfuck {

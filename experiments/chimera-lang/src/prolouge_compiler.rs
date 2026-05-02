@@ -144,6 +144,12 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::TuiDraw, vec![]));
             }
+            Rule::mosaic_block => {
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "mosaic");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
+                genes.push(Gene::new(OpCode::MosaicDraw, vec![]));
+            }
             Rule::piet_block => {
                 let content =
                     extract_block_content_preserve_whitespace(inner_block.as_str(), "piet");

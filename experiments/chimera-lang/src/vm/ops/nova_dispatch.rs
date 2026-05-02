@@ -199,6 +199,7 @@ impl crate::vm::ChimeraVM {
             | OpCode::SporeCloud
             | OpCode::Brainfuck
             | OpCode::TuiDraw
+            | OpCode::MosaicDraw
             | OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour

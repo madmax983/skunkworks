@@ -416,6 +416,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        OpCode::MosaicDraw => {
+            if let Some(cmd) = vm.pop_str("mosaic_draw") {
+                vm.output.push(format!("Mosaic: {}", cmd));
+            }
+            None
+        }
         OpCode::Spawn => super::nova_biology::exec_spawn(vm),
         OpCode::Entropy => exec_entropy(vm),
         OpCode::Stabilize => exec_stabilize(vm),
