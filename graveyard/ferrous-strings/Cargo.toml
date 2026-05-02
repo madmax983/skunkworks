@@ -15,3 +15,5 @@ cpal = { version = "0.15", optional = true }
 [features]
 default = ["audio"]
 audio = ["cpal"]
+
+[workspace]
