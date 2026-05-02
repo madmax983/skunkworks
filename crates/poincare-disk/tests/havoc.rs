@@ -46,3 +46,51 @@ proptest! {
         prop_assert!(!res.im.is_nan(), "Havoc 👺: Math failed! NaN produced.");
     }
 }
+
+// 👺 Havoc: Prove that passing usize::MAX causes a capacity overflow panic.
+#[test]
+fn havoc_poincare_disk_alloc_panic() {
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .arg("--exact")
+        .arg("havoc_poincare_disk_alloc_panic_inner")
+        .arg("--nocapture")
+        .arg("--ignored")
+        .status();
+
+    if let Ok(status) = status {
+        assert!(
+            !status.success(),
+            "👺 Havoc: WRECKAGE! pseudo_random_points panics internally on count = usize::MAX due to capacity overflow!"
+        );
+    }
+}
+
+pub fn pseudo_random_points(seed: u64, count: usize) -> Vec<poincare_disk::Point> {
+    let mut points = Vec::with_capacity(count);
+    let mut s = seed;
+    for _ in 0..count {
+        s = s
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        let u1 = (s >> 32) as f64 / 4294967296.0;
+
+        s = s
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        let u2 = (s >> 32) as f64 / 4294967296.0;
+
+        let r = u1.sqrt() * 0.95;
+        let theta = u2 * 2.0 * std::f64::consts::PI;
+        points.push(num_complex::Complex::from_polar(r, theta));
+    }
+    points
+}
+
+#[test]
+#[ignore]
+fn havoc_poincare_disk_alloc_panic_inner() {
+    if std::env::args().any(|arg| arg == "havoc_poincare_disk_alloc_panic_inner") {
+        let _points = pseudo_random_points(1234, usize::MAX);
+        std::process::exit(0);
+    }
+}
