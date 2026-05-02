@@ -11,3 +11,8 @@
 **Bloat:** Layer Lasagna (`crates/tui-shared/src/semantic/` contained a nested folder hierarchy for only four very simple modules, requiring a separate `mod.rs` to wire them up).
 **Cut:** Flattened the module hierarchy by moving `action.rs`, `entity.rs`, `region.rs`, and `snapshot.rs` up to the `src/` root directory, and exported them directly in `lib.rs` under a `pub mod semantic { ... }` namespace proxy to avoid breaking public API while removing the directory clutter.
 **Saved:** One unnecessary `mod.rs` file, one nested directory level, and reduced cognitive load required to navigate the crate's internal structure.
+
+## [Reduction]
+**Bloat:** Layer Lasagna (`crates/poincare-disk/src/` contained `math.rs`, `geometry.rs`, `transform.rs`, `tiling.rs`, and `types.rs`, taking up 5 internal modules for a library that could easily be contained in one file).
+**Cut:** Flattened the module hierarchy by moving `math.rs`, `geometry.rs`, `transform.rs`, `tiling.rs`, and `types.rs` into `lib.rs` inside `poincare-disk`.
+**Saved:** Five internal files, multiple module definitions, reduced module boundaries, and lowered cognitive load when navigating the `poincare-disk` crate.
