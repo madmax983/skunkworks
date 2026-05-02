@@ -33,7 +33,7 @@ exclude = [
     "experiments/neuro-resonance",
 
     "experiments/system-turbulence",
-    "experiments/turbulent-rhythms",
+
     "experiments/verge-computer",
     "graveyard/*"
 ]

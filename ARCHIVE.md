@@ -1,8 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-choreography**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. Core Laban Effort parameters and dancer fields sit completely unused. Grace period: 24h.
+- **gray-platter**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. The specimen lacks a README and its hybridization is minimal. Grace period: 24h.
 
 
 ## Pardoned
+- **chimera-choreography**: Specimen pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by excising unused Laban Effort parameters and dancer fields. Vigor demonstrated.
 - **turbulent-rhythms**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by environment stabilization allowing successful compilation. Vigor demonstrated.
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
 - **miura-interface**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Trait Void. Resolved by importing missing `std::io::Read` trait. Vigor demonstrated.
