@@ -19,6 +19,7 @@ impl LabanEffort {
     pub fn is_strong(&self) -> bool {
         self.weight < 0.5
     }
+    #[allow(dead_code)]
     pub fn is_light(&self) -> bool {
         self.weight >= 0.5
     }
@@ -26,6 +27,7 @@ impl LabanEffort {
     pub fn is_sudden(&self) -> bool {
         self.time < 0.5
     }
+    #[allow(dead_code)]
     pub fn is_sustained(&self) -> bool {
         self.time >= 0.5
     }

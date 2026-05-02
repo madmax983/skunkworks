@@ -8,12 +8,10 @@ pub struct Dancer {
     pub pos: Vec2,
     pub vel: Vec2,
     pub effort: LabanEffort,
-    pub id: usize,
-    pub color_idx: u8,
 }
 
 impl Dancer {
-    pub fn new(id: usize, x: f32, y: f32) -> Self {
+    pub fn new(x: f32, y: f32) -> Self {
         // Create random DNA
         let mut rng = rand::thread_rng();
         let mut genes = Vec::new();
@@ -99,8 +97,6 @@ impl Dancer {
             pos: Vec2::new(x as f64, y as f64),
             vel: Vec2::new(0.0, 0.0),
             effort: LabanEffort::new(),
-            id,
-            color_idx: rng.gen(),
         }
     }
 
