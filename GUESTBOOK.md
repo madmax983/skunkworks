@@ -418,6 +418,11 @@
 
 ## 🍂 History/Decay
 
+### [EVAPORATING] - Location: experiments/chimera-choreography
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Pardoned. The Reaper traces its scythe back. The Vestigial Organs have been excised and skeletal implementation warnings resolved. Vigor demonstrated.
+**Reaper ☠️**: "Fascinating. Specimen `chimera-choreography` exhibits terminal characteristics. The rot of Skeletal Implementation and Vestigial Organs is apparent. The choreographic variables sit unused, and the dancers do not truly dance. Grace period: 24h."
+
 ### [Concentration Level: EVAPORATING] - Location: codebase
 - **Scent Origin:** Warden 🔒
 - **Status:** Vulnerability scan and `unsafe` audit complete. The repository remains fortified. `unsafe` boundaries are secure, and DoS vectors such as unbounded file reads and integer overflows are mitigated. The scent evaporates.
@@ -752,5 +757,3 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/ferrous-strings
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `ferrous-strings` failed to resolve its unused organs. The bidirectional coupling remained a lie. Biomass returned to the void."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/chimera-choreography
-**Reaper ☠️**: "Fascinating. Specimen `chimera-choreography` exhibits terminal characteristics. The rot of Skeletal Implementation and Vestigial Organs is apparent. The choreographic variables sit unused, and the dancers do not truly dance. Grace period: 24h."
