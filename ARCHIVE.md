@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-strings**: Specimen condemned. Diagnosis: Vestigial Organs / Skeletal Implementation. The core coupling method `magnetize_platter` is unused, breaking the physical simulation feedback loop. Grace period: 24h.
+- **chimera-choreography**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. Core Laban Effort parameters and dancer fields sit completely unused. Grace period: 24h.
 
 
 ## Pardoned
@@ -46,6 +46,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **ferrous-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. The core bidirectional feedback loop was severed, failing to resolve unused method `magnetize_platter` during its grace period. Biomass returned to the void.
 - **neuro-beats**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Minimal Execution Quality. Panics in headless environments (`XOpenDisplay()`) and relies on deterministic, hardcoded topology rather than true emergence. Grace period expired. Moved to graveyard.
 - **quipu-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile `alsa-sys` build script and relies on `macroquad` resulting in headless panics. Grace period expired. Moved to graveyard.
 - **chimera-sandpile**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Panics in headless environments and lacks integration. Failed to improve during grace period. Moved to graveyard.
