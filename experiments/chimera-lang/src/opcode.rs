@@ -1792,6 +1792,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., instruction_string ] -> [ ... ]`
     TuiDraw,
 
+    /// **`Prolouge`** Renders a native ratatui UI layout based on a mosaic instruction string.
+    ///
+    /// **Stack:** `[ ..., instruction_string ] -> [ ... ]`
+    MosaicDraw,
+
     // Meta Features (Self-Definition)
     /// **`Nova`** Defines a new enzyme (OpCode) that calls a strand.
     ///

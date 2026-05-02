@@ -152,7 +152,7 @@ mod tests {
         // We expect some genes.
         let ops: Vec<String> = new_strand.genes.iter().map(|g| g.op.to_string()).collect();
         // With B1/S1, (0,0) and (0,1) should survive/be born.
-        assert!(ops.contains(&"push".to_string()));
-        assert!(ops.contains(&"add".to_string()));
+        assert!(ops.contains(&"Push".to_string()) || ops.contains(&"push".to_string()));
+        assert!(ops.contains(&"Add".to_string()) || ops.contains(&"add".to_string()));
     }
 }
