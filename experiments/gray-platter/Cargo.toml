@@ -1,0 +1,12 @@
+[package]
+name = "gray-platter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+platter = { path = "../../crates/platter" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+tui-shared = { workspace = true }
+anyhow = { workspace = true }
