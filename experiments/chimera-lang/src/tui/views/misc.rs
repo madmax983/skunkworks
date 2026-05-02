@@ -326,13 +326,13 @@ pub(crate) fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     let info = vec![
         Line::from("FRACTAL ENGINE"),
         Line::from(" "),
-        Line::from(format!("Mode: {}", mode_str)),
+        Line::from(vec![Span::raw("Mode: "), Span::raw(mode_str.to_string())]),
         Line::from(format!("Zoom: {:.2e}", vm.fractal.zoom)),
         Line::from(format!(
             "Center: {:.6} + {:.6}i",
             vm.fractal.center_re, vm.fractal.center_im
         )),
-        Line::from(format!("Max Iter: {}", vm.fractal.max_iter)),
+        Line::from(vec![Span::raw("Max Iter: "), Span::raw(vm.fractal.max_iter.to_string())]),
         Line::from(" "),
         Line::from("Julia Constant:"),
         Line::from(format!("{:.6} + {:.6}i", vm.fractal.c_re, vm.fractal.c_im)),
@@ -762,9 +762,9 @@ pub(crate) fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
     let timer = vm.egregore.manifestation_timer;
 
     let stats = vec![
-        Line::from(format!("Faith: {}", faith)),
-        Line::from(format!("Alignment: {} (Chaos <-> Order)", alignment)),
-        Line::from(format!("Manifestation: {} ticks", timer)),
+        Line::from(vec![Span::raw("Faith: "), Span::raw(faith.to_string())]),
+        Line::from(vec![Span::raw("Alignment: "), Span::raw(alignment.to_string()), Span::raw(" (Chaos <-> Order)")]),
+        Line::from(vec![Span::raw("Manifestation: "), Span::raw(timer.to_string()), Span::raw(" ticks")]),
         Line::from(" "),
         Line::from("Rituals:"),
         Line::from("  pray(n) - Order"),

@@ -319,8 +319,8 @@ pub(crate) fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, app_state: &A
 
     // Info
     let info = vec![
-        Line::from(format!("Recursion Depth: {}", vm.recursion_depth)),
-        Line::from(format!("Call Stack Size: {}", vm.call_stack.len())),
+        Line::from(vec![Span::raw("Recursion Depth: "), Span::raw(vm.recursion_depth.to_string())]),
+        Line::from(vec![Span::raw("Call Stack Size: "), Span::raw(vm.call_stack.len().to_string())]),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Compose, Curry, Quote: Functional Ops"),
@@ -709,7 +709,7 @@ pub(crate) fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             vm.chronostasis_timer
         )),
         Line::from(format!("Chronos Integrity: {:.1}%", vm.chronos_integrity)),
-        Line::from(format!("Active Time Loops: {}", vm.paradox_loops.len())),
+        Line::from(vec![Span::raw("Active Time Loops: "), Span::raw(vm.paradox_loops.len().to_string())]),
         Line::from(" "),
         Line::from(format!("Cursor: {},{}", cx, cy)),
         Line::from(" "),
@@ -921,7 +921,7 @@ pub(crate) fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &
     let info = vec![
         Line::from("PANDEMONIUM REACTOR"),
         Line::from(" "),
-        Line::from(format!("Tool: {} (1-4)", tool_name)),
+        Line::from(vec![Span::raw("Tool: "), Span::raw(tool_name.to_string()), Span::raw(" (1-4)")]),
         Line::from(format!(
             "Radius: {:.1} ([ / ])",
             app_state.pandemonium_radius

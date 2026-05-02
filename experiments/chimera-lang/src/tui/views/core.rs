@@ -734,7 +734,7 @@ pub(crate) fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
     let mut info_text = vec![
         Line::from("THE VOID"),
         Line::from(" "),
-        Line::from(format!("Local Entropy: {} / 100", local_entropy)),
+        Line::from(vec![Span::raw("Local Entropy: "), Span::raw(local_entropy.to_string()), Span::raw(" / 100")]),
         Line::from(" "),
         Line::from("Mechanics:"),
         Line::from("  - Entropy > 50 causes Reality Decay (Glitches)"),
