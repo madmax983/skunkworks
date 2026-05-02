@@ -64,11 +64,11 @@
 //! }
 //! ```
 
+pub mod action;
 pub(crate) mod bobber;
 pub(crate) mod button;
-pub(crate) mod log_list;
-pub mod action;
 pub mod entity;
+pub(crate) mod log_list;
 pub mod region;
 pub mod snapshot;
 
