@@ -61,3 +61,50 @@ proptest! {
         assert!(!force.y.is_nan(), "Havoc 👺: The infection spread! Force Y is NaN");
     }
 }
+
+// 👺 Havoc: Using an unbounded size (usize::MAX) for Flocking testing should trigger out-of-memory/capacity overflow panics
+#[test]
+fn havoc_flocking_alloc_panic() {
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .arg("--exact")
+        .arg("bench_compute_force_only_cohesion_havoc")
+        .arg("--nocapture")
+        .arg("--ignored")
+        .status();
+
+    if let Ok(status) = status {
+        assert!(
+            !status.success(),
+            "👺 Havoc: WRECKAGE! compute_force bench test panics internally on count = usize::MAX due to capacity overflow!"
+        );
+    }
+}
+
+#[test]
+#[ignore]
+fn bench_compute_force_only_cohesion_havoc() {
+    if std::env::args().any(|arg| arg == "bench_compute_force_only_cohesion_havoc") {
+        let count = usize::MAX;
+        let mut positions = Vec::with_capacity(count);
+        let mut velocities = Vec::with_capacity(count);
+        for i in 0..count {
+            positions.push(locus::Vec2::new(i as f64, 0.0));
+            velocities.push(locus::Vec2::new(0.0, 1.0));
+        }
+
+        let params = flocking::FlockingParams {
+            view_radius: 50.0,
+            separation_radius: 20.0,
+            max_speed: 5.0,
+            max_force: 1.0,
+            separation_weight: 0.0,
+            alignment_weight: 0.0,
+            cohesion_weight: 1.0,
+        };
+
+        for i in 0..1000 {
+            let _ = flocking::compute_force(&positions, &velocities, i, &params);
+        }
+        std::process::exit(0);
+    }
+}
