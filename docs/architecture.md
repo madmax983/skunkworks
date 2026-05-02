@@ -63,16 +63,16 @@ classDiagram
     note for Tui "Handles raw mode, alternate screen,\nand mouse capture automatically."
 ```
 
-### Semantic Bridge (crates/tui-shared/src/semantic)
+### Semantic Bridge (crates/tui-shared)
 
-The `semantic` module within the `tui-shared` crate enables applications to expose their internal state as structured data for LLM agents (ADR 004, ADR 070).
+The semantic logic within the `tui-shared` crate enables applications to expose their internal state as structured data for LLM agents (ADR 004, ADR 070, ADR 093). The module hierarchy is flattened, exporting components directly.
 
 ```mermaid
 classDiagram
     direction LR
 
     class Facade {
-        <<Module: semantic/mod.rs>>
+        <<Module: lib.rs>>
         +Snapshot
         +Entity
         +Region
