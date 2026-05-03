@@ -3,9 +3,11 @@ use poincare_disk::{hyperbolic_dist, mobius_add, Mobius, Point};
 
 /// Generates a deterministic sequence of points inside the Poincaré disk.
 pub fn pseudo_random_points(seed: u64, count: usize) -> Vec<Point> {
-    let mut points = Vec::with_capacity(count);
+    // 🔒 WARDEN: Prevent OOM/capacity overflow by bounding the pre-allocation
+    let actual_count = count.min(100_000);
+    let mut points = Vec::with_capacity(actual_count);
     let mut s = seed;
-    for _ in 0..count {
+    for _ in 0..actual_count {
         // LCG: x_{n+1} = (a * x_n + c) % m
         // Using values from MMIX (Knuth)
         s = s

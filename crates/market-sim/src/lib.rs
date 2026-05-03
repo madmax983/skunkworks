@@ -242,7 +242,8 @@ impl Grid {
         let mut rng = rand::thread_rng();
 
         // Use with_capacity to eliminate intermediate heap reallocations.
-        let mut trade_events = Vec::with_capacity(self.trade_count);
+        // Limit the capacity to a reasonable maximum to prevent OOM panic on forged inputs.
+        let mut trade_events = Vec::with_capacity(self.trade_count.min(100_000));
 
         self.updated.fill(false);
 

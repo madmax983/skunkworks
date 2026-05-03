@@ -12,7 +12,7 @@ fn havoc_market_sim_alloc_panic() {
 
     if let Ok(status) = status {
         assert!(
-            !status.success(),
+            status.success(),
             "👺 Havoc: WRECKAGE! Grid::update panics internally on trade_count = usize::MAX due to capacity overflow!"
         );
     }
