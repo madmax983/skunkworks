@@ -1,0 +1,3 @@
+report_content = "Specimen `neuro-git` exhibits terminal characteristics. Terminal Compilation Failure / Ecosystem Maladaptation confirmed—the specimen fails to compile due to unresolved imports `anyhow` and `rand`. Its documentation is also extremely brief (Documentation Void). It fails to build within the ecosystem. The swarm does not recognize its existence. Condemned."
+with open('experiments/neuro-git/.reaper-report.md', 'w') as f:
+    f.write(report_content)
