@@ -72,6 +72,13 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### market-platter
+- **Parents**: crates/market-sim + crates/platter
+- **Concept**: Market Heatmap Scan.
+- **Novel trait**: The discrete market trades (from `market-sim`) are embedded into a 2D scalar field (`platter`). As trades happen in the market grid, they act as massive heat pulses that saturate the continuous scalar field at their exact collision point (x, y coordinate).
+- **Predicted Phenotype**: A visual "trade radar" or market heatmap. Discrete market interactions (Bids and Asks colliding) leave continuous, fading trails in the 2D grid. Areas of high liquidity will show up as bright, persistent hotspots, while sparse price levels will remain dark.
+- **Status**: experiments/market-platter
+- **Evaluation**: Success. Compiled. The continuous field successfully visualizes liquidity clusters from the discrete particle collisions, leaving fading heat signatures of market transactions.
 ### neuro-platter
 - **Parents**: crates/neuro-sim + crates/platter
 - **Concept**: Spiking Heatmap Scan.
