@@ -1,3 +1,4 @@
+use std::io::Read;
 pub(crate) mod handlers;
 pub(crate) mod router;
 
@@ -37,7 +38,7 @@ fn check_hot_reload(vm: &mut ChimeraVM, app_state: &mut AppState) {
     let mut src = String::new();
     let limit = 1024 * 1024; // 1MB limit
     if let Ok(bytes) =
-        std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut src)
+        file.take(limit + 1).read_to_string(&mut src)
     {
         if bytes as u64 <= limit {
             let parent = path.parent();

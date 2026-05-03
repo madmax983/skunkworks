@@ -662,20 +662,21 @@ pub(crate) fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     f.render_widget(mem_list, left_chunks[1]);
 
     // Right: Karma & Miracles
-    let mut info = Vec::new();
-    info.push(Line::from(vec![Span::raw("Karma: "), Span::raw(vm.akashic.karma.to_string())]));
-    info.push(Line::from(" "));
-    info.push(Line::from("Miracles (Cost):"));
-    info.push(Line::from("  0: Resurrection (1000)"));
-    info.push(Line::from("  1: Terraform (5000)"));
-    info.push(Line::from("  2: Wealth (2000)"));
-    info.push(Line::from("  3: Cleanse (500)"));
-    info.push(Line::from("  4: Ascension (10000)"));
-    info.push(Line::from(" "));
-    info.push(Line::from("Opcodes:"));
-    info.push(Line::from("  Miracle(id)"));
-    info.push(Line::from("  AkashicSave(key)"));
-    info.push(Line::from("  AkashicLoad(key)"));
+    let info = vec![
+        Line::from(vec![Span::raw("Karma: "), Span::raw(vm.akashic.karma.to_string())]),
+        Line::from(" "),
+        Line::from("Miracles (Cost):"),
+        Line::from("  0: Resurrection (1000)"),
+        Line::from("  1: Terraform (5000)"),
+        Line::from("  2: Wealth (2000)"),
+        Line::from("  3: Cleanse (500)"),
+        Line::from("  4: Ascension (10000)"),
+        Line::from(" "),
+        Line::from("Opcodes:"),
+        Line::from("  Miracle(id)"),
+        Line::from("  AkashicSave(key)"),
+        Line::from("  AkashicLoad(key)"),
+    ];
 
     let info_widget = Paragraph::new(info).block(
         Block::default()
