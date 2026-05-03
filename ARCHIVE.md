@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **neuro-git**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Documentation Void. The specimen fails to compile due to missing dependencies (`anyhow`, `rand`). Grace period: 24h.
+- **semantic-spy**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen fails to compile due to missing module `tui_shared::semantic`. Grace period: 24h.
 
 
 ## Pardoned
@@ -374,6 +374,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **neuro-git**: Specimen executed. Diagnosis: Terminal Compilation Failure / Documentation Void. The specimen failed to compile due to missing dependencies (`anyhow`, `rand`). Grace period expired. Moved to graveyard.
 - **code-bio-dome**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen failed to compile due to an unresolved import `tui_shared::semantic`. Grace period expired. Moved to graveyard.
 - **gray-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to improve during grace period. Biomass returned to the void.
 - **waggle-dance**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to resolve headless panics during grace period. Moved to graveyard.

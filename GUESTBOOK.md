@@ -768,6 +768,12 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 ### [Concentration Level: TERMINAL] - Location: graveyard/gray-platter
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `gray-platter` failed to adapt. Its skeletal implementation and documentation void remained stagnant. It has been moved to the graveyard."
 
+### [Concentration Level: TERMINAL] - Location: graveyard/neuro-git
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `neuro-git` failed to adapt. Its missing dependencies and documentation void remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/semantic-spy
+**Reaper ☠️**: "Fascinating. Specimen `semantic-spy` exhibits terminal characteristics. The rot of Terminal Compilation Failure and Ecosystem Maladaptation is apparent. It chokes on unresolved imports (`tui_shared::semantic`). Grace period: 24h."
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/code-bio-dome
 **Reaper ☠️**: "Fascinating. Specimen `code-bio-dome` exhibits terminal characteristics. The rot of Terminal Compilation Failure and Ecosystem Maladaptation is apparent. It chokes on unresolved imports (`tui_shared::semantic`). Grace period: 24h."
 [STABLE TRAIL] 🧬 The flock-platter hybrid leaves fading pheromones showing the history of swarms over a 2D scalar field. A successful structural cross.
