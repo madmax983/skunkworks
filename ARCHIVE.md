@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **gray-platter**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. The specimen lacks a README and its hybridization is minimal. Grace period: 24h.
+- **code-bio-dome**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen fails to compile due to an unresolved import `tui_shared::semantic`. Grace period: 24h.
 
 
 ## Pardoned
@@ -374,6 +374,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **gray-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to improve during grace period. Biomass returned to the void.
 - **waggle-dance**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to resolve headless panics during grace period. Moved to graveyard.
 - **photon-racer**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / TUI Misuse. Failed to improve during grace period. Moved to graveyard.
 - **firefly-synapse**: Specimen executed. Diagnosis: Generic Implementation / Ecosystem Isolation. Grace period expired. Moved to graveyard.
