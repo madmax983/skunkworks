@@ -280,7 +280,7 @@ impl Value {
                         .iter()
                         .map(|v| {
                             // Special formatting for boolean-like values
-                            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Green (True -> Green, False -> Yellow)
+                            // 🎨 Mosaic: Colorize 'True' as Green and 'False' as Yellow
                             match v {
                                 Value::Str(s) if s.eq_ignore_ascii_case("true") => {
                                     comfy_table::Cell::new("True").fg(comfy_table::Color::Green)

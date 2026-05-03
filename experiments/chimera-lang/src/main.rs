@@ -315,7 +315,7 @@ fn main() -> Result<()> {
 
             let mut val_cell = comfy_table::Cell::new(&val_str);
 
-            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Green (True -> Green, False -> Yellow)
+            // 🎨 Mosaic: Colorize 'True' as Green and 'False' as Yellow
             if val_str == "1" || val_str.eq_ignore_ascii_case("true") {
                 val_cell = val_cell.fg(comfy_table::Color::Green);
             } else if val_str == "0" || val_str.eq_ignore_ascii_case("false") {
