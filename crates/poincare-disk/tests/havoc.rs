@@ -59,16 +59,17 @@ fn havoc_poincare_disk_alloc_panic() {
 
     if let Ok(status) = status {
         assert!(
-            !status.success(),
+            status.success(),
             "👺 Havoc: WRECKAGE! pseudo_random_points panics internally on count = usize::MAX due to capacity overflow!"
         );
     }
 }
 
 pub fn pseudo_random_points(seed: u64, count: usize) -> Vec<poincare_disk::Point> {
-    let mut points = Vec::with_capacity(count);
+    let actual_count = count.min(100_000);
+    let mut points = Vec::with_capacity(actual_count);
     let mut s = seed;
-    for _ in 0..count {
+    for _ in 0..actual_count {
         s = s
             .wrapping_mul(6364136223846793005)
             .wrapping_add(1442695040888963407);

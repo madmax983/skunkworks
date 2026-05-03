@@ -113,9 +113,27 @@ pub fn scan_workspace(root: impl AsRef<Path>) -> Result<Vec<StructInfo>> {
                     std::io::Read::take(file, limit + 1).read_to_string(&mut content)
                 {
                     if bytes_read <= limit as usize {
-                        // Parse file. If it fails (syntax error), just skip it.
-                        if let Ok(file_ast) = syn::parse_file(&content) {
-                            scanner.visit_file(&file_ast);
+                        // 🔒 WARDEN: Prevent stack overflow from deeply nested generics.
+                        // `syn::parse_file` uses recursive descent parsing, which will
+                        // easily blow the stack on files with 5000+ nested brackets.
+                        // We check the maximum consecutive depth of `<` before parsing.
+                        let mut max_depth: usize = 0;
+                        let mut current_depth: usize = 0;
+                        for c in content.chars() {
+                            if c == '<' {
+                                current_depth += 1;
+                                if current_depth > max_depth {
+                                    max_depth = current_depth;
+                                }
+                            } else if c == '>' {
+                                current_depth = current_depth.saturating_sub(1);
+                            }
+                        }
+
+                        if max_depth <= 100 {
+                            if let Ok(file_ast) = syn::parse_file(&content) {
+                                scanner.visit_file(&file_ast);
+                            }
                         }
                     }
                 }

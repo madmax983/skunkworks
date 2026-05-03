@@ -43,3 +43,5 @@
 **[Global API Refactoring Risks]**
 **Learning:** When updating public API return types across multiple workspace crates (e.g., changing `physics-pbd` constraints to return `Result`), attempting to use simplistic global Python string replacements or regex scripts to append `.unwrap()` causes widespread syntax errors and repository pollution.
 **Action:** Rely on `replace_with_git_merge_diff` for exact patch application, or manually patch files using isolated string replacement tools. Never commit scratchpad python files to version control; always run `git clean -fd` or manually remove them after use.
+**Threat:** Unbounded numerical inputs (e.g. `usize::MAX`) or lack of recursion depth checks triggering panics inside hot paths, specifically Out-Of-Memory (OOM) capacity overflows via `Vec::with_capacity` and stack overflows via AST traversal in `syn::parse_file`.
+**Defense:** Explicitly limit dynamic capacities and recursion bounds using `count.min(SAFE_LIMIT)` and iterate character depths before delegating to deeply-recursive third-party parsers.

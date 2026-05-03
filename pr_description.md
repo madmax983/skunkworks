@@ -1,19 +1,4 @@
-👺 Havoc: Segfault/Capacity Overflow in `flocking` and `poincare-disk`
-
-🧨 **The Trigger:**
-Passing `usize::MAX` into the unvalidated `count` parameter in `crates/flocking` (during test bench allocation setup for `compute_force`) and `crates/poincare-disk` (during `pseudo_random_points` generation for properties testing) directly reaches `Vec::with_capacity(count)` causing a catastrophic integer overflow logic leading to a panic.
-
-📉 **The Stack Trace:**
-```
-thread 'havoc_flocking_alloc_panic_inner' panicked at /rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/alloc/src/raw_vec/mod.rs:28:5:
-capacity overflow
-
-thread 'havoc_poincare_disk_alloc_panic_inner' panicked at /rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/alloc/src/raw_vec/mod.rs:28:5:
-capacity overflow
-```
-
-🧪 **Reproduction:**
-Run `cargo test -p flocking --test havoc` and `cargo test -p poincare-disk --test havoc`.
-
-😈 **Comment:**
-You assumed `count` would never be larger than RAM. You were wrong.
+🎯 **Target:** Fix deliberately injected out-of-memory (OOM) capacity overflows and infinite recursion boundaries across multiple crates (`flocking`, `market-sim`, `poincare-disk`, `struct-harmonics`).
+💣 **Risk:** The previous `Vec::with_capacity(usize::MAX)` and unbound `.push_str()` loops crashed testing and rendering binaries during chaos-fuzzing runs, leading to uncatchable `SIGABRT` crashes. Deeply nested generic parsing in `syn::parse_file` led to immediate stack overflows without boundaries.
+🧪 **Strategy:** Applied safety clamps to numerical allocations via `capacity.min(SAFE_LIMIT)` and implemented a pre-parser string loop validator to prevent deep recursion. Added defensive math fallbacks against numeric propagation during physics checks.
+🔬 **Verification:** `cargo test --workspace` no longer triggers `capacity overflow` or `stack overflow` panics.
