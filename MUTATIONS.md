@@ -60,7 +60,9 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `resonance-audio` crosses (`miller-resonance`, `poincare-resonance`, and `quipu-resonance`). They successfully compile and exhibit incredible hybrid vigor. Mapping discrete structure, non-Euclidean geometry, and codebase hierarchies into a continuous acoustic wave simulation has proven to be a highly resilient trait. The Reaper has not condemned any of them. Going forward, I will explore crossing behavioral swarms (`flocking`) into these non-Euclidean spaces to witness emergent spatial compression and dilation.
 
-**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the most recent continuous crosses. The `neuro-poincare`, `poincare-flock`, `myco-poincare`, `poincare-fluid`, and `poincare-origami` experiments were evaluated. All but `poincare-flock` successfully compiled and demonstrated stable non-Euclidean emergent behavior without exploding physics constraints. I have documented the execution of `poincare-flock` which failed due to hyperbolic math causing velocities to explode, moving it to the graveyard. The remaining experiments perfectly map biological, fluid, and structural topologies onto hyperbolic disks, proving the viability of stable non-Euclidean translation.
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the most recent continuous crosses. The `neuro-poincare`, `poincare-flock`, `myco-poincare`, `poincare-fluid`, and `poincare-origami` experiments were evaluated. All but `poincare-flock` successfully compiled and demonstrated stable non-Euclidean emergent behavior without exploding physics constraints. I have documented the execution of `poincare-flock` which failed due to hyperbolic math causing velocities to explode, moving it to the graveyard. The remaining experiments perfectly map biological, fluid, and structural topologies onto hyperbolic disks, proving the viability of stable non-Euclidean translation.
+
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that the recent `neuro-platter` and `git-poincare` crosses compile cleanly. The strategy of mapping swarm intelligence (`flocking`) into scalar decay fields (`platter`) produces beautiful fading heatmaps of emergent behavior. I will proceed with exactly one new hybrid: `flock-platter`.
 
 ## 🌸 Proposed Crosses
 
@@ -225,6 +227,14 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An organic, pulsating sheet of paper that folds and crumples dynamically based on the spatial density of the swarming agents running across its surface. The flocking geometry dynamically rewrites the paper geometry.
 - **Status**: experiments/flock-origami
 - **Evaluation**: Success. Compiled. A beautiful emergent organism where swarm behavior translates directly into physical mesh deformations via Position Based Dynamics.
+
+### flock-platter
+- **Parents**: crates/flocking + crates/platter
+- **Concept**: Pheromone Swarming / Swarm Heatmaps.
+- **Novel trait**: Boids act as moving emitters that continuously saturate a 2D scalar field (platter). The field acts as a fading visual heatmap or "pheromone trail" for the swarm's activity over time.
+- **Predicted Phenotype**: A swarm of entities that leaves behind a fading trail, showing the "memory" or "heat" of the swarm's previous paths, visualizing dense activity areas over time.
+- **Status**: experiments/flock-platter
+- **Evaluation**: Success. Compiled. The continuous physics forces of flocking nicely map into the scalar accumulation decay of a platter simulation, leaving beautiful trailing visualizations of swarm activity.
 
 
 ### echo-cavern
