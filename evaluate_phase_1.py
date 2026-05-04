@@ -1,6 +1,1 @@
-with open('ARCHIVE.md', 'r') as f:
-    content = f.read()
-
-print("Condemned experiments:")
-condemned = content.split('## ☠️ Condemned (Awaiting Execution)')[1].split('## Pardoned')[0]
-print(condemned)
+# There is NOTHING in Proposed Crosses! Let me create a proposed cross first, or just directly create git-platter and put it under Attempted Crosses.
