@@ -9,12 +9,35 @@ fn havoc_gray_scott_init_overflow() {
 #[test]
 #[should_panic(expected = "coordinate out of bounds")]
 fn havoc_gray_scott_scanline_wrapping() {
-    // 👺 Havoc: If bounds are not explicitly checked on BOTH axes before calculating
-    // y * width + x, it could panic here because it was recently fixed.
-    // Wait, let's look at get_index.
     let gs = GrayScott::new(10, 10);
-    // If x = 15, y = 0, y*10 + 15 = 15.
-    // But get_index panics if x >= width.
-    // Let's call get_index(15, 0)
     let _ = gs.get_index(15, 0);
+}
+
+// 👺 Havoc: `chunks_exact_mut(0)` panics!
+#[test]
+fn havoc_gray_scott_zero_width_panic() {
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .arg("--exact")
+        .arg("havoc_gray_scott_zero_width_panic_inner")
+        .arg("--nocapture")
+        .arg("--ignored")
+        .status();
+
+    if let Ok(status) = status {
+        assert!(
+            status.success(),
+            "👺 Havoc: WRECKAGE! update_sequential panics internally on width = 0 due to chunks_exact_mut(0)!"
+        );
+    }
+}
+
+#[test]
+#[ignore]
+fn havoc_gray_scott_zero_width_panic_inner() {
+    if std::env::args().any(|arg| arg == "havoc_gray_scott_zero_width_panic_inner") {
+        let mut gs = GrayScott::new(0, 10);
+        // This will call `chunks_exact_mut(0)` which panics!
+        gs.update(0.1, 0.1, 1.0);
+        std::process::exit(0);
+    }
 }

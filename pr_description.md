@@ -1,4 +1,13 @@
-🎯 **Target:** Fix deliberately injected out-of-memory (OOM) capacity overflows and infinite recursion boundaries across multiple crates (`flocking`, `market-sim`, `poincare-disk`, `struct-harmonics`).
-💣 **Risk:** The previous `Vec::with_capacity(usize::MAX)` and unbound `.push_str()` loops crashed testing and rendering binaries during chaos-fuzzing runs, leading to uncatchable `SIGABRT` crashes. Deeply nested generic parsing in `syn::parse_file` led to immediate stack overflows without boundaries.
-🧪 **Strategy:** Applied safety clamps to numerical allocations via `capacity.min(SAFE_LIMIT)` and implemented a pre-parser string loop validator to prevent deep recursion. Added defensive math fallbacks against numeric propagation during physics checks.
-🔬 **Verification:** `cargo test --workspace` no longer triggers `capacity overflow` or `stack overflow` panics.
+Title: 👺 Havoc: Capacity overflow panic in `generate_miura_grid`
+
+🧨 **The Trigger:** Passing dimensions like `(0, usize::MAX - 1)` to `generate_miura_grid` passes the `.checked_mul` bounds checks but still results in `capacity = usize::MAX`, triggering a fatal capacity overflow panic when passed to `Vec::with_capacity()`.
+
+📉 **The Stack Trace:**
+```
+thread 'havoc_origami_capacity_panic_inner' panicked at /rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/alloc/src/raw_vec/mod.rs:28:5:
+capacity overflow
+```
+
+🧪 **Reproduction:** Run `cargo test -p origami --test havoc`.
+
+😈 **Comment:** "You thought a few `checked_mul`s were enough? You assumed the matrix would never be larger than RAM. You were wrong."
