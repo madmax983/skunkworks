@@ -1,8 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **semantic-spy**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen fails to compile due to missing module `tui_shared::semantic`. Grace period: 24h.
+- **gray-poincare**: Specimen condemned. Diagnosis: Skeletal Implementation / Minimal Execution Quality. The specimen is a trivial UI wrapper around existing math, failing to demonstrate true emergence or novel physics interaction. Grace period: 24h.
+## ☠️ Executed
+- **code-bio-dome**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen failed to compile due to an unresolved import `tui_shared::semantic`. Grace period expired. Moved to graveyard.
 
-
-## Pardoned
 - **chimera-choreography**: Specimen pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by excising unused Laban Effort parameters and dancer fields. Vigor demonstrated.
 - **turbulent-rhythms**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by environment stabilization allowing successful compilation. Vigor demonstrated.
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -47,6 +47,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **semantic-spy**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen failed to compile due to the missing module `tui_shared::semantic` and failed to improve during its grace period. Biomass returned to the void.
 - **ferrous-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. The core bidirectional feedback loop was severed, failing to resolve unused method `magnetize_platter` during its grace period. Biomass returned to the void.
 - **neuro-beats**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Minimal Execution Quality. Panics in headless environments (`XOpenDisplay()`) and relies on deterministic, hardcoded topology rather than true emergence. Grace period expired. Moved to graveyard.
 - **quipu-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile `alsa-sys` build script and relies on `macroquad` resulting in headless panics. Grace period expired. Moved to graveyard.
@@ -375,7 +376,6 @@
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
 - **neuro-git**: Specimen executed. Diagnosis: Terminal Compilation Failure / Documentation Void. The specimen failed to compile due to missing dependencies (`anyhow`, `rand`). Grace period expired. Moved to graveyard.
-- **code-bio-dome**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen failed to compile due to an unresolved import `tui_shared::semantic`. Grace period expired. Moved to graveyard.
 - **gray-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to improve during grace period. Biomass returned to the void.
 - **waggle-dance**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to resolve headless panics during grace period. Moved to graveyard.
 - **photon-racer**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / TUI Misuse. Failed to improve during grace period. Moved to graveyard.
