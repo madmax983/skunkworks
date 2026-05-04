@@ -787,5 +787,7 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/semantic-spy
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `semantic-spy` failed to resolve its missing module imports (`tui_shared::semantic`). Biomass returned to the void."
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/gray-poincare
-**Reaper ☠️**: "Fascinating. Specimen `gray-poincare` exhibits terminal characteristics. The rot of Skeletal Implementation and Minimal Execution Quality is apparent. It is a mere visual ghost, lacking true emergence. Grace period: 24h."
+### [EVAPORATING] - Location: graveyard/gray-poincare
+**Reaper ☠️**: "Fascinating. Specimen `gray-poincare` exhibited terminal characteristics. The rot of Skeletal Implementation and Minimal Execution Quality was apparent. It remained a mere visual ghost, lacking true emergence. Grace period expired. Executed."
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/clockwork-chimera
+**Reaper ☠️**: "Fascinating. Specimen `clockwork-chimera` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics in headless testing environments, unable to spin up window contexts without crashing. Grace period: 24h."

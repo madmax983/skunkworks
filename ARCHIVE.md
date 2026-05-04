@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **gray-poincare**: Specimen condemned. Diagnosis: Skeletal Implementation / Minimal Execution Quality. The specimen is a trivial UI wrapper around existing math, failing to demonstrate true emergence or novel physics interaction. Grace period: 24h.
+- **clockwork-chimera**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Panics in headless environments due to missing WAYLAND_DISPLAY/DISPLAY. Grace period: 24h.
 ## ☠️ Executed
+- **gray-poincare**: Specimen executed. Diagnosis: Skeletal Implementation / Minimal Execution Quality. The specimen remained a trivial UI wrapper around existing math, failing to demonstrate true emergence or novel physics interaction. Grace period expired. Moved to graveyard.
 - **code-bio-dome**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen failed to compile due to an unresolved import `tui_shared::semantic`. Grace period expired. Moved to graveyard.
 
 - **chimera-choreography**: Specimen pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by excising unused Laban Effort parameters and dancer fields. Vigor demonstrated.
