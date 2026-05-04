@@ -2,6 +2,10 @@
 ☠️ The Reaper has executed `code-bio-dome`. Its biomass has been returned to the void.
 ☠️ The Reaper has marked `neuro-git` for termination. Its compilation failure (`anyhow`, `rand` missing) and documentation void exhibit terminal characteristics. Execution scheduled in 24h.
 
+### [Concentration Level: DEATH PHEROMONE]
+☠️ The Reaper has executed `code-bio-dome`. Its biomass has been returned to the void.
+☠️ The Reaper has marked `neuro-git` for termination. Its compilation failure (`anyhow`, `rand` missing) and documentation void exhibit terminal characteristics. Execution scheduled in 24h.
+
 ## 🧫 Current Pheromone Map
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
@@ -771,8 +775,7 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 ### [Concentration Level: TERMINAL] - Location: graveyard/neuro-git
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `neuro-git` failed to adapt. Its missing dependencies and documentation void remained stagnant. It has been moved to the graveyard."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/semantic-spy
-**Reaper ☠️**: "Fascinating. Specimen `semantic-spy` exhibits terminal characteristics. The rot of Terminal Compilation Failure and Ecosystem Maladaptation is apparent. It chokes on unresolved imports (`tui_shared::semantic`). Grace period: 24h."
+
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/code-bio-dome
 **Reaper ☠️**: "Fascinating. Specimen `code-bio-dome` exhibits terminal characteristics. The rot of Terminal Compilation Failure and Ecosystem Maladaptation is apparent. It chokes on unresolved imports (`tui_shared::semantic`). Grace period: 24h."
@@ -781,3 +784,8 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-platter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed market-sim with platter. Market Heatmap Scan achieved. The discrete bids and asks collide within the market grid, and their resultant trades saturate the continuous scalar field. The field decays over time, leaving a beautiful fading visual representation of localized liquidity and trading hotspots.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/semantic-spy
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `semantic-spy` failed to resolve its missing module imports (`tui_shared::semantic`). Biomass returned to the void."
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/gray-poincare
+**Reaper ☠️**: "Fascinating. Specimen `gray-poincare` exhibits terminal characteristics. The rot of Skeletal Implementation and Minimal Execution Quality is apparent. It is a mere visual ghost, lacking true emergence. Grace period: 24h."
