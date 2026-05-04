@@ -316,7 +316,7 @@ sequenceDiagram
     GPU->>Ping: Write Next State
 ```
 
-### Storage Decoupling (ADR 012)
+### Storage Decoupling (ADR 006)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.
 
@@ -1479,6 +1479,29 @@ stateDiagram-v2
         [*] --> Stored
         Stored --> Consumed : Mourn (Energy Gain)
     }
+```
+
+### Nova Feature: Mosaic UI (ADR 094)
+
+The Mosaic UI system enables esolang scripts to declaratively define terminal user interface layouts using a `mosaic` block. The compiler interprets the block, generating a string payload and an `OpCode::MosaicDraw` instruction to render the view natively via Ratatui.
+
+```mermaid
+sequenceDiagram
+    participant Script as Script Source
+    participant Compiler as PrologueCompiler
+    participant VM as ChimeraVM
+    participant TUI as Ratatui Terminal
+
+    Note over Script: mosaic { LayoutDef }
+    Script->>Compiler: parse_mosaic_block()
+    Compiler->>Compiler: Extract String Payload
+    Compiler-->>VM: push(String(LayoutDef))
+    Compiler-->>VM: push(OpCode::MosaicDraw)
+
+    Note over VM: Execution Phase
+    VM->>VM: execute_gene(MosaicDraw)
+    VM->>VM: stack.pop() -> LayoutDef String
+    VM->>TUI: Render LayoutDef (Ratatui)
 ```
 
 ### Nova Feature: Prologue System (ADR 042, ADR 091)
