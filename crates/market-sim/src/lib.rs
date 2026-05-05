@@ -333,39 +333,38 @@ impl Grid {
         owner: usize,
         rng: &mut impl Rng,
     ) -> Option<TradeEvent> {
-        if y > 0 {
-            let target_idx = idx - self.width;
-            match self.cells[target_idx] {
-                Particle::Empty => {
-                    self.cells[target_idx] = Particle::Bid(owner);
-                    self.cells[idx] = Particle::Empty;
-                    self.updated[target_idx] = true;
-                }
-                Particle::Ask(seller) => {
-                    // Collision!
-                    self.cells[target_idx] = Particle::Trade {
-                        age: DEFAULT_TRADE_AGE,
-                    };
-                    self.cells[idx] = Particle::Empty;
-                    self.updated[target_idx] = true;
-                    return Some(TradeEvent {
-                        buyer: owner,
-                        seller,
-                        price: (self.height - 1 - (y - 1)) as f32,
-                    });
-                }
-                Particle::Wall => {
-                    self.try_move_sideways(idx, x, Particle::Bid(owner), rng);
-                }
-                _ => {
-                    self.try_move_sideways(idx, x, Particle::Bid(owner), rng);
-                }
-            }
-        } else {
+        if y == 0 {
             // Reached top (Maximum Price), expire.
             self.cells[idx] = Particle::Empty;
+            return None;
         }
-        None
+
+        let target_idx = idx - self.width;
+        match self.cells[target_idx] {
+            Particle::Empty => {
+                self.cells[target_idx] = Particle::Bid(owner);
+                self.cells[idx] = Particle::Empty;
+                self.updated[target_idx] = true;
+                None
+            }
+            Particle::Ask(seller) => {
+                // Collision!
+                self.cells[target_idx] = Particle::Trade {
+                    age: DEFAULT_TRADE_AGE,
+                };
+                self.cells[idx] = Particle::Empty;
+                self.updated[target_idx] = true;
+                Some(TradeEvent {
+                    buyer: owner,
+                    seller,
+                    price: (self.height - 1 - (y - 1)) as f32,
+                })
+            }
+            _ => {
+                self.try_move_sideways(idx, x, Particle::Bid(owner), rng);
+                None
+            }
+        }
     }
 
     fn process_ask(
@@ -376,39 +375,38 @@ impl Grid {
         owner: usize,
         rng: &mut impl Rng,
     ) -> Option<TradeEvent> {
-        if y < self.height - 1 {
-            let target_idx = idx + self.width;
-            match self.cells[target_idx] {
-                Particle::Empty => {
-                    self.cells[target_idx] = Particle::Ask(owner);
-                    self.cells[idx] = Particle::Empty;
-                    self.updated[target_idx] = true;
-                }
-                Particle::Bid(buyer) => {
-                    // Collision!
-                    self.cells[target_idx] = Particle::Trade {
-                        age: DEFAULT_TRADE_AGE,
-                    };
-                    self.cells[idx] = Particle::Empty;
-                    self.updated[target_idx] = true;
-                    return Some(TradeEvent {
-                        buyer,
-                        seller: owner,
-                        price: (self.height - 1 - (y + 1)) as f32,
-                    });
-                }
-                Particle::Wall => {
-                    self.try_move_sideways(idx, x, Particle::Ask(owner), rng);
-                }
-                _ => {
-                    self.try_move_sideways(idx, x, Particle::Ask(owner), rng);
-                }
-            }
-        } else {
+        if y == self.height - 1 {
             // Reached bottom (Minimum Price), expire.
             self.cells[idx] = Particle::Empty;
+            return None;
         }
-        None
+
+        let target_idx = idx + self.width;
+        match self.cells[target_idx] {
+            Particle::Empty => {
+                self.cells[target_idx] = Particle::Ask(owner);
+                self.cells[idx] = Particle::Empty;
+                self.updated[target_idx] = true;
+                None
+            }
+            Particle::Bid(buyer) => {
+                // Collision!
+                self.cells[target_idx] = Particle::Trade {
+                    age: DEFAULT_TRADE_AGE,
+                };
+                self.cells[idx] = Particle::Empty;
+                self.updated[target_idx] = true;
+                Some(TradeEvent {
+                    buyer,
+                    seller: owner,
+                    price: (self.height - 1 - (y + 1)) as f32,
+                })
+            }
+            _ => {
+                self.try_move_sideways(idx, x, Particle::Ask(owner), rng);
+                None
+            }
+        }
     }
 
     fn update_stats_and_cleanup(&mut self, trade_count: usize) {

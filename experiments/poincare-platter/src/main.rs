@@ -65,7 +65,8 @@ impl PoincarePlatterApp {
                         let mapped = mobius.apply(p);
                         let dist_sq = mapped.norm_sqr();
 
-                        if dist_sq < 0.05 { // Radius of heat source
+                        if dist_sq < 0.05 {
+                            // Radius of heat source
                             // Accumulate heat
                             self.platter.accumulate(x, y, 0.1);
                         }
@@ -107,7 +108,11 @@ fn run_app(tui: &mut Tui) -> Result<()> {
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Poincaré Platter - Hyperbolic Heatmap "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Poincaré Platter - Hyperbolic Heatmap "),
+                )
                 .x_bounds([-1.1, 1.1])
                 .y_bounds([-1.1, 1.1])
                 .paint(|ctx| {
@@ -139,7 +144,14 @@ fn run_app(tui: &mut Tui) -> Result<()> {
                                     } else {
                                         Color::Blue
                                     };
-                                    ctx.print(nx, ny, ratatui::text::Span::styled("█", Style::default().fg(color)));
+                                    ctx.print(
+                                        nx,
+                                        ny,
+                                        ratatui::text::Span::styled(
+                                            "█",
+                                            Style::default().fg(color),
+                                        ),
+                                    );
                                 }
                             }
                         }

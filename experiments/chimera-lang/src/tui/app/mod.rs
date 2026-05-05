@@ -37,9 +37,7 @@ fn check_hot_reload(vm: &mut ChimeraVM, app_state: &mut AppState) {
 
     let mut src = String::new();
     let limit = 1024 * 1024; // 1MB limit
-    if let Ok(bytes) =
-        file.take(limit + 1).read_to_string(&mut src)
-    {
+    if let Ok(bytes) = file.take(limit + 1).read_to_string(&mut src) {
         if bytes as u64 <= limit {
             let parent = path.parent();
             if let Ok(new_dna) = crate::compiler::compile(&src, parent) {

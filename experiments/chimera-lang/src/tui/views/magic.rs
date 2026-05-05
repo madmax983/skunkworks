@@ -27,8 +27,15 @@ pub(crate) fn render_prolouge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             title_style,
         )),
         Line::from(""),
-        Line::from(vec![Span::raw("🧬 Current Energy: "), Span::raw(vm.energy.to_string()), Span::raw(" J")]),
-        Line::from(vec![Span::raw("🍄 Entropy Level: "), Span::raw(vm.glitch_level.to_string())]),
+        Line::from(vec![
+            Span::raw("🧬 Current Energy: "),
+            Span::raw(vm.energy.to_string()),
+            Span::raw(" J"),
+        ]),
+        Line::from(vec![
+            Span::raw("🍄 Entropy Level: "),
+            Span::raw(vm.glitch_level.to_string()),
+        ]),
         Line::from(""),
         Line::from("Active Mutations:"),
     ];
@@ -494,13 +501,19 @@ pub(crate) fn render_verbum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
                 Style::default().add_modifier(Modifier::BOLD),
             )]),
             Line::from(format!("Rarity: {:?}", word.rarity)),
-            Line::from(vec![Span::raw("Power Cost: "), Span::raw(word.cost.to_string())]),
+            Line::from(vec![
+                Span::raw("Power Cost: "),
+                Span::raw(word.cost.to_string()),
+            ]),
             Line::from(""),
             Line::from("Meaning (Genes):"),
         ];
 
         for gene in &word.genes {
-            details.push(Line::from(vec![Span::raw("  "), Span::raw(gene.op.to_string())]));
+            details.push(Line::from(vec![
+                Span::raw("  "),
+                Span::raw(gene.op.to_string()),
+            ]));
         }
 
         let p = Paragraph::new(details)
@@ -663,7 +676,10 @@ pub(crate) fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
 
     // Right: Karma & Miracles
     let info = vec![
-        Line::from(vec![Span::raw("Karma: "), Span::raw(vm.akashic.karma.to_string())]),
+        Line::from(vec![
+            Span::raw("Karma: "),
+            Span::raw(vm.akashic.karma.to_string()),
+        ]),
         Line::from(" "),
         Line::from("Miracles (Cost):"),
         Line::from("  0: Resurrection (1000)"),
@@ -922,7 +938,10 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             }
         }
     }
-    info.push(Line::from(vec![Span::raw("Active Signals: "), Span::raw(signal_count.to_string())]));
+    info.push(Line::from(vec![
+        Span::raw("Active Signals: "),
+        Span::raw(signal_count.to_string()),
+    ]));
 
     // Rhythm Status
     info.push(Line::from(format!(
@@ -940,7 +959,10 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         vm.prologue_state.mycelium_buffer.len()
     )));
     if let Some(val) = vm.prologue_state.mycelium_buffer.front() {
-        info.push(Line::from(vec![Span::raw("  Head: "), Span::raw(val.to_string())]));
+        info.push(Line::from(vec![
+            Span::raw("  Head: "),
+            Span::raw(val.to_string()),
+        ]));
     }
 
     // Check for Agent at Cursor
@@ -965,7 +987,10 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             "?".to_string()
         };
 
-        info.push(Line::from(vec![Span::raw("Type: "), Span::raw(type_str.to_string())]));
+        info.push(Line::from(vec![
+            Span::raw("Type: "),
+            Span::raw(type_str.to_string()),
+        ]));
 
         if type_str == "₣" {
             info.push(Line::from("Forth Stack:"));
@@ -979,7 +1004,10 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
                 info.push(Line::from(" (Empty)"));
             }
         } else {
-            info.push(Line::from(vec![Span::raw("State: "), Span::raw(agent.state.to_string())]));
+            info.push(Line::from(vec![
+                Span::raw("State: "),
+                Span::raw(agent.state.to_string()),
+            ]));
         }
     }
 
@@ -1101,9 +1129,15 @@ pub(crate) fn render_forge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
         });
 
     let test_text = vec![
-        Line::from(vec![Span::raw("Input: "), Span::raw(app_state.forge_test_input.to_string())]),
+        Line::from(vec![
+            Span::raw("Input: "),
+            Span::raw(app_state.forge_test_input.to_string()),
+        ]),
         Line::from("---"),
-        Line::from(vec![Span::raw("Output: "), Span::raw(app_state.forge_test_output.to_string())]),
+        Line::from(vec![
+            Span::raw("Output: "),
+            Span::raw(app_state.forge_test_output.to_string()),
+        ]),
     ];
 
     f.render_widget(Paragraph::new(test_text).block(test_block), right_chunks[1]);
@@ -1172,7 +1206,10 @@ pub(crate) fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
             .split(chunks[1]);
 
         let mut info_text = vec![
-            Line::from(vec![Span::raw("Mutation: "), Span::raw(trace.mutation_desc.to_string())]),
+            Line::from(vec![
+                Span::raw("Mutation: "),
+                Span::raw(trace.mutation_desc.to_string()),
+            ]),
             Line::from(format!(
                 "Energy: {} -> {} (Cost: {})",
                 trace.result_energy + trace.energy_cost, // Approx start
@@ -1183,7 +1220,10 @@ pub(crate) fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
                 "Status: {}",
                 if trace.status == 1 { "Alive" } else { "Dead" }
             )),
-            Line::from(vec![Span::raw("Accepted: "), Span::raw(trace.accepted.to_string())]),
+            Line::from(vec![
+                Span::raw("Accepted: "),
+                Span::raw(trace.accepted.to_string()),
+            ]),
         ];
 
         if trace.is_nightmare {
@@ -1373,7 +1413,10 @@ pub(crate) fn render_kaleidoscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: 
 
     if let Some(state) = &vm.piet_state {
         info_lines.push(Line::from(""));
-        info_lines.push(Line::from(vec![Span::raw("Steps: "), Span::raw(state.steps.to_string())]));
+        info_lines.push(Line::from(vec![
+            Span::raw("Steps: "),
+            Span::raw(state.steps.to_string()),
+        ]));
         info_lines.push(Line::from(format!(
             "DP: {:?} | CC: {:?}",
             state.dp, state.cc
@@ -1383,7 +1426,10 @@ pub(crate) fn render_kaleidoscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: 
         info_lines.push(Line::from(""));
         info_lines.push(Line::from("Stack (Top):"));
         for val in state.stack.iter().rev().take(10) {
-            info_lines.push(Line::from(vec![Span::raw("  "), Span::raw(val.to_string())]));
+            info_lines.push(Line::from(vec![
+                Span::raw("  "),
+                Span::raw(val.to_string()),
+            ]));
         }
     } else {
         info_lines.push(Line::from(""));
@@ -1457,7 +1503,10 @@ pub(crate) fn render_bestiary(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             Line::from(format!("Genome ID: {:x}", org.genome_id)),
             Line::from(format!("Traits: {:?}", org.traits)),
             Line::from(format!("Location: {:?}", org.context_loc)),
-            Line::from(vec![Span::raw("Stack Depth: "), Span::raw(org.stack.len().to_string())]),
+            Line::from(vec![
+                Span::raw("Stack Depth: "),
+                Span::raw(org.stack.len().to_string()),
+            ]),
             Line::from(format!("IP: {:?}", org.ip)),
             Line::from(format!("Direction: {:?}", org.direction)),
         ];
