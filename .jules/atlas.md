@@ -46,3 +46,6 @@
 ## 2024-05-22 - [Extracted Core Op Dispatch]
 **Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` retained the core operational dispatch block (`exec_core_op`), a lengthy `match` structure acting as a central router for basic opcodes. This cluttered the central module unnecessarily.
 **Blueprint:** Extracted `exec_core_op` into a dedicated file `experiments/chimera-lang/src/vm/ops/core_dispatch.rs`. This cleanly isolates the core execution dispatch logic and further reduces the footprint of the central `mod.rs`.
+## 2026-05-05 - [Extracting System Sub-processors]
+**Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` was heavily bloated (~3500 lines) with extensive operational logic for subsystem processing (`process_environment`, `process_symbiotes`, `process_nova_environment`, `process_subsystems`, `process_chaos_and_events`). These systems intertwined pure VM core loop state with external domain logic like nova flux and diffusion.
+**Blueprint:** Created `experiments/chimera-lang/src/vm/systems/` directory. Extracted the large system processing loops into cleanly isolated, domain-specific submodules (`environment.rs`, `symbiotes.rs`, `nova_environment.rs`, `subsystems.rs`, `chaos.rs`), bringing the `mod.rs` file size down significantly.
