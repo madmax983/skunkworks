@@ -869,6 +869,51 @@ classDiagram
     NovaDispatchOps ..> ChimeraVM : Extends (impl)
 ```
 
+### ChimeraVM System Sub-processors (ADR 095)
+
+The `ChimeraVM` operational loops are decoupled into domain-specific subsystem processors within the `vm::systems` module.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        <<Struct>>
+        +step()
+        +execute_gene()
+    }
+
+    class EnvironmentSystem {
+        <<Module: systems/environment.rs>>
+        +process_environment()
+    }
+
+    class NovaEnvironmentSystem {
+        <<Module: systems/nova_environment.rs>>
+        +process_nova_environment()
+    }
+
+    class SymbioteSystem {
+        <<Module: systems/symbiotes.rs>>
+        +process_symbiotes()
+    }
+
+    class SubsystemProcessor {
+        <<Module: systems/subsystems.rs>>
+        +process_subsystems()
+    }
+
+    class ChaosSystem {
+        <<Module: systems/chaos.rs>>
+        +process_chaos_and_events()
+    }
+
+    EnvironmentSystem ..> ChimeraVM : Extends (impl)
+    NovaEnvironmentSystem ..> ChimeraVM : Extends (impl)
+    SymbioteSystem ..> ChimeraVM : Extends (impl)
+    SubsystemProcessor ..> ChimeraVM : Extends (impl)
+    ChaosSystem ..> ChimeraVM : Extends (impl)
+```
+
 ### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073, ADR 077, ADR 081, ADR 084, ADR 086, ADR 087, ADR 088)
 
 The TUI event loop is decoupled into specific input handler modules to avoid a monolithic `run_app` loop. The main `run_tui` loop delegates directly to the modularized `app::run_app` execution logic, reducing `tui/mod.rs` to a lightweight facade. The handlers themselves are further decoupled into specific input type submodules.
