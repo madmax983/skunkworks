@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **market-platter**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. A trivial loop script operating without proper structure or emergence. Grace period: 24h.
+- **flock-platter**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. It lacks a `main.rs` binary executable and visualizer, remaining an unrealized data structure without true emergent complexity. Grace period: 24h.
 ## ☠️ Executed
+- **market-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It remained a trivial 76-line terminal loop script without true emergent complexity. Grace period expired. Moved to graveyard.
 - **clockwork-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Panics in headless environments due to missing WAYLAND_DISPLAY/DISPLAY. Grace period expired. Moved to graveyard.
 - **gray-poincare**: Specimen executed. Diagnosis: Skeletal Implementation / Minimal Execution Quality. The specimen remained a trivial UI wrapper around existing math, failing to demonstrate true emergence or novel physics interaction. Grace period expired. Moved to graveyard.
 - **code-bio-dome**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen failed to compile due to an unresolved import `tui_shared::semantic`. Grace period expired. Moved to graveyard.
