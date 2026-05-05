@@ -89,6 +89,10 @@ impl<'a> TensionBar<'a> {
 }
 
 fn get_tension_color(tension: f64) -> Color {
+    if tension >= 0.9 {
+        return Color::LightRed; // Danger zone flashing
+    }
+
     // Gradient Calculation: Cyan -> Yellow -> Red
     let (r, g, b) = if tension < 0.5 {
         // Cyan (0, 255, 255) to Yellow (255, 255, 0)
