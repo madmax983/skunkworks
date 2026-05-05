@@ -15,12 +15,7 @@ pub struct SwarmPlatter {
 }
 
 impl SwarmPlatter {
-    pub fn new(
-        num_boids: usize,
-        width: f64,
-        height: f64,
-        params: FlockingParams,
-    ) -> Self {
+    pub fn new(num_boids: usize, width: f64, height: f64, params: FlockingParams) -> Self {
         let mut positions = Vec::with_capacity(num_boids);
         let mut velocities = Vec::with_capacity(num_boids);
 

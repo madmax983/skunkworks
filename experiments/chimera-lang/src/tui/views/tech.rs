@@ -342,9 +342,16 @@ pub(crate) fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &
     let mut info_lines = Vec::new();
 
     if let Some(id) = owner {
-        info_lines.push(Line::from(vec![Span::raw("Owner: Strand "), Span::raw(id.to_string())]));
+        info_lines.push(Line::from(vec![
+            Span::raw("Owner: Strand "),
+            Span::raw(id.to_string()),
+        ]));
         if let Some(rate) = vm.tax_rates.get(&id) {
-            info_lines.push(Line::from(vec![Span::raw("Tax Rate: "), Span::raw(rate.to_string()), Span::raw(" Energy/tick")]));
+            info_lines.push(Line::from(vec![
+                Span::raw("Tax Rate: "),
+                Span::raw(rate.to_string()),
+                Span::raw(" Energy/tick"),
+            ]));
         } else {
             info_lines.push(Line::from("Tax Rate: 0 (Free)"));
         }
@@ -912,7 +919,10 @@ pub(crate) fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             if let Some(crate::vm::Value::Str(name)) = args.first() {
                 if name == "reaction" {
                     if rules_count < 20 {
-                        info.push(Line::from(vec![Span::raw("  "), Span::raw(fact.to_string())]));
+                        info.push(Line::from(vec![
+                            Span::raw("  "),
+                            Span::raw(fact.to_string()),
+                        ]));
                     }
                     rules_count += 1;
                 }
@@ -921,7 +931,11 @@ pub(crate) fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     }
 
     if rules_count > 20 {
-        info.push(Line::from(vec![Span::raw("  ... and "), Span::raw((rules_count - 20).to_string()), Span::raw(" more")]));
+        info.push(Line::from(vec![
+            Span::raw("  ... and "),
+            Span::raw((rules_count - 20).to_string()),
+            Span::raw(" more"),
+        ]));
     }
 
     info.push(Line::from(" "));
@@ -1196,7 +1210,10 @@ pub(crate) fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         Line::from(" "),
         Line::from(format!("Voltage: {:.2} V", v)),
         Line::from(format!("Current: {:.2} A", c)),
-        Line::from(vec![Span::raw("Node Type: "), Span::raw(r_status.to_string())]),
+        Line::from(vec![
+            Span::raw("Node Type: "),
+            Span::raw(r_status.to_string()),
+        ]),
         Line::from(" "),
         Line::from("Opcodes:"),
         Line::from("  battery(v, y, x) - Set Source"),

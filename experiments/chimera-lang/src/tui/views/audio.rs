@@ -321,8 +321,14 @@ pub(crate) fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
                     .add_modifier(Modifier::BOLD),
             ),
         ]),
-        Line::from(vec![Span::raw("BPM: "), Span::raw(app_state.sequencer_state.bpm.to_string())]),
-        Line::from(vec![Span::raw("Tick: "), Span::raw(app_state.sequencer_state.tick.to_string())]),
+        Line::from(vec![
+            Span::raw("BPM: "),
+            Span::raw(app_state.sequencer_state.bpm.to_string()),
+        ]),
+        Line::from(vec![
+            Span::raw("Tick: "),
+            Span::raw(app_state.sequencer_state.tick.to_string()),
+        ]),
     ];
 
     f.render_widget(

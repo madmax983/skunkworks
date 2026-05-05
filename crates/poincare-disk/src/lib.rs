@@ -73,15 +73,11 @@
 use num_complex::Complex;
 use std::f64::consts::PI;
 
-
-
 /// A point in the Poincaré disk ($|z| < 1$).
 ///
 /// While this is an alias for `Complex<f64>`, all functions in this crate assume
 /// that the modulus (norm) of the point is strictly less than 1.0.
 pub type Point = Complex<f64>;
-
-
 
 /// Represents a geodesic segment between two points in the Poincaré disk.
 ///
@@ -188,8 +184,6 @@ impl Geodesic {
         Some((center, radius))
     }
 }
-
-
 
 /// Performs Möbius addition: $ (z + a) / (1 + \bar{a}z) $.
 ///
@@ -352,8 +346,6 @@ mod tests_1 {
         );
     }
 }
-
-
 
 /// Represents a [Möbius transformation](https://en.wikipedia.org/wiki/M%C3%B6bius_transformation) of the form $f(z) = \frac{az + b}{cz + d}$.
 ///
@@ -631,8 +623,6 @@ impl Mobius {
     }
 }
 
-
-
 /// Precomputed constants for generating a hyperbolic tiling.
 ///
 /// Specifically, this struct calculates parameters for a regular $\{p, q\}$ tiling,
@@ -787,4 +777,3 @@ mod tests_2 {
         assert!((c.neighbor_offset - 0.485).abs() < 0.01);
     }
 }
-
