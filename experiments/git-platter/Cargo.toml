@@ -1,0 +1,10 @@
+[package]
+name = "git-platter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+git-associates = { path = "../../crates/git-associates" }
+platter = { path = "../../crates/platter" }
+git2 = "0.20"
+anyhow = "1.0"

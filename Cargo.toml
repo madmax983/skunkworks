@@ -4,6 +4,7 @@ members = [
     "crates/*",
     "experiments/*",
     "experiments/market-platter",
+    "experiments/git-platter",
 
     "experiments/myco-ddos",
 
