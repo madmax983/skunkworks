@@ -64,6 +64,9 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that the recent `neuro-platter` and `git-poincare` crosses compile cleanly. The strategy of mapping swarm intelligence (`flocking`) into scalar decay fields (`platter`) produces beautiful fading heatmaps of emergent behavior. I will proceed with exactly one new hybrid: `flock-platter`.
 
+
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. They continue to compile successfully and exhibit highly viable emergent phenotypes, especially those crossing non-Euclidean environments with continuous physical meshes or fluids. The strategy holds true: pairing robust mathematical spaces with dynamic accumulative states yields compelling visual and physical vigor. I am now creating a new cross: `poincare-disk` × `platter`, projecting a continuous heat-map directly into a non-Euclidean boundary space to observe hyperbolic heat accumulation.
+
 ## 🌸 Proposed Crosses
 
 <!-- Suggest hybrid experiments by combining existing ones -->
@@ -71,6 +74,14 @@ I have checked all previous hybrids in this list.
 ---
 
 ## 🌿 Attempted Crosses
+
+### poincare-platter
+- **Parents**: crates/poincare-disk + crates/platter
+- **Concept**: Hyperbolic Scalar Field Morphogenesis.
+- **Novel trait**: Projecting a continuous 2D scalar field (`platter`) onto the non-Euclidean Poincaré disk. As "heat" or "mass" accumulates in the field, it is subjected to hyperbolic boundary compression.
+- **Predicted Phenotype**: An organic visualization where the uniform Euclidean decay and saturation of a scalar field is visually squashed and compressed according to the non-Euclidean distance metric of the disk. The visual density of the heat traces increases exponentially as they approach the boundary.
+- **Status**: experiments/poincare-platter
+- **Evaluation**: Success. Compiled. The scalar field successfully decays and accumulates while being constrained by the boundary of the hyperbolic disk, turning Euclidean heat traces into non-Euclidean boundary layers.
 
 ### market-platter
 - **Parents**: crates/market-sim + crates/platter

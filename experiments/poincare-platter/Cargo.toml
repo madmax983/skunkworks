@@ -1,0 +1,14 @@
+[package]
+name = "poincare-platter"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+poincare-disk = { path = "../../crates/poincare-disk" }
+platter = { path = "../../crates/platter" }
+anyhow = { workspace = true }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+num-complex = "0.4"
