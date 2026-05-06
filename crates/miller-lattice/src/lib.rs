@@ -15,8 +15,8 @@
 
 use anyhow::Result;
 use cgmath::Vector3;
-use rustc_hash::FxHashMap;
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::collections::VecDeque;
 use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 
@@ -147,7 +147,7 @@ impl Crystal {
     /// Returns an error if the root path cannot be read.
     pub fn build_from_path(root: &Path) -> Result<Self> {
         let mut crystal = Crystal::new();
-        let mut occupied = HashSet::new();
+        let mut occupied = FxHashSet::default();
 
         // Add root at origin
         let root_pos = LatticePoint::new(0, 0, 0);
@@ -350,7 +350,7 @@ mod tests {
         assert_eq!(crystal.atoms.len(), 5);
         assert_eq!(crystal.bonds.len(), 4);
 
-        let mut positions = HashSet::new();
+        let mut positions = FxHashSet::default();
         for atom in &crystal.atoms {
             assert!(
                 positions.insert(atom.position),

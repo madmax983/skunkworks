@@ -33,3 +33,6 @@
 **Bolt Optimization: Removing heap allocations in TUI render hot paths**
 **Learning:** Using the `format!` macro inside `Widget::render` methods to combine strings for Ratatui `Line::from()` causes an unnecessary `String` heap allocation on every single frame.
 **Action:** Replace `format!("{} {}", a, b)` with `Line::from(vec![Span::raw(a), Span::raw(" "), Span::raw(b)])`. While `vec!` still allocates a vector of pointers, it bypasses the significant overhead of string formatting and allocation machinery.
+## [FxHashSet for LatticePoint Collision Detection]
+**Learning:** Swapping `std::collections::HashSet` for `rustc_hash::FxHashSet` is a safe, zero-cost performance optimization for hashing small integer keys or geometric coordinates like `LatticePoint` where cryptographic collision resistance is unnecessary.
+**Action:** Default to `FxHashSet` (via `FxHashSet::default()`) when dealing with grid systems or discrete spatial coordinate lookups.
