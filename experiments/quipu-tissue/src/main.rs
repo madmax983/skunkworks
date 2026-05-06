@@ -44,7 +44,7 @@ impl QuipuWorld {
 
             if i > 0 {
                 let prev = main_cord[i - 1];
-                physics.add_distance_constraint(prev, idx, 1.0); // Stiff main cord
+                let _ = physics.add_distance_constraint(prev, idx, 1.0); // Stiff main cord
             }
         }
 
@@ -90,7 +90,7 @@ impl QuipuWorld {
         for (_cluster_idx, cluster) in data.clusters.iter().enumerate().rev() {
             // Gap between clusters
             let gap_idx = self.physics.add_particle(current_pos, 0.1); // Light string
-            self.physics.add_distance_constraint(prev_idx, gap_idx, 0.8); // Loose gap
+            let _ = self.physics.add_distance_constraint(prev_idx, gap_idx, 0.8); // Loose gap
             cord_particles.push(gap_idx);
             prev_idx = gap_idx;
             current_pos.y -= SEGMENT_LENGTH;
@@ -106,7 +106,7 @@ impl QuipuWorld {
 
                 // Add Actuator Constraint (Muscle) to previous particle
                 // This allows the knot to "climb" or "contract" the cord
-                self.physics.add_actuator_constraint(
+                let _ = self.physics.add_actuator_constraint(
                     prev_idx,
                     p_idx,
                     0.1,
