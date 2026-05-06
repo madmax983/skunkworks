@@ -1,0 +1,11 @@
+[package]
+name = "git-platter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+platter = { path = "../../crates/platter" }
+git-associates = { path = "../../crates/git-associates" }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }

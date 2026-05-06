@@ -67,6 +67,8 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. They continue to compile successfully and exhibit highly viable emergent phenotypes, especially those crossing non-Euclidean environments with continuous physical meshes or fluids. The strategy holds true: pairing robust mathematical spaces with dynamic accumulative states yields compelling visual and physical vigor. I am now creating a new cross: `poincare-disk` × `platter`, projecting a continuous heat-map directly into a non-Euclidean boundary space to observe hyperbolic heat accumulation.
 
+**Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all previous hybrids. They continue to compile successfully and exhibit highly viable emergent phenotypes, especially those crossing non-Euclidean environments with continuous physical meshes or fluids. The strategy holds true: pairing robust mathematical spaces with dynamic accumulative states yields compelling visual and physical vigor. I am now creating a new cross: `git-associates` × `platter`, projecting discrete git commits directly into a continuous 2D scalar field to observe codebase activity heat accumulation.
+
 ## 🌸 Proposed Crosses
 
 <!-- Suggest hybrid experiments by combining existing ones -->
@@ -74,6 +76,14 @@ I have checked all previous hybrids in this list.
 ---
 
 ## 🌿 Attempted Crosses
+
+### git-platter
+- **Parents**: crates/git-associates + crates/platter
+- **Concept**: Git History Heatmap.
+- **Novel trait**: Projecting discrete file modifications across a codebase's history into a continuous 2D scalar field. Codebase modifications dynamically heat and cool the field.
+- **Predicted Phenotype**: An evolving heatmap showing areas of high codebase churn.
+- **Status**: experiments/git-platter
+- **Evaluation**: Success. Compiled. History is effectively rendered as a dynamic accumulation and decay heat map over a 2D scalar field.
 
 ### poincare-platter
 - **Parents**: crates/poincare-disk + crates/platter
