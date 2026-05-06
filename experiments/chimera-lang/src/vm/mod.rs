@@ -1535,7 +1535,6 @@ impl ChimeraVM {
     /// - **Fluid Dynamics**: Updating liquid flow and pressure.
     /// - **Mutation**: Triggering random genetic changes if local Toxicity or Radiation is high.
     /// - **Reality Decay**: Triggering Glitches if local Entropy is critical.
-
     fn check_starvation(&mut self) -> bool {
         if self.energy <= 0 {
             self.halted = true;
