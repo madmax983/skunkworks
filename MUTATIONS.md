@@ -69,6 +69,8 @@ I have checked all previous hybrids in this list.
 
 ## 🌸 Proposed Crosses
 
+
+
 <!-- Suggest hybrid experiments by combining existing ones -->
 
 ---
@@ -1081,3 +1083,12 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An organic visualization where the uniform Euclidean chemical diffusion is visually squashed and compressed according to the non-Euclidean distance metric of the disk ($d = \text{atanh}(r)$). The visual density of the chemical patterns increases exponentially as they approach the boundary.
 - **Status**: experiments/gray-poincare
 - **Evaluation**: Success. Compiled. The Turing patterns map correctly to hyperbolic spatial compression.
+
+
+### locus-platter
+- **Parents**: crates/locus + crates/platter
+- **Concept**: Topological Scalar Field Morphogenesis.
+- **Novel trait**: The scalar field's diffusion, accumulation, and heat mapping are projected onto the topological constraints of a non-planar 2D grid. We drop heat sources and watch them wrap around according to different spatial boundaries.
+- **Predicted Phenotype**: A visual mapping showing how different Euclidean boundaries affect heat.
+- **Status**: experiments/locus-platter
+- **Evaluation**: Success. Compiled. The scalar field correctly diffuses across Torus, Klein Bottle, and Cylinder boundaries, creating bounded topological hotspots.
