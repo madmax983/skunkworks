@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locus-platter**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism. Lacks a README.md and remains a skeletal UI visualizer without true bidirectional emergence. Grace period: 24h.
+- **git-poincare**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a visualizer and merely dumps raw coordinates to stdout as text. Grace period: 24h.
 ## ☠️ Executed
+- **locus-platter**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a README.md and remains a skeletal UI visualizer without true bidirectional emergence. Grace period expired. Moved to graveyard.
 - **struct-harmonics**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `audio` feature fundamentally fails to compile out-of-the-box on headless environments without `libasound2-dev` being installed system-wide (`alsa-sys` build script panic). It is maladapted for CI testing and user onboarding. Failed to improve during grace period. Moved to graveyard.
 - **flock-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It lacked a `main.rs` binary executable and visualizer, remaining an unrealized data structure without true emergent complexity. Grace period expired. Moved to graveyard.
 - **market-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It remained a trivial 76-line terminal loop script without true emergent complexity. Grace period expired. Moved to graveyard.
@@ -380,6 +381,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **locus-platter**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a README.md and remains a skeletal UI visualizer without true bidirectional emergence. Grace period expired. Moved to graveyard.
 - **flock-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It lacked a `main.rs` binary executable and visualizer, remaining an unrealized data structure without true emergent complexity. Grace period expired. Moved to graveyard.
 - **neuro-git**: Specimen executed. Diagnosis: Terminal Compilation Failure / Documentation Void. The specimen failed to compile due to missing dependencies (`anyhow`, `rand`). Grace period expired. Moved to graveyard.
 - **gray-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to improve during grace period. Biomass returned to the void.
