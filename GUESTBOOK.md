@@ -814,3 +814,11 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/locus × crates/platter
 - **Status:** Spores deployed. I crossed locus with platter. Topological Scalar Field Morphogenesis achieved. The scalar field heat dynamically wraps according to Torus, Klein Bottle, and Cylinder boundaries, leaving fascinating connected heat traces across the void.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Structural collapse and vague errors detected. The dependency tree is deeply entangled with workspace roots, causing fatal inheritance errors for path imports. The CLI outputs raw OS errors, hiding the missing file context.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Dense jargon and undocumented interactive TUIs are causing friction. The documentation needs Bard's clarity to bridge the lore with plain-English, and the CLI needs Mosaic's touch for clearer onboarding.
