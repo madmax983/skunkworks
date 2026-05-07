@@ -1,0 +1,13 @@
+[package]
+name = "locus-platter"
+version = "0.1.0"
+edition = "2021"
+description = "Topological Scalar Field Morphogenesis"
+
+[dependencies]
+locus.workspace = true
+platter.workspace = true
+anyhow.workspace = true
+crossterm.workspace = true
+ratatui.workspace = true
+tui-shared.workspace = true

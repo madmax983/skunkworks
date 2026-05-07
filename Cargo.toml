@@ -25,6 +25,7 @@ members = [
     "experiments/locus-ddos",
     "experiments/poincare-resonance",
     "experiments/poincare-lattice",
+    "experiments/locus-platter",
     "experiments/neuro-resonance",
 ]
 exclude = [
