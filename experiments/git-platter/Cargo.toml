@@ -1,0 +1,12 @@
+[package]
+name = "git-platter"
+version = "0.1.0"
+edition = "2021"
+description = "Git History Heatmap"
+
+[dependencies]
+git-associates = { path = "../../crates/git-associates" }
+platter = { path = "../../crates/platter" }
+anyhow.workspace = true
+chrono = "0.4"
+tui-shared = { path = "../../crates/tui-shared" }
