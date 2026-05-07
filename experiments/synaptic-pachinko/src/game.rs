@@ -1,19 +1,55 @@
-use crate::audio::{NeuronHit, Snapshot};
+use crate::audio::NeuronHit;
 use crate::physics::{resolve_collision, NeuronPin, PacketKind, Particle};
 use locus::Vec2;
 use rand::Rng;
 
+/// The overseer of the Pachinko arena.
+///
+/// `GameState` holds the entire simulation space: the falling [`crate::physics::Particle`]s (network packets)
+/// and the static grid of [`crate::physics::NeuronPin`]s. It tracks the score and the synchronized visual
+/// representation of the neuron voltages, updated via [`crate::audio::Snapshot`]s from the audio engine.
+///
+/// ## Examples
+/// ```
+/// use synaptic_pachinko::game::GameState;
+///
+/// let mut game = GameState::new(800.0, 600.0);
+/// game.spawn_packet(); // Drop a new packet into the arena
+/// assert_eq!(game.particles.len(), 1);
+/// ```
 pub struct GameState {
+    /// The logical width of the game area.
     pub width: f64,
+    /// The logical height of the game area.
     pub height: f64,
+    /// Dropping network packets currently traversing the grid.
     pub particles: Vec<Particle>,
+    /// The static layout of neural pins.
     pub pins: Vec<NeuronPin>,
+    /// A synchronized view of all neuron voltages.
     pub neuron_voltages: Vec<f32>,
+    /// The averaged electrical field across the entire pin network.
     pub mean_field: f32,
+    /// The number of collisions recorded.
     pub score: u64,
 }
 
 impl GameState {
+    /// Instantiates the game state and procedurally generates the lattice layout of [`crate::physics::NeuronPin`]s.
+    ///
+    /// This establishes the play area boundaries and sets up the structural network that will translate collisions into audio synthesis.
+    ///
+    /// ## Arguments
+    ///
+    /// * `width` - Total logical width defining the horizontal boundaries.
+    /// * `height` - Total logical height defining the drop ceiling.
+    ///
+    /// ## Examples
+    /// ```
+    /// use synaptic_pachinko::game::GameState;
+    /// let game = GameState::new(100.0, 100.0);
+    /// assert_eq!(game.score, 0);
+    /// ```
     pub fn new(width: f64, height: f64) -> Self {
         // Generate Pins
         let mut pins = Vec::new();
@@ -45,6 +81,18 @@ impl GameState {
         }
     }
 
+    /// Injects a new data packet into the system to challenge the neural lattice.
+    ///
+    /// The packet is spawned near the top center with a randomized protocol type ([`crate::physics::PacketKind`]).
+    /// This simulates incoming network traffic hitting the firewall/neural board.
+    ///
+    /// ## Examples
+    /// ```
+    /// use synaptic_pachinko::game::GameState;
+    /// let mut game = GameState::new(100.0, 100.0);
+    /// game.spawn_packet();
+    /// assert_eq!(game.particles.len(), 1);
+    /// ```
     pub fn spawn_packet(&mut self) {
         let mut rng = rand::thread_rng();
         let x = self.width * 0.5 + rng.gen_range(-5.0..5.0);
@@ -56,7 +104,25 @@ impl GameState {
         self.particles.push(Particle::new(x, 0.0, kind));
     }
 
-    pub fn tick(&mut self, dt: f64, hit_tx: &crossbeam_channel::Sender<NeuronHit>) {
+    /// Advances the chaotic physical simulation of the arena.
+    ///
+    /// In this phase, gravity pulls the packets downward. If they strike a pin, the collision is resolved mathematically,
+    /// and the resulting kinetic energy is fired down the `hit_tx` channel as a [`crate::audio::NeuronHit`] to wake up the audio thread.
+    ///
+    /// ## Arguments
+    ///
+    /// * `dt` - Time delta (the frame step duration).
+    /// * `hit_tx` - Channel used to communicate collision energy into the audio engine.
+    ///
+    /// ## Examples
+    /// ```
+    /// use synaptic_pachinko::game::GameState;
+    /// use crossbeam_channel::unbounded;
+    /// let mut game = GameState::new(100.0, 100.0);
+    /// let (tx, rx) = unbounded();
+    /// game.tick(0.016, &tx);
+    /// ```
+    pub fn tick(&mut self, dt: f64, hit_tx: &crossbeam_channel::Sender<crate::audio::NeuronHit>) {
         let gravity = Vec2::new(0.0, 40.0);
 
         for p in &mut self.particles {
@@ -99,7 +165,26 @@ impl GameState {
         self.particles.retain(|p| p.pos.y < self.height + 10.0);
     }
 
-    pub fn update_voltages(&mut self, snap: Snapshot) {
+    /// Synchronizes the visual rendering loop with the high-frequency audio simulation.
+    ///
+    /// Since the audio thread is integrating Izhikevich equations constantly, the UI thread must occasionally pull
+    /// a [`crate::audio::Snapshot`] to know what colors to paint the pins without bottlenecking the sound.
+    ///
+    /// ## Arguments
+    ///
+    /// * `snap` - The frozen network state captured from the audio thread.
+    ///
+    /// ## Examples
+    /// ```
+    /// use synaptic_pachinko::game::GameState;
+    /// use synaptic_pachinko::audio::Snapshot;
+    /// let mut game = GameState::new(100.0, 100.0);
+    /// // Create a snapshot with voltages matching the pin count
+    /// let len = game.pins.len();
+    /// game.update_voltages(Snapshot { voltages: vec![-65.0; len], mean_field: -40.0 });
+    /// assert_eq!(game.mean_field, -40.0);
+    /// ```
+    pub fn update_voltages(&mut self, snap: crate::audio::Snapshot) {
         if snap.voltages.len() == self.pins.len() {
             self.neuron_voltages = snap.voltages;
         }
