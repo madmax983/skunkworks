@@ -1,6 +1,16 @@
+//! Synaptic Pachinko is a Terminal User Interface (TUI) based game that combines
+//! classic Pachinko mechanics with simulating Izhikevich neurons.
+//!
+//! Packets fall through the terminal, striking pins that behave as spiking neurons,
+//! building charge until they reach a threshold and emit audio synthesis.
+
+/// Audio module for sound synthesis mapping neuronal action potentials to audio.
 pub mod audio;
+/// Game state and game logic (updating the position of packets, handling neuron charge, scoring).
 pub mod game;
+/// Neural definitions re-exported from neuro-sim.
 pub mod neuron;
+/// Physics structures and collision resolution for packets dropping on the neuron pins.
 pub mod physics;
 
 use anyhow::Result;

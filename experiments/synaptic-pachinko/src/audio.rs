@@ -6,14 +6,50 @@ use std::sync::Arc;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
 #[derive(Clone, Copy, Debug)]
+/// A physical collision event translated into neural energy.
+///
+/// When a falling [`crate::physics::PacketKind`] strikes a [`crate::physics::NeuronPin`] in the physics simulation,
+/// it generates a `NeuronHit`. The audio engine consumes these events, converting
+/// the physical kinetic energy into a sudden spike of voltage directed at the corresponding Izhikevich neuron.
+///
+/// ## Examples
+/// ```
+/// use synaptic_pachinko::audio::NeuronHit;
+///
+/// let impact = NeuronHit {
+///     index: 42,
+///     strength: 15.0,
+/// };
+/// assert_eq!(impact.strength, 15.0);
+/// ```
 pub struct NeuronHit {
+    /// The index of the struck neuron.
     pub index: usize,
+    /// The charge/impact strength deposited to the neuron.
     pub strength: f32,
 }
 
 #[derive(Clone, Debug)]
+/// A frozen moment in time capturing the electrical potential of the entire network.
+///
+/// Because the audio synthesis engine runs at high frequency in a background thread,
+/// the main UI thread periodically consumes a `Snapshot` to synchronize the visual
+/// representations of the [`crate::physics::NeuronPin`]s without blocking the audio simulation.
+///
+/// ## Examples
+/// ```
+/// use synaptic_pachinko::audio::Snapshot;
+///
+/// let state = Snapshot {
+///     voltages: vec![-65.0, -40.0, 30.0], // The third neuron is spiking!
+///     mean_field: -25.0,
+/// };
+/// assert_eq!(state.voltages.len(), 3);
+/// ```
 pub struct Snapshot {
+    /// Voltages for all tracked neurons.
     pub voltages: Vec<f32>,
+    /// The mean field voltage (average potential across the network).
     pub mean_field: f32,
 }
 
@@ -25,13 +61,43 @@ enum AudioBackend {
     Thread(std::thread::JoinHandle<()>),
 }
 
+/// The maestro orchestrating the symphony of spiking neurons.
+///
+/// `AudioEngine` runs in a dedicated background thread (or CPAL audio callback),
+/// continuously stepping the differential equations of a network of Izhikevich neurons.
+/// It listens for incoming [`NeuronHit`] events from the physics thread, injects charge,
+/// and synthesizes an audio waveform from the resulting action potentials.
+///
+/// It also periodically publishes a [`Snapshot`] of the network's internal voltages
+/// back to the main thread for rendering.
+///
+/// ## Examples
+/// ```no_run
+/// use synaptic_pachinko::audio::AudioEngine;
+///
+/// // Create an engine simulating a network of 100 pins
+/// let engine = AudioEngine::new(100).expect("Failed to open audio device");
+///
+/// // Send a hit event to the 5th neuron
+/// engine.hit_tx.send(synaptic_pachinko::audio::NeuronHit {
+///     index: 5,
+///     strength: 20.0,
+/// }).unwrap();
+/// ```
 pub struct AudioEngine {
     _backend: AudioBackend,
+    /// Channel sender to send collision impacts to the audio thread.
     pub hit_tx: crossbeam_channel::Sender<NeuronHit>,
+    /// Buffer consumer containing the latest network voltage state.
     pub snapshot_rx: Consumer<Snapshot, Arc<HeapRb<Snapshot>>>,
 }
 
 impl AudioEngine {
+    /// Initializes the audio engine, starting background synthesis threads.
+    ///
+    /// ## Arguments
+    ///
+    /// * `neuron_count` - The number of neurons (pins) to simulate.
     pub fn new(neuron_count: usize) -> anyhow::Result<Self> {
         let (hit_tx, hit_rx) = crossbeam_channel::unbounded::<NeuronHit>();
 
