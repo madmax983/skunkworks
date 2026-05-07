@@ -59,9 +59,7 @@ fn main() -> Result<()> {
         // We'll calculate a step size that pushes the point based on the churn size.
         // Step size must be < 1.0 to stay within the unit disk.
         // We use a logarithmic scale to prevent massive commits from instantly hitting the boundary.
-        let step_magnitude = (1.0 - (1.0 / (1.0 + (churn / 100.0).ln())))
-            .max(0.01)
-            .min(0.99);
+        let step_magnitude = (1.0 - (1.0 / (1.0 + (churn / 100.0).ln()))).clamp(0.01, 0.99);
 
         // We pick a random angle to spread the commits out, creating an organic cluster
         let angle = rng.gen_range(0.0..std::f64::consts::TAU);
