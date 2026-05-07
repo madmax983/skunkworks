@@ -89,12 +89,12 @@ pub fn process_forth_agent(
                 }
 
                 // Math
-                "+" | "add" => binary_op(&mut updated_agent.stack, |a, b| a + b),
-                "-" | "sub" => binary_op(&mut updated_agent.stack, |a, b| a - b),
-                "*" | "mul" => binary_op(&mut updated_agent.stack, |a, b| a * b),
+                "+" | "add" => binary_op(&mut updated_agent.stack, |a, b| a.saturating_add(b)),
+                "-" | "sub" => binary_op(&mut updated_agent.stack, |a, b| a.saturating_sub(b)),
+                "*" | "mul" => binary_op(&mut updated_agent.stack, |a, b| a.saturating_mul(b)),
                 "/" | "div" => binary_op(
                     &mut updated_agent.stack,
-                    |a, b| if b != 0 { a / b } else { 0 },
+                    |a, b| if b != 0 { a.saturating_div(b) } else { 0 },
                 ),
                 "%" | "mod" => binary_op(
                     &mut updated_agent.stack,
