@@ -61,7 +61,11 @@ impl<'a> LogList<'a> {
     /// let logs: Vec<&str> = vec!["System started", "Error: timeout"];
     /// let log_list = LogList::new(logs);
     /// ```
-    pub fn new(items: Vec<impl Into<Cow<'a, str>>>) -> Self {
+    pub fn new<I>(items: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<Cow<'a, str>>,
+    {
         Self {
             items: items.into_iter().map(|i| i.into()).collect(),
             block: None,

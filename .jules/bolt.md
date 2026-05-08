@@ -36,3 +36,7 @@
 ## [FxHashSet for LatticePoint Collision Detection]
 **Learning:** Swapping `std::collections::HashSet` for `rustc_hash::FxHashSet` is a safe, zero-cost performance optimization for hashing small integer keys or geometric coordinates like `LatticePoint` where cryptographic collision resistance is unnecessary.
 **Action:** Default to `FxHashSet` (via `FxHashSet::default()`) when dealing with grid systems or discrete spatial coordinate lookups.
+
+**[LogList Iterator Refactor]**
+**Learning:** Collecting iterators into a `Vec` inside a constructor when the caller likely already has an iterator (or can provide one easily) forces an unnecessary heap allocation and an extra O(N) iteration loop. By taking `impl IntoIterator` and directly collecting into the struct's internal `Vec`, we elide that middle-man allocation.
+**Action:** Always prefer `impl IntoIterator` over `Vec<T>` for constructor arguments that ultimately get consumed and collected.
