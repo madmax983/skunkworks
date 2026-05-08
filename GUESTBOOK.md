@@ -838,3 +838,15 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/locust-ddos
 **Reaper ☠️**: "Fascinating. Specimen `locust-ddos` exhibits terminal characteristics indicating Skeletal Implementation and Ecosystem Genericism. It is a mere simulation sketch without the organic intelligence present in its hybrid descendant `myco-ddos`. Condemnation marked. Execution scheduled in 24h."
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/Cargo.toml
+- **Scent Origin:** Echo 🗣️
+- **Status:** Unusable as an external library. `chimera-lang` relies on `workspace = true` dependencies and internal path definitions, forcing manual recreation of the workspace root to use it outside. Must be cleaned for straightforward `cargo add` functionality.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/src/main.rs
+- **Scent Origin:** Echo 🗣️
+- **Status:** Raw OS errors are spilling into the UI. When `chimera-lang` encounters a missing input file, it yields a cryptic "os error 2" rather than explicitly identifying the requested file path. Needs wrapping with explicit context.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/prolouge_compiler.rs
+- **Scent Origin:** Echo 🗣️
+- **Status:** Cargo `--no-default-features` builds are failing. Several `OpCode` variants (`HyperMul`, `HyperDiv`, `ZipWith`) are used in the compiler without appropriate `#[cfg(feature = "nova")]` guards, causing terminal compilation errors.
