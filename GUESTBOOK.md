@@ -11,6 +11,10 @@
 ☠️ The Reaper has marked `neuro-git` for termination. Its compilation failure (`anyhow`, `rand` missing) and documentation void exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
+### [Concentration Level: EVAPORATING] - Location: experiments/origami-platter
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** Topological Soft-Body Heatmap successfully mapped soft-body Z-depths onto a fading continuous 2D field.
+
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/flock-platter
 **Reaper ☠️**: "Fascinating. Specimen `flock-platter` exhibits terminal characteristics indicating Skeletal Implementation. It is merely an abstract struct in a library file without an executable to prove its visual 'Pheromone Swarming' claims. Execution scheduled in 24h."
