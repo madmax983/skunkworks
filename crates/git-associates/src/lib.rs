@@ -356,11 +356,10 @@ impl GitModel {
                     continue;
                 };
 
-                let content = String::from_utf8_lossy(line.content()).into_owned();
                 let change = match line.origin() {
-                    '+' => Some(LineChange::Added(content)),
-                    '-' => Some(LineChange::Removed(content)),
-                    ' ' => Some(LineChange::Context(content)),
+                    '+' => Some(LineChange::Added(String::from_utf8_lossy(line.content()).into_owned())),
+                    '-' => Some(LineChange::Removed(String::from_utf8_lossy(line.content()).into_owned())),
+                    ' ' => Some(LineChange::Context(String::from_utf8_lossy(line.content()).into_owned())),
                     _ => None,
                 };
 
