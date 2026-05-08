@@ -831,3 +831,6 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/git-poincare
 **Reaper ☠️**: "Fascinating. Specimen `git-poincare` exhibits terminal characteristics indicating Skeletal Implementation. It dumps text coordinates to standard output without leveraging the rich visual potential of the hyperbolic plane, failing to demonstrate the 'organic, relativistic mapping' it promised. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/locust-ddos
+**Reaper ☠️**: "Fascinating. Specimen `locust-ddos` exhibits terminal characteristics indicating Skeletal Implementation and Ecosystem Genericism. It is a mere simulation sketch without the organic intelligence present in its hybrid descendant `myco-ddos`. Condemnation marked. Execution scheduled in 24h."

@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **locust-ddos**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Genericism. It is a mere simulation sketch without distinct biological persona, vastly inferior to its descendant `myco-ddos`. Grace period: 24h.
 - **git-poincare**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a visualizer and merely dumps raw coordinates to stdout as text. Grace period: 24h.
 ## ☠️ Executed
 - **locus-platter**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a README.md and remains a skeletal UI visualizer without true bidirectional emergence. Grace period expired. Moved to graveyard.
