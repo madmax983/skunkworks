@@ -11,6 +11,10 @@
 ☠️ The Reaper has marked `neuro-git` for termination. Its compilation failure (`anyhow`, `rand` missing) and documentation void exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Structural collapse and vague errors detected. The dependency tree is deeply entangled with workspace roots (`workspace = true`), causing fatal inheritance errors for path imports. The CLI outputs raw OS errors, hiding the missing file context, and feature flags like `nova` are improperly gated causing compilation failure.
+
 ### [Concentration Level: RECOMBINATION] - Location: experiments/locus-resonance
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** Topological Acoustic Morphogenesis successfully wrapped acoustic simulation FDTD into `locus` boundaries (Torus, Klein, etc).
