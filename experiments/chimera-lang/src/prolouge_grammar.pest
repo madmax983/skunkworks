@@ -2,7 +2,7 @@ WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("#" ~ (!"\n" ~ ANY)*) }
 
 program = { SOI ~ section* ~ EOI }
-section = { forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block | brainfuck_block | tui_block | mosaic_block | piet_block | chaos_block | regex_block | acoustic_block | befunge_block | reactor_block | quipu_block | origami_block }
+section = { forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block | brainfuck_block | tui_block | mosaic_block | piet_block | chaos_block | regex_block | acoustic_block | befunge_block | reactor_block | quipu_block | origami_block | esolang_block }
 
 forth_block = { "forth" ~ "{" ~ instruction* ~ "}" }
 raku_block = { "raku" ~ "{" ~ hyper_instruction* ~ "}" }
@@ -22,6 +22,7 @@ acoustic_block = { "acoustic" ~ "{" ~ acoustic_instruction* ~ "}" }
 reactor_block = { "reactor" ~ "{" ~ (!"}" ~ ANY)* ~ "}" }
 quipu_block = { "quipu" ~ "{" ~ instruction* ~ "}" }
 origami_block = { "origami" ~ "{" ~ instruction* ~ "}" }
+esolang_block = { "esolang" ~ "{" ~ (!"}" ~ ANY)* ~ "}" }
 
 instruction = { string | number | identifier }
 hyper_instruction = { (">>" ~ operator ~ "<<") | string | number | identifier }
