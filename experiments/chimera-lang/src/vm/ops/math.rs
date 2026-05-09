@@ -64,7 +64,11 @@ impl crate::vm::ChimeraVM {
                         let b = self.stack.pop().unwrap();
                         let a = self.stack.pop().unwrap();
                         if let (Value::Str(s1), Value::Str(s2)) = (a, b) {
-                            self.stack.push(Value::Str(s1 + &s2));
+                            if s1.len().saturating_add(s2.len()) > crate::vm::MAX_STRING_LEN {
+                                self.output.push("Error: String length exceeds maximum allowed length".to_string());
+                            } else {
+                                self.stack.push(Value::Str(s1 + &s2));
+                            }
                             return;
                         }
                     }

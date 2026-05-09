@@ -48,6 +48,7 @@ mod tests {
         }
 
         // Verify safety
+        // The VM successfully blocked the explosion. It either pushed an error or left a safe string.
         if let Some(Value::Str(s)) = vm.stack.last() {
             println!("Final String Length: {}", s.len());
             assert!(
@@ -57,7 +58,10 @@ mod tests {
                 MAX_STRING_LEN
             );
         } else {
-            panic!("Stack empty or invalid type");
+            // If the stack doesn't contain a string at the end, it means the operation aborted safely.
+            // Let's verify the error message.
+            assert!(vm.output.iter().any(|msg| msg.contains("Error: String length exceeds maximum allowed length")));
         }
+
     }
 }
