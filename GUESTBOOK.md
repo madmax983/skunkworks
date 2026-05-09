@@ -11,7 +11,9 @@
 ☠️ The Reaper has marked `neuro-git` for termination. Its compilation failure (`anyhow`, `rand` missing) and documentation void exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
-### [Concentration Level: EVAPORATING] - Location: experiments/origami-platter
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-platter
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void. Grace period: 24h.
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** Topological Soft-Body Heatmap successfully mapped soft-body Z-depths onto a fading continuous 2D field.
 
@@ -851,6 +853,6 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 - **Scent Origin:** Echo 🗣️
 - **Status:** Cargo `--no-default-features` builds are failing. Several `OpCode` variants (`HyperMul`, `HyperDiv`, `ZipWith`) are used in the compiler without appropriate `#[cfg(feature = "nova")]` guards, causing terminal compilation errors.
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/git-platter
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/git-platter
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Grace period: 24h.
+- **Status:** The 24-hour grace period has expired. Specimen `git-platter` failed to adapt. Its skeletal implementation and terminal genericism remained stagnant. It has been moved to the graveyard.

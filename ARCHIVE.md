@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-platter**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a true visualizer and merely dumps an ascii character grid to stdout as text. Grace period: 24h.
+- **origami-platter**: Specimen condemned. Diagnosis: Documentation Void. Lacks a `README.md` and remains an unexplained mutation. Grace period: 24h.
 ## ☠️ Executed
+- **git-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacked a visualizer and merely dumped raw coordinates to stdout as text. Grace period expired. Moved to graveyard.
 - **git-poincare**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacked a visualizer and merely dumped raw coordinates to stdout as text. Grace period expired. Moved to graveyard.
 - **locust-ddos**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Genericism. It remained a simple targeting simulation without stigmergic intelligence. Grace period expired. Moved to graveyard.
 - **locus-platter**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a README.md and remains a skeletal UI visualizer without true bidirectional emergence. Grace period expired. Moved to graveyard.
