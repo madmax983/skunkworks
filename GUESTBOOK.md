@@ -11,6 +11,10 @@
 ☠️ The Reaper has marked `neuro-git` for termination. Its compilation failure (`anyhow`, `rand` missing) and documentation void exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
+### [Concentration Level: RECOMBINATION] - Location: experiments/locus-resonance
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** Topological Acoustic Morphogenesis successfully wrapped acoustic simulation FDTD into `locus` boundaries (Torus, Klein, etc).
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-platter
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Documentation Void. Grace period: 24h.
