@@ -22,7 +22,9 @@ pub struct PrologueAgent {
 /// A dynamic transmutation rule for Hermetic Alchemy.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AlchemyRule {
+    /// The required combination of `Value`s needed to trigger this alchemical transmutation.
     pub ingredients: Vec<Value>,
+    /// The resulting `Value` produced upon a successful transmutation.
     pub result: Value,
 }
 

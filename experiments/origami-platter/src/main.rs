@@ -61,11 +61,16 @@ impl OrigamiPlatterApp {
             let grid_x = (x_norm * self.width as f32) as isize;
             let grid_y = (y_norm * self.height as f32) as isize;
 
-            if grid_x >= 0 && grid_x < self.width as isize && grid_y >= 0 && grid_y < self.height as isize {
+            if grid_x >= 0
+                && grid_x < self.width as isize
+                && grid_y >= 0
+                && grid_y < self.height as isize
+            {
                 // The heat represents the stress/presence of the folding mesh
                 // Points with higher Z (mountains) deposit more heat, lower Z (valleys) deposit less
                 let z_weight = (p.z.abs() + 0.1).clamp(0.0, 1.0) as f64;
-                self.platter.accumulate(grid_x as usize, grid_y as usize, 0.2 * z_weight);
+                self.platter
+                    .accumulate(grid_x as usize, grid_y as usize, 0.2 * z_weight);
             }
         }
 
@@ -102,7 +107,11 @@ impl OrigamiPlatterApp {
                             let render_x = (x as f64 / self.width as f64) * 100.0;
                             let render_y = (y as f64 / self.height as f64) * 100.0;
 
-                            ctx.print(render_x, render_y, ratatui::text::Span::styled("█", Style::default().fg(color)));
+                            ctx.print(
+                                render_x,
+                                render_y,
+                                ratatui::text::Span::styled("█", Style::default().fg(color)),
+                            );
                         }
                     }
                 }
@@ -150,7 +159,9 @@ fn main() -> Result<()> {
 
         if event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press && (key.code == KeyCode::Char('q') || key.code == KeyCode::Esc) {
+                if key.kind == KeyEventKind::Press
+                    && (key.code == KeyCode::Char('q') || key.code == KeyCode::Esc)
+                {
                     break;
                 }
             }

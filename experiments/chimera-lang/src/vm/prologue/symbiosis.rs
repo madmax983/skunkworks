@@ -2,6 +2,10 @@ use super::normalize_coords;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 
+/// Applies terminal effects (Sinks) for Symbiosis runes during a simulation tick.
+///
+/// Sinks process grid interactions without spawning new agents, modifying
+/// adjacent cell values and agent states (e.g. Parasite injections, Osmosis).
 pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
         vm.prologue_state.signal_grid[wy][wx].clone()

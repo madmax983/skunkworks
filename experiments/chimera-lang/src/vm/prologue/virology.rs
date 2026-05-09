@@ -1,6 +1,7 @@
 use super::normalize_coords;
 use crate::vm::Value;
 
+/// Evaluates Virology runes against incoming signals to trigger activation.
 pub fn apply_virology_runes(
     rune: &str,
     y: usize,
@@ -28,6 +29,7 @@ pub fn apply_virology_runes(
     changes
 }
 
+/// Executes the terminal (Sink) effects for activated Virology runes.
 pub fn apply_virology_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
         vm.prologue_state.signal_grid[wy][wx].clone()

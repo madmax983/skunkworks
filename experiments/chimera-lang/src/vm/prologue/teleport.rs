@@ -2,6 +2,10 @@ use super::normalize_coords;
 use crate::vm::Value;
 use std::collections::HashMap;
 
+/// Applies Teleportation runes (`{` and `}`) to transfer values across the grid instantly.
+///
+/// Send (`{`) reads a value from the West and sends it to the channel specified by the North.
+/// Receive (`}`) reads a channel from the North and outputs its stored value to Self.
 pub fn apply_teleport_runes(
     rune: &str,
     y: usize,

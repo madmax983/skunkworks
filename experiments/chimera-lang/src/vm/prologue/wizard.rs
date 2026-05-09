@@ -4,10 +4,14 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
+/// Represents the internal state and resources of a Wizard Agent (🧙).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WizardState {
+    /// Magical energy used to cast spells, regenerates over time.
     pub mana: i64,
+    /// Mental stability. Depletes over time or via bad experiments.
     pub sanity: i64,
+    /// Counter for the number of successful spells/experiments cast.
     pub experiments_performed: i64,
 }
 
@@ -22,6 +26,7 @@ impl Default for WizardState {
 }
 
 impl WizardState {
+    /// Serializes the Wizard's internal state into a stringified `Value` for grid storage.
     pub fn to_value(&self) -> Value {
         Value::Str(format!(
             "🧙:{}:{}:{}",
@@ -55,16 +60,24 @@ impl FromStr for WizardState {
     }
 }
 
+/// Defines the set of possible actions the Wizard AI can choose to perform in a tick.
 #[derive(Debug)]
 pub enum WizardAction {
+    /// Move to the specified adjacent (Y, X) coordinate.
     Move(usize, usize),
-    CastPolymorph(usize, usize),    // Target Y, X
-    CastAlchemy(usize, usize),      // Target Y, X
-    CastShortCircuit(usize, usize), // Target Y, X
-    CastBabel(usize, usize),        // Target Y, X
+    /// Transmute the target agent at (Y, X) into a different agent type.
+    CastPolymorph(usize, usize),
+    /// Convert strings to lengths, or integers to strings at the target (Y, X).
+    CastAlchemy(usize, usize),
+    /// Destroy the target at (Y, X), replacing it with `~` or `!`.
+    CastShortCircuit(usize, usize),
+    /// Corrupt the string target at (Y, X) with random noise or errors.
+    CastBabel(usize, usize),
+    /// Do nothing, regenerating mana and sanity.
     Rest,
 }
 
+/// Evaluates the AI logic for a Wizard agent, deciding and executing its next action.
 pub fn process_wizard_logic(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,

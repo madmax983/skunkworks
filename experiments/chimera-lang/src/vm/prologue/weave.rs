@@ -178,6 +178,7 @@ pub fn process_shuttle_agent(
     ))
 }
 
+/// Evaluates and applies the terminal sink effects of Weave logic runes, such as the Warp Sink (`║`).
 pub fn apply_weave_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     if rune == "║" {
         // Warp Sink: Reads signal from Self (deposited by Source '!' or others)

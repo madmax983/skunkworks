@@ -1,10 +1,10 @@
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use locus::Topology;
+use std::time::{Duration, Instant};
 use tui_shared::ratatui::style::{Color, Style};
 use tui_shared::ratatui::text::{Line, Span};
 use tui_shared::ratatui::widgets::{Block, Borders, Paragraph};
 use tui_shared::ratatui::Frame;
-use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 /// A custom physics grid that uses `locus::Topology` for wave propagation wrapping.
