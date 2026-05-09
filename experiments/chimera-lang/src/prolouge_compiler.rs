@@ -172,6 +172,13 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_chaos_instr(instr)?);
                 }
             }
+            Rule::esolang_block => {
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "esolang");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
+                #[cfg(feature = "nova")]
+                genes.push(Gene::new(OpCode::Eval, vec![]));
+            }
             Rule::quipu_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_quipu_instr(instr)?);
@@ -516,6 +523,25 @@ fn compile_acoustic_instr(_pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(feature = "nova")]
+    #[test]
+    fn test_prolouge_compiler_esolang() {
+        let source = r#"
+        esolang {
+            "Hello World" print
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("            \"Hello World\" print".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::Eval);
+    }
 
     #[test]
     fn test_genetics_block() {
