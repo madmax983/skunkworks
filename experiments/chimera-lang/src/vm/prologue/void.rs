@@ -3,6 +3,7 @@ use crate::vm::nova_void::VoidRift;
 use crate::vm::Value;
 use std::collections::VecDeque;
 
+/// Evaluates and applies the effects of Void runes, manipulating empty space and void buffers.
 pub fn apply_void_runes(
     rune: &str,
     y: usize,

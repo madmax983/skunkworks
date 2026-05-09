@@ -1,17 +1,27 @@
 use super::normalize_coords;
 use crate::vm::Value;
 
+/// Arguments passed into the topology runes handler to dictate simulation context.
 pub struct TopologyArgs<'a> {
+    /// The rune character triggering the topology effect.
     pub rune: &'a str,
+    /// The Y coordinate of the rune.
     pub y: usize,
+    /// The X coordinate of the rune.
     pub x: usize,
+    /// The current tick of the simulation.
     pub tick: u64,
+    /// An immutable snapshot of the signal grid for this tick.
     pub current_signals: &'a [Vec<Option<Value>>],
+    /// A mutable reference to the outgoing signal grid for immediate updates.
     pub next_signals: &'a mut [Vec<Option<Value>>],
+    /// A mutable reference to the delayed signal grid (applied next tick).
     pub next_delayed: &'a mut [Vec<Option<Value>>],
+    /// A flag indicating if Orca emulation mode is enabled.
     pub orca_mode: bool,
 }
 
+/// Applies Topology runes to manipulate the spatial flow of signals across the grid.
 pub fn apply_topology_runes(args: TopologyArgs<'_>) -> bool {
     let mut changes = false;
     let TopologyArgs {

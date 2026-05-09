@@ -357,9 +357,15 @@ impl GitModel {
                 };
 
                 let change = match line.origin() {
-                    '+' => Some(LineChange::Added(String::from_utf8_lossy(line.content()).into_owned())),
-                    '-' => Some(LineChange::Removed(String::from_utf8_lossy(line.content()).into_owned())),
-                    ' ' => Some(LineChange::Context(String::from_utf8_lossy(line.content()).into_owned())),
+                    '+' => Some(LineChange::Added(
+                        String::from_utf8_lossy(line.content()).into_owned(),
+                    )),
+                    '-' => Some(LineChange::Removed(
+                        String::from_utf8_lossy(line.content()).into_owned(),
+                    )),
+                    ' ' => Some(LineChange::Context(
+                        String::from_utf8_lossy(line.content()).into_owned(),
+                    )),
                     _ => None,
                 };
 

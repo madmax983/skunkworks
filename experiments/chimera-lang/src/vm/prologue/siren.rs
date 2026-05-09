@@ -12,15 +12,37 @@ use std::str::FromStr;
 /// Example: "♬:120:0:100:0:1:60,62,64" (BPM 120, Octave 0, Vel 100, Sine Wave, East, Buffer\[C4,D4,E4\])
 #[derive(Debug, Clone)]
 pub struct SirenState {
+    /// The tempo of the Siren in Beats Per Minute (BPM).
     pub bpm: u64,
+    /// The octave offset from the base note (e.g., C4).
     pub octave: i64,
+    /// The MIDI velocity (0-127) determining note volume.
     pub velocity: u8,
-    pub waveform: u8,     // 0=Sine, 1=Square, 2=Saw, 3=Triangle, 4=Noise
-    pub direction: usize, // 0=N, 1=E, 2=S, 3=W
-    pub buffer: Vec<u8>,  // MIDI Note Buffer
+    /// The waveform oscillator type: `0`=Sine, `1`=Square, `2`=Saw, `3`=Triangle, `4`=Noise.
+    pub waveform: u8,
+    /// The movement direction of the Siren: `0`=North, `1`=East, `2`=South, `3`=West.
+    pub direction: usize,
+    /// The buffer of recently played MIDI notes, used for composing DNA.
+    pub buffer: Vec<u8>,
 }
 
 impl SirenState {
+    /// Instantiates the core audio engine for a new Siren.
+    ///
+    /// Sirens are look-ahead sequencers. By explicitly specifying their starting BPM,
+    /// Octave, and Velocity, they ensure consistent performance even when dropped
+    /// into chaotic, uncharted regions of the grid where runes might unpredictably alter them later.
+    ///
+    /// ## Examples
+    ///
+    /// ```
+    /// use chimera_lang::vm::prologue::siren::SirenState;
+    ///
+    /// // Create a Siren playing a fast, quiet Sine wave moving East (1).
+    /// let siren = SirenState::new(180, 2, 50, 0, 1);
+    /// assert_eq!(siren.bpm, 180);
+    /// assert_eq!(siren.octave, 2);
+    /// ```
     pub fn new(bpm: u64, octave: i64, velocity: u8, waveform: u8, direction: usize) -> Self {
         Self {
             bpm,
@@ -47,6 +69,27 @@ impl Default for SirenState {
 }
 
 impl SirenState {
+    /// Encodes the acoustic history and parameters of the Siren into a mutable grid `Value`.
+    ///
+    /// Because the simulation grid stores state entirely as polymorphic `Value` types,
+    /// the Siren must serialize its complex internal parameters back into a formatted string
+    /// `♬:BPM:Octave...` string before moving to the next cell.
+    ///
+    /// ## Examples
+    ///
+    /// ```
+    /// use chimera_lang::vm::prologue::siren::SirenState;
+    /// use chimera_lang::vm::Value;
+    ///
+    /// let siren = SirenState::new(120, 0, 100, 0, 1);
+    /// let encoded = siren.to_value();
+    ///
+    /// if let Value::Str(s) = encoded {
+    ///     assert_eq!(s, "♬:120:0:100:0:1:");
+    /// } else {
+    ///     panic!("Expected string value");
+    /// }
+    /// ```
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }
