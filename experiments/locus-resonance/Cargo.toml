@@ -1,0 +1,10 @@
+[package]
+name = "locus-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+locus = { path = "../../crates/locus" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+tui-shared = { path = "../../crates/tui-shared" }
+crossterm = "0.28"
