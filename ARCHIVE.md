@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **origami-platter**: Specimen condemned. Diagnosis: Documentation Void. Lacks a `README.md` and remains an unexplained mutation. Grace period: 24h.
+- **quipu-platter**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Remains a trivial x/y mapping of static integers rather than a complex biological hybrid. Grace period: 24h.
 ## ☠️ Executed
+- **origami-platter**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` and explain its mutation during the grace period. Grace period expired. Moved to graveyard.
 - **git-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacked a visualizer and merely dumped raw coordinates to stdout as text. Grace period expired. Moved to graveyard.
 - **git-poincare**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacked a visualizer and merely dumped raw coordinates to stdout as text. Grace period expired. Moved to graveyard.
 - **locust-ddos**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Genericism. It remained a simple targeting simulation without stigmergic intelligence. Grace period expired. Moved to graveyard.
