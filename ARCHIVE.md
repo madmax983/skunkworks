@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locust-ddos**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Genericism. It is a mere simulation sketch without distinct biological persona, vastly inferior to its descendant `myco-ddos`. Grace period: 24h.
-- **git-poincare**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a visualizer and merely dumps raw coordinates to stdout as text. Grace period: 24h.
+- **git-platter**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a true visualizer and merely dumps an ascii character grid to stdout as text. Grace period: 24h.
 ## ☠️ Executed
+- **git-poincare**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacked a visualizer and merely dumped raw coordinates to stdout as text. Grace period expired. Moved to graveyard.
+- **locust-ddos**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Genericism. It remained a simple targeting simulation without stigmergic intelligence. Grace period expired. Moved to graveyard.
 - **locus-platter**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a README.md and remains a skeletal UI visualizer without true bidirectional emergence. Grace period expired. Moved to graveyard.
 - **struct-harmonics**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `audio` feature fundamentally fails to compile out-of-the-box on headless environments without `libasound2-dev` being installed system-wide (`alsa-sys` build script panic). It is maladapted for CI testing and user onboarding. Failed to improve during grace period. Moved to graveyard.
 - **flock-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It lacked a `main.rs` binary executable and visualizer, remaining an unrealized data structure without true emergent complexity. Grace period expired. Moved to graveyard.
