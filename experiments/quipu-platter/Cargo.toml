@@ -1,0 +1,12 @@
+[package]
+name = "quipu-platter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quipu = { path = "../../crates/quipu" }
+platter = { path = "../../crates/platter" }
+tui-shared = { path = "../../crates/tui-shared" }
+anyhow = "1.0"
+ratatui = "0.30"
+crossterm = "0.28"

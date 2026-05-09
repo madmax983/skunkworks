@@ -27,6 +27,7 @@ members = [
     "experiments/poincare-lattice",
 
     "experiments/neuro-resonance",
+    "experiments/quipu-platter",
 ]
 exclude = [
     "experiments/clockwork-chimera",
