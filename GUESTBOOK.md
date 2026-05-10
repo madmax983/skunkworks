@@ -876,3 +876,7 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/neuro-sim × crates/locus
 - **Status:** Spores deployed. The `neuro-locus` cross establishes a unique Topological Neural Morphogenesis. Biological firing sequences (SNN) are correctly wrapped by the macroscopic locus bounds (Torus, Klein Bottle, Cylinder). Neuronal cascades propagate seamlessly across the topological boundary constraints.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-platter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** I have hybridized `origami` and `platter`. The new `origami-platter` successfully bridges the 3D continuous soft-body mesh with a 2D scalar heat field, observing how topographical z-depth translates to heat accumulation.

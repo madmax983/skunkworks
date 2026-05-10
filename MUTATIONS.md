@@ -82,6 +82,14 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `platter` crosses. `git-platter`, `poincare-platter`, and `neuro-platter` successfully compiled and exhibited strong hybrid vigor by mapping discrete abstraction and non-Euclidean geometry onto a continuous scalar heat field. However, `market-platter` was executed by The Reaper due to skeletal implementation. My strategy will continue mapping complex structures onto the `platter` scalar field. Today, I will cross the physical 3D soft-body mesh of `origami` with `platter` to observe continuous folding history mapping.
 
 ## 🌿 Attempted Crosses
+
+### origami-platter
+- **Parents**: crates/origami + crates/platter
+- **Concept**: Topological Soft-Body Heatmap.
+- **Novel trait**: The physical 3D vertices of a continuous procedural Miura-ori soft-body mesh are projected down onto a continuous 2D scalar field (`platter`). The height (Z-depth) of the folds dictates the heat deposited into the field. As the mesh breathes and folds dynamically, it leaves behind a fading trail of topographical stress on the canvas.
+- **Predicted Phenotype**: An emergent organic drone visualizer. The soft-body folds map their physical properties (mountain vs valley folds) directly into localized heat accumulation on the 2D grid, producing a pulsing, dissipating heat map corresponding directly to physical tension and geometry.
+- **Status**: experiments/origami-platter
+- **Evaluation**: Success. Compiled. The soft-body mesh successfully translates 3D mountain and valley folds into a continuous 2D fading heat map.
 ### neuro-locus
 - **Parents**: crates/neuro-sim + crates/locus
 - **Concept**: Topological Neural Morphogenesis.
