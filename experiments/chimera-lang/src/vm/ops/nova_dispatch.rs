@@ -482,6 +482,10 @@ impl crate::vm::ChimeraVM {
                 nova_raku::exec_raku_op(self, op, args);
                 Some(None)
             }
+            OpCode::Flock => {
+                self.output.push("Flocking step simulated.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
             #[cfg(feature = "oracle")]
             OpCode::Divergence => Some(nova::exec_nova_op(self, op, args)),
             _ => None,

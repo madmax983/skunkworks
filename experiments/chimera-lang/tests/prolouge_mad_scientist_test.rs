@@ -379,3 +379,17 @@ mod tests {
         assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::HyperAdd);
     }
 }
+
+#[cfg(feature = "nova")]
+#[test]
+fn test_prolouge_compiler_flocking() {
+    let source = r#"
+    flocking {
+        simulate
+    }
+    "#;
+    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let genes = &dna.helix.strands[0].genes;
+
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Flock);
+}
