@@ -40,3 +40,7 @@
 **[LogList Iterator Refactor]**
 **Learning:** Collecting iterators into a `Vec` inside a constructor when the caller likely already has an iterator (or can provide one easily) forces an unnecessary heap allocation and an extra O(N) iteration loop. By taking `impl IntoIterator` and directly collecting into the struct's internal `Vec`, we elide that middle-man allocation.
 **Action:** Always prefer `impl IntoIterator` over `Vec<T>` for constructor arguments that ultimately get consumed and collected.
+
+**[AST Ownership over Borrowing]**
+**Learning:** Passing recursive AST structures (like `Nucleotide` or deeply nested enums) by reference (`&T`) forces deep heap `.clone()` allocations when mapping to new structures (like flattening AST into `Gene` vectors).
+**Action:** Refactor functions like `flatten_ast` to take ownership (`T`) rather than a reference. This allows consuming the tree via `.into_iter()` and moving elements directly into the new representation without deep cloning, saving significant heap allocation overhead without fighting the borrow checker.

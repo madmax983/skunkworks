@@ -158,7 +158,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             f.render_widget(canvas, main_chunks[0]);
 
             let log_list =
-                LogList::new(event_log.clone().into_iter().rev().collect()).with_title("Music Log");
+                LogList::new(event_log.clone().into_iter().rev()).with_title("Music Log");
             f.render_widget(log_list, main_chunks[1]);
 
             // Footer with buttons

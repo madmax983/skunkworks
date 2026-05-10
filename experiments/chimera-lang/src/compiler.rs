@@ -1132,7 +1132,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             }
         }
 
-        flatten_ast(&ast)
+        flatten_ast(ast)
     }
 
     #[cfg(feature = "nova")]
@@ -1418,7 +1418,13 @@ fn babel_parse(
     }
 }
 
-fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
+/// Flattens an AST into a linear sequence of executable Genes.
+///
+/// **Bolt Optimization ⚡:** This function takes ownership of the `Nucleotide` AST
+/// instead of borrowing it (`&Nucleotide`). This allows us to consume the tree via `.into_iter()`
+/// and directly transfer nodes into `Gene` arguments without performing deep `.clone()` operations,
+/// eliminating significant heap allocations during compilation.
+fn flatten_ast(ast: Nucleotide) -> Result<Vec<Gene>> {
     match ast {
         Nucleotide::Junction(crate::ast::JunctionType::All, children) => {
             let mut genes = Vec::new();
@@ -1431,11 +1437,10 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
             if !children.is_empty() {
                 if let Nucleotide::String(op_name) = &children[0] {
                     if let Ok(op) = OpCode::from_str(op_name) {
-                        let mut args = Vec::new();
-                        for child in children.iter().skip(1) {
-                            args.push(child.clone());
-                        }
-                        return Ok(vec![Gene { op, args }]);
+                        return Ok(vec![Gene {
+                            op,
+                            args: children.into_iter().skip(1).collect(),
+                        }]);
                     }
                 }
             }
@@ -1446,7 +1451,7 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
             Ok(genes)
         }
         Nucleotide::String(s) => {
-            if let Ok(op) = OpCode::from_str(s) {
+            if let Ok(op) = OpCode::from_str(&s) {
                 if let OpCode::Unknown(_) = op {
                     // Not a known opcode, push as string literal
                     // Check if it looks like a number
@@ -1458,7 +1463,7 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
                     } else {
                         Ok(vec![Gene {
                             op: OpCode::Push,
-                            args: vec![Nucleotide::String(s.clone())],
+                            args: vec![Nucleotide::String(s)],
                         }])
                     }
                 } else {
@@ -1468,13 +1473,13 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
                 // Should not happen with strum default, but safe fallback
                 Ok(vec![Gene {
                     op: OpCode::Push,
-                    args: vec![Nucleotide::String(s.clone())],
+                    args: vec![Nucleotide::String(s)],
                 }])
             }
         }
         Nucleotide::Number(n) => Ok(vec![Gene {
             op: OpCode::Push,
-            args: vec![Nucleotide::Number(*n)],
+            args: vec![Nucleotide::Number(n)],
         }]),
         _ => Ok(vec![]),
     }
