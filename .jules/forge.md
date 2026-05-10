@@ -10,3 +10,10 @@
 **[Extracting Audio Process Commands]**
 **Learning:** When extracting helper methods that act on instance state from within a large "God Function" (like the command event processor loop in `AudioModel::process`), watch out for the docstrings on the original function. If they describe the *entire* process (including steps now handled by the new helper), they should not be copied verbatim to the private helper.
 **Action:** Always rewrite or remove doc comments for newly extracted private helpers to accurately reflect only the specific sub-task they perform, ensuring documentation remains accurate and concise.
+**[Flattening Nested Match Logic]**
+**Learning:** When flattening deeply nested loops containing match statements (like in `extract_hunks`), extracting the innermost match logic into a named helper function returning an `Option<T>` is extremely effective. It enables replacing the loops with a flat `.filter_map().collect()` iterator pipeline.
+**Action:** Always extract inner `match` expressions into small helper functions when they cause "Pyramids of Doom" inside multiple `for` loops.
+
+**[Missing Default Implementations]**
+**Learning:** Idiomatic Rust requires implementing the `Default` trait for structs that provide a parameterless `pub fn new() -> Self` constructor.
+**Action:** When auditing files, always check if a struct has `pub fn new() -> Self` but lacks an `impl Default`. Apply `#[derive(Default)]` or implement manually to resolve the discrepancy.
