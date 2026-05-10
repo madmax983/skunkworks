@@ -2807,6 +2807,7 @@ pub enum OpCode {
     /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
     #[cfg(feature = "nova")]
     ZipWith,
+    Flock,
 
     /// No Operation. Does nothing.
     Nop,

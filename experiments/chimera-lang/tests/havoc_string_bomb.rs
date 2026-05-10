@@ -60,8 +60,10 @@ mod tests {
         } else {
             // If the stack doesn't contain a string at the end, it means the operation aborted safely.
             // Let's verify the error message.
-            assert!(vm.output.iter().any(|msg| msg.contains("Error: String length exceeds maximum allowed length")));
+            assert!(vm
+                .output
+                .iter()
+                .any(|msg| msg.contains("Error: String length exceeds maximum allowed length")));
         }
-
     }
 }
