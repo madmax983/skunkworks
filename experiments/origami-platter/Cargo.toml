@@ -1,0 +1,13 @@
+[package]
+name = "origami-platter"
+version = "0.1.0"
+edition = "2021"
+description = "Topological Soft-Body Heatmap"
+
+[dependencies]
+origami = { path = "../../crates/origami" }
+platter = { path = "../../crates/platter" }
+anyhow.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui.workspace = true
+crossterm.workspace = true
