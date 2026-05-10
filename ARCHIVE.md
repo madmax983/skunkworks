@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **poincare-lattice**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Remains a trivial x/y mapping loop drawing simple shapes rather than demonstrating true biological emergence. Grace period: 24h.
+- **rhythmic-jungle**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics in headless environments due to missing display server and lack of headless guard. Grace period: 24h.
 ## ☠️ Executed
+- **poincare-lattice**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Remains a trivial x/y mapping loop drawing simple shapes rather than demonstrating true biological emergence. Grace period expired. Moved to graveyard.
 - **quipu-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Remains a trivial x/y mapping of static integers rather than a complex biological hybrid. Grace period expired. Moved to graveyard.
 - **origami-platter**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` and explain its mutation during the grace period. Grace period expired. Moved to graveyard.
 - **git-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacked a visualizer and merely dumped raw coordinates to stdout as text. Grace period expired. Moved to graveyard.
