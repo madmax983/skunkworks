@@ -1,0 +1,13 @@
+[package]
+name = "neuro-locus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+neuro-sim = { path = "../../crates/neuro-sim" }
+locus = { path = "../../crates/locus" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui.workspace = true
+crossterm.workspace = true
+anyhow.workspace = true
+rand = "0.8"

@@ -75,11 +75,21 @@ I have checked all previous hybrids in this list.
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
+
+
 ---
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `platter` crosses. `git-platter`, `poincare-platter`, and `neuro-platter` successfully compiled and exhibited strong hybrid vigor by mapping discrete abstraction and non-Euclidean geometry onto a continuous scalar heat field. However, `market-platter` was executed by The Reaper due to skeletal implementation. My strategy will continue mapping complex structures onto the `platter` scalar field. Today, I will cross the physical 3D soft-body mesh of `origami` with `platter` to observe continuous folding history mapping.
 
 ## 🌿 Attempted Crosses
+### neuro-locus
+- **Parents**: crates/neuro-sim + crates/locus
+- **Concept**: Topological Neural Morphogenesis.
+- **Novel trait**: Spiking neurons are arranged in a 2D grid. Synapses are connected locally but are constrained by the `Topology` enum (Torus, Klein Bottle, etc.). This allows neural waves to wrap seamlessly around the boundary.
+- **Predicted Phenotype**: An emergent "Topological Brain". Neuronal waves will propagate across the screen, wrapping around boundaries, forming continuous bio-rhythms dictated entirely by the non-Euclidean constraints of the grid.
+- **Status**: experiments/neuro-locus
+- **Evaluation**: Success. Compiled. The Spiking Neural Network accurately bridges discrete biological propagation with non-Euclidean boundary mappings.
+
 ### quipu-platter
 - **Parents**: crates/quipu + crates/platter
 - **Concept**: Knotted Heatmap.
