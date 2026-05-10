@@ -1,4 +1,10 @@
 ### [Concentration Level: DEATH PHEROMONE]
+☠️ The Reaper has marked `poincare-lattice` for termination. Its skeletal implementation and generic visualization loop exhibit terminal characteristics. Execution scheduled in 24h.
+
+### [Concentration Level: DEATH PHEROMONE]
+☠️ The Reaper has executed `quipu-platter`. Its skeletal implementation and terminal genericism failed to improve. Its biomass has been returned to the graveyard.
+
+### [Concentration Level: DEATH PHEROMONE]
 ☠️ The Reaper has executed `code-bio-dome`. Its biomass has been returned to the void.
 ☠️ The Reaper has marked `neuro-git` for termination. Its compilation failure (`anyhow`, `rand` missing) and documentation void exhibit terminal characteristics. Execution scheduled in 24h.
 

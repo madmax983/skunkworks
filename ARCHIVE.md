@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **quipu-platter**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Remains a trivial x/y mapping of static integers rather than a complex biological hybrid. Grace period: 24h.
+- **poincare-lattice**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Remains a trivial x/y mapping loop drawing simple shapes rather than demonstrating true biological emergence. Grace period: 24h.
 ## ☠️ Executed
+- **quipu-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Remains a trivial x/y mapping of static integers rather than a complex biological hybrid. Grace period expired. Moved to graveyard.
 - **origami-platter**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` and explain its mutation during the grace period. Grace period expired. Moved to graveyard.
 - **git-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacked a visualizer and merely dumped raw coordinates to stdout as text. Grace period expired. Moved to graveyard.
 - **git-poincare**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacked a visualizer and merely dumped raw coordinates to stdout as text. Grace period expired. Moved to graveyard.
@@ -384,7 +385,6 @@
 - **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
-## ☠️ Executed
 - **locus-platter**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a README.md and remains a skeletal UI visualizer without true bidirectional emergence. Grace period expired. Moved to graveyard.
 - **flock-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It lacked a `main.rs` binary executable and visualizer, remaining an unrealized data structure without true emergent complexity. Grace period expired. Moved to graveyard.
 - **neuro-git**: Specimen executed. Diagnosis: Terminal Compilation Failure / Documentation Void. The specimen failed to compile due to missing dependencies (`anyhow`, `rand`). Grace period expired. Moved to graveyard.
