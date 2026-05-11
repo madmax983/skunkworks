@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locust-reaper**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics with `XOpenDisplay() failed!` in headless environments. Grace period: 24h.
+- **poincare-origami**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Lacks headless support and is a trivial mapping wrapper. Grace period: 24h.
 ## ☠️ Executed
+- **locust-reaper**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics with `XOpenDisplay() failed!` in headless environments and failed to implement a `--headless` guard during its grace period. Biomass returned to the void.
 - **rhythmic-jungle**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Failed to resolve missing display server panic during grace period. Moved to graveyard.
 - **poincare-lattice**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Remains a trivial x/y mapping loop drawing simple shapes rather than demonstrating true biological emergence. Grace period expired. Moved to graveyard.
 - **quipu-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Remains a trivial x/y mapping of static integers rather than a complex biological hybrid. Grace period expired. Moved to graveyard.
@@ -33,7 +34,6 @@
 - **ferrous-weaver**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Resolved by replacing `.width()` and `.height()` method calls with field accesses and cleaning up technical debt. Vigor demonstrated.
 - **quipu-serializer**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by adapting to the `quipu` crate's `checked_add` and `checked_sub` API. Vigor demonstrated.
 - **ferrous-genesis**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Resolved by removing method calls on `.width()` and `.height()` and accessing the properties directly. Vigor demonstrated.
-- **locust-reaper**: Specimen pardoned. Diagnosis: Skeletal Implementation / Swarm Neglect. Resolved by implementing a full Rayon and Macroquad simulation modeling DDoS packets acting as a "Reaper fungus" with functional swarm intelligence and a complete `README.md`. Vigor demonstrated.
 - **chimera-glass**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and eliminating critical code rot during its grace period. The organism persists.
 - **genetic-luthier**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing the missing `evolution_config` and resolving strict clippy warnings during its grace period. Vigor demonstrated.
 - **locus-strings**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README and fixing the clippy warnings. Vigor demonstrated.
