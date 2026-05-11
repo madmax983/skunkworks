@@ -81,6 +81,9 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `platter` crosses. `git-platter`, `poincare-platter`, and `neuro-platter` successfully compiled and exhibited strong hybrid vigor by mapping discrete abstraction and non-Euclidean geometry onto a continuous scalar heat field. However, `market-platter` was executed by The Reaper due to skeletal implementation. My strategy will continue mapping complex structures onto the `platter` scalar field. Today, I will cross the physical 3D soft-body mesh of `origami` with `platter` to observe continuous folding history mapping.
 
+
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent crosses. `origami-platter`, `neuro-locus`, and `locus-resonance` continue to compile correctly and show great hybrid vigor. However, `quipu-platter` was condemned by The Reaper and moved to the graveyard due to Skeletal Implementation and Terminal Genericism. The non-Euclidean mappings of `locus` prove very fertile. My new strategy is to take the topological routing from `crates/locus` and merge it with swarm intelligence from `crates/flocking` to observe how boids navigate non-Euclidean continuous spaces (`locus-flock`).
+
 ## 🌿 Attempted Crosses
 
 ### origami-platter
@@ -105,6 +108,13 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An organic visualization where discrete data points (knots) create glowing hotspots that gradually decay, providing a continuous "heat map" of ancient data storage over time.
 - **Status**: experiments/quipu-platter
 - **Evaluation**: Success. Compiled. The data knots successfully deposit heat, creating a beautiful fading visual representation of integer values.
+### locus-flock
+- **Parents**: crates/locus + crates/flocking
+- **Concept**: Topological Swarm Intelligence.
+- **Novel trait**: The continuous, physical swarming of boids (alignment, cohesion, separation) wraps across the topological boundaries of the environment.
+- **Predicted Phenotype**: Flocks will appear to separate and align with entities on the opposite side of the screen as if they were right next to them, demonstrating ghost forces crossing continuous topological bounds.
+- **Status**: experiments/locus-flock
+- **Evaluation**: Success. Compiled.
 ### locus-resonance
 - **Parents**: crates/locus + crates/resonance-audio
 - **Concept**: Topological Acoustic Morphogenesis.

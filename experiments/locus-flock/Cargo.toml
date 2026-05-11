@@ -1,0 +1,12 @@
+[package]
+name = "locus-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm = "0.28"
+flocking = { path = "../../crates/flocking" }
+locus = { path = "../../crates/locus" }
+ratatui = "0.30"
+tui-shared = { path = "../../crates/tui-shared" }
+rand = "0.8"
