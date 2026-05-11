@@ -97,7 +97,7 @@ pub fn apply_list_runes(
                 None
             };
 
-            if let (Some(Value::Junction(t, items)), Some(mask)) = (w_sig, n_sig) {
+            if let (Some(Value::Junction(t, mut items)), Some(mask)) = (w_sig, n_sig) {
                 // How does mask work?
                 // If mask is Int(1), pass all?
                 // If mask is a Junction of booleans?
@@ -110,9 +110,10 @@ pub fn apply_list_runes(
                 // Or: Keep items equal to Mask?
                 // Let's say: Remove items equal to Mask.
 
-                let filtered: Vec<Value> = items.into_iter().filter(|v| *v != mask).collect();
+                // Optimization: using `.retain` avoids an intermediate `.collect::<Vec<_>>()` allocation.
+                items.retain(|v| *v != mask);
                 if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Junction(t, filtered));
+                    next_signals[y][x] = Some(Value::Junction(t, items));
                     changes = true;
                 }
             }
