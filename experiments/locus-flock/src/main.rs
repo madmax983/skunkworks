@@ -3,7 +3,6 @@ use flocking::{compute_force, FlockingParams};
 use locus::{Topology, Vec2};
 use rand::Rng;
 use ratatui::{
-
     style::{Color, Style},
     text::Span,
     widgets::{canvas::Canvas, Block, Borders},
@@ -69,19 +68,29 @@ impl LocusFlockApp {
 
             // Re-center virtual positions to mimic topology (Torus)
             if matches!(self.topology, Topology::Torus) {
-               for j in 0..virtual_positions.len() {
-                   if i == j { continue; }
-                   let dx = virtual_positions[j].x - self.positions[i].x;
-                   let dy = virtual_positions[j].y - self.positions[i].y;
+                for j in 0..virtual_positions.len() {
+                    if i == j {
+                        continue;
+                    }
+                    let dx = virtual_positions[j].x - self.positions[i].x;
+                    let dy = virtual_positions[j].y - self.positions[i].y;
 
-                   let w = self.width as f64;
-                   let h = self.height as f64;
+                    let w = self.width as f64;
+                    let h = self.height as f64;
 
-                   if dx > w / 2.0 { virtual_positions[j].x -= w; }
-                   if dx < -w / 2.0 { virtual_positions[j].x += w; }
-                   if dy > h / 2.0 { virtual_positions[j].y -= h; }
-                   if dy < -h / 2.0 { virtual_positions[j].y += h; }
-               }
+                    if dx > w / 2.0 {
+                        virtual_positions[j].x -= w;
+                    }
+                    if dx < -w / 2.0 {
+                        virtual_positions[j].x += w;
+                    }
+                    if dy > h / 2.0 {
+                        virtual_positions[j].y -= h;
+                    }
+                    if dy < -h / 2.0 {
+                        virtual_positions[j].y += h;
+                    }
+                }
             }
 
             let force = compute_force(&virtual_positions, &self.velocities, i, &self.params);
@@ -103,7 +112,10 @@ impl LocusFlockApp {
             let y_idx = self.positions[i].y.floor() as i64;
             let x_idx = self.positions[i].x.floor() as i64;
 
-            if let Some((ny, nx)) = self.topology.normalize(y_idx, x_idx, self.width as usize, self.height as usize) {
+            if let Some((ny, nx)) =
+                self.topology
+                    .normalize(y_idx, x_idx, self.width as usize, self.height as usize)
+            {
                 // Update coordinate to wrapped position, keeping fractional part
                 let frac_x = self.positions[i].x - self.positions[i].x.floor();
                 let frac_y = self.positions[i].y - self.positions[i].y.floor();
@@ -131,7 +143,10 @@ impl LocusFlockApp {
     }
 
     fn draw(&self, frame: &mut ratatui::Frame) {
-        let title = format!(" 🧬 Splice: locus × flocking | Topology: {:?} ", self.topology);
+        let title = format!(
+            " 🧬 Splice: locus × flocking | Topology: {:?} ",
+            self.topology
+        );
         let canvas = Canvas::default()
             .block(Block::default().title(title).borders(Borders::ALL))
             .paint(|ctx| {

@@ -4,6 +4,29 @@ use crate::value::Value;
 use crate::vm::Chirality;
 
 impl crate::vm::ChimeraVM {
+    pub(crate) fn binary_op<F>(stack: &mut Vec<Value>, output: &mut Vec<String>, op: F)
+    where
+        F: Fn(i64, i64) -> i64 + Copy,
+    {
+        if stack.len() < 2 {
+            output.push("Error: Stack underflow".to_string());
+            return;
+        }
+        let b = stack.pop().unwrap();
+        let a = stack.pop().unwrap();
+
+        if let Some(res) = a.apply_binary_op(
+            b,
+            op,
+            crate::vm::MAX_RECURSION_DEPTH,
+            crate::vm::MAX_JUNCTION_SIZE,
+        ) {
+            stack.push(res);
+        } else {
+            output.push("Error: Type mismatch or complexity limit".to_string());
+        }
+    }
+
     pub(crate) fn exec_math_op(&mut self, op: OpCode) {
         #[cfg(feature = "nova")]
         let effective_op = if self.chirality == Chirality::Right {
