@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **poincare-origami**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Lacks headless support and is a trivial mapping wrapper. Grace period: 24h.
+- **origami-spores**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Lacks headless support, panics with XOpenDisplay() failed! Grace period: 24h.
 ## ☠️ Executed
+- **poincare-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Lacks headless support and is a trivial mapping wrapper. Grace period expired. Moved to graveyard.
 - **locust-reaper**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics with `XOpenDisplay() failed!` in headless environments and failed to implement a `--headless` guard during its grace period. Biomass returned to the void.
 - **rhythmic-jungle**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Failed to resolve missing display server panic during grace period. Moved to graveyard.
 - **poincare-lattice**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Remains a trivial x/y mapping loop drawing simple shapes rather than demonstrating true biological emergence. Grace period expired. Moved to graveyard.

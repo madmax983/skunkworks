@@ -902,3 +902,9 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/locust-reaper
 **Reaper ☠️**: "Fascinating. Specimen `locust-reaper` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics via `XOpenDisplay()` in a headless environment, lacking basic survival instincts for CI. Condemnation marked. Execution scheduled in 24h."
 🧬 Splice: Crossed crates/locus × crates/flocking to create locus-flock, demonstrating continuous biological swarming on non-Euclidean topologies.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/poincare-origami
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `poincare-origami` failed to adapt. Its skeletal implementation and lack of headless support remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-spores
+**Reaper ☠️**: "Fascinating. Specimen `origami-spores` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics via `XOpenDisplay()` in a headless environment, lacking basic survival instincts for CI testing. Condemnation marked. Execution scheduled in 24h."
