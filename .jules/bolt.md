@@ -44,3 +44,7 @@
 **[AST Ownership over Borrowing]**
 **Learning:** Passing recursive AST structures (like `Nucleotide` or deeply nested enums) by reference (`&T`) forces deep heap `.clone()` allocations when mapping to new structures (like flattening AST into `Gene` vectors).
 **Action:** Refactor functions like `flatten_ast` to take ownership (`T`) rather than a reference. This allows consuming the tree via `.into_iter()` and moving elements directly into the new representation without deep cloning, saving significant heap allocation overhead without fighting the borrow checker.
+
+**Optimize Vec Filter/Collect**
+**Learning:** When filtering a destructuring matched `Vec`, `.into_iter().filter(...).collect::<Vec<_>>()` creates a new heap allocation.
+**Action:** Use an in-place `.retain(...)` by ensuring the destructured `Vec` is captured with `mut`, avoiding intermediate allocations and keeping the exact same behavior while satisfying the borrow checker.
