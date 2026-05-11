@@ -382,6 +382,34 @@ mod tests {
 
 #[cfg(feature = "nova")]
 #[test]
+fn test_prolouge_compiler_market() {
+    let source = r#"
+    market {
+        10
+        invest
+        "Secret"
+        5
+        offer
+    }
+    "#;
+    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let genes = &dna.helix.strands[0].genes;
+
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(10));
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Invest);
+    assert_eq!(genes[2].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(
+        genes[2].args[0],
+        chimera_lang::ast::Nucleotide::String("Secret".to_string())
+    );
+    assert_eq!(genes[3].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(genes[3].args[0], chimera_lang::ast::Nucleotide::Number(5));
+    assert_eq!(genes[4].op, chimera_lang::opcode::OpCode::Offer);
+}
+
+#[cfg(feature = "nova")]
+#[test]
 fn test_prolouge_compiler_flocking() {
     let source = r#"
     flocking {

@@ -194,6 +194,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_flocking_instr(instr)?);
                 }
             }
+            Rule::market_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_market_instr(instr)?);
+                }
+            }
             Rule::reactor_block => {
                 let content =
                     extract_block_content_preserve_whitespace(inner_block.as_str(), "reactor");
@@ -242,6 +247,48 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
                     vec![Nucleotide::String(id.to_string())],
                 ));
             }
+        }
+        _ => {}
+    }
+    Ok(genes)
+}
+
+fn compile_market_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair.into_inner().next().unwrap();
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            match op.as_str() {
+                #[cfg(feature = "nova")]
+                "invest" => genes.push(Gene::new(OpCode::Invest, vec![])),
+                #[cfg(feature = "nova")]
+                "divest" => genes.push(Gene::new(OpCode::Divest, vec![])),
+                #[cfg(feature = "nova")]
+                "buy" => genes.push(Gene::new(OpCode::Buy, vec![])),
+                #[cfg(feature = "nova")]
+                "offer" => genes.push(Gene::new(OpCode::Offer, vec![])),
+                #[cfg(feature = "nova")]
+                "balance" => genes.push(Gene::new(OpCode::Balance, vec![])),
+                #[cfg(feature = "nova")]
+                "ticker" => genes.push(Gene::new(OpCode::Ticker, vec![])),
+                _ => {
+                    if let Ok(opcode) = OpCode::from_str(&op) {
+                        genes.push(Gene::new(opcode, vec![]));
+                    } else {
+                        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+                    }
+                }
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
         }
         _ => {}
     }
