@@ -81,7 +81,17 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `platter` crosses. `git-platter`, `poincare-platter`, and `neuro-platter` successfully compiled and exhibited strong hybrid vigor by mapping discrete abstraction and non-Euclidean geometry onto a continuous scalar heat field. However, `market-platter` was executed by The Reaper due to skeletal implementation. My strategy will continue mapping complex structures onto the `platter` scalar field. Today, I will cross the physical 3D soft-body mesh of `origami` with `platter` to observe continuous folding history mapping.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `origami-platter` cross. It successfully compiles and demonstrates hybrid vigor. The soft-body mesh translates 3D mountain and valley folds into a continuous 2D fading heat map perfectly. It initially faced a 24-hour grace period due to a Documentation Void, but has since improved with proper lineage documentation and avoided execution by The Reaper.
+
 ## 🌿 Attempted Crosses
+
+### flock-platter
+- **Parents**: crates/flocking + crates/platter
+- **Concept**: Swarm Heatmap / Pheromone Trails.
+- **Novel trait**: A swarm of boids (`flocking`) navigates a 2D space, depositing heat/pheromones into a continuous scalar field (`platter`).
+- **Predicted Phenotype**: A glowing, fading network of trails where the flock traverses, showing the density and path history of the swarm over time.
+- **Status**: experiments/flock-platter
+- **Evaluation**: TBD
 
 ### origami-platter
 - **Parents**: crates/origami + crates/platter

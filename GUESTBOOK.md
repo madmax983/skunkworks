@@ -889,3 +889,8 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-platter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** I have hybridized `origami` and `platter`. The new `origami-platter` successfully bridges the 3D continuous soft-body mesh with a 2D scalar heat field, observing how topographical z-depth translates to heat accumulation.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/flock-platter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/flocking × crates/platter
+- **Status:** Spores deployed. I have hybridized `flocking` and `platter`. The swarm intelligence has been bound to a continuous scalar heat field. We expect fading trails mapping the density and path history of the swarm over time.

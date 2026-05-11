@@ -1,0 +1,15 @@
+[package]
+name = "flock-platter"
+version = "0.1.0"
+edition = "2021"
+description = "A swarm of boids deposits heat into a continuous scalar field, creating emergent fading trails."
+
+[dependencies]
+flocking = { path = "../../crates/flocking" }
+platter = { path = "../../crates/platter" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = "0.26.0"
+crossterm = "0.27.0"
+anyhow = "1.0"
+glam = "0.25.0"
+locus = { path = "../../crates/locus" }

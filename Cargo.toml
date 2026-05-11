@@ -32,6 +32,7 @@ exclude = [
 
     "experiments/ik-codewalker",
     "experiments/neuro-resonance",
+    "experiments/flock-platter",
 
     "experiments/system-turbulence",
 

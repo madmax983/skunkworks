@@ -58,7 +58,9 @@ impl NeuroLocusApp {
                         let target_y = y as i64 + dy;
                         let target_x = x as i64 + dx;
 
-                        if let Some((ny, nx)) = topology.normalize(target_y, target_x, width, height) {
+                        if let Some((ny, nx)) =
+                            topology.normalize(target_y, target_x, width, height)
+                        {
                             let neighbor_idx = ny as usize * width + nx as usize;
 
                             // Probabilistic synaptic connection
@@ -70,7 +72,12 @@ impl NeuroLocusApp {
                                     rng.gen_range(-15.0..-5.0) // Inhibitory
                                 };
                                 let delay = rng.gen_range(1..5);
-                                network.add_synapse_with_delay(current_idx, neighbor_idx, weight, delay);
+                                network.add_synapse_with_delay(
+                                    current_idx,
+                                    neighbor_idx,
+                                    weight,
+                                    delay,
+                                );
                             }
                         }
                     }
@@ -103,7 +110,12 @@ impl NeuroLocusApp {
         let cx = (self.width as f64 / 2.0) + (self.time.cos() * 10.0);
         let cy = (self.height as f64 / 2.0) + (self.time.sin() * 5.0);
 
-        if let Some((ny, nx)) = self.topology.normalize(cy.round() as i64, cx.round() as i64, self.width, self.height) {
+        if let Some((ny, nx)) = self.topology.normalize(
+            cy.round() as i64,
+            cx.round() as i64,
+            self.width,
+            self.height,
+        ) {
             let center_idx = ny as usize * self.width + nx as usize;
             self.inputs[center_idx] += 30.0;
         }
@@ -129,7 +141,12 @@ fn run_app(tui: &mut Tui) -> Result<()> {
     let width = 80;
     let height = 40;
 
-    let topologies = [Topology::Plane, Topology::Torus, Topology::Klein, Topology::CylinderH];
+    let topologies = [
+        Topology::Plane,
+        Topology::Torus,
+        Topology::Klein,
+        Topology::CylinderH,
+    ];
     let mut topo_idx = 1; // Start with Torus
 
     let mut app = NeuroLocusApp::new(width, height, topologies[topo_idx]);
@@ -186,10 +203,8 @@ fn run_app(tui: &mut Tui) -> Result<()> {
 
             f.render_widget(canvas, chunks[0]);
 
-            let stats = Paragraph::new(
-                "Use [Space] to switch Topology | [Q] to quit"
-            )
-            .block(Block::default().borders(Borders::ALL));
+            let stats = Paragraph::new("Use [Space] to switch Topology | [Q] to quit")
+                .block(Block::default().borders(Borders::ALL));
             f.render_widget(stats, chunks[1]);
         })?;
 
