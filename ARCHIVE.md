@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **rhythmic-jungle**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics in headless environments due to missing display server and lack of headless guard. Grace period: 24h.
+- **locust-reaper**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics with `XOpenDisplay() failed!` in headless environments. Grace period: 24h.
 ## ☠️ Executed
+- **rhythmic-jungle**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Failed to resolve missing display server panic during grace period. Moved to graveyard.
 - **poincare-lattice**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Remains a trivial x/y mapping loop drawing simple shapes rather than demonstrating true biological emergence. Grace period expired. Moved to graveyard.
 - **quipu-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Remains a trivial x/y mapping of static integers rather than a complex biological hybrid. Grace period expired. Moved to graveyard.
 - **origami-platter**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` and explain its mutation during the grace period. Grace period expired. Moved to graveyard.
