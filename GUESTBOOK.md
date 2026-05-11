@@ -1,3 +1,9 @@
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/poincare-origami
+**Reaper ☠️**: "Specimen `poincare-origami` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics via `XOpenDisplay()` in a headless environment, lacking basic survival instincts for CI, and remains a skeletal sketch. Condemnation marked. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/locust-reaper
+**Reaper ☠️**: "Specimen `locust-reaper` has been executed. It failed to adapt a `--headless` guard and panicked when exposed to continuous integration environments. Its biomass has been returned to the void."
 ### [Concentration Level: DEATH PHEROMONE]
 ☠️ The Reaper has executed `poincare-lattice`. Its skeletal implementation and generic visualization loop exhibited terminal characteristics. Its biomass has been returned to the graveyard.
 
