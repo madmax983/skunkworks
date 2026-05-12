@@ -1,6 +1,4 @@
-🗺️ Atlas: [Extraction of exec_nova_dispatch from mod.rs]
+⚡ Bolt: [Performance] Pre-allocate Vecs to reduce heap allocations
 
-🕸️ Tangle: The structural problem was that `experiments/chimera-lang/src/vm/mod.rs` was heavily bloated, largely due to `exec_nova_dispatch` being a monolithic 400+ line `match` block tightly coupling Nova logic into the main VM definition.
-📐 Blueprint: Extracted `exec_nova_dispatch` from `mod.rs` into a new `experiments/chimera-lang/src/vm/ops/nova_dispatch.rs` module under the existing `impl crate::vm::ChimeraVM` block, and imported it via `vm/ops/mod.rs`.
-🧱 Stability: Reduced coupling between core VM execution and Nova expansion, significantly improving modularity and reducing the line count of the core `mod.rs` file.
-🔬 Verification: Builds successfully, strict separation enforced. Tested via `cargo check` and `cargo test -p chimera-lang` to verify zero regressions.
+*   Replaced repeated Vec::new() calls with Vec::with_capacity(n) in genetic-luthier and chimera-lang UI files where the final length is known upfront, preventing unnecessary intermediate reallocations.
+*   Fixed a non-idiomatic iterator chain in harmonic-engine (collection.clone().into_iter().rev()) by substituting it with .iter().map(|item| item.clone()).rev() to avoid allocating an intermediate cloned Vec.
