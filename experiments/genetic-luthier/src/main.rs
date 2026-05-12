@@ -16,7 +16,7 @@ async fn main() {
     // Keep handle alive
     let _audio_handle = audio_handle;
 
-    let mut strings: Vec<LuthierString> = Vec::new();
+    let mut strings: Vec<LuthierString> = Vec::with_capacity(STRING_COUNT);
 
     // Initialize strings
     for i in 0..STRING_COUNT {

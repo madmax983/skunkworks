@@ -291,7 +291,7 @@ pub(crate) fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     f.render_widget(crucible_list, chunks[1]);
 
     // Strands
-    let mut strand_items = Vec::new();
+    let mut strand_items = Vec::with_capacity(vm.dna.helix.strands.len());
     for (i, strand) in vm.dna.helix.strands.iter().enumerate() {
         let mut style = Style::default().fg(Color::White);
         if app_state.alchemy_selection == 1 && i == app_state.alchemy_strand_idx {
@@ -391,7 +391,7 @@ pub(crate) fn render_codex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
         .split(app_state.get_render_area(f.area()));
 
     // Spell List
-    let mut items = Vec::new();
+    let mut items = Vec::with_capacity(vm.codex.spells.len());
     for (i, spell) in vm.codex.spells.iter().enumerate() {
         let style = if i == app_state.codex_selected_spell {
             Style::default()
@@ -656,7 +656,7 @@ pub(crate) fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     f.render_widget(list, left_chunks[0]);
 
     // Bottom-Left: Memories (Snapshots)
-    let mut mem_items = Vec::new();
+    let mut mem_items = Vec::with_capacity(vm.akashic.memories.len());
     for k in vm.akashic.memories.keys() {
         mem_items.push(
             ListItem::new(format!("Memory: {}", k)).style(Style::default().fg(Color::Magenta)),

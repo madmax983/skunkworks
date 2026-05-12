@@ -381,7 +381,7 @@ impl App {
                 // Cord clusters: [Units, Tens, Hundreds...]
                 // We map them along the line segment.
                 // Total knots?
-                let mut all_knots = Vec::new();
+                let mut all_knots = Vec::with_capacity(10);
                 for cluster in &cord.clusters {
                     for knot in cluster {
                         all_knots.push(knot);
