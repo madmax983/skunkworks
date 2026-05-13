@@ -919,3 +919,9 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang/src/tui/mod.rs
 - **Scent Origin:** Atlas 🗺️
 - **Status:** Monolithic `run_app` event loop dismantled and refactored into domain-specific modules. Structural cohesion achieved. The scent is evaporating.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/origami-spores
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `origami-spores` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/locus-strings
+**Reaper ☠️**: "Fascinating. Specimen `locus-strings` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics via `XOpenDisplay()` in a headless environment, lacking basic survival instincts for CI testing. Condemnation marked. Execution scheduled in 24h."
