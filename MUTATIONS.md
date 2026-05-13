@@ -86,6 +86,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### quipu-origami
+- **Parents**: crates/quipu + crates/origami
+- **Concept**: Knotted Morphogenesis in 3D.
+- **Novel trait**: The discrete structural knots of a Quipu cord act as physical tension nodes warping a 3D procedural Miura-ori soft-body mesh.
+- **Predicted Phenotype**: An emergent organic drone visualizer. The ancient data storage cords dynamically constrain and physically warp the physical soft-body paper mesh based on data topology.
+- **Status**: experiments/quipu-origami
+- **Evaluation**: Success. Compiled. The soft-body mesh successfully translates discrete knot data into localized physical deformation constraints.
+
 ### quipu-gray
 - **Parents**: crates/quipu + crates/gray-scott
 - **Concept**: Knotted Morphogenesis.
