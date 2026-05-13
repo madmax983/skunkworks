@@ -1,0 +1,13 @@
+[package]
+name = "gray-lattice"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+miller-lattice = { path = "../../crates/miller-lattice" }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { path = "../../crates/tui-shared" }

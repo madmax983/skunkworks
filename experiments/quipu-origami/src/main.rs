@@ -90,7 +90,11 @@ async fn run_macroquad() {
 
             if x < cols && y < rows {
                 let br_idx = idx + w + 1;
-                let _ = system.add_distance_constraint(p_indices[idx], p_indices[br_idx], stiffness * 0.5);
+                let _ = system.add_distance_constraint(
+                    p_indices[idx],
+                    p_indices[br_idx],
+                    stiffness * 0.5,
+                );
             }
         }
     }
@@ -99,7 +103,9 @@ async fn run_macroquad() {
     for (i, cord) in quipu.cords.iter().enumerate() {
         let x = i.min(cols);
         let cluster_count = cord.clusters.len();
-        if cluster_count == 0 { continue; }
+        if cluster_count == 0 {
+            continue;
+        }
 
         let row_spacing = rows / cluster_count;
         for (j, cluster) in cord.clusters.iter().enumerate() {
@@ -167,7 +173,9 @@ async fn run_macroquad() {
         for (i, cord) in quipu.cords.iter().enumerate() {
             let x = i.min(cols);
             let cluster_count = cord.clusters.len();
-            if cluster_count == 0 { continue; }
+            if cluster_count == 0 {
+                continue;
+            }
 
             let row_spacing = rows / cluster_count;
             for (j, cluster) in cord.clusters.iter().enumerate() {

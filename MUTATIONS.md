@@ -86,6 +86,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### gray-lattice
+- **Parents**: crates/gray-scott + crates/miller-lattice
+- **Concept**: Code Entropy Morphogenesis.
+- **Novel trait**: The discrete structural codebase lattice from `miller-lattice` is mapped directly into a continuous `gray-scott` reaction-diffusion grid. Directories act as continuous sources of the 'kill' (V) chemical (decay boundaries), while files act as sources of the 'feed' (U) chemical (growth centers).
+- **Predicted Phenotype**: An organic, morphogenetic visualization where the rigid architecture of the codebase actively guides and constraints chemical Turing patterns.
+- **Status**: experiments/gray-lattice
+- **Evaluation**: Success. Compiled. The static crystal lattice nodes successfully translate into interacting chemical growth and decay boundaries within the morphogenetic substrate.
+
 ### quipu-origami
 - **Parents**: crates/quipu + crates/origami
 - **Concept**: Knotted Morphogenesis in 3D.
