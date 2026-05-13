@@ -139,7 +139,10 @@ fn main() -> Result<()> {
                                         x as f64,
                                         // Invert Y for canvas drawing
                                         (app.height - 1 - y) as f64,
-                                        ratatui::text::Span::styled("█", Style::default().fg(color)),
+                                        ratatui::text::Span::styled(
+                                            "█",
+                                            Style::default().fg(color),
+                                        ),
                                     );
                                 }
                             }
@@ -155,7 +158,10 @@ fn main() -> Result<()> {
                                 ctx.print(
                                     cx as f64,
                                     (app.height - 1 - y) as f64,
-                                    ratatui::text::Span::styled("|", Style::default().fg(Color::DarkGray)),
+                                    ratatui::text::Span::styled(
+                                        "|",
+                                        Style::default().fg(Color::DarkGray),
+                                    ),
                                 );
                             }
 
@@ -166,7 +172,8 @@ fn main() -> Result<()> {
 
                                     if !cluster.is_empty() {
                                         let knot_spacing = 3;
-                                        let start_x = cx.saturating_sub((cluster.len() * knot_spacing) / 2);
+                                        let start_x =
+                                            cx.saturating_sub((cluster.len() * knot_spacing) / 2);
 
                                         for (k, knot) in cluster.iter().enumerate() {
                                             let kx = start_x + k * knot_spacing;
@@ -180,7 +187,12 @@ fn main() -> Result<()> {
                                             ctx.print(
                                                 kx as f64,
                                                 (app.height - 1 - cy) as f64,
-                                                ratatui::text::Span::styled(symbol, Style::default().fg(Color::White).bg(Color::Red)),
+                                                ratatui::text::Span::styled(
+                                                    symbol,
+                                                    Style::default()
+                                                        .fg(Color::White)
+                                                        .bg(Color::Red),
+                                                ),
                                             );
                                         }
                                     }
