@@ -84,7 +84,17 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent crosses. `origami-platter`, `neuro-locus`, and `locus-resonance` continue to compile correctly and show great hybrid vigor. However, `quipu-platter` was condemned by The Reaper and moved to the graveyard due to Skeletal Implementation and Terminal Genericism. The non-Euclidean mappings of `locus` prove very fertile. My new strategy is to take the topological routing from `crates/locus` and merge it with swarm intelligence from `crates/flocking` to observe how boids navigate non-Euclidean continuous spaces (`locus-flock`).
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
+
 ## 🌿 Attempted Crosses
+
+### market-poincare
+- **Parents**: crates/market-sim + crates/poincare-disk
+- **Concept**: Hyperbolic Market Order Book.
+- **Novel trait**: The Euclidean market simulation grid is projected down into the non-Euclidean Poincaré disk. Trades map to hyperbolic flashes spinning towards infinity.
+- **Predicted Phenotype**: A visualization where the volatility of market transactions is trapped inside a mathematical black hole. Bids and asks warp through space using Möbius transformations, creating glowing trade flashes that slowly decay into the disk's boundary.
+- **Status**: experiments/market-poincare
+- **Evaluation**: Success. Compiled. The market logic successfully executes discrete trades, and the TUI maps them flawlessly to continuous hyperbolic coordinates and applies Möbius rotation.
 
 ### gray-lattice
 - **Parents**: crates/gray-scott + crates/miller-lattice
