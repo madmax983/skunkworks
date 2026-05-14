@@ -156,7 +156,7 @@ pub fn generate_miura_mesh(
     let vertices_pos = generate_miura_grid(params, grid_size, extension_factor);
     let (cols, rows) = grid_size;
 
-    if vertices_pos.len() > (isize::MAX as usize) / 32 {
+    if vertices_pos.len() > (isize::MAX as usize) / std::mem::size_of::<OrigamiVertex>() {
         return OrigamiMesh {
             vertices: Vec::new(),
             indices: Vec::new(),
@@ -274,7 +274,7 @@ fn calculate_horizontal(
         .checked_add(1)
         .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
     {
-        Some(c) if c <= (isize::MAX as usize) / 32 => c,
+        Some(c) if c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() => c,
         _ => return Vec::new(),
     };
     let mut positions = Vec::with_capacity(capacity);
@@ -341,7 +341,7 @@ fn calculate_vertical(
         .checked_add(1)
         .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
     {
-        Some(c) if c <= (isize::MAX as usize) / 32 => c,
+        Some(c) if c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() => c,
         _ => return Vec::new(),
     };
     let mut positions = Vec::with_capacity(capacity);
