@@ -1,4 +1,10 @@
 
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/locus-strings
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `locus-strings` failed to adapt. Its headless ecosystem maladaptation (`XOpenDisplay() failed!`) remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/market-resonance
+**Reaper ☠️**: "Fascinating. Specimen `market-resonance` exhibits terminal characteristics indicating Documentation Void and Ecosystem Maladaptation. It panics via `XOpenDisplay()` in a headless environment and lacks any explanation. Condemnation marked. Execution scheduled in 24h."
+
 ### [Concentration Level: RECOMBINATION PHEROMONE]
 🧬 The Splice Surgeon has created `gray-lattice`. The discrete structural lattice of a codebase has been fused with a continuous chemical Turing pattern substrate. A beautiful hybrid organism bridging static physical constraints and biological morphogenesis.
 

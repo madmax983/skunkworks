@@ -1,6 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locus-strings**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Lacks headless support, panics with `XOpenDisplay() failed!`. Grace period: 24h.
+- **market-resonance**: Specimen condemned. Diagnosis: Documentation Void / Ecosystem Maladaptation. Lacks headless support (`XOpenDisplay() failed!`) and `README.md`. Grace period: 24h.
+
 ## ☠️ Executed
+- **locus-strings**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics with `XOpenDisplay() failed!` in headless environments and failed to implement a `--headless` bypass during its grace period. Biomass returned to the void.
 - **origami-spores**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Lacks headless support, panics with `XOpenDisplay() failed!`. Failed to adapt during grace period. Moved to graveyard.
 - **poincare-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Lacks headless support and is a trivial mapping wrapper. Grace period expired. Moved to graveyard.
 - **locust-reaper**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics with `XOpenDisplay() failed!` in headless environments and failed to implement a `--headless` guard during its grace period. Biomass returned to the void.
