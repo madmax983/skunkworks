@@ -156,6 +156,13 @@ pub fn generate_miura_mesh(
     let vertices_pos = generate_miura_grid(params, grid_size, extension_factor);
     let (cols, rows) = grid_size;
 
+    if vertices_pos.len() > (isize::MAX as usize) / 32 {
+        return OrigamiMesh {
+            vertices: Vec::new(),
+            indices: Vec::new(),
+        };
+    }
+
     let mut vertices = Vec::with_capacity(vertices_pos.len());
     for (idx, pos) in vertices_pos.iter().enumerate() {
         let i = idx % (cols + 1);
@@ -169,8 +176,8 @@ pub fn generate_miura_mesh(
     // Optimization: Pre-allocate vector capacity to avoid reallocations.
     // Each grid cell consists of a quad split into 2 triangles (6 indices).
     let capacity = match rows.checked_mul(cols).and_then(|x| x.checked_mul(6)) {
-        Some(c) => c,
-        None => {
+        Some(c) if c <= (isize::MAX as usize) / std::mem::size_of::<u16>() => c,
+        _ => {
             return OrigamiMesh {
                 vertices: Vec::new(),
                 indices: Vec::new(),
@@ -267,8 +274,8 @@ fn calculate_horizontal(
         .checked_add(1)
         .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
     {
-        Some(c) => c,
-        None => return Vec::new(),
+        Some(c) if c <= (isize::MAX as usize) / 32 => c,
+        _ => return Vec::new(),
     };
     let mut positions = Vec::with_capacity(capacity);
 
@@ -334,8 +341,8 @@ fn calculate_vertical(
         .checked_add(1)
         .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
     {
-        Some(c) => c,
-        None => return Vec::new(),
+        Some(c) if c <= (isize::MAX as usize) / 32 => c,
+        _ => return Vec::new(),
     };
     let mut positions = Vec::with_capacity(capacity);
 
