@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **market-resonance**: Specimen condemned. Diagnosis: Documentation Void / Ecosystem Maladaptation. Lacks headless support (`XOpenDisplay() failed!`) and `README.md`. Grace period: 24h.
+- **quipu-gray**: Specimen condemned. Diagnosis: Documentation Void. Lacks a `README.md`. Grace period: 24h.
 
 ## ☠️ Executed
 - **locus-strings**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics with `XOpenDisplay() failed!` in headless environments and failed to implement a `--headless` bypass during its grace period. Biomass returned to the void.
