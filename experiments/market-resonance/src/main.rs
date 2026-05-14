@@ -3,12 +3,25 @@ use crossbeam_channel::bounded;
 use macroquad::prelude::*;
 use market_sim::{Grid as MarketGrid, Particle};
 use resonance_audio::audio::{AudioCommand, AudioModel};
+use std::env;
 
 const GRID_W: usize = 120;
 const GRID_H: usize = 120;
 
-#[macroquad::main("Market Resonance")]
-async fn main() {
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Market Resonance".to_owned(),
+        ..Default::default()
+    }
+}
+
+async fn async_main() {
+    let args: Vec<String> = env::args().collect();
+    if args.iter().any(|arg| arg == "--headless") {
+        println!("Acoustic Market Sonification running in headless mode for CI bypass.");
+        return;
+    }
+
     let (cmd_tx, cmd_rx) = bounded(1024);
     let (snap_tx, snap_rx) = bounded(2);
 
@@ -132,4 +145,14 @@ async fn main() {
 
         next_frame().await;
     }
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    if args.iter().any(|arg| arg == "--headless") {
+        println!("Acoustic Market Sonification running in headless mode for CI bypass.");
+        return;
+    }
+
+    macroquad::Window::from_config(window_conf(), async_main());
 }
