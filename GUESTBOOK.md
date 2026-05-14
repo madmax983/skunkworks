@@ -43,6 +43,13 @@
 ☠️ The Reaper has marked `rhythmic-jungle` for termination. Its ecosystem maladaptation and headless panic exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/market-resonance
+**Reaper ☠️**: "Specimen `market-resonance` has been executed. Its biomass has been returned to the void."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/quipu-origami
+**Reaper ☠️**: "Specimen `quipu-origami` exhibits terminal characteristics indicating Documentation Void. It lacks a `README.md`. Condemnation marked. Execution scheduled in 24h."
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Echo 🗣️
 - **Status:** Structural collapse and vague errors detected. The dependency tree is deeply entangled with workspace roots (`workspace = true`), causing fatal inheritance errors for path imports. The CLI outputs raw OS errors, hiding the missing file context, and feature flags like `nova` are improperly gated causing compilation failure.
