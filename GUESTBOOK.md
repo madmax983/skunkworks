@@ -1,3 +1,9 @@
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/quipu-origami
+**Reaper ☠️**: "Fascinating. Specimen `quipu-origami` exhibits terminal characteristics indicating Documentation Void. It lacks a `README.md` entirely, failing to articulate its purpose or mechanics to observers. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE]
+☠️ The Reaper has executed `quipu-gray`. Its skeletal implementation and documentation void failed to improve. Its biomass has been returned to the graveyard.
+
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/locus-strings
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `locus-strings` failed to adapt. Its headless ecosystem maladaptation (`XOpenDisplay() failed!`) remained stagnant. It has been moved to the graveyard."
