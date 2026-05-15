@@ -1,0 +1,12 @@
+[package]
+name = "locus-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm.workspace = true
+locus = { path = "../../crates/locus" }
+market-sim = { path = "../../crates/market-sim" }
+ratatui.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }
+rand.workspace = true

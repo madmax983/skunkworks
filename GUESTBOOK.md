@@ -46,6 +46,14 @@
 ☠️ The Reaper has marked `rhythmic-jungle` for termination. Its ecosystem maladaptation and headless panic exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
+### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-market
+
+- **Scent Origin:** The Splice Surgeon 🧬
+
+- **Status:** Recombination pheromone deployed. Spliced locus with market-sim.
+
+- **Phenotype:** Topological Market Morphogenesis. Bids and asks travel along a wrapped non-Euclidean boundary, where extreme price movements cause cyclic inflation through the topological void.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Echo 🗣️
 - **Status:** Structural collapse and vague errors detected. The dependency tree is deeply entangled with workspace roots (`workspace = true`), causing fatal inheritance errors for path imports. The CLI outputs raw OS errors, hiding the missing file context, and feature flags like `nova` are improperly gated causing compilation failure.
