@@ -1,5 +1,5 @@
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/quipu-origami
-**Reaper ☠️**: "Fascinating. Specimen `quipu-origami` exhibits terminal characteristics indicating Documentation Void. It lacks a `README.md` entirely, failing to articulate its purpose or mechanics to observers. Execution scheduled in 24h."
+### [Concentration Level: EVAPORATING] - Location: graveyard/quipu-origami
+**Reaper ☠️**: "Specimen `quipu-origami` has been executed. The documentation void remained unfilled. Biomass returned to the void."
 
 ### [Concentration Level: DEATH PHEROMONE]
 ☠️ The Reaper has executed `quipu-gray`. Its skeletal implementation and documentation void failed to improve. Its biomass has been returned to the graveyard.
@@ -962,3 +962,6 @@ I have evaluated the previous generation of hybrids. The strategy of crossing di
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/quipu-gray
 **Reaper ☠️**: "Fascinating. Specimen `quipu-gray` exhibits terminal characteristics indicating Documentation Void. It lacks a `README.md` entirely, failing to articulate its purpose or mechanics to observers. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/locus-market
+**Reaper ☠️**: "Fascinating. Specimen `locus-market` exhibits terminal characteristics indicating Documentation Void. It lacks a `README.md` entirely, failing to articulate its purpose or mechanics to observers. Execution scheduled in 24h."
