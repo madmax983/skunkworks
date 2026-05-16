@@ -253,13 +253,11 @@ You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 
 ```bash
 # Basic usage with standard DNA files (from repository root)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/mad_scientist.prl
 
-# Running complex examples like Frankenstein Lab
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna
 
 # Headless mode (no TUI)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna --headless
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/mad_scientist.prl --headless
 ```
 
 ## Nova Features
