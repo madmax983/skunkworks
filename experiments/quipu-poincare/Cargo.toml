@@ -1,0 +1,11 @@
+[package]
+name = "quipu-poincare"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+poincare-disk = { path = "../../crates/poincare-disk" }
+quipu = { path = "../../crates/quipu" }
+ratatui = "0.30"
+crossterm = "0.28"
+anyhow = "1.0"
