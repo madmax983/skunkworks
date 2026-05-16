@@ -1,7 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locus-market**: Specimen condemned. Diagnosis: Documentation Void. Lacks a `README.md`. Grace period: 24h.
-
+- **locus-ddos**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period: 24h.
 ## ☠️ Executed
+- **locus-market**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` to explain its mechanics during the grace period. Grace period expired. Moved to graveyard.
 - **quipu-origami**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` to explain its mechanics during the grace period. Grace period expired. Moved to graveyard.
 - **quipu-gray**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` to explain its mechanics during the grace period. Grace period expired. Moved to graveyard.
 - **locus-strings**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Void. Panics with `XOpenDisplay() failed!` in headless environments and failed to implement a `--headless` bypass during its grace period. Biomass returned to the void.
