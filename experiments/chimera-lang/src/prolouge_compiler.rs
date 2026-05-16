@@ -87,11 +87,14 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_forth_instr(instr)?);
                 }
             }
+            #[cfg(feature = "nova")]
             Rule::raku_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_raku_instr(instr)?);
                 }
             }
+            #[cfg(not(feature = "nova"))]
+            Rule::raku_block => {}
             Rule::orca_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_orca_instr(instr)?);
@@ -422,6 +425,7 @@ fn compile_chaos_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     Ok(genes)
 }
 
+#[cfg(feature = "nova")]
 fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     // hyper_instruction = { (">>" ~ operator ~ "<<") | string | number | identifier }

@@ -19,17 +19,17 @@ resonance = ["dep:resonance-audio", "dep:crossbeam-channel", "dep:rodio"]
 
 [dependencies]
 regex = "1.10"
-locus = { workspace = true, features = ["serde"] }
+locus = { path = "../../crates/locus", features = ["serde"] }
 pest = "2.7"
 pest_derive = "2.7"
 clap = { version = "4.4", features = ["derive"] }
-anyhow.workspace = true
-ratatui = { workspace = true }
-tui-shared = { workspace = true }
-crossterm = { workspace = true }
+anyhow = "1.0"
+ratatui = "0.30"
+tui-shared = { path = "../../crates/tui-shared" }
+crossterm = "0.28"
 rand = "0.8"
 crossbeam-channel = { version = "0.5", optional = true }
-resonance-audio = { workspace = true, optional = true }
+resonance-audio = { path = "../../crates/resonance-audio", optional = true }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 strum = "0.26"
