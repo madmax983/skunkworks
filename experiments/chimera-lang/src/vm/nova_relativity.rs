@@ -2,6 +2,13 @@
 use super::{ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_retroscope` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_retroscope
+/// ```
 pub fn exec_retroscope(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, y, x (top)
     if vm.stack.len() >= 3 {
@@ -47,6 +54,13 @@ pub fn exec_retroscope(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
+/// Performs the `update_relativity` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of update_relativity
+/// ```
 pub fn update_relativity(vm: &mut ChimeraVM) {
     // 1. Accrete Gravity from Energy Consumption
     // Each step adds a tiny bit of "mass" to the current location.

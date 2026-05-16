@@ -3,6 +3,13 @@ use crate::ast::{Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
+/// Performs the `process_forth_agent` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_forth_agent
+/// ```
 pub fn process_forth_agent(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,

@@ -4,6 +4,13 @@ use crate::vm::{ChimeraVM, Value};
 use std::collections::HashMap;
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_morph` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_morph
+/// ```
 pub fn exec_morph(vm: &mut ChimeraVM) {
     // Stack: axiom, rules, iterations (top)
     if vm.stack.len() < 3 {
@@ -86,6 +93,13 @@ pub fn exec_morph(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_grow` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_grow
+/// ```
 pub fn exec_grow(vm: &mut ChimeraVM) {
     // Stack: instructions, start_y, start_x (top)
     if vm.stack.len() < 3 {

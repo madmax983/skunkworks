@@ -2,6 +2,13 @@ use super::{ChimeraVM, Value};
 use crate::vm::nova::{get_direction_mask, Phase};
 use crate::vm::nova_biome::Biome;
 
+/// Performs the `exec_gravitate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_gravitate
+/// ```
 pub fn exec_gravitate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: radius
     let r = vm.pop_int("gravitate")?;
@@ -78,6 +85,13 @@ pub fn exec_gravitate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_migrate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_migrate
+/// ```
 pub fn exec_migrate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: dy, dx (top)
     let mut dx = vm.pop_int("migrate")?;
@@ -146,6 +160,13 @@ pub fn exec_migrate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_relativity` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_relativity
+/// ```
 pub fn exec_relativity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.relativity_mode = !vm.relativity_mode;
     let status = if vm.relativity_mode { "ON" } else { "OFF" };
@@ -154,6 +175,13 @@ pub fn exec_relativity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_graviton` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_graviton
+/// ```
 pub fn exec_graviton(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     vm.gravity_grid[cy][cx] = vm.gravity_grid[cy][cx].saturating_add(50);
@@ -163,6 +191,13 @@ pub fn exec_graviton(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_event_horizon` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_event_horizon
+/// ```
 pub fn exec_event_horizon(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     let g = vm.gravity_grid[cy][cx];
@@ -170,6 +205,13 @@ pub fn exec_event_horizon(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_sense_wind` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_sense_wind
+/// ```
 pub fn exec_sense_wind(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     let (dy, dx) = vm.wind_grid[cy][cx];
@@ -178,12 +220,26 @@ pub fn exec_sense_wind(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_sense_moisture` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_sense_moisture
+/// ```
 pub fn exec_sense_moisture(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     vm.stack.push(Value::Int(vm.moisture_grid[cy][cx]));
     None
 }
 
+/// Performs the `exec_terraform` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_terraform
+/// ```
 pub fn exec_terraform(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let radius_val = vm.stack.pop().unwrap();
@@ -235,6 +291,13 @@ pub fn exec_terraform(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_sense_biome` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_sense_biome
+/// ```
 pub fn exec_sense_biome(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     let biome = vm.biome_grid[cy][cx];
@@ -253,6 +316,13 @@ pub fn exec_sense_biome(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_shape` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shape
+/// ```
 pub fn exec_shape(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(t) = val {
@@ -288,6 +358,13 @@ pub fn exec_shape(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_rift` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_rift
+/// ```
 pub fn exec_rift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 4 {
         let x2_val = vm.stack.pop().unwrap();
@@ -324,6 +401,13 @@ pub fn exec_rift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_seal` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_seal
+/// ```
 pub fn exec_seal(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let x_val = vm.stack.pop().unwrap();
@@ -352,6 +436,13 @@ pub fn exec_seal(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_isomerize` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_isomerize
+/// ```
 pub fn exec_isomerize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.chirality = match vm.chirality {
         crate::vm::Chirality::Left => crate::vm::Chirality::Right,
@@ -362,6 +453,13 @@ pub fn exec_isomerize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_phase_shift` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_phase_shift
+/// ```
 pub fn exec_phase_shift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(id) = val {
@@ -386,6 +484,13 @@ pub fn exec_phase_shift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_membrane` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_membrane
+/// ```
 pub fn exec_membrane(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let mask_val = vm.pop_int("membrane")?;
 
@@ -422,6 +527,13 @@ pub fn exec_membrane(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_osmosis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_osmosis
+/// ```
 pub fn exec_osmosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let dx = vm.pop_int("osmosis")?;
     let dy = vm.pop_int("osmosis")?;

@@ -3,6 +3,13 @@ use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use rand::Rng;
 
+/// Performs the `exec_crystal_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_crystal_op
+/// ```
 pub fn exec_crystal_op(
     vm: &mut ChimeraVM,
     op: OpCode,

@@ -4,7 +4,9 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `OneiricGrid`.
 pub struct OneiricGrid {
+    /// The `cells` field.
     pub cells: Vec<Vec<f32>>,
 }
 
@@ -15,6 +17,13 @@ impl Default for OneiricGrid {
 }
 
 impl OneiricGrid {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             cells: vec![vec![0.0; GRID_SIZE]; GRID_SIZE],
@@ -23,6 +32,13 @@ impl OneiricGrid {
 }
 
 /// Updates the Oneiric state based on runes.
+/// Performs the `apply_oneiric_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_oneiric_runes
+/// ```
 pub fn apply_oneiric_runes(
     rune: &str,
     y: usize,
@@ -85,6 +101,13 @@ pub fn apply_oneiric_runes(
 
 /// Applies global dream physics (Diffusion and Decay).
 /// This should be called once per tick in `exec_prologue_tick`.
+/// Performs the `process_oneiric_tick` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_oneiric_tick
+/// ```
 pub fn process_oneiric_tick(vm: &mut ChimeraVM) {
     let mut next_cells = vm.prologue_state.oneiric_grid.cells.clone();
     let decay = 0.90; // Fast decay
@@ -124,6 +147,13 @@ pub fn process_oneiric_tick(vm: &mut ChimeraVM) {
 /// Process Logic for the Dream Weaver Agent (💤).
 ///
 /// It seeks high Oneiric intensity and weaves dreams (runes) when intensity peaks.
+/// Performs the `process_dream_weaver_logic` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_dream_weaver_logic
+/// ```
 pub fn process_dream_weaver_logic(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,
@@ -193,6 +223,13 @@ pub fn process_dream_weaver_logic(
 /// Process Logic for the Nightmare Agent (👹).
 ///
 /// It seeks and destroys Dream Weavers, and consumes Oneiric intensity.
+/// Performs the `process_nightmare_logic` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_nightmare_logic
+/// ```
 pub fn process_nightmare_logic(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,

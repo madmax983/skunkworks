@@ -1,11 +1,16 @@
 use serde::{Deserialize, Serialize};
 
+/// Constant `GRID_SIZE`.
 pub const GRID_SIZE: usize = 16;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+/// Represents a `ChimeraChaos`.
 pub struct ChimeraChaos {
+    /// The `grid` field.
     pub grid: Vec<Vec<f64>>,
+    /// The `r_grid` field.
     pub r_grid: Vec<Vec<f64>>, // Growth rate parameters (3.0 - 4.0)
+    /// The `coupling` field.
     pub coupling: f64,
 }
 
@@ -16,6 +21,13 @@ impl Default for ChimeraChaos {
 }
 
 impl ChimeraChaos {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             grid: vec![vec![0.5; GRID_SIZE]; GRID_SIZE],
@@ -24,6 +36,13 @@ impl ChimeraChaos {
         }
     }
 
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
     pub fn tick(&mut self) {
         let mut next_grid = self.grid.clone();
         for (y, row) in next_grid.iter_mut().enumerate().take(GRID_SIZE) {

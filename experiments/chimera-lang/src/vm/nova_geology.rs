@@ -6,6 +6,13 @@ use crate::opcode::OpCode;
 use crate::value::Value;
 use rand::Rng;
 
+/// Performs the `exec_geology_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_geology_op
+/// ```
 pub fn exec_geology_op(
     vm: &mut ChimeraVM,
     op: OpCode,

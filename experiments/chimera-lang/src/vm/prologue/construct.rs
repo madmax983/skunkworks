@@ -3,6 +3,13 @@ use crate::ast::JunctionType;
 use crate::vm::Value;
 use serde_json;
 
+/// Performs the `apply_construct_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_construct_runes
+/// ```
 pub fn apply_construct_runes(
     rune: &str,
     y: usize,
@@ -72,6 +79,13 @@ pub fn apply_construct_runes(
     changes
 }
 
+/// Performs the `apply_construct_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_construct_sinks
+/// ```
 pub fn apply_construct_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
     if rune == "Π" {
         // Prototyper: West (Blueprint/String) -> Grid (East)

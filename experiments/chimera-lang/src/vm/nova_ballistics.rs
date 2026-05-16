@@ -4,17 +4,33 @@ use super::{ChimeraVM, Value, GRID_SIZE, MAX_PROJECTILES};
 use rand::Rng;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a `Projectile`.
 pub struct Projectile {
+    /// The `x` field.
     pub x: f64,
+    /// The `y` field.
     pub y: f64,
+    /// The `vx` field.
     pub vx: f64,
+    /// The `vy` field.
     pub vy: f64,
+    /// The `power` field.
     pub power: i64,
+    /// The `ttl` field.
     pub ttl: usize,
+    /// The `owner` field.
     pub owner: usize, // Strand index
+    /// The `last_hit` field.
     pub last_hit: Option<(usize, usize)>,
 }
 
+/// Performs the `update_projectiles` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of update_projectiles
+/// ```
 pub fn update_projectiles(vm: &mut ChimeraVM) {
     let mut surviving_projectiles = Vec::new();
     let mut limit_reached = false;
@@ -196,6 +212,13 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
     vm.projectiles = surviving_projectiles;
 }
 
+/// Performs the `exec_fire` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fire
+/// ```
 pub fn exec_fire(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., power, dy, dx ] (top)
     if vm.stack.len() >= 3 {
@@ -244,6 +267,13 @@ pub fn exec_fire(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_salvo` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_salvo
+/// ```
 pub fn exec_salvo(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., power, count ]
     if vm.stack.len() >= 2 {

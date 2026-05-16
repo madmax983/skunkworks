@@ -54,6 +54,121 @@ use strum_macros::{AsRefStr, EnumIter, EnumString};
     Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, EnumString, AsRefStr, EnumIter,
 )]
 #[strum(serialize_all = "snake_case")]
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
+/// Enum for `OpCode`.
 pub enum OpCode {
     /// Pushes a value onto the stack.
     ///
@@ -278,6 +393,64 @@ pub enum OpCode {
     /// **`Silicon`** Toggles automatic conduction mode.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
+    /// Silicon
     Silicon,
     /// **`Silicon`** Constructs a logic gate on the grid.
     ///
@@ -899,6 +1072,64 @@ pub enum OpCode {
     /// **`Nova`** Randomly corrupts the Grid or Stack.
     ///
     /// **Stack:** `[ ..., severity ] -> [ ... ]`
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
+    /// Glitch
     Glitch,
     /// **`Nova`** Shuffles the stack.
     ///
@@ -2310,10 +2541,126 @@ pub enum OpCode {
     /// **`Nova`** Sets the Fractal Mode to Mandelbrot.
     ///
     /// **Stack:** `[ ..., max_iterations ] -> [ ... ]`
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
+    /// Mandelbrot
     Mandelbrot,
     /// **`Nova`** Sets the Fractal Mode to Julia Set with constant c.
     ///
     /// **Stack:** `[ ..., c_re, c_im ] -> [ ... ]`
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
+    /// Julia
     Julia,
     /// **`Nova`** Adjusts the Fractal Zoom level.
     ///

@@ -1,6 +1,13 @@
 use super::normalize_coords;
 use crate::vm::Value;
 
+/// Performs the `apply_biolum_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_biolum_runes
+/// ```
 pub fn apply_biolum_runes(
     rune: &str,
     y: usize,
@@ -23,6 +30,13 @@ pub fn apply_biolum_runes(
     changes
 }
 
+/// Performs the `apply_biolum_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_biolum_sinks
+/// ```
 pub fn apply_biolum_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
         "Φ" => {

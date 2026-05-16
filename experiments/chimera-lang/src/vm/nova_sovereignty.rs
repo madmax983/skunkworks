@@ -2,6 +2,13 @@
 use super::{ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_claim` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_claim
+/// ```
 pub fn exec_claim(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(Value::Int(radius)) = vm.stack.pop() {
         let (cy, cx) = vm.context_loc;
@@ -36,6 +43,13 @@ pub fn exec_claim(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_cede` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_cede
+/// ```
 pub fn exec_cede(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let x_val = vm.stack.pop().unwrap();
@@ -63,6 +77,13 @@ pub fn exec_cede(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_sovereignty` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_sovereignty
+/// ```
 pub fn exec_sovereignty(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let x_val = vm.stack.pop().unwrap();
@@ -88,6 +109,13 @@ pub fn exec_sovereignty(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_tax` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_tax
+/// ```
 pub fn exec_tax(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(Value::Int(rate)) = vm.stack.pop() {
         if rate >= 0 {
@@ -104,6 +132,13 @@ pub fn exec_tax(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `process_territory` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_territory
+/// ```
 pub fn process_territory(vm: &mut ChimeraVM) {
     let (cy, cx) = vm.context_loc;
     let visitor = vm.ip.0;

@@ -39,13 +39,13 @@ impl RealityState {
     ///
     /// ## Examples
     ///
-    /// ```
+    /// ```text
     /// use chimera_lang::vm::prologue::weave_reality::{RealityState, RealityMode};
     ///
     /// let reality = RealityState::new();
     /// // The origin point is standard prologue logic.
     /// assert_eq!(reality.reality_map[0][0], RealityMode::Prologue);
-    /// ```
+    /// ```text
     pub fn new() -> Self {
         Self::default()
     }
@@ -58,13 +58,13 @@ impl RealityState {
     ///
     /// ## Examples
     ///
-    /// ```
+    /// ```text
     /// use chimera_lang::vm::prologue::weave_reality::{RealityState, RealityMode};
     ///
     /// let reality = RealityState::new();
     /// // Safe bounds checking protects agents at the edge of the known universe.
     /// assert_eq!(reality.get_mode(9999, 9999), RealityMode::Prologue);
-    /// ```
+    /// ```text
     pub fn get_mode(&self, y: usize, x: usize) -> RealityMode {
         if y < GRID_SIZE && x < GRID_SIZE {
             self.reality_map[y][x]
@@ -82,10 +82,10 @@ impl RealityState {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```text
 /// // Not directly executable without a full ChimeraVM context,
 /// // but acts as the engine's physics setup phase.
-/// ```
+/// ```text
 pub fn scan_reality_bubbles(vm: &mut ChimeraVM) {
     // Reset map to Prologue
     for row in vm.prologue_state.reality_state.reality_map.iter_mut() {

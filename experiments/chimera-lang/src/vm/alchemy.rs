@@ -30,28 +30,58 @@ const RES_GOLD: &str = "gold";
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Default)]
+/// Represents a `Crucible`.
 pub struct Crucible {
+    /// The `contents` field.
     pub contents: Vec<Value>,
 }
 
 #[cfg(feature = "nova")]
 impl Crucible {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             contents: Vec::new(),
         }
     }
 
+    /// Performs the `add` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of add
+    /// ```
     pub fn add(&mut self, val: Value) {
         self.contents.push(val);
     }
 
+    /// Performs the `clear` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of clear
+    /// ```
     pub fn clear(&mut self) {
         self.contents.clear();
     }
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_crucible_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_crucible_op
+/// ```
 pub fn exec_crucible_op(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -101,6 +131,13 @@ pub fn exec_crucible_op(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `transmute_crucible` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of transmute_crucible
+/// ```
 pub fn transmute_crucible(vm: &mut ChimeraVM) {
     // Take contents out to avoid double borrow
     let mut ingredients: Vec<Value> = std::mem::take(&mut vm.crucible.contents);
@@ -380,6 +417,13 @@ fn register_new_strand(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `perform_alchemy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of perform_alchemy
+/// ```
 pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
     let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
     let mut ingredients = Vec::new();

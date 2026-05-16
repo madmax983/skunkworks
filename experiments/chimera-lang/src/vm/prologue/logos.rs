@@ -9,18 +9,31 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Enum for `GrammarRule`.
+/// Enum for `GrammarRule`.
 pub enum GrammarRule {
+    /// Literal
     Literal(String),
+    /// Regex
     Regex(String),
+    /// Sequence
     Sequence(Vec<GrammarRule>),
+    /// Choice
     Choice(Vec<GrammarRule>),
+    /// Reference
     Reference(String),
+    /// WeightedChoice
     WeightedChoice(Vec<(u32, GrammarRule)>),
+    /// Whitespace
     Whitespace,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `LogosEngine`.
+/// Represents a `LogosEngine`.
 pub struct LogosEngine {
+    /// The `rules` field.
+    /// The `rules` field.
     pub rules: HashMap<String, GrammarRule>,
 }
 
@@ -31,12 +44,40 @@ impl Default for LogosEngine {
 }
 
 impl LogosEngine {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             rules: HashMap::new(),
         }
     }
 
+    /// Performs the `define_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of define_rule
+    /// ```
+    /// Performs the `define_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of define_rule
+    /// ```
     pub fn define_rule(&mut self, name: &str, definition: &str) {
         match self.parse_rule_def(definition) {
             Ok(rule) => {
@@ -48,12 +89,40 @@ impl LogosEngine {
         }
     }
 
+    /// Performs the `define_rule_from_dna` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of define_rule_from_dna
+    /// ```
+    /// Performs the `define_rule_from_dna` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of define_rule_from_dna
+    /// ```
     pub fn define_rule_from_dna(&mut self, name: &str, dna: &Dna, strand_idx: usize) {
         if let Ok(rule) = self.dna_to_grammar(dna, strand_idx) {
             self.rules.insert(name.to_string(), rule);
         }
     }
 
+    /// Performs the `mutate_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutate_rule
+    /// ```
+    /// Performs the `mutate_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutate_rule
+    /// ```
     pub fn mutate_rule(&mut self, name: &str) {
         if let Some(rule) = self.rules.get_mut(name) {
             mutate_grammar_rule(rule);
@@ -212,6 +281,20 @@ impl LogosEngine {
         }
     }
 
+    /// Performs the `generate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of generate
+    /// ```
+    /// Performs the `generate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of generate
+    /// ```
     pub fn generate(&self, rule_name: &str) -> Result<String, String> {
         if let Some(rule) = self.rules.get(rule_name) {
             self.generate_from_rule(rule, 0)
@@ -299,6 +382,20 @@ impl LogosEngine {
         }
     }
 
+    /// Performs the `parse_input` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_input
+    /// ```
+    /// Performs the `parse_input` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_input
+    /// ```
     pub fn parse_input(&self, rule_name: &str, input: &str) -> Result<Value, String> {
         if let Some(rule) = self.rules.get(rule_name) {
             let (val_opt, consumed) = self.parse_from_rule(rule, input, 0, 0)?;
@@ -445,6 +542,20 @@ fn mutate_grammar_rule(rule: &mut GrammarRule) {
     }
 }
 
+/// Performs the `apply_logos_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_logos_runes
+/// ```
+/// Performs the `apply_logos_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_logos_runes
+/// ```
 pub fn apply_logos_runes(
     rune: &str,
     y: usize,
@@ -537,6 +648,20 @@ pub fn apply_logos_runes(
     changes
 }
 
+/// Performs the `apply_logos_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_logos_sinks
+/// ```
+/// Performs the `apply_logos_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_logos_sinks
+/// ```
 pub fn apply_logos_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     // West signal for input
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {

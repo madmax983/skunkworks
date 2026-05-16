@@ -4,6 +4,7 @@ use super::{nova_biome::Biome, ChimeraVM};
 ///
 /// Optimization: Used to avoid repeated calls to `get_direction_mask` inside hot loops.
 /// Mappings: N=1, S=2, E=4, W=8.
+/// Constant `NEIGHBOR_DIRECTIONS`.
 pub const NEIGHBOR_DIRECTIONS: [(i64, i64, u8); 4] = [
     (-1, 0, 1), // N
     (1, 0, 2),  // S
@@ -11,6 +12,13 @@ pub const NEIGHBOR_DIRECTIONS: [(i64, i64, u8); 4] = [
     (0, 1, 4),  // E
 ];
 
+/// Performs the `get_open_neighbors` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of get_open_neighbors
+/// ```
 pub fn get_open_neighbors(
     vm: &ChimeraVM,
     y: usize,
@@ -119,6 +127,13 @@ fn diffuse_scalar_grid<F>(
 /// and its open neighbors (neighbors not blocked by membranes).
 ///
 /// Optimized to avoid intermediate Vec allocations.
+/// Performs the `diffuse_hormones` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of diffuse_hormones
+/// ```
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     let mut buffer = [[[0i64; 3]; 16]; 16];
     let size = crate::vm::GRID_SIZE as i64;
@@ -195,6 +210,13 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
 ///
 /// Waste accumulates and spreads. High concentrations trigger damage/mutation.
 #[allow(clippy::needless_range_loop)]
+/// Performs the `diffuse_waste` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of diffuse_waste
+/// ```
 pub fn diffuse_waste(vm: &mut ChimeraVM) {
     diffuse_scalar_grid(
         &mut vm.waste_grid,
@@ -211,6 +233,13 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
 /// Light spreads but decays rapidly (50% per tick), simulating absorption and scattering.
 /// Chloroplasts harvest energy from this grid.
 #[allow(clippy::needless_range_loop)]
+/// Performs the `diffuse_light` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of diffuse_light
+/// ```
 pub fn diffuse_light(vm: &mut ChimeraVM) {
     super::nova_biolum::diffuse_light_color(vm);
     let mut buffer = [[0i64; 16]; 16];
@@ -250,6 +279,13 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
 /// Mutagen spreads and decays slowly (90% retained per tick).
 /// High levels cause random DNA mutations.
 #[allow(clippy::needless_range_loop)]
+/// Performs the `diffuse_mutagen` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of diffuse_mutagen
+/// ```
 pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
     diffuse_scalar_grid(
         &mut vm.mutagen_grid,
@@ -266,6 +302,13 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
 /// Entropy spreads and decays slowly.
 /// High levels cause Reality Decay (glitches).
 #[allow(clippy::needless_range_loop)]
+/// Performs the `diffuse_entropy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of diffuse_entropy
+/// ```
 pub fn diffuse_entropy(vm: &mut ChimeraVM) {
     diffuse_scalar_grid(
         &mut vm.entropy_grid,

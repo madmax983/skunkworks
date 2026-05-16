@@ -9,22 +9,35 @@ use std::collections::VecDeque;
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone)]
+/// Represents a `Gladiator`.
 pub struct Gladiator {
+    /// The `name` field.
     pub name: String,
+    /// The `strand` field.
     pub strand: Strand,
+    /// The `stats` field.
     pub stats: CombatStats,
+    /// The `energy` field.
     pub energy: i64,
+    /// The `ip` field.
     pub ip: usize,
+    /// The `traits` field.
     pub traits: Vec<String>,
 }
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone)]
+/// Represents a `ArenaState`.
 pub struct ArenaState {
+    /// The `combatants` field.
     pub combatants: Vec<Gladiator>,
+    /// The `logs` field.
     pub logs: VecDeque<String>,
+    /// The `turn` field.
     pub turn: usize,
+    /// The `active` field.
     pub active: bool,
+    /// The `winner` field.
     pub winner: Option<String>,
 }
 
@@ -36,6 +49,13 @@ impl Default for ArenaState {
 }
 
 impl ArenaState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             combatants: Vec::new(),
@@ -46,6 +66,13 @@ impl ArenaState {
         }
     }
 
+    /// Performs the `add_gladiator` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of add_gladiator
+    /// ```
     pub fn add_gladiator(&mut self, strand: Strand, seed: u64) {
         let traits = nova_bestiary::analyze_traits(&strand);
         let name = nova_bestiary::generate_name(seed, &traits);
@@ -67,6 +94,13 @@ impl ArenaState {
         self.combatants.push(gladiator);
     }
 
+    /// Performs the `start` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of start
+    /// ```
     pub fn start(&mut self) {
         if self.combatants.len() >= 2 {
             self.active = true;
@@ -78,6 +112,13 @@ impl ArenaState {
         }
     }
 
+    /// Performs the `reset` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of reset
+    /// ```
     pub fn reset(&mut self) {
         self.combatants.clear();
         self.logs.clear();
@@ -86,6 +127,13 @@ impl ArenaState {
         self.turn = 0;
     }
 
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
     pub fn tick(&mut self) {
         if !self.active || self.combatants.len() < 2 {
             return;

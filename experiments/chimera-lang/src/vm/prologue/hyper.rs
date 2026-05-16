@@ -4,12 +4,16 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `HyperState`.
 pub struct HyperState {
     /// Maps 2D Grid Coords (y, x) -> (z, w)
+    /// The `extra_dims` field.
     pub extra_dims: HashMap<(usize, usize), (i64, i64)>,
     /// Current Projection Planes (0=XY, 1=XZ, 2=XW, 3=YZ, 4=YW, 5=ZW)
+    /// The `projection_mode` field.
     pub projection_mode: u8,
     /// Rotation angle (0-360)
+    /// The `rotation` field.
     pub rotation: f64,
 }
 
@@ -20,6 +24,13 @@ impl Default for HyperState {
 }
 
 impl HyperState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             extra_dims: HashMap::new(),
@@ -29,6 +40,13 @@ impl HyperState {
     }
 }
 
+/// Performs the `apply_hyper_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_hyper_runes
+/// ```
 pub fn apply_hyper_runes(
     rune: &str,
     y: usize,

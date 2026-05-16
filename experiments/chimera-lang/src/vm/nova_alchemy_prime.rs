@@ -8,6 +8,13 @@ use crate::vm::{ChimeraVM, Value, MAX_GENES_PER_STRAND};
 use std::str::FromStr;
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_absorb_geometry` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_absorb_geometry
+/// ```
 pub fn exec_absorb_geometry(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -106,6 +113,13 @@ pub fn exec_absorb_geometry(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_project_geometry` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_project_geometry
+/// ```
 pub fn exec_project_geometry(
     vm: &mut ChimeraVM,
     _op: OpCode,

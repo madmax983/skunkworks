@@ -8,6 +8,13 @@ use crate::vm::{ChimeraVM, Value};
 use std::collections::HashMap;
 
 #[cfg(feature = "oracle")]
+/// Performs the `apply_oracle_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_oracle_sinks
+/// ```
 pub fn apply_oracle_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
         "¶" => {
@@ -104,4 +111,11 @@ pub fn apply_oracle_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 }
 
 #[cfg(not(feature = "oracle"))]
+/// Performs the `apply_oracle_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_oracle_sinks
+/// ```
 pub fn apply_oracle_sinks(_vm: &mut ChimeraVM, _rune: &str, _y: usize, _x: usize) {}

@@ -6,6 +6,13 @@ use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_ward` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_ward
+/// ```
 pub fn exec_ward(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., persistence, strand_idx ]
     if vm.stack.len() >= 2 {
@@ -35,6 +42,13 @@ pub fn exec_ward(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Optio
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `check_ward_trigger` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of check_ward_trigger
+/// ```
 pub fn check_ward_trigger(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
 

@@ -2,6 +2,13 @@ use super::{ChimeraVM, Organelle, Value};
 use crate::vm::nova::OrganelleType;
 use rand::Rng;
 
+/// Performs the `process_flux` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_flux
+/// ```
 pub fn process_flux(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
     let mut to_spawn = Vec::new();
@@ -46,6 +53,13 @@ pub fn process_flux(vm: &mut ChimeraVM) {
     }
 }
 
+/// Performs the `tick_wisp` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of tick_wisp
+/// ```
 pub fn tick_wisp(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
     let (cy, cx) = organelle.context_loc;
 
@@ -78,6 +92,13 @@ pub fn tick_wisp(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
     !organelle.halted
 }
 
+/// Performs the `exec_chaos` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_chaos
+/// ```
 pub fn exec_chaos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(arg) = val {
@@ -151,6 +172,13 @@ pub fn exec_chaos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_entropy_surge` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_entropy_surge
+/// ```
 pub fn exec_entropy_surge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.glitch_level = (vm.glitch_level + 0.2).clamp(0.0, 1.0);
 
@@ -171,6 +199,13 @@ pub fn exec_entropy_surge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_quantum_tunnel` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_quantum_tunnel
+/// ```
 pub fn exec_quantum_tunnel(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let s_idx = vm.ip.0;
     if s_idx < vm.dna.helix.strands.len() {

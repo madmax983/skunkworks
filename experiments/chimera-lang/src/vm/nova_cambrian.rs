@@ -4,6 +4,13 @@ use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
+/// Performs the `exec_morphogen` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_morphogen
+/// ```
 pub fn exec_morphogen(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -41,6 +48,13 @@ pub fn exec_morphogen(
     None
 }
 
+/// Performs the `exec_hox_switch` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_hox_switch
+/// ```
 pub fn exec_hox_switch(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -86,6 +100,13 @@ pub fn exec_hox_switch(
     None
 }
 
+/// Performs the `exec_adhere` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_adhere
+/// ```
 pub fn exec_adhere(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Wrapper for Bond (Nova Metazoa)
     // Uses the same logic but explicitly for tissue formation in Cambrian context.

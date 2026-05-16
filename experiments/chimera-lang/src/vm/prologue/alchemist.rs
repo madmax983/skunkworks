@@ -12,13 +12,24 @@ use std::str::FromStr;
 /// Format: "⚗:Mode:Direction:CrucibleLen:Item1,Item2,..."
 /// Mode: 0=Gather, 1=Eject
 #[derive(Debug, Clone)]
+/// Represents a `AlchemistState`.
 pub struct AlchemistState {
+    /// The `mode` field.
     pub mode: u8,
+    /// The `direction` field.
     pub direction: usize, // 0=N, 1=E, 2=S, 3=W
+    /// The `crucible` field.
     pub crucible: Vec<Value>,
 }
 
 impl AlchemistState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             mode: 0,
@@ -27,6 +38,13 @@ impl AlchemistState {
         }
     }
 
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }
@@ -90,6 +108,13 @@ impl FromStr for AlchemistState {
 }
 
 /// Processes the logic for an Alchemist agent.
+/// Performs the `process_alchemist_logic` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_alchemist_logic
+/// ```
 pub fn process_alchemist_logic(
     vm: &mut ChimeraVM,
     agent: &super::PrologueAgent,

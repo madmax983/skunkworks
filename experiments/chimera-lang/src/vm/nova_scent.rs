@@ -11,15 +11,28 @@ use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Scent`.
 pub struct Scent {
+    /// The `signature` field.
     pub signature: String,
+    /// The `x` field.
     pub x: f64,
+    /// The `y` field.
     pub y: f64,
+    /// The `intensity` field.
     pub intensity: f64,
+    /// The `age` field.
     pub age: usize,
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_scent_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_scent_op
+/// ```
 pub fn exec_scent_op(
     vm: &mut ChimeraVM,
     op: OpCode,
@@ -171,6 +184,13 @@ fn exec_track(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `process_scents` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_scents
+/// ```
 pub fn process_scents(vm: &mut ChimeraVM) {
     let decay_rate = 0.95; // 5% decay per tick
     let min_intensity = 1.0;

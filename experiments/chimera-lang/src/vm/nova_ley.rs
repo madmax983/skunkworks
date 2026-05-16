@@ -7,15 +7,22 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// Represents a `LeyNode`.
 pub struct LeyNode {
+    /// The `y` field.
     pub y: usize,
+    /// The `x` field.
     pub x: usize,
+    /// The `power` field.
     pub power: i64,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// Represents a `LeyNetwork`.
 pub struct LeyNetwork {
+    /// The `nodes` field.
     pub nodes: Vec<LeyNode>,
+    /// The `connections` field.
     pub connections: Vec<Vec<usize>>,
 }
 
@@ -26,6 +33,13 @@ impl Default for LeyNetwork {
 }
 
 impl LeyNetwork {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             nodes: Vec::new(),
@@ -33,6 +47,13 @@ impl LeyNetwork {
         }
     }
 
+    /// Performs the `add_node` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of add_node
+    /// ```
     pub fn add_node(&mut self, y: usize, x: usize, power: i64) -> usize {
         let idx = self.nodes.len();
         self.nodes.push(LeyNode { y, x, power });
@@ -40,6 +61,13 @@ impl LeyNetwork {
         idx
     }
 
+    /// Performs the `generate_random` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of generate_random
+    /// ```
     pub fn generate_random(&mut self) {
         let mut rng = rand::thread_rng();
         // Generate 3-5 nodes
@@ -66,6 +94,13 @@ impl LeyNetwork {
         }
     }
 
+    /// Performs the `connect` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of connect
+    /// ```
     pub fn connect(&mut self, idx1: usize, idx2: usize) {
         if idx1 < self.nodes.len()
             && idx2 < self.nodes.len()
@@ -77,6 +112,13 @@ impl LeyNetwork {
         }
     }
 
+    /// Performs the `find_nearest` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of find_nearest
+    /// ```
     pub fn find_nearest(&self, y: usize, x: usize) -> Option<(usize, f64)> {
         let mut min_dist = f64::MAX;
         let mut nearest_idx = None;
@@ -95,6 +137,13 @@ impl LeyNetwork {
     }
 }
 
+/// Performs the `exec_ley_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_ley_op
+/// ```
 pub fn exec_ley_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         OpCode::LeySense => exec_ley_sense(vm),

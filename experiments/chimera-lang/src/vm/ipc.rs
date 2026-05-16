@@ -15,6 +15,13 @@ use std::time::{SystemTime, UNIX_EPOCH};
 const ETHER_DIR: &str = ".chimera_ether";
 
 #[cfg(feature = "nova")]
+/// Performs the `signal` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of signal
+/// ```
 pub fn signal(vm: &mut ChimeraVM) {
     // stack: channel, value
     if vm.stack.len() >= 2 {
@@ -57,6 +64,13 @@ pub fn signal(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `receive` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of receive
+/// ```
 pub fn receive(vm: &mut ChimeraVM) {
     // stack: channel
     if let Some(val) = vm.stack.pop() {

@@ -2,6 +2,13 @@ use super::normalize_coords;
 use crate::ast::Dna;
 use crate::vm::{ChimeraVM, Value};
 
+/// Performs the `apply_sequencer_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_sequencer_runes
+/// ```
 pub fn apply_sequencer_runes(
     rune: &str,
     y: usize,
@@ -46,6 +53,13 @@ pub fn apply_sequencer_runes(
     changes
 }
 
+/// Performs the `apply_sequencer_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_sequencer_sinks
+/// ```
 pub fn apply_sequencer_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
         vm.prologue_state.signal_grid[wy][wx].clone()

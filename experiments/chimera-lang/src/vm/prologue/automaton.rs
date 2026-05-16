@@ -8,14 +8,26 @@ use std::str::FromStr;
 /// Format: "A:PC:Dir:Memory:Program"
 /// Example: "A:0:1:0:^>v<"
 #[derive(Debug, Clone)]
+/// Represents a `AutomatonState`.
 pub struct AutomatonState {
-    pub pc: usize,       // Program Counter
-    pub dir: usize,      // 0=N, 1=E, 2=S, 3=W
-    pub memory: i64,     // Internal Register/Clipboard
+    /// The `pc` field.
+    pub pc: usize, // Program Counter
+    /// The `dir` field.
+    pub dir: usize, // 0=N, 1=E, 2=S, 3=W
+    /// The `memory` field.
+    pub memory: i64, // Internal Register/Clipboard
+    /// The `program` field.
     pub program: String, // The Code
 }
 
 impl AutomatonState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new(pc: usize, dir: usize, memory: i64, program: String) -> Self {
         Self {
             pc,
@@ -38,6 +50,13 @@ impl Default for AutomatonState {
 }
 
 impl AutomatonState {
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }
@@ -86,6 +105,13 @@ impl FromStr for AutomatonState {
 /// Executes one step of the Automaton's program.
 ///
 /// Returns the updated state and an optional movement target.
+/// Performs the `process_automaton_agent` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_automaton_agent
+/// ```
 pub fn process_automaton_agent(
     vm: &mut crate::vm::ChimeraVM,
     agent: &super::PrologueAgent,

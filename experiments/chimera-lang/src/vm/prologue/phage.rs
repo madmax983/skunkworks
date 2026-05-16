@@ -4,6 +4,13 @@ use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 
+/// Performs the `process_phage_agent` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_phage_agent
+/// ```
 pub fn process_phage_agent(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,

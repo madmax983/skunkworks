@@ -2,14 +2,26 @@ use super::{ChimeraVM, Value};
 use rand::Rng;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a `VoidRift`.
 pub struct VoidRift {
+    /// The `location` field.
     pub location: (usize, usize),
+    /// The `severity` field.
     pub severity: usize,
+    /// The `age` field.
     pub age: usize,
+    /// The `consumed` field.
     pub consumed: usize,
 }
 
 impl VoidRift {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new(location: (usize, usize)) -> Self {
         Self {
             location,
@@ -20,6 +32,13 @@ impl VoidRift {
     }
 }
 
+/// Performs the `process_rifts` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_rifts
+/// ```
 pub fn process_rifts(vm: &mut ChimeraVM) {
     let mut rifts = std::mem::take(&mut vm.void_rifts);
     let mut new_rifts = Vec::new();
@@ -75,6 +94,13 @@ pub fn process_rifts(vm: &mut ChimeraVM) {
     vm.void_rifts.extend(new_rifts);
 }
 
+/// Performs the `exec_void_rift` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_void_rift
+/// ```
 pub fn exec_void_rift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., y, x ] -> [ ... ]
     if vm.stack.len() >= 2 {
@@ -102,6 +128,13 @@ pub fn exec_void_rift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_void_cast` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_void_cast
+/// ```
 pub fn exec_void_cast(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ... ] -> [ ..., power ]
     // Finds nearest rift and draws power

@@ -3,6 +3,13 @@
 use crate::vm::nova::OrganelleType;
 use crate::vm::ChimeraVM;
 
+/// Performs the `process_organelle_growth` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_organelle_growth
+/// ```
 pub fn process_organelle_growth(vm: &mut ChimeraVM) {
     let organelles = &mut vm.organelles;
     let output = &mut vm.output;

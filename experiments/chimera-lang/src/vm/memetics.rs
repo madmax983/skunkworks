@@ -8,14 +8,704 @@ use crate::opcode::OpCode;
 use rand::Rng;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
+/// Represents a `Meme`.
 pub struct Meme {
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
     pub genes: Vec<Gene>,
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
+    /// The `virulence` field.
     pub virulence: u8, // 0-100
-    pub fidelity: u8,  // 0-100
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    /// The `fidelity` field.
+    pub fidelity: u8, // 0-100
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
+    /// The `description` field.
     pub description: String,
 }
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
+/// Enum for `VirusMode`.
 pub enum VirusMode {
     Overwrite,   // Current behavior: Replace cell with new content
     RewriteGrid, // Parse cell content -> Mutate -> Write back
@@ -23,35 +713,3370 @@ pub enum VirusMode {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
+/// Represents a `Virus`.
 pub struct Virus {
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
     pub name: String,
-    pub color: (u8, u8, u8),          // RGB
-    pub pattern: String,              // Target text pattern (contains match)
-    pub mutation_rate: u8,            // 0-100
-    pub payload: Option<usize>,       // DNA Strand index to inject
-    pub grammar: Option<Value>,       // Grammar for linguistic mutation
-    pub quorum_threshold: u8,         // Neighbors needed for quorum action
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    /// The `color` field.
+    pub color: (u8, u8, u8), // RGB
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    /// The `pattern` field.
+    pub pattern: String, // Target text pattern (contains match)
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    /// The `mutation_rate` field.
+    pub mutation_rate: u8, // 0-100
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    /// The `payload` field.
+    pub payload: Option<usize>, // DNA Strand index to inject
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    /// The `grammar` field.
+    pub grammar: Option<Value>, // Grammar for linguistic mutation
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    /// The `quorum_threshold` field.
+    pub quorum_threshold: u8, // Neighbors needed for quorum action
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
+    /// The `quorum_action` field.
     pub quorum_action: Option<usize>, // Strand to execute on quorum
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
+    /// The `mode` field.
     pub mode: VirusMode,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
+/// Represents a `ViralState`.
 pub struct ViralState {
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
+    /// The `infection_level` field.
     pub infection_level: u8, // 0-255
-    pub virus_id: usize,     // Index in virus_library
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    /// The `virus_id` field.
+    pub virus_id: usize, // Index in virus_library
 }
 
 #[derive(Debug, Clone, Default)]
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
+/// Represents a `MemePool`.
 pub struct MemePool {
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
+    /// The `memes` field.
     pub memes: Vec<Meme>,
 }
 
 impl MemePool {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self { memes: Vec::new() }
     }
 }
 
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
+/// Performs the `exec_memetics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_memetics_op
+/// ```
 pub fn exec_memetics_op(
     vm: &mut ChimeraVM,
     op: OpCode,

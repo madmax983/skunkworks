@@ -2,17 +2,34 @@ use super::normalize_coords;
 use crate::vm::prologue::AlchemyRule;
 use crate::vm::Value;
 
+/// Constant `ELEM_FIRE`.
 pub const ELEM_FIRE: u64 = 0x1F525; // 🔥
+/// Constant `ELEM_WATER`.
 pub const ELEM_WATER: u64 = 0x1F4A7; // 💧
+/// Constant `ELEM_EARTH`.
 pub const ELEM_EARTH: u64 = 0x1F30D; // 🌍
+/// Constant `ELEM_AIR`.
 pub const ELEM_AIR: u64 = 0x1F32C; // 🌬️
+/// Constant `ELEM_AETHER`.
 pub const ELEM_AETHER: u64 = 0x2728; // ✨
+/// Constant `ELEM_STEAM`.
 pub const ELEM_STEAM: u64 = 0x2601; // ☁️
+/// Constant `ELEM_LAVA`.
 pub const ELEM_LAVA: u64 = 0x1F30B; // 🌋
+/// Constant `ELEM_MUD`.
 pub const ELEM_MUD: u64 = 0x1F331; // 🌱
+/// Constant `ELEM_PLASMA`.
 pub const ELEM_PLASMA: u64 = 0x26A1; // ⚡
+/// Constant `ELEM_ASH`.
 pub const ELEM_ASH: u64 = 0x26B0; // ⚰️
 
+/// Performs the `apply_elemental_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_elemental_runes
+/// ```
 pub fn apply_elemental_runes(
     rune: &str,
     y: usize,

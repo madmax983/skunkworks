@@ -16,6 +16,13 @@ fn is_mapping(v: &Value) -> bool {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_plant` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_plant
+/// ```
 pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: rules, mapping (optional), axiom (top)
     if vm.stack.len() < 2 {
@@ -102,6 +109,13 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `tick_seed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of tick_seed
+/// ```
 pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
     // Stack: [ rules, mapping, current_string, index, turtle_stack ] (Top)
     // Note: vm.stack contains the organelle's data due to swap in tick_organelle

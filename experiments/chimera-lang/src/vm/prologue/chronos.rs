@@ -10,6 +10,13 @@ fn val_to_idx(v: &Value) -> Option<usize> {
     }
 }
 
+/// Performs the `apply_chronos_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_chronos_runes
+/// ```
 pub fn apply_chronos_runes(
     rune: &str,
     y: usize,
@@ -73,6 +80,13 @@ pub fn apply_chronos_runes(
     changes
 }
 
+/// Performs the `apply_chronos_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_chronos_sinks
+/// ```
 pub fn apply_chronos_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     if rune == "c" {
         // Prophecy: West (Strand Index) -> Simulate -> South (1=Death, 0=Life)

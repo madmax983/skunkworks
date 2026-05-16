@@ -6,6 +6,13 @@ use rand::Rng;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
+/// Performs the `exec_quantum_jump` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_quantum_jump
+/// ```
 pub fn exec_quantum_jump(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let s_idx = vm.ip.0;
     if let Some(&partner_idx) = vm.entangled_pairs.get(&s_idx) {
@@ -30,6 +37,13 @@ pub fn exec_quantum_jump(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_entangle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_entangle
+/// ```
 pub fn exec_entangle(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let s_val2 = vm.stack.pop().unwrap();
@@ -69,6 +83,13 @@ pub fn exec_entangle(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_decohere` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_decohere
+/// ```
 pub fn exec_decohere(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(s) = val {
@@ -92,6 +113,13 @@ pub fn exec_decohere(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_superpose` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_superpose
+/// ```
 pub fn exec_superpose(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let b = vm.stack.pop().unwrap();
@@ -114,6 +142,13 @@ pub fn exec_superpose(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_collapse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_collapse
+/// ```
 pub fn exec_collapse(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         match val {
@@ -144,6 +179,13 @@ pub fn exec_collapse(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_observe` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_observe
+/// ```
 pub fn exec_observe(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         match val {
@@ -176,6 +218,13 @@ pub fn exec_observe(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_horcrux` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_horcrux
+/// ```
 pub fn exec_horcrux(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 3 {
         let x_val = vm.stack.pop().unwrap();
@@ -224,6 +273,13 @@ pub fn exec_horcrux(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_rebirth` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_rebirth
+/// ```
 pub fn exec_rebirth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let x_val = vm.stack.pop().unwrap();

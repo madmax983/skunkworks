@@ -13,14 +13,25 @@ use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "nova")]
 #[derive(Clone, Debug, Serialize, Deserialize)]
+/// Represents a `Sigil`.
 pub struct Sigil {
+    /// The `pattern` field.
     pub pattern: Vec<(i64, i64, Value)>,
+    /// The `strand_idx` field.
     pub strand_idx: usize,
     #[serde(default)]
+    /// The `auto_cast` field.
     pub auto_cast: bool,
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_invoke` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_invoke
+/// ```
 pub fn exec_invoke(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -188,6 +199,13 @@ fn check_pattern_uniform(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `check_dynamic_pattern` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of check_dynamic_pattern
+/// ```
 pub fn check_dynamic_pattern(
     vm: &ChimeraVM,
     cy: usize,
@@ -217,6 +235,13 @@ fn consume_pattern(vm: &mut ChimeraVM, cy: usize, cx: usize, offsets: &[(i64, i6
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `consume_dynamic_pattern` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of consume_dynamic_pattern
+/// ```
 pub fn consume_dynamic_pattern(
     vm: &mut ChimeraVM,
     cy: usize,
@@ -231,6 +256,13 @@ pub fn consume_dynamic_pattern(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_auto_cast` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_auto_cast
+/// ```
 pub fn exec_auto_cast(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -266,6 +298,13 @@ pub fn exec_auto_cast(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `process_passive_sigils` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_passive_sigils
+/// ```
 pub fn process_passive_sigils(vm: &mut ChimeraVM) {
     let (cy, cx) = vm.context_loc;
 
@@ -314,6 +353,13 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_inscribe` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_inscribe
+/// ```
 pub fn exec_inscribe(
     vm: &mut ChimeraVM,
     _op: OpCode,

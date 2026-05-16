@@ -8,6 +8,13 @@ use crate::vm::oracle;
 use std::collections::HashMap;
 
 #[cfg(feature = "nova")]
+/// Performs the `process_reactor` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_reactor
+/// ```
 pub fn process_reactor(vm: &mut ChimeraVM) {
     if !vm.reactor_mode {
         return;
@@ -106,6 +113,13 @@ pub fn process_reactor(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_reactor` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_reactor
+/// ```
 pub fn exec_reactor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.reactor_mode = !vm.reactor_mode;
     let status = if vm.reactor_mode { "ON" } else { "OFF" };
@@ -115,6 +129,13 @@ pub fn exec_reactor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_reaction` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_reaction
+/// ```
 pub fn exec_reaction(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., InputA, InputB, Output ]
     if vm.stack.len() >= 3 {

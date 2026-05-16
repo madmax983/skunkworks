@@ -10,6 +10,13 @@ fn val_to_idx(v: &Value) -> Option<usize> {
     }
 }
 
+/// Performs the `apply_quantum_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_quantum_runes
+/// ```
 pub fn apply_quantum_runes(
     rune: &str,
     y: usize,
@@ -79,6 +86,13 @@ pub fn apply_quantum_runes(
     changes
 }
 
+/// Performs the `apply_quantum_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_quantum_sinks
+/// ```
 pub fn apply_quantum_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     if rune == "8" {
         // Entangle: West (Strand A) + East (Strand B) -> Entangle

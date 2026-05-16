@@ -3,6 +3,13 @@ use crate::ast::Dna;
 use crate::vm::{ChimeraVM, Value, MAX_STRANDS};
 use rand::Rng;
 
+/// Performs the `apply_evolution_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_evolution_runes
+/// ```
 pub fn apply_evolution_runes(
     rune: &str,
     y: usize,
@@ -57,6 +64,13 @@ pub fn apply_evolution_runes(
     changes
 }
 
+/// Performs the `apply_evolution_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_evolution_sinks
+/// ```
 pub fn apply_evolution_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
         "G" => {

@@ -4,13 +4,25 @@ use crate::value::Value;
 use rand::Rng;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a `Catalyst`.
 pub struct Catalyst {
+    /// The `id` field.
     pub id: u64,
+    /// The `recipe` field.
     pub recipe: Vec<OpCode>,
+    /// The `charge` field.
     pub charge: i64,
+    /// The `stability` field.
     pub stability: f64,
 }
 
+/// Performs the `synthesize` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of synthesize
+/// ```
 pub fn synthesize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: strand_idx
     if let Some(val) = vm.stack.pop() {
@@ -53,6 +65,13 @@ pub fn synthesize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `catalyze` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of catalyze
+/// ```
 pub fn catalyze(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: catalyst_id, target_strand_idx
     if vm.stack.len() >= 2 {

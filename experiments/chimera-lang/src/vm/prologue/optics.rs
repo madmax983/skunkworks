@@ -1,6 +1,13 @@
 use super::normalize_coords;
 use crate::vm::Value;
 
+/// Performs the `apply_optics_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_optics_runes
+/// ```
 pub fn apply_optics_runes(
     rune: &str,
     y: usize,

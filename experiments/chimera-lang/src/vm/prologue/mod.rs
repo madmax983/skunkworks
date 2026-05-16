@@ -52,90 +52,175 @@ use rand::Rng;
 
 use std::collections::{HashMap, HashSet, VecDeque};
 
+/// The `alchemist` module.
 pub mod alchemist;
+/// The `alchemy` module.
 pub mod alchemy;
+/// The `altar` module.
 pub mod altar;
+/// The `architect` module.
 pub mod architect;
+/// The `astral` module.
 pub mod astral;
+/// The `automaton` module.
 pub mod automaton;
+/// The `biolum` module.
 pub mod biolum;
+/// The `catalyst` module.
 pub mod catalyst;
+/// The `chaos` module.
 pub mod chaos;
+/// The `chroma` module.
 pub mod chroma;
+/// The `chromatin` module.
 pub mod chromatin;
+/// The `chronos` module.
 pub mod chronos;
+/// The `construct` module.
 pub mod construct;
+/// The `critter` module.
 pub mod critter;
+/// The `echo` module.
 pub mod echo;
+/// The `elektra` module.
 pub mod elektra;
+/// The `elemental` module.
 pub mod elemental;
+/// The `epigenetics` module.
 pub mod epigenetics;
+/// The `evolution` module.
 pub mod evolution;
+/// The `fission` module.
 pub mod fission;
+/// The `forth` module.
 pub mod forth;
+/// The `gardener` module.
 pub mod gardener;
+/// The `genetics` module.
 pub mod genetics;
+/// The `golem` module.
 pub mod golem;
+/// The `hyper` module.
 pub mod hyper;
+/// The `io` module.
 pub mod io;
+/// The `lexicon` module.
 pub mod lexicon;
+/// The `library` module.
 pub mod library;
+/// The `ligase` module.
 pub mod ligase;
+/// The `linguistics` module.
 pub mod linguistics;
+/// The `list` module.
 pub mod list;
+/// The `logic` module.
 pub mod logic;
+/// The `logic_agent` module.
 pub mod logic_agent;
+/// The `logos` module.
 pub mod logos;
+/// The `math` module.
 pub mod math;
+/// The `memetics` module.
 pub mod memetics;
+/// The `mesmerist` module.
 pub mod mesmerist;
+/// The `mycelium` module.
 pub mod mycelium;
+/// The `narrative` module.
 pub mod narrative;
+/// The `necromancy` module.
 pub mod necromancy;
 #[cfg(feature = "biophysics")]
+/// The `neural` module.
 pub mod neural;
+/// The `oneiric` module.
 pub mod oneiric;
+/// The `optics` module.
 pub mod optics;
+/// The `oracle` module.
 pub mod oracle;
+/// The `pandemonium` module.
 pub mod pandemonium;
+/// The `phage` module.
 pub mod phage;
+/// The `philosopher` module.
 pub mod philosopher;
+/// The `phonetics` module.
 pub mod phonetics;
+/// The `pilot` module.
 pub mod pilot;
+/// The `plasmid` module.
 pub mod plasmid;
+/// The `prism` module.
 pub mod prism;
+/// The `psionics` module.
 pub mod psionics;
+/// The `quantum` module.
 pub mod quantum;
+/// The `resonance` module.
 pub mod resonance;
+/// The `rhythm` module.
 pub mod rhythm;
+/// The `ribozyme` module.
 pub mod ribozyme;
+/// The `runecraft` module.
 pub mod runecraft;
+/// The `scavenger` module.
 pub mod scavenger;
+/// The `scholar` module.
 pub mod scholar;
+/// The `sequencer` module.
 pub mod sequencer;
+/// The `siren` module.
 pub mod siren;
+/// The `splicer` module.
 pub mod splicer;
+/// The `symbiosis` module.
 pub mod symbiosis;
+/// The `teleport` module.
 pub mod teleport;
+/// The `topology` module.
 pub mod topology;
+/// The `virology` module.
 pub mod virology;
+/// The `void` module.
 pub mod void;
+/// The `weave` module.
 pub mod weave;
+/// The `weave_reality` module.
 pub mod weave_reality;
+/// The `weaver` module.
 pub mod weaver;
+/// The `wizard` module.
 pub mod wizard;
+/// The `zeta` module.
 pub mod zeta;
 
 // Golem Materials (Public for shared use)
+/// Constant `MAT_HEART`.
 pub const MAT_HEART: &str = "🗿";
+/// Constant `MAT_EARTH`.
 pub const MAT_EARTH: &str = "◊";
+/// Constant `MAT_BRICK`.
 pub const MAT_BRICK: &str = "🧱";
+/// Constant `MAT_WALL`.
 pub const MAT_WALL: &str = "#";
+/// Constant `MAT_SHIELD`.
 pub const MAT_SHIELD: &str = "🛡️";
 
+/// The `state` module.
 pub mod state;
 pub use state::*;
 
+/// Performs the `exec_prologue_tick` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prologue_tick
+/// ```
 pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     if !vm.prologue_state.active {
         return;
@@ -1436,6 +1521,13 @@ fn pack_agent_data(state: Value, stack: Vec<Value>) -> Value {
     }
 }
 
+/// Performs the `unpack_agent_data` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of unpack_agent_data
+/// ```
 pub fn unpack_agent_data(val: Value) -> (Value, Vec<Value>) {
     match val {
         Value::Junction(crate::ast::JunctionType::All, list) => {
@@ -1458,6 +1550,13 @@ fn is_empty_val(v: &Value) -> bool {
     }
 }
 
+/// Performs the `normalize_coords` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of normalize_coords
+/// ```
 pub fn normalize_coords(y: i64, x: i64) -> Option<(usize, usize)> {
     if y >= 0 && y < GRID_SIZE as i64 && x >= 0 && x < GRID_SIZE as i64 {
         Some((y as usize, x as usize))

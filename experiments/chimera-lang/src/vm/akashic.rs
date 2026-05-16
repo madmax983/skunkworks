@@ -9,19 +9,30 @@ use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::Write;
 
+/// Constant `AKASHIC_FILE`.
 pub const AKASHIC_FILE: &str = ".chimera_akashic.json";
+/// Constant `MAX_AKASHIC_SIZE`.
 pub const MAX_AKASHIC_SIZE: u64 = 1024 * 1024; // 1MB limit for safety
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+/// Represents a `AkashicSpore`.
 pub struct AkashicSpore {
+    /// The `dna_hash` field.
     pub dna_hash: u64,
+    /// The `generation` field.
     pub generation: u64,
+    /// The `energy` field.
     pub energy: i64,
+    /// The `ip` field.
     pub ip: (usize, usize),
     #[serde(skip)]
+    /// The `stack_snapshot` field.
     pub stack_snapshot: Vec<Value>, // Too complex to safely serialize/deserialize dynamically without bounds checking
+    /// The `active_strands` field.
     pub active_strands: usize,
+    /// The `telomeres` field.
     pub telomeres: Vec<i64>,
+    /// The `ether` field.
     pub ether: HashMap<i64, std::collections::VecDeque<Value>>,
 }
 
@@ -39,13 +50,19 @@ pub struct AkashicSpore {
 /// memory exhaustion attacks if an agent writes excessively large values. File
 /// access uses atomic renames for safety.
 #[derive(Serialize, Deserialize, Clone)]
+/// Represents a `AkashicRecords`.
 pub struct AkashicRecords {
+    /// The `storage` field.
     pub storage: HashMap<String, Value>,
+    /// The `karma` field.
     pub karma: i64,
+    /// The `memories` field.
     pub memories: HashMap<String, AkashicSpore>,
     #[serde(skip)]
+    /// The `corrupted` field.
     pub corrupted: bool,
     #[serde(skip)]
+    /// The `file_path` field.
     pub file_path: String,
 }
 
@@ -130,6 +147,13 @@ impl AkashicRecords {
     /// Creates a new `AkashicRecords` instance by attempting to load from the default file (`.chimera_akashic.json`).
     /// If the file does not exist or cannot be parsed, it initializes a fresh, empty record.
     /// If an alternative path is set via the environment variable `CHIMERA_AKASHIC_PATH`, it will use that instead.
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         let file_path = if let Ok(path) = std::env::var("CHIMERA_AKASHIC_PATH") {
             path
@@ -161,6 +185,13 @@ impl AkashicRecords {
     ///     println!("Loaded {}", records.storage.len());
     /// }
     /// # }
+    /// ```
+    /// Performs the `load_from` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of load_from
     /// ```
     pub fn load_from(file_path: &str) -> Result<Self, String> {
         match std::fs::File::open(file_path) {
@@ -229,6 +260,13 @@ impl AkashicRecords {
     /// // records.save();
     /// # }
     /// ```
+    /// Performs the `save` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of save
+    /// ```
     pub fn save(&self) -> Result<(), String> {
         if self.corrupted {
             return Err(
@@ -265,6 +303,13 @@ impl AkashicRecords {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_akashic_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_akashic_op
+/// ```
 pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::AkashicWrite => {

@@ -5,6 +5,13 @@ use rand::seq::SliceRandom;
 use rand::Rng;
 use strum::IntoEnumIterator;
 
+/// Performs the `apply_mutation` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_mutation
+/// ```
 pub fn apply_mutation(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize) {
     if strand_idx < vm.dna.helix.strands.len() {
         let strand = &mut vm.dna.helix.strands[strand_idx];
@@ -27,6 +34,13 @@ pub fn apply_mutation(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize) {
     }
 }
 
+/// Performs the `apply_scramble` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_scramble
+/// ```
 pub fn apply_scramble(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, radius: f64) {
     let r = radius as usize;
     if strand_idx < vm.dna.helix.strands.len() {
@@ -42,6 +56,13 @@ pub fn apply_scramble(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, ra
     }
 }
 
+/// Performs the `apply_purge` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_purge
+/// ```
 pub fn apply_purge(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, radius: f64) {
     let r = radius as usize;
     if strand_idx < vm.dna.helix.strands.len() {
@@ -55,6 +76,13 @@ pub fn apply_purge(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, radiu
     }
 }
 
+/// Performs the `apply_duplicate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_duplicate
+/// ```
 pub fn apply_duplicate(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize) {
     if strand_idx < vm.dna.helix.strands.len() {
         // Clone gene and insert
@@ -70,6 +98,13 @@ pub fn apply_duplicate(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize) {
     }
 }
 
+/// Performs the `apply_storm` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_storm
+/// ```
 pub fn apply_storm(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, radius: f64) {
     let r = radius as usize;
     if strand_idx < vm.dna.helix.strands.len() {
@@ -122,6 +157,13 @@ pub fn apply_storm(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, radiu
 
 /// Targeted mutation: Replaces occurrences of `from` OpCode with `to` OpCode in the target strand.
 /// `probability` determines the chance of replacement for each occurrence (0.0 to 1.0).
+/// Performs the `apply_mutagen` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_mutagen
+/// ```
 pub fn apply_mutagen(
     vm: &mut ChimeraVM,
     strand_idx: usize,

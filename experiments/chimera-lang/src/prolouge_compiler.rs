@@ -18,6 +18,121 @@ use crate::opcode::OpCode;
 #[derive(Parser)]
 #[allow(missing_docs)]
 #[grammar = "prolouge_grammar.pest"]
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
+/// Represents a `ProlougeParser`.
 pub struct ProlougeParser;
 
 /// Evaluates an esoteric Prolouge script and synthesizes a biological [`Dna`] structure.
@@ -65,6 +180,811 @@ fn extract_block_content_preserve_whitespace(block_str: &str, block_type: &str) 
 /// - **Panics**: Returns a `Result::Err` if a block contains syntax invalid for its declared paradigm.
 ///
 /// For more details on the VM execution, see [`crate::vm::ChimeraVM`].
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
 pub fn compile(source: &str) -> Result<Dna> {
     let mut pairs = ProlougeParser::parse(Rule::program, source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;

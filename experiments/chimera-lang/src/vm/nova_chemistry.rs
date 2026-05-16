@@ -4,6 +4,13 @@ use crate::ast::JunctionType;
 use crate::vm::{iterate_circle, ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_mix` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_mix
+/// ```
 pub fn exec_mix(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., radius ]
     if let Some(val) = vm.stack.pop() {
@@ -65,6 +72,13 @@ pub fn exec_mix(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_brew` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_brew
+/// ```
 pub fn exec_brew(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., heat ]
     if let Some(val) = vm.stack.pop() {
@@ -146,6 +160,13 @@ pub fn exec_brew(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_splash` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_splash
+/// ```
 pub fn exec_splash(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., radius, dy, dx ]
     if vm.stack.len() >= 3 {

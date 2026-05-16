@@ -6,12 +6,19 @@ use std::fmt;
 use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Enum for `GardenerAction`.
 pub enum GardenerAction {
+    /// Move
     Move(usize, usize),
+    /// Plant
     Plant(usize, usize, Value),
+    /// Nurture
     Nurture(usize, usize),
+    /// Harvest
     Harvest(usize, usize),
+    /// Die
     Die,
+    /// None
     None,
 }
 
@@ -21,13 +28,24 @@ pub enum GardenerAction {
 /// Example: "♣:100:0:1,2,3"
 /// Mode: 0 = Wander/Plant, 1 = Tend/Harvest
 #[derive(Debug, Clone)]
+/// Represents a `GardenerState`.
 pub struct GardenerState {
+    /// The `energy` field.
     pub energy: i64,
+    /// The `mode` field.
     pub mode: usize,
+    /// The `inventory` field.
     pub inventory: VecDeque<Value>,
 }
 
 impl GardenerState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new(energy: i64, mode: usize, inventory: VecDeque<Value>) -> Self {
         Self {
             energy,
@@ -50,6 +68,13 @@ impl Default for GardenerState {
 }
 
 impl GardenerState {
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }
@@ -93,6 +118,13 @@ impl FromStr for GardenerState {
     }
 }
 
+/// Performs the `process_gardener_logic` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_gardener_logic
+/// ```
 pub fn process_gardener_logic(
     _vm: &mut crate::vm::ChimeraVM,
     agent: &super::PrologueAgent,

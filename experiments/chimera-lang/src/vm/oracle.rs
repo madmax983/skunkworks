@@ -9,13 +9,23 @@ use std::collections::HashMap;
 use strum::IntoEnumIterator;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// Represents a `Omen`.
 pub struct Omen {
+    /// The `condition` field.
     pub condition: Value,
+    /// The `effect` field.
     pub effect: Value,
 }
 
 type Subst = HashMap<String, Value>;
 
+/// Performs the `process_omens` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_omens
+/// ```
 pub fn process_omens(vm: &mut ChimeraVM) -> usize {
     let mut triggered_count = 0;
     let omens_snapshot = vm.omens.clone();
@@ -54,6 +64,13 @@ pub fn process_omens(vm: &mut ChimeraVM) -> usize {
     triggered_count
 }
 
+/// Performs the `exec_oracle_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_oracle_op
+/// ```
 pub fn exec_oracle_op(
     vm: &mut ChimeraVM,
     op: OpCode,
@@ -526,6 +543,13 @@ fn is_var(v: &Value) -> Option<String> {
     None
 }
 
+/// Performs the `resolve` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of resolve
+/// ```
 pub fn resolve(term: &Value, subst: &Subst) -> Value {
     match term {
         Value::Str(s) if s.starts_with('?') => {
@@ -589,6 +613,13 @@ fn bind(var: &str, val: &Value, subst: &Subst) -> Option<Subst> {
     Some(new_subst)
 }
 
+/// Performs the `solve` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of solve
+/// ```
 pub fn solve(
     goals: &[Value],
     subst: Subst,

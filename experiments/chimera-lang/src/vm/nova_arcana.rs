@@ -5,36 +5,406 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
+/// Enum for `Arcana`.
 pub enum Arcana {
+    /// TheFool
     TheFool = 0,
+    /// TheMagician
     TheMagician = 1,
+    /// TheHighPriestess
     TheHighPriestess = 2,
+    /// TheEmpress
     TheEmpress = 3,
+    /// TheEmperor
     TheEmperor = 4,
+    /// TheHierophant
     TheHierophant = 5,
+    /// TheLovers
     TheLovers = 6,
+    /// TheChariot
     TheChariot = 7,
+    /// Strength
     Strength = 8,
+    /// TheHermit
     TheHermit = 9,
+    /// WheelOfFortune
     WheelOfFortune = 10,
+    /// Justice
     Justice = 11,
+    /// TheHangedMan
     TheHangedMan = 12,
+    /// Death
     Death = 13,
+    /// Temperance
     Temperance = 14,
+    /// TheDevil
     TheDevil = 15,
+    /// TheTower
     TheTower = 16,
+    /// TheStar
     TheStar = 17,
+    /// TheMoon
     TheMoon = 18,
+    /// TheSun
     TheSun = 19,
+    /// Judgement
     Judgement = 20,
+    /// TheWorld
     TheWorld = 21,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
+/// Represents a `FateState`.
 pub struct FateState {
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
+    /// The `active_arcana` field.
     pub active_arcana: Option<Arcana>,
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
+    /// The `duration` field.
     pub duration: usize,
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
+    /// The `deck` field.
     pub deck: Vec<Arcana>,
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
+    /// The `discard` field.
     pub discard: Vec<Arcana>,
 }
 
@@ -45,6 +415,412 @@ impl Default for FateState {
 }
 
 impl FateState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         let mut deck = Vec::new();
         // Initialize with all Major Arcana
@@ -88,6 +864,412 @@ impl FateState {
     }
 }
 
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
+/// Performs the `exec_draw` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_draw
+/// ```
 pub fn exec_draw(vm: &mut ChimeraVM) {
     // Draw: Pop from deck, set active, set duration (100 ticks).
     // Push card ID to stack.
@@ -113,6 +1295,412 @@ pub fn exec_draw(vm: &mut ChimeraVM) {
     vm.fate.duration = 100;
 }
 
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
+/// Performs the `exec_shuffle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_shuffle
+/// ```
 pub fn exec_shuffle(vm: &mut ChimeraVM) {
     // Move discard to deck
     vm.fate.deck.append(&mut vm.fate.discard);
@@ -122,6 +1710,412 @@ pub fn exec_shuffle(vm: &mut ChimeraVM) {
     vm.output.push("FATE: Shuffled deck".to_string());
 }
 
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
+/// Performs the `exec_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fate
+/// ```
 pub fn exec_fate(vm: &mut ChimeraVM) {
     // Pushes active card ID to stack, or -1 if none.
     if let Some(card) = &vm.fate.active_arcana {
@@ -131,6 +2125,412 @@ pub fn exec_fate(vm: &mut ChimeraVM) {
     }
 }
 
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
+/// Performs the `process_fate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fate
+/// ```
 pub fn process_fate(vm: &mut ChimeraVM) {
     if vm.fate.duration > 0 {
         vm.fate.duration -= 1;

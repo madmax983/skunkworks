@@ -8,6 +8,13 @@ use crate::vm::oracle;
 use crate::vm::{ChimeraVM, Value};
 use std::collections::HashMap;
 
+/// Performs the `process_savant` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_savant
+/// ```
 pub fn process_savant(vm: &mut ChimeraVM, organelle: &mut Organelle) {
     #[cfg(not(feature = "oracle"))]
     {

@@ -4,6 +4,13 @@ use super::{ChimeraVM, Value, GRID_SIZE};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 
+/// Performs the `exec_cartography_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_cartography_op
+/// ```
 pub fn exec_cartography_op(
     vm: &mut ChimeraVM,
     op: OpCode,

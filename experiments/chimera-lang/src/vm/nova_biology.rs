@@ -6,6 +6,13 @@ use rand::Rng;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
+/// Performs the `organelle_type_from_int` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of organelle_type_from_int
+/// ```
 pub fn organelle_type_from_int(t: i64) -> (OrganelleType, (i8, i8)) {
     match t {
         1 => (OrganelleType::Chloroplast, (0, 0)),
@@ -22,6 +29,13 @@ pub fn organelle_type_from_int(t: i64) -> (OrganelleType, (i8, i8)) {
     }
 }
 
+/// Performs the `exec_spawn` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_spawn
+/// ```
 pub fn exec_spawn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: type, strand_idx (bottom)
     let t = vm.pop_int("spawn")?;
@@ -80,6 +94,13 @@ pub fn exec_spawn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_identity` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_identity
+/// ```
 pub fn exec_identity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let id = match &vm.active_organelle_kind {
         None => -1, // Nucleus
@@ -102,6 +123,13 @@ pub fn exec_identity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_differentiate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_differentiate
+/// ```
 pub fn exec_differentiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if vm.active_organelle_kind.is_some() {
@@ -144,6 +172,13 @@ pub fn exec_differentiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_symbiosis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_symbiosis
+/// ```
 pub fn exec_symbiosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let dx = vm.pop_int("symbiosis")?;
     let dy = vm.pop_int("symbiosis")?;
@@ -175,6 +210,13 @@ pub fn exec_symbiosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_lysis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lysis
+/// ```
 pub fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(sip) = vm.symbiotes.pop() {
         if vm.organelles.len() >= MAX_ORGANELLES {
@@ -215,6 +257,13 @@ pub fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_secrete` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_secrete
+/// ```
 pub fn exec_secrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let amount_val = vm.stack.pop().unwrap();
@@ -241,6 +290,13 @@ pub fn exec_secrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_detect` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_detect
+/// ```
 pub fn exec_detect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(c) = val {
@@ -259,6 +315,13 @@ pub fn exec_detect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_absorb` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_absorb
+/// ```
 pub fn exec_absorb(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let amount_val = vm.stack.pop().unwrap();
@@ -320,6 +383,13 @@ pub(crate) fn exec_detox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_chemotaxis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_chemotaxis
+/// ```
 pub fn exec_chemotaxis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(c) = val {
@@ -384,6 +454,13 @@ pub(crate) fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_sense_mutagen` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_sense_mutagen
+/// ```
 pub fn exec_sense_mutagen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     let level = vm.mutagen_grid[cy][cx];
@@ -391,6 +468,13 @@ pub fn exec_sense_mutagen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_devour` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_devour
+/// ```
 pub fn exec_devour(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     let level = vm.mutagen_grid[cy][cx];
@@ -409,6 +493,13 @@ pub fn exec_devour(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_spirit` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_spirit
+/// ```
 pub fn exec_spirit(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Str(msg) = val {
@@ -424,6 +515,13 @@ pub fn exec_spirit(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_match` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_match
+/// ```
 pub fn exec_match(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let target_val = vm.stack.pop().unwrap();
@@ -467,6 +565,13 @@ fn glob_match(pattern: &str, target: &str) -> bool {
     }
 }
 
+/// Performs the `exec_bury` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_bury
+/// ```
 pub fn exec_bury(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         match val {
@@ -503,6 +608,13 @@ pub fn exec_bury(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_exhume` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_exhume
+/// ```
 pub fn exec_exhume(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(strand) = vm.graveyard.pop() {
         vm.dna.helix.strands.push(strand);
@@ -533,6 +645,13 @@ pub fn exec_exhume(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_seance` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_seance
+/// ```
 pub fn exec_seance(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(strand) = vm.graveyard.last() {
         let ghost_strand = strand.clone();
@@ -545,6 +664,13 @@ pub fn exec_seance(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_mourn` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_mourn
+/// ```
 pub fn exec_mourn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let count = vm.graveyard.len() as i64;
     let energy_gain = count * 2;
@@ -557,6 +683,13 @@ pub fn exec_mourn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_reincarnate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_reincarnate
+/// ```
 pub fn exec_reincarnate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         match val {

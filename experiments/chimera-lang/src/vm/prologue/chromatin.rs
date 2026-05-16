@@ -2,6 +2,13 @@ use super::{normalize_coords, PrologueAgent};
 use crate::vm::{ChimeraVM, Value};
 use rand::seq::SliceRandom;
 
+/// Performs the `process_chromatin_agent` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_chromatin_agent
+/// ```
 pub fn process_chromatin_agent(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,

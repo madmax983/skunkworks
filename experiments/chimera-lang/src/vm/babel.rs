@@ -7,6 +7,13 @@ use crate::opcode::OpCode;
 use rand::Rng;
 
 /// Executes Babel-related OpCodes.
+/// Performs the `exec_babel_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_babel_op
+/// ```
 pub fn exec_babel_op(
     vm: &mut ChimeraVM,
     op: OpCode,
@@ -542,6 +549,13 @@ pub fn exec_babel_op(
 /// **OpCode:** `Ouroboros`
 /// **Stack:** `[ ..., grammar_junction ] -> [ ... ]`
 /// **Effect:** Decompiles self, parses with grammar, mutates, recompiles, replaces self.
+/// Performs the `exec_ouroboros` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_ouroboros
+/// ```
 pub fn exec_ouroboros(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(grammar) = vm.stack.pop() {
         let current_strand_idx = vm.ip.0;
@@ -593,6 +607,7 @@ pub fn exec_ouroboros(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 use std::fmt;
 
 #[derive(Debug)]
+/// Represents a `ParseError`.
 pub struct ParseError;
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -601,6 +616,13 @@ impl fmt::Display for ParseError {
 }
 impl std::error::Error for ParseError {}
 
+/// Performs the `run_parser` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of run_parser
+/// ```
 pub fn run_parser(
     parser: &Value,
     input: &str,
@@ -733,6 +755,13 @@ pub fn run_parser(
 /// **Optimization (Bolt ⚡):** When constructing `GrammarRule::Sequence` and
 /// `GrammarRule::Choice`, we inline the `.collect()` call directly into the enum
 /// constructor. This removes an unnecessary intermediate `Vec<_>` binding.
+/// Performs the `value_to_grammar_rule` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of value_to_grammar_rule
+/// ```
 pub fn value_to_grammar_rule(v: &Value) -> GrammarRule {
     if let Value::Junction(JunctionType::Any, args) = v {
         if let Some(Value::Str(type_str)) = args.first() {
@@ -770,6 +799,13 @@ pub fn value_to_grammar_rule(v: &Value) -> GrammarRule {
     GrammarRule::Whitespace
 }
 
+/// Performs the `grammar_rule_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of grammar_rule_to_value
+/// ```
 pub fn grammar_rule_to_value(rule: &GrammarRule) -> Value {
     match rule {
         GrammarRule::Literal(s) => Value::Junction(
@@ -811,6 +847,13 @@ pub fn grammar_rule_to_value(rule: &GrammarRule) -> Value {
 }
 
 /// Generates a string from a Grammar.
+/// Performs the `generate_string` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of generate_string
+/// ```
 pub fn generate_string(parser: &Value) -> String {
     generate_string_depth(parser, 0)
 }
@@ -875,6 +918,13 @@ fn generate_string_depth(parser: &Value, depth: usize) -> String {
     String::new()
 }
 
+/// Performs the `mutate_grammar` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of mutate_grammar
+/// ```
 pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
     let mut rng = rand::thread_rng();
     if !rng.gen_bool(rate.clamp(0.0, 1.0)) {
@@ -972,6 +1022,13 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
     grammar.clone()
 }
 
+/// Performs the `mutate_cst` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of mutate_cst
+/// ```
 pub fn mutate_cst(cst: &Value, rate: f64) -> Value {
     let mut rng = rand::thread_rng();
     if !rng.gen_bool(rate) {
@@ -1007,6 +1064,13 @@ pub fn mutate_cst(cst: &Value, rate: f64) -> Value {
     }
 }
 
+/// Performs the `flatten_cst` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of flatten_cst
+/// ```
 pub fn flatten_cst(cst: &Value) -> String {
     match cst {
         Value::Str(s) => s.clone(),
@@ -1021,6 +1085,13 @@ pub fn flatten_cst(cst: &Value) -> String {
     }
 }
 
+/// Performs the `compile_cst` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_cst
+/// ```
 pub fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> Option<usize> {
     if cst.depth() > crate::vm::MAX_RECURSION_DEPTH {
         return None;
@@ -1119,6 +1190,13 @@ fn compile_cst_recursive(
     Ok(())
 }
 
+/// Performs the `read_grammar_from_grid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of read_grammar_from_grid
+/// ```
 pub fn read_grammar_from_grid(vm: &ChimeraVM, y: usize, x: usize) -> Value {
     let mut scanner = GridScanner {
         vm,
@@ -1325,6 +1403,13 @@ impl<'a> GridScanner<'a> {
     }
 }
 
+/// Performs the `generate_random_grid_grammar` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of generate_random_grid_grammar
+/// ```
 pub fn generate_random_grid_grammar(vm: &mut ChimeraVM, y: usize, x: usize, amount: usize) {
     let mut rng = rand::thread_rng();
     grow_grammar(vm, y as i64, x as i64, amount, &mut rng);

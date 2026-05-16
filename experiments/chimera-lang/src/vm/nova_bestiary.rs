@@ -6,6 +6,13 @@ use crate::opcode::OpCode;
 use rand::{rngs::StdRng, Rng, SeedableRng};
 
 #[cfg(feature = "nova")]
+/// Performs the `analyze_traits` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of analyze_traits
+/// ```
 pub fn analyze_traits(strand: &Strand) -> Vec<String> {
     let mut traits = Vec::new();
     let mut op_counts = std::collections::HashMap::new();
@@ -93,6 +100,13 @@ pub fn analyze_traits(strand: &Strand) -> Vec<String> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `generate_name` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of generate_name
+/// ```
 pub fn generate_name(seed: u64, traits: &[String]) -> String {
     let mut rng = StdRng::seed_from_u64(seed);
 
@@ -140,6 +154,13 @@ pub fn generate_name(seed: u64, traits: &[String]) -> String {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `generate_face` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of generate_face
+/// ```
 pub fn generate_face(seed: u64, traits: &[String]) -> Vec<String> {
     let mut rng = StdRng::seed_from_u64(seed);
 
@@ -184,15 +205,28 @@ pub fn generate_face(seed: u64, traits: &[String]) -> Vec<String> {
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone)]
+/// Represents a `CombatStats`.
 pub struct CombatStats {
+    /// The `hp` field.
     pub hp: i64,
+    /// The `max_hp` field.
     pub max_hp: i64,
+    /// The `attack` field.
     pub attack: i64,
+    /// The `defense` field.
     pub defense: i64,
+    /// The `speed` field.
     pub speed: i64,
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `generate_combat_stats` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of generate_combat_stats
+/// ```
 pub fn generate_combat_stats(traits: &[String]) -> CombatStats {
     let mut hp = 100;
     let mut attack = 10;

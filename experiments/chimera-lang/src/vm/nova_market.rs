@@ -7,26 +7,45 @@ use std::collections::VecDeque;
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Order`.
 pub struct Order {
+    /// The `id` field.
     pub id: u64,
+    /// The `trader_id` field.
     pub trader_id: usize,
+    /// The `item` field.
     pub item: String,
+    /// The `price` field.
     pub price: i64,
+    /// The `is_sell` field.
     pub is_sell: bool, // true = Ask (Sell), false = Bid (Buy)
 }
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Default)]
+/// Represents a `MarketState`.
 pub struct MarketState {
-    pub asks: Vec<Order>,                 // Sell orders
-    pub bids: Vec<Order>,                 // Buy orders (future use)
-    pub wallets: Vec<i64>,                // Credits per strand
+    /// The `asks` field.
+    pub asks: Vec<Order>, // Sell orders
+    /// The `bids` field.
+    pub bids: Vec<Order>, // Buy orders (future use)
+    /// The `wallets` field.
+    pub wallets: Vec<i64>, // Credits per strand
+    /// The `history` field.
     pub history: VecDeque<(String, i64)>, // (Item, Price)
+    /// The `next_order_id` field.
     pub next_order_id: u64,
 }
 
 #[cfg(feature = "nova")]
 impl MarketState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             asks: Vec::new(),
@@ -37,6 +56,13 @@ impl MarketState {
         }
     }
 
+    /// Performs the `clear` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of clear
+    /// ```
     pub fn clear(&mut self) {
         self.asks.clear();
         self.bids.clear();
@@ -45,22 +71,50 @@ impl MarketState {
         self.next_order_id = 0;
     }
 
+    /// Performs the `ensure_wallet` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of ensure_wallet
+    /// ```
     pub fn ensure_wallet(&mut self, trader_id: usize) {
         if trader_id >= self.wallets.len() {
             self.wallets.resize(trader_id + 1, 0);
         }
     }
 
+    /// Performs the `get_balance` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_balance
+    /// ```
     pub fn get_balance(&mut self, trader_id: usize) -> i64 {
         self.ensure_wallet(trader_id);
         self.wallets[trader_id]
     }
 
+    /// Performs the `credit` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of credit
+    /// ```
     pub fn credit(&mut self, trader_id: usize, amount: i64) {
         self.ensure_wallet(trader_id);
         self.wallets[trader_id] = self.wallets[trader_id].saturating_add(amount);
     }
 
+    /// Performs the `debit` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of debit
+    /// ```
     pub fn debit(&mut self, trader_id: usize, amount: i64) -> bool {
         self.ensure_wallet(trader_id);
         if self.wallets[trader_id] >= amount {
@@ -71,6 +125,13 @@ impl MarketState {
         }
     }
 
+    /// Performs the `place_ask` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of place_ask
+    /// ```
     pub fn place_ask(&mut self, trader_id: usize, item: String, price: i64) -> u64 {
         let id = self.next_order_id;
         self.next_order_id += 1;
@@ -84,6 +145,13 @@ impl MarketState {
         id
     }
 
+    /// Performs the `match_buy` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of match_buy
+    /// ```
     pub fn match_buy(
         &mut self,
         buyer_id: usize,
@@ -135,6 +203,13 @@ impl MarketState {
 // --- VM Execution Logic ---
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_offer` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_offer
+/// ```
 pub fn exec_offer(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let item_val = vm.stack.pop().unwrap();
@@ -163,6 +238,13 @@ pub fn exec_offer(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_buy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_buy
+/// ```
 pub fn exec_buy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let query_val = vm.stack.pop().unwrap();
@@ -188,6 +270,13 @@ pub fn exec_buy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_invest` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_invest
+/// ```
 pub fn exec_invest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(amount) = val {
@@ -211,6 +300,13 @@ pub fn exec_invest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_divest` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_divest
+/// ```
 pub fn exec_divest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(amount) = val {
@@ -235,6 +331,13 @@ pub fn exec_divest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_balance` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_balance
+/// ```
 pub fn exec_balance(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let bal = vm.market.get_balance(vm.ip.0);
     vm.stack.push(Value::Int(bal));
@@ -242,6 +345,13 @@ pub fn exec_balance(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_ticker` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_ticker
+/// ```
 pub fn exec_ticker(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some((_, price)) = vm.market.history.back() {
         vm.stack.push(Value::Int(*price));

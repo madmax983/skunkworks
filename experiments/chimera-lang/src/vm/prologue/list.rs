@@ -1,6 +1,13 @@
 use super::normalize_coords;
 use crate::vm::Value;
 
+/// Performs the `apply_list_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_list_runes
+/// ```
 pub fn apply_list_runes(
     rune: &str,
     y: usize,

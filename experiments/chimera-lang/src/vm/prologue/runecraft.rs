@@ -2,6 +2,13 @@ use super::normalize_coords;
 use crate::ast::JunctionType;
 use crate::vm::{ChimeraVM, Value};
 
+/// Performs the `apply_runecraft_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_runecraft_sinks
+/// ```
 pub fn apply_runecraft_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     // 1. Check for Definition Rune £
     if rune == "£" {

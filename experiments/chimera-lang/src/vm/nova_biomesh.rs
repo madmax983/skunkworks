@@ -5,13 +5,24 @@ use crate::vm::{ChimeraVM, Value};
 use std::collections::{HashMap, VecDeque};
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a `BioMeshNode`.
 pub struct BioMeshNode {
+    /// The `id` field.
     pub id: u64,
+    /// The `buffer` field.
     pub buffer: VecDeque<Value>,
+    /// The `connections` field.
     pub connections: Vec<(usize, usize)>,
 }
 
 impl BioMeshNode {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new(id: u64) -> Self {
         Self {
             id,
@@ -22,7 +33,9 @@ impl BioMeshNode {
 }
 
 #[derive(Debug, Clone)]
+/// Represents a `BioMeshState`.
 pub struct BioMeshState {
+    /// The `nodes` field.
     pub nodes: HashMap<(usize, usize), BioMeshNode>,
 }
 
@@ -33,6 +46,13 @@ impl Default for BioMeshState {
 }
 
 impl BioMeshState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             nodes: HashMap::new(),
@@ -40,6 +60,13 @@ impl BioMeshState {
     }
 }
 
+/// Performs the `exec_mesh_net` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_mesh_net
+/// ```
 pub fn exec_mesh_net(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, usize)> {
     // MeshNet(id)
     // Turns current cell into a node.
@@ -59,6 +86,13 @@ pub fn exec_mesh_net(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, 
     None
 }
 
+/// Performs the `exec_mesh_grow` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_mesh_grow
+/// ```
 pub fn exec_mesh_grow(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // MeshGrow()
     // Connects to all adjacent nodes.
@@ -107,6 +141,13 @@ pub fn exec_mesh_grow(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_mesh_prune` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_mesh_prune
+/// ```
 pub fn exec_mesh_prune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // MeshPrune()
     // Removes all connections from current node.
@@ -130,6 +171,13 @@ pub fn exec_mesh_prune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_mesh_send` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_mesh_send
+/// ```
 pub fn exec_mesh_send(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // MeshSend(target_id, value)
     // Uses BFS to find path to target_id.
@@ -197,6 +245,13 @@ pub fn exec_mesh_send(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_mesh_recv` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_mesh_recv
+/// ```
 pub fn exec_mesh_recv(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // MeshRecv()
     // Pops from local buffer.

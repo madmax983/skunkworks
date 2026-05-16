@@ -10,6 +10,13 @@ use rand::Rng;
 use strum::IntoEnumIterator;
 
 #[cfg(feature = "nova")]
+/// Performs the `spawn_random_ecology` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of spawn_random_ecology
+/// ```
 pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
     let mut rng = rand::thread_rng();
     for _ in 0..count {
@@ -91,6 +98,13 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `process_ecology_tick` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_ecology_tick
+/// ```
 pub fn process_ecology_tick(vm: &mut ChimeraVM) {
     let mut interactions: std::collections::HashMap<(usize, usize), Vec<usize>> =
         std::collections::HashMap::new();
@@ -209,6 +223,13 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `spawn_food` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of spawn_food
+/// ```
 pub fn spawn_food(vm: &mut ChimeraVM) {
     let mut rng = rand::thread_rng();
     let x = rng.gen_range(0..crate::vm::GRID_SIZE);
@@ -222,6 +243,13 @@ pub fn spawn_food(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `tick_ecology` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of tick_ecology
+/// ```
 pub fn tick_ecology(vm: &mut ChimeraVM) {
     // 1. Spawn Food periodically
     let mut rng = rand::thread_rng();
@@ -234,6 +262,13 @@ pub fn tick_ecology(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `cambrian_explosion` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of cambrian_explosion
+/// ```
 pub fn cambrian_explosion(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.organelles.clear();
     vm.output

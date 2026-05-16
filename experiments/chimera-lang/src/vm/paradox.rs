@@ -3,28 +3,555 @@ use crate::vm::Value;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
+/// Enum for `Trigger`.
 pub enum Trigger {
+    /// Always
     Always,
+    /// Signal
     Signal(String), // Match active signal in Prologue
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
+/// Enum for `Action`.
 pub enum Action {
+    /// Log
     Log(String),
+    /// Set
     Set(i64, i64, Value), // Relative x, y, value (to context_loc)
+    /// Glitch
     Glitch(f32),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
+/// Represents a `Rule`.
 pub struct Rule {
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
+    /// The `name` field.
     pub name: String,
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
+    /// The `trigger` field.
     pub trigger: Trigger,
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
+    /// The `actions` field.
     pub actions: Vec<Action>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
+/// Represents a `Paradox`.
 pub struct Paradox {
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
+    /// The `rules` field.
     pub rules: Vec<Rule>,
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
+    /// The `active` field.
     pub active: bool,
 }
 
@@ -38,10 +565,822 @@ impl Default for Paradox {
 }
 
 impl Paradox {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
     pub fn tick(&mut self, vm: &mut ChimeraVM) {
         if !self.active {
             return;
@@ -120,6 +1459,412 @@ impl Paradox {
         }
     }
 
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
+    /// Performs the `parse_rule` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of parse_rule
+    /// ```
     pub fn parse_rule(&mut self, input: &str) -> Result<(), String> {
         // Syntax: "rule NAME triggers TRIGGER do ACTION"
         // Example: "rule Test triggers always do log Hello"

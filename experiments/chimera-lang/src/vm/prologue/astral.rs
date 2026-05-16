@@ -3,11 +3,17 @@ use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `AstralState`.
 pub struct AstralState {
+    /// The `vx` field.
     pub vx: f64,
+    /// The `vy` field.
     pub vy: f64,
+    /// The `px` field.
     pub px: f64, // Sub-pixel precision X
+    /// The `py` field.
     pub py: f64, // Sub-pixel precision Y
+    /// The `mass` field.
     pub mass: f64,
 }
 
@@ -24,6 +30,13 @@ impl Default for AstralState {
 }
 
 impl AstralState {
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
     pub fn to_value(&self) -> Value {
         Value::Junction(
             crate::ast::JunctionType::All,
@@ -37,6 +50,13 @@ impl AstralState {
         )
     }
 
+    /// Performs the `from_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of from_value
+    /// ```
     pub fn from_value(val: &Value) -> Self {
         if let Value::Junction(_, list) = val {
             if list.len() >= 5 {
@@ -78,6 +98,13 @@ impl AstralState {
     }
 }
 
+/// Performs the `process_astral_agent` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_astral_agent
+/// ```
 pub fn process_astral_agent(
     _vm: &mut ChimeraVM,
     agent: &PrologueAgent,
