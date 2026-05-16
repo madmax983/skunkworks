@@ -2,6 +2,811 @@ use crate::matrix_rain::MatrixRain;
 use ratatui::widgets::ListState;
 
 impl ViewMode {
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
+    /// Performs the `next_view` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of next_view
+    /// ```
     pub fn next_view(&self) -> ViewMode {
         match self {
             ViewMode::Genome => ViewMode::Grid,
@@ -259,6 +1064,811 @@ impl ViewMode {
         }
     }
 
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
+    /// Performs the `is_grid_navigable` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of is_grid_navigable
+    /// ```
     pub fn is_grid_navigable(&self) -> bool {
         match self {
             ViewMode::Grid | ViewMode::BioticChaos => true,
@@ -290,6 +1900,121 @@ impl ViewMode {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
+/// Enum for `ViewMode`.
 pub enum ViewMode {
     Genome,
     Grid,
@@ -354,6 +2079,64 @@ pub enum ViewMode {
     #[cfg(feature = "nova")]
     Arena,
     #[cfg(feature = "nova")]
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
+    /// Garden
     Garden,
     #[cfg(feature = "nova")]
     Orca,
@@ -429,6 +2212,811 @@ pub enum ViewMode {
 }
 
 impl ViewMode {
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
+    /// Performs the `as_str` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of as_str
+    /// ```
     pub fn as_str(&self) -> &'static str {
         match self {
             ViewMode::Genome => "GENOME",
@@ -541,6 +3129,121 @@ impl ViewMode {
     }
 }
 
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
+/// Enum for `InputMode`.
 pub enum InputMode {
     Normal,
     Editing,
@@ -849,6 +3552,811 @@ impl AppState {
         }
     }
 
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
+    /// Performs the `get_render_area` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_render_area
+    /// ```
     pub fn get_render_area(&self, full_area: ratatui::layout::Rect) -> ratatui::layout::Rect {
         if self.screen_shake > 0.1 {
             let mut rng = rand::thread_rng();

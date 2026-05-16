@@ -36,6 +36,13 @@ fn get_conductivity(val: &Value) -> f32 {
     }
 }
 
+/// Performs the `exec_elektra_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_elektra_op
+/// ```
 pub fn exec_elektra_op(
     vm: &mut ChimeraVM,
     op: OpCode,
@@ -683,6 +690,13 @@ fn check_transistor(dir: i64, y: usize, x: usize, ny: usize, nx: usize, vm: &Chi
 }
 
 #[allow(clippy::needless_range_loop)]
+/// Performs the `update_circuit` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of update_circuit
+/// ```
 pub fn update_circuit(vm: &mut ChimeraVM) {
     let iterations = 10;
     let grid_size = GRID_SIZE;

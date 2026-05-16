@@ -3,14 +3,26 @@ use crate::vm::ChimeraVM;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
+/// Enum for `EpigeneticMark`.
 pub enum EpigeneticMark {
     #[default]
+    /// None
     None,
-    Methylated,     // Silenced
+    /// Methylated
+    Methylated, // Silenced
+    /// Phosphorylated
     Phosphorylated, // Amplified
-    Rotting,        // Decaying (Energy Source for Scavengers)
+    /// Rotting
+    Rotting, // Decaying (Energy Source for Scavengers)
 }
 
+/// Performs the `apply_epigenetic_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_epigenetic_runes
+/// ```
 pub fn apply_epigenetic_runes(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     // Check if triggered from West
     let triggered = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {

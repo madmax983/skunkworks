@@ -6,10 +6,15 @@ use resonance_audio::audio::AudioCommand;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `RhythmState`.
 pub struct RhythmState {
+    /// The `bpm` field.
     pub bpm: u64,
+    /// The `ticks` field.
     pub ticks: u64,
+    /// The `beat_interval` field.
     pub beat_interval: u64,
+    /// The `last_beat_tick` field.
     pub last_beat_tick: u64,
 }
 
@@ -25,12 +30,26 @@ impl Default for RhythmState {
 }
 
 impl RhythmState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self::default()
     }
 }
 
 #[allow(clippy::too_many_arguments)]
+/// Performs the `apply_rhythm_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_rhythm_runes
+/// ```
 pub fn apply_rhythm_runes(
     rune: &str,
     y: usize,

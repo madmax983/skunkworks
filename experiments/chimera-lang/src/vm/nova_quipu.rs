@@ -3,12 +3,22 @@ use super::{ChimeraVM, Value};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `QuipuState`.
 pub struct QuipuState {
+    /// The `cords` field.
     pub cords: Vec<i64>,
+    /// The `active_cord` field.
     pub active_cord: usize,
 }
 
 impl QuipuState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         // 16 Cords by default
         Self {
@@ -17,12 +27,26 @@ impl QuipuState {
         }
     }
 
+    /// Performs the `tie` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tie
+    /// ```
     pub fn tie(&mut self, val: i64) {
         if self.active_cord < self.cords.len() {
             self.cords[self.active_cord] = val;
         }
     }
 
+    /// Performs the `read` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of read
+    /// ```
     pub fn read(&self) -> i64 {
         if self.active_cord < self.cords.len() {
             self.cords[self.active_cord]
@@ -31,6 +55,13 @@ impl QuipuState {
         }
     }
 
+    /// Performs the `untie` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of untie
+    /// ```
     pub fn untie(&mut self) -> i64 {
         if self.active_cord < self.cords.len() {
             let val = self.cords[self.active_cord];
@@ -41,12 +72,26 @@ impl QuipuState {
         }
     }
 
+    /// Performs the `select_cord` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of select_cord
+    /// ```
     pub fn select_cord(&mut self, idx: usize) {
         if idx < self.cords.len() {
             self.active_cord = idx;
         }
     }
 
+    /// Performs the `tangle` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tangle
+    /// ```
     pub fn tangle(&mut self, other_idx: usize) {
         if self.active_cord < self.cords.len() && other_idx < self.cords.len() {
             let val_b = self.cords[other_idx];
@@ -64,6 +109,13 @@ impl Default for QuipuState {
 // --- VM Execution Logic ---
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_knot` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_knot
+/// ```
 pub fn exec_knot(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         match val {
@@ -81,6 +133,13 @@ pub fn exec_knot(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_unknot` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_unknot
+/// ```
 pub fn exec_unknot(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let val = vm.quipu.untie();
     vm.stack.push(Value::Int(val));
@@ -89,6 +148,13 @@ pub fn exec_unknot(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_cord` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_cord
+/// ```
 pub fn exec_cord(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(idx) = val {
@@ -109,6 +175,13 @@ pub fn exec_cord(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_read_cord` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_read_cord
+/// ```
 pub fn exec_read_cord(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let val = vm.quipu.read();
     vm.stack.push(Value::Int(val));
@@ -116,6 +189,13 @@ pub fn exec_read_cord(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_tangle` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_tangle
+/// ```
 pub fn exec_tangle(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(idx) = val {

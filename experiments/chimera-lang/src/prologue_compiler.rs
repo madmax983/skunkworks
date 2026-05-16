@@ -20,6 +20,121 @@ use crate::vm::{Value, GRID_SIZE};
 #[derive(Parser)]
 #[allow(missing_docs)]
 #[grammar = "prologue_grammar.pest"]
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
+/// Represents a `PrologueParser`.
 pub struct PrologueParser;
 
 /// Represents the parsed structure of a Prologue circuit script.
@@ -44,16 +159,706 @@ pub struct PrologueParser;
 ///
 /// assert_eq!(program.orca_mode, Some(false));
 /// ```
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
+/// Represents a `PrologueProgram`.
 pub struct PrologueProgram {
     /// The compiled biological instruction set to execute the logic circuit.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
+    /// The `dna` field.
     pub dna: Dna,
     /// An optional pre-configured initial 2D memory space state.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
+    /// The `grid` field.
     pub grid: Option<Vec<Vec<Value>>>,
     /// Flags if this circuit uses Orca-specific execution timing rules.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
+    /// The `orca_mode` field.
     pub orca_mode: Option<bool>,
     /// Custom operational runes mapped to specific DNA `OpCode` sequences.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
+    /// The `custom_runes` field.
     pub custom_runes: HashMap<String, usize>,
     /// Transformation rules for transmuting values via `OpCode::Alchemy`.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
+    /// The `alchemy_book` field.
     pub alchemy_book: Vec<AlchemyRule>,
 }
 
@@ -85,6 +890,811 @@ pub struct PrologueProgram {
 /// - **Panics**: Returns `Result::Err` rather than panicking if the syntax is invalid or if the internal ChimeraScript fails to compile.
 ///
 /// Use this in conjunction with [`crate::compiler::compile`] if loading raw scripts.
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
 pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram> {
     let mut pairs = PrologueParser::parse(Rule::program, source)?;
 

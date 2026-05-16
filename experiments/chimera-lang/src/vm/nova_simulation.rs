@@ -1,5 +1,810 @@
 use super::{ChimeraVM, Value};
 
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
+/// Performs the `execute_ephemeral_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_ephemeral_strand
+/// ```
 pub fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand) {
     if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
         vm.output
@@ -20,6 +825,811 @@ pub fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand)
     vm.recursion_depth -= 1;
 }
 
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
+/// Performs the `execute_strand_sync` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of execute_strand_sync
+/// ```
 pub fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
     if strand_idx < vm.dna.helix.strands.len() {
         let strand = vm.dna.helix.strands[strand_idx].clone();
@@ -38,6 +1648,811 @@ pub fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
 /// **OpCode:** `Prophecy`
 /// **Stack:** `[ ..., ticks ] -> [ ..., result (1=Death, 0=Life) ]`
 #[allow(clippy::needless_range_loop)]
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
+/// Performs the `exec_prophecy` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prophecy
+/// ```
 pub fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks (top)
     let ticks = vm.pop_int("prophecy")?;
@@ -101,6 +2516,811 @@ pub fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
+/// Performs the `exec_lisp_eval` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lisp_eval
+/// ```
 pub fn exec_lisp_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let s = vm.pop_str("lisp_eval")?;
 
@@ -124,6 +3344,811 @@ pub fn exec_lisp_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Simulate`
 /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., top_val, final_energy, status ]`
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
+/// Performs the `exec_simulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_simulate
+/// ```
 pub fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, strand_idx (bottom)
     let ticks = vm.pop_int("simulate")?;
@@ -204,6 +4229,811 @@ pub fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Dream`
 /// **Stack:** `[ ..., ticks, strand_idx ] -> [ ..., result ]`
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
+/// Performs the `exec_dream` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dream
+/// ```
 pub fn exec_dream(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, strand_idx (bottom)
     let ticks = vm.pop_int("dream")?;
@@ -284,6 +5114,121 @@ pub fn exec_dream(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         success,
         is_nightmare,
         dream_vm.output.clone(),
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
+        /// None
         None,
     );
     vm.dream_traces.push(trace);
@@ -307,6 +5252,811 @@ pub fn exec_dream(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
+/// Performs the `exec_lucid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lucid
+/// ```
 pub fn exec_lucid(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let amount = vm.pop_int("lucid")?;
 

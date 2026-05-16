@@ -11,55 +11,104 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 /// Represents a "time-travel" snapshot of the VM state.
 #[derive(Clone, Debug, Serialize, Deserialize)]
+/// Represents a `Spore`.
 pub struct Spore {
+    /// The `phase` field.
     pub phase: Phase,
+    /// The `chirality` field.
     pub chirality: crate::vm::Chirality,
+    /// The `dna` field.
     pub dna: Dna,
+    /// The `stack` field.
     pub stack: Vec<Value>,
+    /// The `ip` field.
     pub ip: (usize, usize),
+    /// The `output` field.
     pub output: Vec<String>,
+    /// The `halted` field.
     pub halted: bool,
+    /// The `energy` field.
     pub energy: i64,
+    /// The `grid` field.
     pub grid: Vec<Vec<Value>>,
+    /// The `chaos_mode` field.
     pub chaos_mode: bool,
+    /// The `recursion_depth` field.
     pub recursion_depth: usize,
+    /// The `context_loc` field.
     pub context_loc: (usize, usize),
+    /// The `epigenome` field.
     pub epigenome: HashSet<(usize, usize)>,
+    /// The `telomeres` field.
     pub telomeres: Vec<i64>,
+    /// The `hormone_grid` field.
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
+    /// The `waste_grid` field.
     pub waste_grid: Vec<Vec<i64>>,
+    /// The `mutagen_grid` field.
     pub mutagen_grid: Vec<Vec<i64>>,
+    /// The `light_grid` field.
     pub light_grid: Vec<Vec<i64>>,
+    /// The `call_stack` field.
     pub call_stack: Vec<(usize, usize)>,
+    /// The `input_buffer` field.
     pub input_buffer: VecDeque<char>,
+    /// The `receptors` field.
     pub receptors: HashMap<char, usize>,
+    /// The `entangled_pairs` field.
     pub entangled_pairs: HashMap<usize, usize>,
     #[serde(skip)]
+    /// The `portals` field.
     pub portals: HashMap<(usize, usize), (usize, usize)>,
+    /// The `membranes` field.
     pub membranes: Vec<Vec<u8>>,
+    /// The `chroma_grid` field.
     pub chroma_grid: Vec<Vec<ChromaCell>>,
+    /// The `sonar_target` field.
     pub sonar_target: Option<(usize, usize)>,
+    /// The `symbiotes` field.
     pub symbiotes: Vec<(usize, usize)>,
+    /// The `ether` field.
     pub ether: HashMap<i64, VecDeque<Value>>,
+    /// The `reflexes` field.
     pub reflexes: HashMap<i64, usize>,
     #[serde(skip)]
+    /// The `remap_table` field.
     pub remap_table: HashMap<OpCode, OpCode>,
+    /// The `direction` field.
     pub direction: isize,
     #[serde(skip)]
+    /// The `mycelium` field.
     pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
+    /// The `immune_system` field.
     pub immune_system: HashSet<u64>,
+    /// The `dictionary` field.
     pub dictionary: HashMap<String, usize>,
+    /// The `gravity_grid` field.
     pub gravity_grid: Vec<Vec<i64>>,
+    /// The `wind_grid` field.
     pub wind_grid: Vec<Vec<(i8, i8)>>,
+    /// The `moisture_grid` field.
     pub moisture_grid: Vec<Vec<i64>>,
+    /// The `entropy_grid` field.
     pub entropy_grid: Vec<Vec<i64>>,
+    /// The `relativity_mode` field.
     pub relativity_mode: bool,
     #[cfg(feature = "cortex")]
+    /// The `synapse_map` field.
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
+    /// The `activation_levels` field.
     pub activation_levels: Vec<i64>,
 }
 
+/// Performs the `exec_sporulate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_sporulate
+/// ```
 pub fn exec_sporulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.spores.len() >= crate::vm::MAX_SPORES {
         vm.output.push("Error: Spore limit exceeded".to_string());
@@ -75,6 +124,13 @@ pub fn exec_sporulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_time_loop` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_time_loop
+/// ```
 pub fn exec_time_loop(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(loop_id) = val {
@@ -103,6 +159,13 @@ pub fn exec_time_loop(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `create_spore` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of create_spore
+/// ```
 pub fn create_spore(vm: &ChimeraVM) -> Spore {
     Spore {
         phase: vm.phase,
@@ -151,6 +214,13 @@ pub fn create_spore(vm: &ChimeraVM) -> Spore {
     }
 }
 
+/// Performs the `restore_state` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of restore_state
+/// ```
 pub fn restore_state(vm: &mut ChimeraVM, spore: &Spore) {
     vm.phase = spore.phase;
     vm.chirality = spore.chirality;
@@ -198,6 +268,13 @@ pub fn restore_state(vm: &mut ChimeraVM, spore: &Spore) {
     }
 }
 
+/// Performs the `exec_germinate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_germinate
+/// ```
 pub fn exec_germinate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(id) = val {
@@ -222,6 +299,13 @@ pub fn exec_germinate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_paradox` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_paradox
+/// ```
 pub fn exec_paradox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let val = vm.stack.pop().unwrap();
@@ -274,6 +358,13 @@ pub fn exec_paradox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_time_warp` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_time_warp
+/// ```
 pub fn exec_time_warp(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let factor_val = vm.stack.pop().unwrap();
@@ -316,6 +407,13 @@ pub fn exec_time_warp(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_chronos` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_chronos
+/// ```
 pub fn exec_chronos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     let factor = vm.time_grid[cy][cx];
@@ -323,6 +421,13 @@ pub fn exec_chronos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_chronostasis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_chronostasis
+/// ```
 pub fn exec_chronostasis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(ticks) = val {
@@ -347,6 +452,13 @@ pub fn exec_chronostasis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_retrograde` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_retrograde
+/// ```
 pub fn exec_retrograde(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(ticks) = val {
@@ -385,6 +497,13 @@ pub fn exec_retrograde(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "oracle")]
+/// Performs the `exec_divergence` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_divergence
+/// ```
 pub fn exec_divergence(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: query, count (top)
     if vm.stack.len() >= 2 {

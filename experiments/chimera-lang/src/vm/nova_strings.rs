@@ -4,16 +4,31 @@ use crate::vm::{ChimeraVM, Value, MAX_STRINGS};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `CosmicString`.
 pub struct CosmicString {
+    /// The `start` field.
     pub start: (f64, f64),
+    /// The `end` field.
     pub end: (f64, f64),
+    /// The `tension` field.
     pub tension: f64,
+    /// The `amplitude` field.
     pub amplitude: f64,
+    /// The `phase` field.
     pub phase: f64,
+    /// The `frequency` field.
     pub frequency: f64,
+    /// The `damping` field.
     pub damping: f64,
 }
 
+/// Performs the `update_strings` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of update_strings
+/// ```
 pub fn update_strings(vm: &mut ChimeraVM) {
     for s in &mut vm.strings {
         // Simple Harmonic Motion
@@ -27,6 +42,13 @@ pub fn update_strings(vm: &mut ChimeraVM) {
     }
 }
 
+/// Performs the `exec_string_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_string_op
+/// ```
 pub fn exec_string_op(
     vm: &mut ChimeraVM,
     op: OpCode,

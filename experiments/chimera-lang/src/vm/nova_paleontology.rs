@@ -7,6 +7,13 @@ use pest::Parser;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
+/// Performs the `exec_fossilize` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_fossilize
+/// ```
 pub fn exec_fossilize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., strand_idx ]
     if let Some(Value::Int(idx)) = vm.stack.pop() {
@@ -82,6 +89,13 @@ pub fn exec_fossilize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_unearth` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_unearth
+/// ```
 pub fn exec_unearth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., y, x ]
     if vm.stack.len() >= 2 {
@@ -174,6 +188,13 @@ pub fn exec_unearth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_carbon_date` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_carbon_date
+/// ```
 pub fn exec_carbon_date(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., y, x ]
     if vm.stack.len() >= 2 {

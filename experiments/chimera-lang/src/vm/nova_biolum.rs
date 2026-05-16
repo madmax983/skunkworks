@@ -8,6 +8,13 @@ const NEIGHBOR_DIRECTIONS: [(i64, i64, u8); 4] = [
     (0, 1, 4),  // E
 ];
 
+/// Performs the `exec_luciferin` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_luciferin
+/// ```
 pub fn exec_luciferin(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [r, g, b, intensity]
     if vm.stack.len() >= 4 {
@@ -50,6 +57,13 @@ pub fn exec_luciferin(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_photophore` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_photophore
+/// ```
 pub fn exec_photophore(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [radius]
     if let Some(val) = vm.stack.pop() {
@@ -98,6 +112,13 @@ pub fn exec_photophore(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[allow(clippy::needless_range_loop)]
+/// Performs the `diffuse_light_color` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of diffuse_light_color
+/// ```
 pub fn diffuse_light_color(vm: &mut ChimeraVM) {
     let size = 16;
     let mut buffer = [[(0u8, 0u8, 0u8); 16]; 16];

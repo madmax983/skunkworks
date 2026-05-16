@@ -18,6 +18,13 @@ fn calculate_decay(w_dy: i8, w_dx: i8, moisture: i64) -> (i8, i8, i64) {
 }
 
 /// Applies active effects from Hydra components (Pumps, Fans).
+/// Performs the `process_hydra_components` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_hydra_components
+/// ```
 pub fn process_hydra_components(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
     for y in 0..size {
@@ -45,6 +52,13 @@ pub fn process_hydra_components(vm: &mut ChimeraVM) {
 }
 
 /// Checks sensors and triggers execution if pressure is high.
+/// Performs the `process_sensors` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_sensors
+/// ```
 pub fn process_sensors(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
     let threshold = 100;
@@ -95,6 +109,13 @@ pub fn process_sensors(vm: &mut ChimeraVM) {
 /// Simulates fluid dynamics (Advection and Diffusion) for the Atmosphere.
 ///
 /// Updates `wind_grid` and `moisture_grid`.
+/// Performs the `process_fluid` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_fluid
+/// ```
 pub fn process_fluid(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
     let mut new_moisture = vec![vec![0i64; size]; size];
@@ -177,6 +198,13 @@ pub fn process_fluid(vm: &mut ChimeraVM) {
     }
 }
 
+/// Performs the `exec_aeolus` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_aeolus
+/// ```
 pub fn exec_aeolus(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -221,6 +249,13 @@ pub fn exec_aeolus(
     None
 }
 
+/// Performs the `exec_storm` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_storm
+/// ```
 pub fn exec_storm(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., intensity, radius ]
     if vm.stack.len() < 2 {
@@ -258,6 +293,13 @@ pub fn exec_storm(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Opti
     None
 }
 
+/// Performs the `exec_tsunami` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_tsunami
+/// ```
 pub fn exec_tsunami(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -309,6 +351,13 @@ pub fn exec_tsunami(
     None
 }
 
+/// Performs the `exec_dry` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dry
+/// ```
 pub fn exec_dry(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., radius ]
     let Some(Value::Int(r)) = vm.stack.pop() else {

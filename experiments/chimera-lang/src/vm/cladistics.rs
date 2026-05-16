@@ -5,22 +5,35 @@ use std::collections::HashMap;
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `CladeNode`.
 pub struct CladeNode {
+    /// The `id` field.
     pub id: usize,
+    /// The `parent_id` field.
     pub parent_id: Option<usize>,
+    /// The `birth_tick` field.
     pub birth_tick: u64,
+    /// The `death_tick` field.
     pub death_tick: Option<u64>,
+    /// The `event` field.
     pub event: String,
+    /// The `mutation_count` field.
     pub mutation_count: usize,
+    /// The `children` field.
     pub children: Vec<usize>,
+    /// The `strand_idx` field.
     pub strand_idx: usize, // The slot it occupied
 }
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Cladistics`.
 pub struct Cladistics {
+    /// The `nodes` field.
     pub nodes: HashMap<usize, CladeNode>,
+    /// The `active_map` field.
     pub active_map: HashMap<usize, usize>, // strand_idx -> node_id
+    /// The `next_node_id` field.
     pub next_node_id: usize,
 }
 
@@ -32,6 +45,13 @@ impl Default for Cladistics {
 }
 
 impl Cladistics {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             nodes: HashMap::new(),
@@ -40,6 +60,13 @@ impl Cladistics {
         }
     }
 
+    /// Performs the `register_strand` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of register_strand
+    /// ```
     pub fn register_strand(
         &mut self,
         strand_idx: usize,
@@ -77,6 +104,13 @@ impl Cladistics {
         self.active_map.insert(strand_idx, id);
     }
 
+    /// Performs the `kill_strand` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of kill_strand
+    /// ```
     pub fn kill_strand(&mut self, strand_idx: usize, tick: u64) {
         if let Some(&node_id) = self.active_map.get(&strand_idx) {
             if let Some(node) = self.nodes.get_mut(&node_id) {
@@ -85,6 +119,13 @@ impl Cladistics {
         }
     }
 
+    /// Performs the `mutate_strand` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutate_strand
+    /// ```
     pub fn mutate_strand(&mut self, strand_idx: usize) {
         if let Some(&node_id) = self.active_map.get(&strand_idx) {
             if let Some(node) = self.nodes.get_mut(&node_id) {
@@ -94,6 +135,13 @@ impl Cladistics {
     }
 
     // For rendering, we might want to get roots (nodes with no parents)
+    /// Performs the `get_roots` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_roots
+    /// ```
     pub fn get_roots(&self) -> Vec<usize> {
         self.nodes
             .values()

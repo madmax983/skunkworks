@@ -3,12 +3,22 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
+/// Represents a `HavocEngine`.
 pub struct HavocEngine {
+    /// The `rate` field.
     pub rate: f64,
+    /// The `scope` field.
     pub scope: u8, // 1=Mem, 2=Stack, 4=Exec
 }
 
 impl HavocEngine {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             rate: 0.0,
@@ -16,6 +26,13 @@ impl HavocEngine {
         }
     }
 
+    /// Performs the `tick` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of tick
+    /// ```
     pub fn tick(&mut self, vm: &mut ChimeraVM) {
         if self.rate <= 0.0 || self.scope == 0 {
             return;

@@ -4,6 +4,13 @@ use crate::vm::{Value, MAX_COMPLEX_STRING_LEN};
 use regex::Regex;
 use serde_json;
 
+/// Performs the `apply_linguistics_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_linguistics_runes
+/// ```
 pub fn apply_linguistics_runes(
     rune: &str,
     y: usize,

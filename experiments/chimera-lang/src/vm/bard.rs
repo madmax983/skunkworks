@@ -38,25 +38,36 @@ use resonance_audio::audio::AudioCommand;
 
 /// Represents a single musical event (Note or Rest).
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a `Note`.
 pub struct Note {
     /// MIDI Pitch (0-127). 0 indicates a Rest.
     ///
     /// - 60 = Middle C (C4)
     /// - 69 = A4 (440Hz)
+    /// The `pitch` field.
     pub pitch: u8,
     /// Duration in 1/16th notes.
     ///
     /// - 1 = 16th note
     /// - 4 = Quarter note
     /// - 16 = Whole note
+    /// The `duration` field.
     pub duration: u8,
     /// Velocity (0-127). 0 is silent (Rest).
     ///
     /// Used for dynamic expression (pianissimo to fortissimo).
+    /// The `velocity` field.
     pub velocity: u8,
 }
 
 impl Note {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new(pitch: u8, duration: u8, velocity: u8) -> Self {
         Self {
             pitch,
@@ -77,6 +88,13 @@ impl Note {
 /// - `Tempo`: Logs tempo change (metadata).
 /// - `Perform`: Compiles the score to ABC notation string on the stack.
 /// - `Compose`: Compiles the score into a DNA strand.
+/// Performs the `exec_bard_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_bard_op
+/// ```
 pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::Note => {
@@ -241,6 +259,13 @@ fn note_to_gene(note: &Note) -> Option<Gene> {
 }
 
 /// Converts the recorded score into an ABC Notation string.
+/// Performs the `score_to_abc` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of score_to_abc
+/// ```
 pub fn score_to_abc(score: &[Note]) -> String {
     let mut s = String::from("X:1\nT:Chimera Composition\nM:4/4\nL:1/16\nK:C\n");
     let mut measure_dur = 0;

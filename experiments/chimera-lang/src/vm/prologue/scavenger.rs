@@ -5,6 +5,13 @@ use crate::vm::ChimeraVM;
 use crate::vm::Value;
 use rand::Rng;
 
+/// Performs the `apply_scavenger_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_scavenger_sinks
+/// ```
 pub fn apply_scavenger_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     if rune == "♻" {
         // Recycle: Signal West -> Spawn Scavenger South
@@ -21,6 +28,13 @@ pub fn apply_scavenger_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
     }
 }
 
+/// Performs the `process_scavenger_logic` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_scavenger_logic
+/// ```
 pub fn process_scavenger_logic(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,

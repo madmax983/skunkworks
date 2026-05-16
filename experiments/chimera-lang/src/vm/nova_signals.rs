@@ -192,6 +192,13 @@ struct PhageCloneRequest {
     strand_idx: usize,
 }
 
+/// Performs the `process_signals` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_signals
+/// ```
 pub fn process_signals(vm: &mut ChimeraVM) {
     let size = GRID_SIZE;
     let mut ctx = SignalContext {

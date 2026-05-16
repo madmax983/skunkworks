@@ -14,6 +14,13 @@ use std::f64::consts::PI;
 use strum::IntoEnumIterator;
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_interfere` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_interfere
+/// ```
 pub fn exec_interfere(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -81,6 +88,13 @@ pub fn exec_interfere(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_diffract` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_diffract
+/// ```
 pub fn exec_diffract(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -141,6 +155,13 @@ pub fn exec_diffract(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_refract` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_refract
+/// ```
 pub fn exec_refract(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -185,6 +206,13 @@ pub fn exec_refract(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `mutate_hologram` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of mutate_hologram
+/// ```
 pub fn mutate_hologram(vm: &mut ChimeraVM, intensity: f64) {
     let mut rng = rand::thread_rng();
     for y in 0..GRID_SIZE {
@@ -202,6 +230,13 @@ pub fn mutate_hologram(vm: &mut ChimeraVM, intensity: f64) {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `refract_genes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of refract_genes
+/// ```
 pub fn refract_genes(vm: &ChimeraVM) -> Vec<Gene> {
     let op_codes: Vec<OpCode> = OpCode::iter().collect();
     let op_count = op_codes.len() as f64;
@@ -282,6 +317,13 @@ pub fn refract_genes(vm: &ChimeraVM) -> Vec<Gene> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_project` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_project
+/// ```
 pub fn exec_project(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -304,6 +346,13 @@ pub fn exec_project(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_hologram` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_hologram
+/// ```
 pub fn exec_hologram(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -317,6 +366,13 @@ pub fn exec_hologram(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_phase_mutate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_phase_mutate
+/// ```
 pub fn exec_phase_mutate(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -342,6 +398,13 @@ pub fn exec_phase_mutate(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_quantum_scribe` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_quantum_scribe
+/// ```
 pub fn exec_quantum_scribe(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -382,6 +445,13 @@ pub fn exec_quantum_scribe(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_quantum_scan` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_quantum_scan
+/// ```
 pub fn exec_quantum_scan(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -423,6 +493,13 @@ pub fn exec_quantum_scan(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_holo_invoke` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_holo_invoke
+/// ```
 pub fn exec_holo_invoke(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -482,6 +559,13 @@ pub fn exec_holo_invoke(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_holo_speak` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_holo_speak
+/// ```
 pub fn exec_holo_speak(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -527,6 +611,13 @@ fn get_opcode_index(op: &OpCode) -> usize {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_holo_sonify` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_holo_sonify
+/// ```
 pub fn exec_holo_sonify(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -580,6 +671,13 @@ pub fn exec_holo_sonify(
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_cymatic_scan` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_cymatic_scan
+/// ```
 pub fn exec_cymatic_scan(
     vm: &mut ChimeraVM,
     _op: OpCode,

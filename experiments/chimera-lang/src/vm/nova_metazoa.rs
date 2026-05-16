@@ -7,11 +7,21 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Tissue`.
 pub struct Tissue {
+    /// The `id` field.
     pub id: usize,
+    /// The `members` field.
     pub members: Vec<u64>, // IDs of Organelles
 }
 
+/// Performs the `process_metazoan` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_metazoan
+/// ```
 pub fn process_metazoan(vm: &mut ChimeraVM, organelle: &mut crate::vm::nova::Organelle) {
     use rand::Rng;
     let mut rng = rand::thread_rng();
@@ -37,6 +47,13 @@ pub fn process_metazoan(vm: &mut ChimeraVM, organelle: &mut crate::vm::nova::Org
     }
 }
 
+/// Performs the `exec_bond` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_bond
+/// ```
 pub fn exec_bond(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., direction ] -> [ ..., tissue_id ]
     // Direction: 0=N, 1=E, 2=S, 3=W
@@ -153,6 +170,13 @@ pub fn exec_bond(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Optio
     None
 }
 
+/// Performs the `exec_unbond` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_unbond
+/// ```
 pub fn exec_unbond(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -192,6 +216,13 @@ pub fn exec_unbond(
     None
 }
 
+/// Performs the `exec_signify` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_signify
+/// ```
 pub fn exec_signify(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -240,6 +271,13 @@ pub fn exec_signify(
     None
 }
 
+/// Performs the `exec_tissue` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_tissue
+/// ```
 pub fn exec_tissue(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -259,6 +297,13 @@ pub fn exec_tissue(
     None
 }
 
+/// Performs the `cleanup_tissues` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of cleanup_tissues
+/// ```
 pub fn cleanup_tissues(vm: &mut ChimeraVM) {
     let active_ids: HashSet<u64> = vm.organelles.iter().map(|o| o.id).collect();
     let mut empty_tissues = Vec::new();

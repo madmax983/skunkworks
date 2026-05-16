@@ -6,15 +6,25 @@ use crate::opcode::OpCode;
 use std::collections::VecDeque;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a `AttractorState`.
 pub struct AttractorState {
+    /// The `x` field.
     pub x: f64,
+    /// The `y` field.
     pub y: f64,
+    /// The `z` field.
     pub z: f64,
+    /// The `sigma` field.
     pub sigma: f64,
+    /// The `rho` field.
     pub rho: f64,
+    /// The `beta` field.
     pub beta: f64,
+    /// The `dt` field.
     pub dt: f64,
+    /// The `mode` field.
     pub mode: u8, // 0=Lorenz, 1=Rossler, 2=Thomas
+    /// The `history` field.
     pub history: VecDeque<(f64, f64, f64)>,
 }
 
@@ -25,6 +35,13 @@ impl Default for AttractorState {
 }
 
 impl AttractorState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             x: 0.1,
@@ -39,6 +56,13 @@ impl AttractorState {
         }
     }
 
+    /// Performs the `step` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of step
+    /// ```
     pub fn step(&mut self) {
         let (dx, dy, dz) = match self.mode {
             0 => {
@@ -84,6 +108,13 @@ impl AttractorState {
     }
 }
 
+/// Performs the `exec_attractor_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_attractor_op
+/// ```
 pub fn exec_attractor_op(
     vm: &mut ChimeraVM,
     op: OpCode,

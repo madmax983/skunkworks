@@ -5,6 +5,13 @@ use crate::ast::{Gene, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;
 
+/// Performs the `process_metamorphism` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_metamorphism
+/// ```
 pub fn process_metamorphism(vm: &mut ChimeraVM) {
     if !vm.metamorphism_enabled {
         return;

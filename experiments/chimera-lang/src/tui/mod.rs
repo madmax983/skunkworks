@@ -20,6 +20,7 @@ use std::io;
 
 pub(crate) const GRIMOIRE_TEXT: &str = include_str!("../../GRIMOIRE.md");
 
+/// The `state` module.
 pub mod state;
 pub use state::*;
 pub(crate) mod app;
@@ -48,6 +49,13 @@ pub(crate) fn panel_block<'a>(title: &'a str, active: bool) -> Block<'a> {
         .border_style(border_style)
 }
 
+/// Performs the `run_tui` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of run_tui
+/// ```
 pub fn run_tui(
     mut vm: ChimeraVM,
     initial_view: Option<ViewMode>,

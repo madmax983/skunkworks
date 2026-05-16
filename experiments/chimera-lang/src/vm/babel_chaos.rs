@@ -7,9 +7,13 @@ use std::collections::HashMap;
 use strum::IntoEnumIterator;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `BabelState`.
 pub struct BabelState {
+    /// The `integrity` field.
     pub integrity: f64, // 1.0 = stable, 0.0 = total chaos
+    /// The `chaos_map` field.
     pub chaos_map: HashMap<OpCode, OpCode>,
+    /// The `all_ops` field.
     pub all_ops: Vec<OpCode>,
 }
 
@@ -20,6 +24,13 @@ impl Default for BabelState {
 }
 
 impl BabelState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             integrity: 1.0,
@@ -28,6 +39,13 @@ impl BabelState {
         }
     }
 
+    /// Performs the `get_random_op` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_random_op
+    /// ```
     pub fn get_random_op(&self) -> OpCode {
         if self.all_ops.is_empty() {
             return OpCode::Nop;
@@ -36,6 +54,13 @@ impl BabelState {
         self.all_ops[rng.gen_range(0..self.all_ops.len())].clone()
     }
 
+    /// Performs the `speak_in_tongues` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of speak_in_tongues
+    /// ```
     pub fn speak_in_tongues(&self) -> String {
         let mut rng = rand::thread_rng();
         let len = rng.gen_range(5..20);
@@ -69,6 +94,13 @@ impl BabelState {
         parts.join(" ")
     }
 
+    /// Performs the `confuse` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of confuse
+    /// ```
     pub fn confuse(&mut self) {
         if self.all_ops.is_empty() {
             return;
@@ -84,11 +116,25 @@ impl BabelState {
         }
     }
 
+    /// Performs the `reset_map` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of reset_map
+    /// ```
     pub fn reset_map(&mut self) {
         self.chaos_map.clear();
     }
 }
 
+/// Performs the `exec_babel_chaos_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_babel_chaos_op
+/// ```
 pub fn exec_babel_chaos_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::Glossolalia => {

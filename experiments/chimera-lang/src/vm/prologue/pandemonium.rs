@@ -3,6 +3,13 @@ use crate::vm::{ChimeraVM, Value, MAX_STRING_LEN};
 use rand::seq::SliceRandom;
 use rand::Rng;
 
+/// Performs the `apply_pandemonium_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_pandemonium_runes
+/// ```
 pub fn apply_pandemonium_runes(
     rune: &str,
     y: usize,
@@ -85,6 +92,13 @@ pub fn apply_pandemonium_runes(
     changes
 }
 
+/// Performs the `apply_pandemonium_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_pandemonium_sinks
+/// ```
 pub fn apply_pandemonium_sinks(_vm: &mut ChimeraVM, _rune: &str, _y: usize, _x: usize) {
     // Sinks moved to Runes or deprecated.
 }

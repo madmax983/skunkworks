@@ -2,21 +2,40 @@ use super::normalize_coords;
 use crate::vm::Value;
 use std::collections::HashMap;
 
+/// Represents a `ElektraArgs`.
 pub struct ElektraArgs<'a> {
+    /// The `rune` field.
     pub rune: &'a str,
+    /// The `y` field.
     pub y: usize,
+    /// The `x` field.
     pub x: usize,
+    /// The `tick` field.
     pub tick: u64,
+    /// The `current_signals` field.
     pub current_signals: &'a [Vec<Option<Value>>],
+    /// The `next_signals` field.
     pub next_signals: &'a mut [Vec<Option<Value>>],
+    /// The `voltage_grid` field.
     pub voltage_grid: &'a mut [Vec<f32>],
+    /// The `resistance_grid` field.
     pub resistance_grid: &'a mut [Vec<f32>],
+    /// The `capacitance_grid` field.
     pub capacitance_grid: &'a mut [Vec<f32>],
+    /// The `energy` field.
     pub energy: &'a mut i64,
+    /// The `registers` field.
     pub registers: &'a mut HashMap<(usize, usize), Value>,
 }
 
 #[cfg(feature = "elektra")]
+/// Performs the `apply_elektra_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_elektra_runes
+/// ```
 pub fn apply_elektra_runes(args: ElektraArgs) -> bool {
     let mut changes = false;
     let w_sig = if let Some((wy, wx)) = normalize_coords(args.y as i64, args.x as i64 - 1) {
@@ -160,6 +179,13 @@ pub fn apply_elektra_runes(args: ElektraArgs) -> bool {
 }
 
 #[cfg(not(feature = "elektra"))]
+/// Performs the `apply_elektra_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_elektra_runes
+/// ```
 pub fn apply_elektra_runes(_args: ElektraArgs) -> bool {
     false
 }

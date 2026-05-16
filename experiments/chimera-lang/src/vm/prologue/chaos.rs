@@ -2,6 +2,13 @@ use super::normalize_coords;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 
+/// Performs the `apply_chaos_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_chaos_runes
+/// ```
 pub fn apply_chaos_runes(
     rune: &str,
     y: usize,
@@ -29,6 +36,13 @@ pub fn apply_chaos_runes(
     changes
 }
 
+/// Performs the `apply_chaos_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_chaos_sinks
+/// ```
 pub fn apply_chaos_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     // Check signal from West
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {

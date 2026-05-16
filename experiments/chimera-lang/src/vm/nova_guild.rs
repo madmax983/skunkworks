@@ -7,16 +7,29 @@ use std::collections::{HashMap, HashSet};
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `GuildState`.
 pub struct GuildState {
+    /// The `name` field.
     pub name: String,
+    /// The `members` field.
     pub members: HashSet<usize>, // Strand indices
+    /// The `treasury` field.
     pub treasury: i64,
+    /// The `founder` field.
     pub founder: usize,
+    /// The `policies` field.
     pub policies: HashMap<String, i64>,
 }
 
 #[cfg(feature = "nova")]
 impl GuildState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new(name: String, founder: usize) -> Self {
         let mut members = HashSet::new();
         members.insert(founder);
@@ -31,6 +44,13 @@ impl GuildState {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_guild` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_guild
+/// ```
 pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 3 {
         vm.output
@@ -202,6 +222,13 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_charter` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_charter
+/// ```
 pub fn exec_charter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 3 {
         vm.output

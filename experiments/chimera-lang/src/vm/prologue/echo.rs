@@ -4,17 +4,32 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+/// Represents a `EchoBuffer`.
 pub struct EchoBuffer {
+    /// The `buffer` field.
     pub buffer: Vec<Value>,
+    /// The `index` field.
     pub index: usize,
+    /// The `recording` field.
     pub recording: bool,
+    /// The `playing` field.
     pub playing: bool,
+    /// The `reversed` field.
     pub reversed: bool,
+    /// The `distorted` field.
     pub distorted: bool,
     #[serde(default)]
+    /// The `last_tick` field.
     pub last_tick: u64,
 }
 
+/// Performs the `apply_echo_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_echo_runes
+/// ```
 pub fn apply_echo_runes(
     rune: &str,
     y: usize,

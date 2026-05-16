@@ -2,6 +2,13 @@
 use crate::ast::JunctionType;
 use crate::value::Value;
 
+/// Performs the `load_standard_library` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of load_standard_library
+/// ```
 pub fn load_standard_library() -> Vec<Value> {
     let mut kb = Vec::new();
 

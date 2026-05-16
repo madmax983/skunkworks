@@ -1,6 +1,13 @@
 use crate::vm::ChimeraVM;
 use crate::vm::Value;
 
+/// Performs the `exec_origami` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_origami
+/// ```
 pub fn exec_origami(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         let extension_factor = match val {

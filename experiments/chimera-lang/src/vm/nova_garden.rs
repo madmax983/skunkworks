@@ -5,8 +5,11 @@ use std::collections::HashMap;
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, PartialEq, Eq)]
+/// Represents a `Rule`.
 pub struct Rule {
+    /// The `birth` field.
     pub birth: Vec<u8>,
+    /// The `survival` field.
     pub survival: Vec<u8>,
 }
 
@@ -22,7 +25,9 @@ impl Default for Rule {
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone)]
+/// Represents a `GardenState`.
 pub struct GardenState {
+    /// The `rules` field.
     pub rules: HashMap<i64, Rule>,
 }
 
@@ -34,6 +39,13 @@ impl Default for GardenState {
 }
 
 impl GardenState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         let mut rules = HashMap::new();
         // Species 1 uses standard Life
@@ -69,6 +81,13 @@ fn parse_life_rule(rule: &str) -> Option<(Vec<u8>, Vec<u8>)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_sow` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_sow
+/// ```
 pub fn exec_sow(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: rule_string, species_id (top)
     if vm.stack.len() >= 2 {
@@ -98,6 +117,13 @@ pub fn exec_sow(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_harvest` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_harvest
+/// ```
 pub fn exec_harvest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: radius (top)
     if let Some(val) = vm.stack.pop() {
@@ -137,6 +163,13 @@ pub fn exec_harvest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_evolve` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_evolve
+/// ```
 pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let rows = vm.grid.len();
     let cols = if rows > 0 { vm.grid[0].len() } else { 0 };

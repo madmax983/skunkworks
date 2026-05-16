@@ -4,6 +4,13 @@ use rand::Rng;
 use std::collections::{HashMap, VecDeque};
 
 #[allow(clippy::too_many_arguments)]
+/// Performs the `apply_io_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_io_runes
+/// ```
 pub fn apply_io_runes(
     rune: &str,
     y: usize,

@@ -2,6 +2,13 @@
 
 use super::{ChimeraVM, Value};
 
+/// Performs the `exec_resonate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_resonate
+/// ```
 pub fn exec_resonate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., amplitude, frequency ]
     if vm.stack.len() >= 2 {
@@ -54,6 +61,13 @@ pub fn exec_resonate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_listen_freq` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_listen_freq
+/// ```
 pub fn exec_listen_freq(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., frequency, strand_idx ]
     if vm.stack.len() >= 2 {
@@ -83,6 +97,13 @@ pub fn exec_listen_freq(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_sonic_claim` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_sonic_claim
+/// ```
 pub fn exec_sonic_claim(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., target_frequency ]
     if let Some(val) = vm.stack.pop() {
@@ -129,6 +150,13 @@ pub fn exec_sonic_claim(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_dampen` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_dampen
+/// ```
 pub fn exec_dampen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., amount, radius ]
     if vm.stack.len() >= 2 {
@@ -176,6 +204,13 @@ pub fn exec_dampen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 /// Simulates continuous wave propagation (diffusion) and decay.
 /// Should be called once per VM tick if Resonance is enabled.
+/// Performs the `process_resonance` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_resonance
+/// ```
 pub fn process_resonance(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
     let mut new_grid = vm.resonance_grid.clone();

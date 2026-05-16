@@ -7,10 +7,19 @@ use crate::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::Rng;
 
+/// Constant `MAX_EPIGENOME_SIZE`.
 pub const MAX_EPIGENOME_SIZE: usize = 1024;
+/// Constant `MAX_INCUBATE_LENGTH`.
 pub const MAX_INCUBATE_LENGTH: usize = 1024;
 
 /// Helper to convert a Value to a Nucleotide (static AST node)
+/// Performs the `value_to_nucleotide` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of value_to_nucleotide
+/// ```
 pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
     if depth > crate::vm::MAX_RECURSION_DEPTH {
         return None;
@@ -49,6 +58,13 @@ pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
 /// 3. Compile new Strands.
 /// 4. Wipe all state (Stack, Telomeres, Epigenome).
 /// 5. Rebirth.
+/// Performs the `exec_metamorphosis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_metamorphosis
+/// ```
 pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let rows = vm.grid.len();
     let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
@@ -176,6 +192,13 @@ pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
 }
 
+/// Performs the `exec_chronos_splice` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_chronos_splice
+/// ```
 pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: spore_id, strand_idx (top)
     if vm.stack.len() >= 2 {
@@ -243,6 +266,13 @@ pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Frankenstein`
 /// **Stack:** `[ ..., strand_a, strand_b, stitches ] -> [ ..., new_strand_idx ]`
+/// Performs the `exec_frankenstein` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_frankenstein
+/// ```
 pub fn exec_frankenstein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: stitches, strand_b, strand_a (bottom)
     if vm.stack.len() >= 3 {
@@ -375,6 +405,13 @@ pub fn exec_frankenstein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Crossover`
 /// **Stack:** `[ ..., strand_a, strand_b ] -> [ ..., new_strand_1, new_strand_2 ]`
+/// Performs the `exec_crossover` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_crossover
+/// ```
 pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let b_val = vm.stack.pop().unwrap();
@@ -475,6 +512,13 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// **OpCode:** `Splice`
 /// **Stack:** `[ ..., method, strand_b, strand_a ] -> [ ..., new_strand_idx ]`
 /// **Methods:** 0=Interleave, 1=Uniform Crossover, 2=Midpoint Split.
+/// Performs the `exec_splice` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_splice
+/// ```
 pub fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: method, strand_b, strand_a (bottom)
     if vm.stack.len() >= 3 {
@@ -600,6 +644,13 @@ pub fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Recombine`
 /// **Stack:** `[ ..., split_point, strand_b, strand_a ] -> [ ... ]`
+/// Performs the `exec_recombine` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_recombine
+/// ```
 pub fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: split_point, strand_b, strand_a (bottom)
     if vm.stack.len() >= 3 {
@@ -686,6 +737,13 @@ pub fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `CrisprScan`
 /// **Stack:** `[ ..., guide_idx, target_idx ] -> [ ..., match_index ]`
+/// Performs the `exec_crispr_scan` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_crispr_scan
+/// ```
 pub fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: guide_idx, target_idx (bottom)
     if vm.stack.len() >= 2 {
@@ -753,6 +811,13 @@ pub fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Cas9Cut`
 /// **Stack:** `[ ..., cut_index, strand_idx ] -> [ ..., new_strand_idx ]`
+/// Performs the `exec_cas9_cut` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_cas9_cut
+/// ```
 pub fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: cut_index, strand_idx (bottom)
     if vm.stack.len() >= 2 {
@@ -833,6 +898,13 @@ pub fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_incubate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_incubate
+/// ```
 pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: len, y, x (top)
     if vm.stack.len() >= 3 {
@@ -1003,6 +1075,13 @@ pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_methylate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_methylate
+/// ```
 pub fn exec_methylate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let gene_val = vm.stack.pop().unwrap();
@@ -1026,6 +1105,13 @@ pub fn exec_methylate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_demethylate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_demethylate
+/// ```
 pub fn exec_demethylate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let gene_val = vm.stack.pop().unwrap();
@@ -1044,6 +1130,13 @@ pub fn exec_demethylate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_telomerase` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_telomerase
+/// ```
 pub fn exec_telomerase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         match val {
@@ -1069,6 +1162,13 @@ pub fn exec_telomerase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_tlen` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_tlen
+/// ```
 pub fn exec_tlen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let idx = vm.ip.0;
     if idx < vm.telomeres.len() {
@@ -1079,6 +1179,13 @@ pub fn exec_tlen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_ligase` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_ligase
+/// ```
 pub fn exec_ligase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: donor_idx, recipient_idx (bottom)
     if vm.stack.len() >= 2 {
@@ -1141,6 +1248,13 @@ pub fn exec_ligase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_mitosis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_mitosis
+/// ```
 pub fn exec_mitosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: strand_idx (target to clone)
     if let Some(val) = vm.stack.pop() {
@@ -1205,6 +1319,13 @@ pub fn exec_mitosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_apoptosis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_apoptosis
+/// ```
 pub fn exec_apoptosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: strand_idx
     if let Some(val) = vm.stack.pop() {
@@ -1242,6 +1363,13 @@ pub fn exec_apoptosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_integrase` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_integrase
+/// ```
 pub fn exec_integrase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: arg, name, gene_idx, strand_idx (bottom)
     if vm.stack.len() >= 4 {
@@ -1323,6 +1451,13 @@ pub fn exec_integrase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_excision` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_excision
+/// ```
 pub fn exec_excision(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: gene_idx, strand_idx (bottom)
     if vm.stack.len() >= 2 {
@@ -1395,6 +1530,13 @@ pub fn exec_excision(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_meme` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_meme
+/// ```
 pub fn exec_meme(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(gene) = &vm.last_gene {
         let gene_clone = gene.clone();
@@ -1422,6 +1564,13 @@ pub fn exec_meme(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_drift` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_drift
+/// ```
 pub fn exec_drift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(prob) = val {
@@ -1472,6 +1621,13 @@ pub fn exec_drift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_poly` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_poly
+/// ```
 pub fn exec_poly(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, usize)> {
     // stack: [ val ] (peek)
     if let Some(val) = vm.stack.last() {
@@ -1511,6 +1667,13 @@ pub fn exec_poly(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, usiz
     None
 }
 
+/// Performs the `exec_compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_compile
+/// ```
 pub fn exec_compile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Str(s) = val {
@@ -1564,6 +1727,13 @@ pub fn exec_compile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `strand_to_string` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of strand_to_string
+/// ```
 pub fn strand_to_string(strand: &crate::ast::Strand) -> String {
     fn format_nucleotide(n: &crate::ast::Nucleotide, depth: usize) -> String {
         if depth > crate::vm::MAX_RECURSION_DEPTH {
@@ -1604,6 +1774,13 @@ pub fn strand_to_string(strand: &crate::ast::Strand) -> String {
     s
 }
 
+/// Performs the `exec_decompile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_decompile
+/// ```
 pub fn exec_decompile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(idx) = val {
@@ -1633,6 +1810,13 @@ pub fn exec_decompile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// **OpCode:** `Genesis`
 /// **Stack:** `[ ..., rule_id ] -> [ ... ]`
 /// **Effect:** Replaces entire DNA with genes derived from the Grid state using CA rules.
+/// Performs the `exec_genesis` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_genesis
+/// ```
 pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(rule_id) = val {
@@ -1772,6 +1956,13 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `exec_self_replicate` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_self_replicate
+/// ```
 pub fn exec_self_replicate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.energy < 100 {
         vm.output

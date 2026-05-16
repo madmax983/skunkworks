@@ -3,6 +3,13 @@ use crate::opcode::OpCode;
 use crate::value::Value;
 use crate::vm::{ChimeraVM, MAX_JUNCTION_SIZE};
 
+/// Performs the `exec_raku_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_raku_op
+/// ```
 pub fn exec_raku_op(
     vm: &mut ChimeraVM,
     op: OpCode,

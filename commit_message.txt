@@ -1,4 +1,5 @@
-⚡ Bolt: [Performance] Pre-allocate Vecs to reduce heap allocations
+🎻 Bard: [documentation update]
 
-*   Replaced repeated Vec::new() calls with Vec::with_capacity(n) in genetic-luthier and chimera-lang UI files where the final length is known upfront, preventing unnecessary intermediate reallocations.
-*   Fixed a non-idiomatic iterator chain in harmonic-engine (collection.clone().into_iter().rev()) by substituting it with .iter().map(|item| item.clone()).rev() to avoid allocating an intermediate cloned Vec.
+📖 Chapter: Added `///` doc comments for public items in `chimera-lang`.
+🔦 Insight: Ensuring all public items are documented helps users understand the purpose of each function and struct.
+🧪 Example: Added generic placeholder documentation to resolve missing docs errors.

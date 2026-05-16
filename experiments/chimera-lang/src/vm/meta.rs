@@ -6,6 +6,13 @@ use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_meta_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_meta_op
+/// ```
 pub fn exec_meta_op(
     vm: &mut ChimeraVM,
     op: OpCode,

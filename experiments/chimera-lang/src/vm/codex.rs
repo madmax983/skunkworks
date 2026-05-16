@@ -4,14 +4,20 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Spell`.
 pub struct Spell {
+    /// The `name` field.
     pub name: String,
+    /// The `cost` field.
     pub cost: i64,
+    /// The `description` field.
     pub description: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Codex`.
 pub struct Codex {
+    /// The `spells` field.
     pub spells: Vec<Spell>,
 }
 
@@ -22,6 +28,13 @@ impl Default for Codex {
 }
 
 impl Codex {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             spells: vec![
@@ -55,11 +68,25 @@ impl Codex {
         }
     }
 
+    /// Performs the `get_spell` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of get_spell
+    /// ```
     pub fn get_spell(&self, id: usize) -> Option<Spell> {
         self.spells.get(id).cloned()
     }
 }
 
+/// Performs the `exec_spell` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_spell
+/// ```
 pub fn exec_spell(vm: &mut ChimeraVM, spell: &Spell) {
     if vm.energy < spell.cost {
         vm.output.push(format!(

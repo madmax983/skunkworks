@@ -51,6 +51,7 @@ use std::collections::{HashSet, VecDeque};
 
 /// The physical state of the organism, affecting movement and mutation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+/// Enum for `Phase`.
 pub enum Phase {
     /// Standard state. Blocks movement through walls. Normal energy costs.
     #[default]
@@ -65,6 +66,7 @@ pub enum Phase {
 
 /// Defines the specialized behavior of an Organelle.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// Enum for `OrganelleType`.
 pub enum OrganelleType {
     /// Standard execution unit. No special abilities.
     Worker,
@@ -114,44 +116,69 @@ pub enum OrganelleType {
 /// vm.organelles.push(organelle);
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a `Organelle`.
 pub struct Organelle {
     /// The organelle's private stack.
+    /// The `stack` field.
     pub stack: Vec<Value>,
     /// Instruction Pointer `(strand_idx, gene_idx)`.
+    /// The `ip` field.
     pub ip: (usize, usize),
     /// Current location on the 16x16 grid.
+    /// The `context_loc` field.
     pub context_loc: (usize, usize),
     /// Call stack for `Call`/`Ret` operations.
+    /// The `call_stack` field.
     pub call_stack: Vec<(usize, usize)>,
     /// Recursion depth tracker to prevent infinite loops.
+    /// The `recursion_depth` field.
     pub recursion_depth: usize,
     /// Execution state. If true, the organelle is removed or stops processing.
+    /// The `halted` field.
     pub halted: bool,
     /// The specialization type (e.g., Chloroplast, Mitochondria).
+    /// The `kind` field.
     pub kind: OrganelleType,
     /// Movement vector (dy, dx) used by some organelles (e.g. Ribosome, Void).
+    /// The `direction` field.
     pub direction: (i8, i8),
     /// Time To Live. If `Some(0)`, the organelle dies.
+    /// The `ttl` field.
     pub ttl: Option<usize>,
     /// Display name (flavor text).
+    /// The `name` field.
     pub name: String,
     /// List of acquired traits or buffs.
+    /// The `traits` field.
     pub traits: Vec<String>,
     /// Unique identifier for this organelle.
+    /// The `id` field.
     pub id: u64,
     /// ID of the tissue/colony this organelle belongs to (for Metazoan behavior).
+    /// The `tissue_id` field.
     pub tissue_id: Option<usize>,
     /// Hash of the source genome (for identification).
+    /// The `genome_id` field.
     pub genome_id: u64,
     /// Internal energy reserve (currently unused/vestigial).
     /// Organelles draw from the main VM `energy` pool.
+    /// The `energy` field.
     pub energy: i64,
     /// Accumulated experience points (for leveling up behavior).
+    /// The `experience` field.
     pub experience: i64,
     /// Growth stage (0=Larva, 1=Adult, etc.).
+    /// The `stage` field.
     pub stage: u8,
 }
 
+/// Performs the `check_chorus_chords` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of check_chorus_chords
+/// ```
 pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
     let buffer: Vec<&str> = vm.chorus_buffer.iter().map(|s| s.as_str()).collect();
     let len = buffer.len();
@@ -271,6 +298,13 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
 /// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
 /// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[allow(clippy::needless_range_loop)]
+/// Performs the `exec_operator` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_operator
+/// ```
 pub fn exec_operator(vm: &mut ChimeraVM, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., char_str, strand_idx ]
     // BUT OpCode usually takes stack args.
@@ -295,6 +329,13 @@ pub fn exec_operator(vm: &mut ChimeraVM, _args: &[Nucleotide]) -> Option<(usize,
     None
 }
 
+/// Performs the `exec_nova_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_nova_op
+/// ```
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         OpCode::Levenshtein => super::nova_linguistics::exec_levenshtein(vm),
@@ -746,6 +787,13 @@ fn exec_tui_mod(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs the `glob_match` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of glob_match
+/// ```
 pub fn glob_match(pattern: &str, target: &str) -> bool {
     if let Some((p_head, p_tail)) = pattern.split_once('*') {
         if !target.starts_with(p_head) {
@@ -849,6 +897,13 @@ fn exec_conjugate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// - (1, 0) South -> 2
 /// - (0, 1) East -> 4
 /// - (0, -1) West -> 8
+/// Performs the `get_direction_mask` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of get_direction_mask
+/// ```
 pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
     match (dy, dx) {
         (-1, 0) => Some(1), // N
@@ -2299,6 +2354,13 @@ fn exec_spore_cloud(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 impl ChimeraVM {
+    /// Performs the `resurrect_from_graveyard` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of resurrect_from_graveyard
+    /// ```
     pub fn resurrect_from_graveyard(&mut self, index: usize) -> Result<usize, String> {
         if index < self.graveyard.len() {
             let strand = self.graveyard.remove(index);

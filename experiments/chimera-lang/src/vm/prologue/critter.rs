@@ -5,12 +5,190 @@ use std::fmt;
 use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
+/// Enum for `CritterAction`.
 pub enum CritterAction {
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
+    /// Move
     Move(usize, usize),
+    /// Attack
     Attack(usize, usize),
+    /// Build
     Build(char, usize, usize),
+    /// Split
     Split,
+    /// Mark
     Mark,
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
+    /// None
     None,
 }
 
@@ -19,14 +197,710 @@ pub enum CritterAction {
 /// Format: "C:Energy:Genes:IP:Direction"
 /// Example: "C:100:NSEW:0:0"
 #[derive(Debug, Clone)]
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
+/// Represents a `CritterState`.
 pub struct CritterState {
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
+    /// The `energy` field.
     pub energy: i64,
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
+    /// The `genes` field.
     pub genes: String,
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
+    /// The `ip` field.
     pub ip: usize,
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
+    /// The `direction` field.
     pub direction: usize, // 0=N, 1=E, 2=S, 3=W
 }
 
 impl CritterState {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new(energy: i64, genes: String, ip: usize, direction: usize) -> Self {
         Self {
             energy,
@@ -49,6 +923,412 @@ impl Default for CritterState {
 }
 
 impl CritterState {
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
+    /// Performs the `to_value` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of to_value
+    /// ```
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }
@@ -93,6 +1373,412 @@ impl FromStr for CritterState {
     }
 }
 
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
+/// Performs the `process_critter_move` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of process_critter_move
+/// ```
 pub fn process_critter_move(
     critter: &mut CritterState,
     y: usize,
@@ -279,6 +1965,412 @@ pub fn process_critter_move(
     }
 }
 
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
+/// Performs the `breed` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of breed
+/// ```
 pub fn breed(parent1: &CritterState, parent2: &CritterState) -> CritterState {
     let mut rng = rand::thread_rng();
 

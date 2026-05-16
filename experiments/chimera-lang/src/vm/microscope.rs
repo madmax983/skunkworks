@@ -2,21 +2,34 @@ use super::{ChimeraVM, Value};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+/// Represents a `MicroscopeData`.
 pub struct MicroscopeData {
+    /// The `coords` field.
     pub coords: (usize, usize),
+    /// The `value` field.
     pub value: Value,
+    /// The `hormone_levels` field.
     pub hormone_levels: [i64; 3],
+    /// The `waste_level` field.
     pub waste_level: i64,
+    /// The `mutagen_level` field.
     pub mutagen_level: i64,
+    /// The `light_level` field.
     pub light_level: i64,
+    /// The `organelles` field.
     pub organelles: Vec<OrganelleInfo>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+/// Represents a `OrganelleInfo`.
 pub struct OrganelleInfo {
+    /// The `kind` field.
     pub kind: String,
+    /// The `ip` field.
     pub ip: (usize, usize),
+    /// The `stack_depth` field.
     pub stack_depth: usize,
+    /// The `energy_share` field.
     pub energy_share: i64, // Placeholder for now
 }
 
@@ -34,6 +47,13 @@ impl Default for MicroscopeData {
     }
 }
 
+/// Performs the `scan` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of scan
+/// ```
 pub fn scan(vm: &ChimeraVM, y: usize, x: usize) -> MicroscopeData {
     let mut data = MicroscopeData {
         coords: (y, x),

@@ -6,6 +6,13 @@ use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_reflector` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_reflector
+/// ```
 pub fn exec_reflector(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., orientation, y, x ]
     if vm.stack.len() >= 3 {
@@ -38,6 +45,13 @@ pub fn exec_reflector(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_prism` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_prism
+/// ```
 pub fn exec_prism(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., orientation, y, x ]
     if vm.stack.len() >= 3 {
@@ -69,6 +83,13 @@ pub fn exec_prism(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_lens` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_lens
+/// ```
 pub fn exec_lens(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., power, y, x ]
     if vm.stack.len() >= 3 {
@@ -98,6 +119,13 @@ pub fn exec_lens(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Performs the `exec_optics_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_optics_op
+/// ```
 pub fn exec_optics_op(
     vm: &mut ChimeraVM,
     op: OpCode,

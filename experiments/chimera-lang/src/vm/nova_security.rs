@@ -4,12 +4,26 @@ use crate::opcode::OpCode;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
+/// Performs the `hash_strand` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of hash_strand
+/// ```
 pub fn hash_strand(strand: &Strand) -> u64 {
     let mut hasher = DefaultHasher::new();
     strand.hash(&mut hasher);
     hasher.finish()
 }
 
+/// Performs the `exec_security_op` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of exec_security_op
+/// ```
 pub fn exec_security_op(
     vm: &mut ChimeraVM,
     op: OpCode,

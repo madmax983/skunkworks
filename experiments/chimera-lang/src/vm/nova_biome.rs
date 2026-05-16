@@ -1,17 +1,84 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
+/// Enum for `Biome`.
 pub enum Biome {
     #[default]
+    /// Plains
     Plains,
+    /// Swamp
     Swamp,
+    /// Desert
     Desert,
+    /// Tundra
     Tundra,
+    /// Volcanic
     Volcanic,
     // New Biomes
+    /// Glitch
     Glitch,
+    /// Aether
     Aether,
+    /// Silicon
     Silicon,
+    /// Garden
     Garden,
 }
 
@@ -19,6 +86,412 @@ impl Biome {
     /// Returns the inertia factor for diffusion.
     /// Higher values mean the cell retains more of its own value (slower diffusion).
     /// Base value is usually 4.
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
+    /// Performs the `diffusion_inertia` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of diffusion_inertia
+    /// ```
     pub fn diffusion_inertia(&self) -> i64 {
         match self {
             Biome::Plains => 4,
@@ -36,6 +509,412 @@ impl Biome {
     /// Returns the decay percentage per tick (0-100).
     /// 100 means no decay (100% retained).
     /// 90 means 10% decay.
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
+    /// Performs the `decay_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of decay_rate
+    /// ```
     pub fn decay_rate(&self) -> i64 {
         match self {
             Biome::Plains => 100, // No decay (Standard)
@@ -52,6 +931,412 @@ impl Biome {
 
     /// Returns the energy cost modifier for operations in this biome.
     /// 1.0 is base cost.
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
+    /// Performs the `energy_cost_modifier` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of energy_cost_modifier
+    /// ```
     pub fn energy_cost_modifier(&self) -> f64 {
         match self {
             Biome::Plains => 1.0,
@@ -68,6 +1353,412 @@ impl Biome {
 
     /// Returns the probability of spontaneous mutation (0.0 - 1.0).
     /// Used to scale the base mutation rate.
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
+    /// Performs the `mutation_rate` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of mutation_rate
+    /// ```
     pub fn mutation_rate(&self) -> f64 {
         match self {
             Biome::Plains => 1.0,
@@ -83,6 +1774,412 @@ impl Biome {
     }
 
     /// Returns the magic amplification factor.
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
+    /// Performs the `magic_amp` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of magic_amp
+    /// ```
     pub fn magic_amp(&self) -> i64 {
         match self {
             Biome::Aether => 2,
@@ -92,6 +2189,412 @@ impl Biome {
     }
 
     /// Returns the RGB color for TUI visualization.
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
+    /// Performs the `color` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of color
+    /// ```
     pub fn color(&self) -> (u8, u8, u8) {
         match self {
             Biome::Plains => (0, 0, 0),      // Default/Transparent

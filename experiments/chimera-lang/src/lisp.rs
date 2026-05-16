@@ -12,11 +12,931 @@ use std::str::FromStr;
 const MAX_LISP_DEPTH: usize = 256;
 
 #[derive(Debug, Clone)]
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
+/// Enum for `SExpr`.
 pub enum SExpr {
     Atom(String),
     List(Vec<SExpr>),
 }
 
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
+/// Performs the `parse` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of parse
+/// ```
 pub fn parse(input: &str) -> Result<Vec<SExpr>> {
     let tokens = tokenize(input);
     let mut exprs = Vec::new();
@@ -57,6 +977,811 @@ fn sexpr_to_value_inner(expr: &SExpr, depth: usize) -> Result<Value> {
     }
 }
 
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
+/// Performs the `sexpr_to_value` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of sexpr_to_value
+/// ```
 pub fn sexpr_to_value(expr: &SExpr) -> Result<Value> {
     sexpr_to_value_inner(expr, 0)
 }
@@ -157,6 +1882,811 @@ fn parse_expr(tokens: &[String], start: usize, depth: usize) -> Result<(SExpr, u
     }
 }
 
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
+/// Performs the `compile` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile
+/// ```
 pub fn compile(source: &str) -> Result<Dna> {
     let exprs = parse(source)?;
     let mut strands = Vec::new();
@@ -191,6 +2721,811 @@ pub fn compile(source: &str) -> Result<Dna> {
     })
 }
 
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
+/// Performs the `compile_fragment` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of compile_fragment
+/// ```
 pub fn compile_fragment(source: &str) -> Result<Vec<Gene>> {
     let exprs = parse(source)?;
     let mut genes = Vec::new();

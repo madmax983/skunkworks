@@ -10,6 +10,7 @@ use ratatui::{buffer::Buffer, layout::Rect, style::Color};
 ///
 /// Manages the layout and rendering of animated text drop sequences
 /// across the terminal grid.
+/// Represents a `MatrixRain`.
 pub struct MatrixRain {
     columns: Vec<Column>,
     width: u16,
@@ -31,6 +32,13 @@ impl Default for MatrixRain {
 }
 
 impl MatrixRain {
+    /// Creates a new instance.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of new()
+    /// ```
     pub fn new() -> Self {
         Self {
             columns: Vec::new(),
@@ -39,6 +47,13 @@ impl MatrixRain {
         }
     }
 
+    /// Performs the `update` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of update
+    /// ```
     pub fn update(&mut self, width: u16, height: u16) {
         // Resize check
         if self.width != width || self.height != height {
@@ -86,6 +101,13 @@ impl MatrixRain {
         });
     }
 
+    /// Performs the `render` operation.
+    ///
+    /// ## Examples
+    ///
+    /// ```text
+    /// // Example usage of render
+    /// ```
     pub fn render(&self, buf: &mut Buffer, area: Rect) {
         for col in &self.columns {
             let head_y = col.y as i32;

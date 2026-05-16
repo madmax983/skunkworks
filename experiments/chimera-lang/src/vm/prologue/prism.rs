@@ -2,6 +2,13 @@ use super::normalize_coords;
 use crate::ast::JunctionType;
 use crate::vm::Value;
 
+/// Performs the `apply_prism_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_prism_runes
+/// ```
 pub fn apply_prism_runes(
     rune: &str,
     y: usize,
@@ -179,6 +186,13 @@ pub fn apply_prism_runes(
     changes
 }
 
+/// Performs the `apply_prism_sinks` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_prism_sinks
+/// ```
 pub fn apply_prism_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
         vm.prologue_state.signal_grid[wy][wx].clone()

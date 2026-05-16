@@ -1,6 +1,13 @@
 use super::normalize_coords;
 use crate::vm::{ChimeraVM, Value};
 
+/// Performs the `apply_altar_runes` operation.
+///
+/// ## Examples
+///
+/// ```text
+/// // Example usage of apply_altar_runes
+/// ```
 pub fn apply_altar_runes(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     if rune != "⛩" {
         return;
