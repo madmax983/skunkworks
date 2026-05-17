@@ -17,3 +17,6 @@
 **[Missing Default Implementations]**
 **Learning:** Idiomatic Rust requires implementing the `Default` trait for structs that provide a parameterless `pub fn new() -> Self` constructor.
 **Action:** When auditing files, always check if a struct has `pub fn new() -> Self` but lacks an `impl Default`. Apply `#[derive(Default)]` or implement manually to resolve the discrepancy.
+**[Flattening Nested Match Loops with Iterators]**
+**Learning:** To flatten 'Pyramids of Doom' caused by deeply nested loops containing `match` statements, extracting the innermost match logic into a helper function returning `Option<T>` allows replacing the outer loops with a flat `.filter_map().collect()` iterator pipeline. This drastically improves code readability without altering behavior.
+**Action:** Always extract inner `match` expressions into small helper functions when they cause "Pyramids of Doom" inside multiple `for` loops, then rewrite the iteration using `filter_map`.
