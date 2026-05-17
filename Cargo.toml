@@ -29,6 +29,7 @@ members = [
     "experiments/gray-lattice",
     "experiments/market-poincare",
     "experiments/quipu-poincare",
+    "experiments/myco-resonance",
 
 ]
 exclude = [
