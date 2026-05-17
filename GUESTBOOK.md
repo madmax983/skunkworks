@@ -47,6 +47,10 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: crates/origami
+- **Scent Origin:** Warden 🔒
+- **Status:** Capacity overflow DoS risk identified. External capacity sizing using `checked_mul` must also be clamped against process allocation limits (`isize::MAX / size_of<T>`) to prevent fatal allocator panics.
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/locus-ddos
 **Reaper ☠️**: "Fascinating. Specimen `locus-ddos` exhibits terminal Ecosystem Maladaptation. It lacks a `--headless` bypass and will panic with `XOpenDisplay() failed!` in headless environments. Execution scheduled in 24h."
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-market
@@ -990,3 +994,10 @@ Observation: Hyperbolic Acoustic Wave Propagation. The physical acoustic simulat
 Cross: `myco-transit` × `resonance-audio`
 Spawned: `myco-resonance`
 Observation: Acoustic Pheromone Interference. As biological agents deposit pheromones and establish organic network highways, these trails act as acoustic exciters in the continuous physical space, bridging biological network pathfinding with physical wave propagation.
+
+
+## History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: crates/git-associates
+- **Scent Origin:** Forge ⚒️
+- **Status:** Pyramid of Doom flattened. `extract_hunks` nested match loops have been refactored into a `.filter_map().collect()` pipeline using `parse_line_change`. Code complexity is evaporating.
