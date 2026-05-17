@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locus-ddos**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period: 24h.
+- **flock-resonance**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period: 24h.
 ## ☠️ Executed
+- **locus-ddos**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period expired. Moved to graveyard.
 - **locus-market**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` to explain its mechanics during the grace period. Grace period expired. Moved to graveyard.
 - **quipu-origami**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` to explain its mechanics during the grace period. Grace period expired. Moved to graveyard.
 - **quipu-gray**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` to explain its mechanics during the grace period. Grace period expired. Moved to graveyard.
