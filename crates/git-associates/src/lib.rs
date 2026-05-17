@@ -349,32 +349,12 @@ impl GitModel {
                 continue;
             };
 
-            let mut lines = Vec::with_capacity(lines_count);
-
-            for l_idx in 0..lines_count {
-                let Ok(line) = patch.line_in_hunk(h_idx, l_idx) else {
-                    continue;
-                };
-
-                let change = match line.origin() {
-                    '+' => Some(LineChange::Added(
-                        String::from_utf8_lossy(line.content()).into_owned(),
-                    )),
-                    '-' => Some(LineChange::Removed(
-                        String::from_utf8_lossy(line.content()).into_owned(),
-                    )),
-                    ' ' => Some(LineChange::Context(
-                        String::from_utf8_lossy(line.content()).into_owned(),
-                    )),
-                    _ => None,
-                };
-
-                let Some(c) = change else {
-                    continue;
-                };
-
-                lines.push(c);
-            }
+            let lines: Vec<LineChange> = (0..lines_count)
+                .filter_map(|l_idx| {
+                    let line = patch.line_in_hunk(h_idx, l_idx).ok()?;
+                    Self::parse_line_change(&line)
+                })
+                .collect();
 
             hunks.push(Hunk {
                 header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
@@ -383,6 +363,17 @@ impl GitModel {
         }
 
         hunks
+    }
+
+    /// Helper to convert a git2::DiffLine into a LineChange based on origin.
+    fn parse_line_change(line: &git2::DiffLine) -> Option<LineChange> {
+        let content = String::from_utf8_lossy(line.content()).into_owned();
+        match line.origin() {
+            '+' => Some(LineChange::Added(content)),
+            '-' => Some(LineChange::Removed(content)),
+            ' ' => Some(LineChange::Context(content)),
+            _ => None,
+        }
     }
 }
 
