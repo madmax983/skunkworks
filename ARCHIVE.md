@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-ddos**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Skeletal Implementation. Grace period: 24h.
+- **chimera-rift**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Skeletal Implementation (only ~87 lines of code). Grace period: 24h.
 ## ☠️ Executed
+- **ferrous-ddos**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Skeletal Implementation. Grace period expired. Moved to graveyard.
 - **flock-resonance**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Failed to improve during grace period. Moved to graveyard.
 - **locus-ddos**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period expired. Moved to graveyard.
 - **locus-market**: Specimen executed. Diagnosis: Documentation Void. Failed to add a `README.md` to explain its mechanics during the grace period. Grace period expired. Moved to graveyard.
