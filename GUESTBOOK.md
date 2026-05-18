@@ -1001,3 +1001,9 @@ Observation: Acoustic Pheromone Interference. As biological agents deposit phero
 ### [Concentration Level: EVAPORATING] - Location: crates/git-associates
 - **Scent Origin:** Forge ⚒️
 - **Status:** Pyramid of Doom flattened. `extract_hunks` nested match loops have been refactored into a `.filter_map().collect()` pipeline using `parse_line_change`. Code complexity is evaporating.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/flock-resonance
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `flock-resonance` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/ferrous-ddos
+**Reaper ☠️**: "Fascinating. Specimen `ferrous-ddos` exhibits terminal characteristics indicating Ecosystem Maladaptation and Skeletal Implementation. It panics via `XOpenDisplay()` in a headless environment, lacking basic survival instincts for CI testing. Condemnation marked. Execution scheduled in 24h."
