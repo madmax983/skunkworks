@@ -12,7 +12,7 @@ use std::sync::Arc;
 #[derive(Clone, Debug)]
 pub struct Snapshot {
     pub voltages: Vec<f32>,
-    ////pub mean_field: f32,
+    ////////pub mean_field: f32,
 }
 
 pub enum AudioCommand {
@@ -30,6 +30,8 @@ pub struct AudioEngine {
     #[cfg(feature = "audio")]
     _stream: Option<cpal::Stream>,
     pub cmd_tx: Sender<AudioCommand>,
+#[allow(clippy::type_complexity)]
+#[allow(clippy::type_complexity)]
 #[allow(clippy::type_complexity)]
     #[cfg(feature = "audio")]
     #[allow(clippy::type_complexity)]
