@@ -65,7 +65,7 @@ classDiagram
 
 ### Semantic Bridge (crates/tui-shared)
 
-The semantic logic within the `tui-shared` crate enables applications to expose their internal state as structured data for LLM agents (ADR 004, ADR 070, ADR 093). The module hierarchy is flattened, exporting components directly.
+The semantic logic within the `tui-shared` crate enables applications to expose their internal state as structured data for LLM agents (ADR 004, ADR 070, ADR 093, ADR 096). The module hierarchy is flattened, and internal modules are kept private to enforce the Facade pattern.
 
 ```mermaid
 classDiagram
@@ -80,7 +80,7 @@ classDiagram
     }
 
     class Snapshot {
-        <<Module: snapshot.rs>>
+        <<Private Module: snapshot.rs>>
         +String app
         +u64 frame
         +Vec~Entity~ entities
@@ -90,7 +90,7 @@ classDiagram
     }
 
     class Entity {
-        <<Module: entity.rs>>
+        <<Private Module: entity.rs>>
         +String kind
         +String id
         +Vec2 position
@@ -98,7 +98,7 @@ classDiagram
     }
 
     class Action {
-        <<Module: action.rs>>
+        <<Private Module: action.rs>>
         +String name
         +String description
         +String key
