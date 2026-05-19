@@ -64,13 +64,13 @@
 //! }
 //! ```
 
-pub mod action;
+pub(crate) mod action;
 pub(crate) mod bobber;
 pub(crate) mod button;
-pub mod entity;
+pub(crate) mod entity;
 pub(crate) mod log_list;
-pub mod region;
-pub mod snapshot;
+pub(crate) mod region;
+pub(crate) mod snapshot;
 
 pub use action::Action;
 pub use entity::{Entity, PropValue};
