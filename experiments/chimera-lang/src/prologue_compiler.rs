@@ -1895,22 +1895,16 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
             // To distinguish '-' (math) from -5 (number), we peek ahead.
             // If '-' is followed by digit, it's a number.
 
-            let mut is_number = false;
-            if c == '-' {
-                let mut temp = chars.clone();
-                temp.next(); // skip '-'
-                if let Some(nc) = temp.peek() {
-                    if nc.is_ascii_digit() {
-                        is_number = true;
-                    }
-                }
-            } else {
-                is_number = true;
-            }
+            let mut s = String::new();
+            s.push(chars.next().unwrap()); // consume the first digit or '-'
 
-            if is_number {
-                let mut s = String::new();
-                s.push(chars.next().unwrap());
+            // Check if it's just a '-' and the next character isn't a digit.
+            let is_negative_sign_only =
+                c == '-' && chars.peek().is_none_or(|&nc| !nc.is_ascii_digit());
+
+            if is_negative_sign_only {
+                row.push(Value::Str(s));
+            } else {
                 while let Some(&next_c) = chars.peek() {
                     if next_c.is_ascii_digit() {
                         s.push(chars.next().unwrap());
@@ -1923,9 +1917,6 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
                 } else {
                     row.push(Value::Str(s));
                 }
-            } else {
-                // It's a '-' rune
-                row.push(Value::Str(chars.next().unwrap().to_string()));
             }
         } else if c.is_alphabetic() {
             // Identifier (might be multi-char like "func")
