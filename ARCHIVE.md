@@ -1,6 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-rift**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Skeletal Implementation (only ~87 lines of code). Grace period: 24h.
+- **myco-ddos**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). The specimen fails in headless CI environments. Skeletal Genericism is also prevalent—it's merely Physarum with "firewalls" drawn on top, lacking deep bidirectional hybrid vigor. Grace period: 24h.
+
 ## ☠️ Executed
+- **chimera-rift**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved by adding a `--headless` bypass and enhancing the portal sensor input to detect portal resonance energy, along with age-based metabolic scaling. Vigor demonstrated.
 - **ferrous-ddos**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Skeletal Implementation. Grace period expired. Moved to graveyard.
 - **flock-resonance**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Failed to improve during grace period. Moved to graveyard.
 - **locus-ddos**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period expired. Moved to graveyard.
