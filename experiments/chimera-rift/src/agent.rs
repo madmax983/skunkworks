@@ -72,7 +72,7 @@ impl Agent {
 
     pub fn update(&mut self, world: &mut World) {
         self.age += 1;
-        self.energy -= 1; // Metabolic cost
+        self.energy -= 2 + (self.age / 100) as i32; // Metabolic cost scales with age
 
         // --- 1. Sensors (Input) ---
         // Input 0: Smell Food (Vector encoded as X, Y)
@@ -113,7 +113,8 @@ impl Agent {
         self.push_input(1, w);
 
         // Input 2: Portal Sensor (Nearby Portal?)
-        // Simple search for nearest portal
+        // Enhanced search: Agents sense portal resonance energy
+        let mut portal_resonance = 0.0;
         let mut nearest_portal_dist = f32::MAX;
         let mut portal_target = (self.pos.0, self.pos.1); // Self if none found
 
@@ -130,7 +131,17 @@ impl Agent {
                 nearest_portal_dist = d2;
                 portal_target = portal.exit_pos;
             }
+
+            // Add resonance from all portals based on inverse distance squared
+            if d1 > 0.0 {
+                portal_resonance += portal.energy as f32 / d1;
+            }
+            if d2 > 0.0 {
+                portal_resonance += portal.energy as f32 / d2;
+            }
         }
+
+        self.push_input(3, portal_resonance as i64);
 
         let pdx = (portal_target.0 as i64) - (self.pos.0 as i64);
         let pdy = (portal_target.1 as i64) - (self.pos.1 as i64);

@@ -5,8 +5,19 @@ use agent::Agent;
 use macroquad::prelude::*;
 use world::{World, GRID_HEIGHT, GRID_WIDTH, TILE_SIZE};
 
-#[macroquad::main("Chimera-Rift")]
-async fn main() {
+fn window_conf() -> macroquad::window::Conf {
+    macroquad::window::Conf {
+        window_title: "Chimera-Rift".to_owned(),
+        ..Default::default()
+    }
+}
+
+async fn async_main() {
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode, exiting immediately to avoid XOpenDisplay panic.");
+        return;
+    }
+
     let mut world = World::new();
     let mut agents: Vec<Agent> = (0..50)
         .map(|i| Agent::new(i, GRID_WIDTH / 2, GRID_HEIGHT / 2))
@@ -83,4 +94,12 @@ async fn main() {
 
         next_frame().await
     }
+}
+
+fn main() {
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode, exiting immediately to avoid XOpenDisplay panic.");
+        return;
+    }
+    macroquad::Window::from_config(window_conf(), async_main());
 }
