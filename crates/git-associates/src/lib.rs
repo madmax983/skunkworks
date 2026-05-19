@@ -349,12 +349,14 @@ impl GitModel {
                 continue;
             };
 
-            let lines: Vec<LineChange> = (0..lines_count)
-                .filter_map(|l_idx| {
-                    let line = patch.line_in_hunk(h_idx, l_idx).ok()?;
-                    Self::parse_line_change(&line)
-                })
-                .collect();
+            let mut lines = Vec::with_capacity(lines_count);
+            for l_idx in 0..lines_count {
+                if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
+                    if let Some(change) = Self::parse_line_change(&line) {
+                        lines.push(change);
+                    }
+                }
+            }
 
             hunks.push(Hunk {
                 header: String::from_utf8_lossy(hunk_info.header()).into_owned(),

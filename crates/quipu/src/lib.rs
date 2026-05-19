@@ -541,7 +541,7 @@ impl fmt::Display for Quipu {
 impl Drop for Cord {
     fn drop(&mut self) {
         // Prevent stack overflow when dropping deeply nested Cord structures
-        let mut stack = Vec::new();
+        let mut stack = Vec::with_capacity(self.subsidiaries.len());
         stack.append(&mut self.subsidiaries);
         while let Some(mut cord) = stack.pop() {
             stack.append(&mut cord.subsidiaries);
