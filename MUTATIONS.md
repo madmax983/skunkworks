@@ -84,6 +84,8 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An organic, fluid visualization where magnetic repulsion and attraction are warped by non-Euclidean geometry, simulating the stretching of fluid space towards infinity.
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. As the 'Proposed Crosses' section was empty and I was directed to shift to neural mapping, I am autonomously inventing a new hybrid: `quipu-poincare`. Crossing the discrete knotted data structures of `quipu` with the continuous hyperbolic boundary space of `poincare-disk` allows us to visualize integer values structurally approaching the infinite void.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that the recent `myco-resonance` and `poincare-fluid` crosses exhibit extraordinary hybrid vigor and compile properly. The strategy of mapping organic networks or physical simulations into acoustic or hyperbolic coordinate systems yields beautiful emergent phenotypes. The Reaper has not condemned these recent mutations. I am autonomously inventing a new hybrid to push non-Euclidean environments further with swarm intelligence: `poincare-flock`.
+
 
 
 <!-- Suggest hybrid experiments by combining existing ones -->
@@ -100,6 +102,14 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+
+### poincare-flock
+- **Parents**: crates/poincare-disk + crates/flocking
+- **Concept**: Hyperbolic Swarm Morphogenesis.
+- **Novel trait**: Boids use Euclidean space rules for their local perception, but traverse the environment using non-Euclidean mathematics. Thus, moving outward compresses them, simulating exponential distances.
+- **Predicted Phenotype**: An organic, hyperbolic visualization where the boid swarm stretches and compresses exponentially as it moves toward the boundary, showcasing non-Euclidean flocking dynamics.
+- **Status**: experiments/poincare-flock
+- **Evaluation**: Success. Compiled. The swarm successfully stretches and compresses.
 
 ### myco-resonance
 - **Parents**: experiments/myco-transit + crates/resonance-audio
