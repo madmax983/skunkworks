@@ -9,7 +9,6 @@ proptest! {
     // or Infinities as inputs to see if it gracefully returns them or panics elsewhere.
     // Also, we can use `f64::ANY` to test ALL float values (including NaNs/Infs).
     #[test]
-    #[should_panic]
     fn test_mobius_add_fuzzing(
         z_re in proptest::num::f64::ANY,
         z_im in proptest::num::f64::ANY,
@@ -30,7 +29,6 @@ proptest! {
     }
 
     #[test]
-    #[should_panic]
     fn test_mobius_sub_fuzzing(
         z_re in proptest::num::f64::ANY,
         z_im in proptest::num::f64::ANY,

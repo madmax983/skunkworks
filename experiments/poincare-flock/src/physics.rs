@@ -1,7 +1,7 @@
+use flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use poincare_disk::{mobius_add, Point};
 use rand::Rng;
-use flocking::{compute_force, FlockingParams};
 
 pub struct Particle {
     pub pos: Vec2,
@@ -26,10 +26,8 @@ impl Universe {
                     rng.gen_range(width * 0.4..width * 0.6),
                     rng.gen_range(height * 0.4..height * 0.6),
                 ),
-                vel: Vec2::new(
-                    rng.gen_range(-1.0..1.0),
-                    rng.gen_range(-1.0..1.0),
-                ).normalize() * 1.5,
+                vel: Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize()
+                    * 1.5,
             };
             particles.push(p);
         }
@@ -69,8 +67,8 @@ impl Universe {
             let delta = center - positions[i];
             let dist = delta.magnitude();
             if dist > max_r * 0.2 {
-                 next_velocities[i] += delta.normalize() * 0.02 * (dist / max_r);
-                 next_velocities[i] = next_velocities[i].limit(self.params.max_speed);
+                next_velocities[i] += delta.normalize() * 0.02 * (dist / max_r);
+                next_velocities[i] = next_velocities[i].limit(self.params.max_speed);
             }
         }
 
@@ -114,7 +112,8 @@ impl Universe {
                 self.particles[i].pos = center + delta_c;
                 // Reflect velocity
                 let n = -delta_c.normalize();
-                self.particles[i].vel = self.particles[i].vel - n * (2.0 * self.particles[i].vel.dot(n));
+                self.particles[i].vel =
+                    self.particles[i].vel - n * (2.0 * self.particles[i].vel.dot(n));
             }
         }
     }

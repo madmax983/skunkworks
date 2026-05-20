@@ -38,7 +38,8 @@ impl MarketPoincareApp {
             let x = rng.gen_range(0..self.width);
             if rng.gen_bool(0.5) {
                 // Bid spawns at the bottom
-                self.market.set(x, self.height - 1, Particle::Bid(rng.gen_range(0..100)));
+                self.market
+                    .set(x, self.height - 1, Particle::Bid(rng.gen_range(0..100)));
             } else {
                 // Ask spawns at the top
                 self.market.set(x, 0, Particle::Ask(rng.gen_range(0..100)));
@@ -150,14 +151,20 @@ fn run_app(tui: &mut Tui) -> Result<()> {
                                     ctx.print(
                                         p.re,
                                         p.im,
-                                        ratatui::text::Span::styled("▲", Style::default().fg(Color::Green)),
+                                        ratatui::text::Span::styled(
+                                            "▲",
+                                            Style::default().fg(Color::Green),
+                                        ),
                                     );
                                 }
                                 Particle::Ask(_) => {
                                     ctx.print(
                                         p.re,
                                         p.im,
-                                        ratatui::text::Span::styled("▼", Style::default().fg(Color::Red)),
+                                        ratatui::text::Span::styled(
+                                            "▼",
+                                            Style::default().fg(Color::Red),
+                                        ),
                                     );
                                 }
                                 _ => {}
@@ -186,7 +193,10 @@ fn run_app(tui: &mut Tui) -> Result<()> {
 
             let stats = Paragraph::new(format!(
                 "Bids: {} | Asks: {} | Trades: {} | Active Flashes: {} | [Q] Quit",
-                app.market.total_bids, app.market.total_asks, app.market.trade_count, app.flashes.len(),
+                app.market.total_bids,
+                app.market.total_asks,
+                app.market.trade_count,
+                app.flashes.len(),
             ))
             .block(Block::default().borders(Borders::ALL));
             f.render_widget(stats, chunks[1]);

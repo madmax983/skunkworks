@@ -37,7 +37,11 @@ fn run_app(tui: &mut Tui) -> Result<()> {
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Hyperbolic Swarm "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Hyperbolic Swarm "),
+                )
                 .x_bounds([0.0, universe.width])
                 .y_bounds([0.0, universe.height]) // 0 at bottom
                 .paint(|ctx| {
@@ -74,11 +78,8 @@ fn run_app(tui: &mut Tui) -> Result<()> {
 
             f.render_widget(canvas, chunks[0]);
 
-            let stats = Paragraph::new(format!(
-                "Boids: {} | [Q] Quit",
-                universe.particles.len(),
-            ))
-            .block(Block::default().borders(Borders::ALL));
+            let stats = Paragraph::new(format!("Boids: {} | [Q] Quit", universe.particles.len(),))
+                .block(Block::default().borders(Borders::ALL));
             f.render_widget(stats, chunks[1]);
         })?;
 
