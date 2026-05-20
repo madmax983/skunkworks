@@ -4,7 +4,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use poincare_disk::{Point, Mobius};
+use poincare_disk::{Mobius, Point};
 use quipu::{Cord, Quipu};
 use ratatui::{
     backend::CrosstermBackend,
@@ -95,24 +95,27 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     for (c_idx, cord) in app.quipu.cords.iter().enumerate() {
         let value = cord.value();
         for (k_idx, cluster) in cord.clusters.iter().enumerate() {
-             for (sub_k_idx, knot) in cluster.iter().enumerate() {
-                 let _knot_val = knot.value();
-                 let p = map_to_poincare(c_idx, k_idx + sub_k_idx, value as usize);
-                 let t = Mobius::translation(app.view_center);
-                 let transformed = t.apply(p);
+            for (sub_k_idx, knot) in cluster.iter().enumerate() {
+                let _knot_val = knot.value();
+                let p = map_to_poincare(c_idx, k_idx + sub_k_idx, value as usize);
+                let t = Mobius::translation(app.view_center);
+                let transformed = t.apply(p);
 
-                 let screen_x = center_x as f64 + transformed.re * radius * app.zoom;
-                 let screen_y = center_y as f64 + transformed.im * (radius / 2.0) * app.zoom;
+                let screen_x = center_x as f64 + transformed.re * radius * app.zoom;
+                let screen_y = center_y as f64 + transformed.im * (radius / 2.0) * app.zoom;
 
-                 if screen_x >= 1.0 && screen_x < size.width as f64 - 1.0 &&
-                    screen_y >= 1.0 && screen_y < size.height as f64 - 1.0 {
-                     let symbol = knot.symbol();
-                     let color = Color::Yellow;
+                if screen_x >= 1.0
+                    && screen_x < size.width as f64 - 1.0
+                    && screen_y >= 1.0
+                    && screen_y < size.height as f64 - 1.0
+                {
+                    let symbol = knot.symbol();
+                    let color = Color::Yellow;
 
-                     let widget = Paragraph::new(Span::styled(symbol, Style::default().fg(color)));
-                     f.render_widget(widget, Rect::new(screen_x as u16, screen_y as u16, 1, 1));
-                 }
-             }
+                    let widget = Paragraph::new(Span::styled(symbol, Style::default().fg(color)));
+                    f.render_widget(widget, Rect::new(screen_x as u16, screen_y as u16, 1, 1));
+                }
+            }
         }
     }
 }

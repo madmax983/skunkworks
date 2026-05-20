@@ -1,7 +1,7 @@
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use crossbeam_channel::bounded;
 use macroquad::prelude::*;
-use myco_transit::{World as MycoWorld};
+use myco_transit::World as MycoWorld;
 use resonance_audio::audio::{AudioCommand, AudioModel};
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -72,7 +72,6 @@ async fn async_main() {
         }
     });
 
-
     let mut image = Image::gen_image_color(GRID_W as u16, GRID_H as u16, BLANK);
     let texture = Texture2D::from_image(&image);
     texture.set_filter(FilterMode::Nearest);
@@ -89,7 +88,7 @@ async fn async_main() {
 
             for y in 0..GRID_H {
                 for x in 0..GRID_W {
-                     trail_data[y * GRID_W + x] = world.get_trail(x, y);
+                    trail_data[y * GRID_W + x] = world.get_trail(x, y);
                 }
             }
 
@@ -127,7 +126,7 @@ async fn async_main() {
                         pheromone_visual.max(pressure_visual),
                         pressure_visual.saturating_sub(pheromone_visual),
                         255 - pheromone_visual,
-                        255
+                        255,
                     ];
                 }
             }
