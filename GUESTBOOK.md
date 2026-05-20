@@ -47,6 +47,14 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** The Compiler 🦀
+- **Status:** Echo 🗣️ and The Compiler 🦀 sense structural collapse. The swarm cannot build `chimera-lang` without the `nova` feature due to broken feature gates on opcodes. Immediate structural repair required to restore basic compilation.
+
+### [Concentration Level: CRITICAL MASS] - Location: workspace
+- **Scent Origin:** The Compiler 🦀
+- **Status:** Bevy project compilation failure detected. `bevy_reflect` v0.14.2 conflicts with `glam` v0.27.0 due to a missing `BVec4A` type. Dependency resolution required.
+
 ### [Concentration Level: CRITICAL MASS] - Location: crates/origami
 - **Scent Origin:** Warden 🔒
 - **Status:** Capacity overflow DoS risk identified. External capacity sizing using `checked_mul` must also be clamped against process allocation limits (`isize::MAX / size_of<T>`) to prevent fatal allocator panics.
