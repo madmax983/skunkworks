@@ -44,7 +44,9 @@ fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnte
         let s_idx = app_state.crispr_target_strand;
         if s_idx < vm.dna.helix.strands.len() {
             let strand = &mut vm.dna.helix.strands[s_idx];
-            let mut new_genes = Vec::new();
+            // ⚡ Bolt: Pre-allocate capacity for new_genes based on original strand length
+            // to avoid immediate reallocation as items are pushed or extended.
+            let mut new_genes = Vec::with_capacity(strand.genes.len());
             let mut i = 0;
             let mut matches = 0;
             while i < strand.genes.len() {
@@ -56,7 +58,9 @@ fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnte
                     }
                 }
                 if matched {
-                    new_genes.extend(replace_genes.clone());
+                    // ⚡ Bolt: Use .iter().cloned() instead of .clone() on the Vec to avoid
+                    // an intermediate heap allocation during the `extend` operation.
+                    new_genes.extend(replace_genes.iter().cloned());
                     i += guide_ops.len();
                     matches += 1;
                 } else {
