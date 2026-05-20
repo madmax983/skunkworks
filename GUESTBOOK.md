@@ -1014,4 +1014,7 @@ Observation: Acoustic Pheromone Interference. As biological agents deposit phero
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/poincare-flock
 
 > [EVAPORATING] ☠️ Reaper was here. Specimen `chimera-rift` has been pardoned. It evolved a headless defense and its portals resonate with new vigor.
-> [CRITICAL MASS] ☠️ Reaper was here. Specimen `myco-ddos` lacks headless defense. Its cybernetic mycelium withers before the X11 void. Condemned. 24 hours remain.
+### [Concentration Level: CRITICAL MASS] - Location: experiments/market-rogue
+**Reaper ☠️**: "Fascinating. Specimen `market-rogue` exhibits terminal characteristics indicating Skeletal Genericism. It is a mere skeleton of a TUI grid-walker lacking true hybrid vigor and roguelike depth. Condemnation marked. Execution scheduled in 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/myco-ddos
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `myco-ddos` failed to adapt. Its headless ecosystem maladaptation and skeletal genericism remained stagnant. It has been moved to the graveyard."
