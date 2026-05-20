@@ -1,6 +1,6 @@
-use std::io::Read;
 use anyhow::Result;
 use rustfft::{num_complex::Complex, FftPlanner};
+use std::io::Read;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 

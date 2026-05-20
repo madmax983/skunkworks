@@ -1,6 +1,6 @@
-use std::io::Read;
 use log::info;
 use macroquad::prelude::*;
+use std::io::Read;
 
 mod ants;
 mod audio;

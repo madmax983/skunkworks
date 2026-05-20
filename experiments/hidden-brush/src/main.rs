@@ -3,12 +3,12 @@ mod stego;
 mod ui;
 mod vm;
 
-use std::io::Read;
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use image::{DynamicImage, Rgb, RgbImage};
 use rand::Rng;
 use std::fs;
+use std::io::Read;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -65,7 +65,7 @@ fn main() -> Result<()> {
             let file = fs::File::open(&script)?;
             let mut script_content = String::new();
             let limit = 1024 * 1024; // 1MB limit
-            let bytes_read = file.take(limit + 1).read_to_string(&mut script_content,)?;
+            let bytes_read = file.take(limit + 1).read_to_string(&mut script_content)?;
 
             if bytes_read as u64 > limit {
                 anyhow::bail!("Script file {:?} exceeds 1MB limit", script);

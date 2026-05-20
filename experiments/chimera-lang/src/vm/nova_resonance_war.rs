@@ -1,7 +1,7 @@
 #![cfg(feature = "nova")]
 
-use std::io::Read;
 use super::{ChimeraVM, Value};
+use std::io::Read;
 
 /// Performs the `exec_resonate` operation.
 ///

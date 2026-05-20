@@ -1,4 +1,3 @@
-use std::io::Read;
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode},
@@ -16,6 +15,7 @@ use ratatui::{
     Frame, Terminal,
 };
 use std::io;
+use std::io::Read;
 
 struct App {
     scales: ScalesOfMaat,

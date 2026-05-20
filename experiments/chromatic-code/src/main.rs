@@ -67,7 +67,8 @@ fn main() -> Result<()> {
             let mut text = String::new();
             let limit = 1024 * 1024;
             let file = std::fs::File::open(&input).context("Failed to open input file")?;
-            let bytes = file.take(limit + 1)
+            let bytes = file
+                .take(limit + 1)
                 .read_to_string(&mut text)
                 .context("Failed to read input file")?;
             anyhow::ensure!(bytes <= limit as usize, "Input file exceeds 1MB limit");
@@ -115,9 +116,7 @@ fn main() -> Result<()> {
                 .or_else(|_| std::fs::File::open("src/main.rs")); // Fallback if running from crate root
 
             if let Ok(file) = file_res {
-                if let Ok(bytes) =
-                    file.take(limit + 1).read_to_string(&mut source_code)
-                {
+                if let Ok(bytes) = file.take(limit + 1).read_to_string(&mut source_code) {
                     if bytes > limit as usize {
                         source_code = "Could not find source code, using dummy text.".to_string();
                     }

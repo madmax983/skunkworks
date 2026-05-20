@@ -1,10 +1,10 @@
-use std::io::Read;
 use anyhow::Result;
 use chrono::Utc;
 use git_associates::{Commit, GitModel};
 use macroquad::prelude::*;
 use origami::{generate_miura_grid, MiuraParams, Orientation};
 use std::f32::consts::PI;
+use std::io::Read;
 
 fn conf() -> Conf {
     Conf {

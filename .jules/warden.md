@@ -21,3 +21,6 @@
 **2026-06-25 - [String Concatenation Memory Exhaustion]**
 **Threat:** The `chimera-lang` VM contained a vulnerability in `experiments/chimera-lang/src/vm/ops/math.rs` where the `OpCode::Add` logic executed string concatenation (`s1 + &s2`) without verifying the resulting size. This allowed an attacker to create a "String Bomb" (e.g., repeatedly duplicating and concatenating strings inside a loop) that quickly exhausted system memory, leading to an Out-Of-Memory (OOM) panic and Denial of Service.
 **Defense:** Fortified `OpCode::Add` by validating that `s1.len().saturating_add(s2.len())` does not exceed `crate::vm::MAX_STRING_LEN` (65,536 bytes) prior to concatenation. If the limit is breached, the operation aborts safely and pushes an "Error: String length exceeds maximum allowed length" message to the VM output, neutralizing the DoS vector.
+2025-02-18 - [poincare-disk Geodesic NaN Poisoning]
+**Threat:** Geodesic radius NaN Poisoning due to division by zero
+**Defense:** Return None if determinant is NaN in euclidean_circle

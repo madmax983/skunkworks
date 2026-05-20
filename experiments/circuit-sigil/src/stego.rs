@@ -1,6 +1,6 @@
-use std::io::Read;
 use anyhow::{Context, Result};
 use image::RgbaImage;
+use std::io::Read;
 
 pub fn embed(img: &mut RgbaImage, data: &str, pads: &[(u32, u32)]) -> Result<()> {
     let payload = data.as_bytes();

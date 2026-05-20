@@ -1,12 +1,12 @@
 #![cfg(feature = "nova")]
 
-use std::io::Read;
 use super::{ChimeraVM, Value, MAX_GENES_PER_STRAND, MAX_STRANDS};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::Rng;
+use std::io::Read;
 
 /// Constant `MAX_EPIGENOME_SIZE`.
 pub const MAX_EPIGENOME_SIZE: usize = 1024;

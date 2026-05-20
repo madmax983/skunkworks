@@ -5,12 +5,12 @@ mod sediment;
 mod simulation;
 mod tree;
 
-use std::io::Read;
 use detritivore::Detritivore;
 use macroquad::prelude::*;
 use monitor::fetch_processes;
 use sediment::SedimentParticle;
 use simulation::{ScheduleMode, Sun};
+use std::io::Read;
 use sysinfo::System;
 use tree::Tree;
 

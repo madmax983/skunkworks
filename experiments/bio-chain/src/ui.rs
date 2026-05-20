@@ -1,4 +1,3 @@
-use std::io::Read;
 use crate::network::Network;
 use crossterm::{
     event::{self, Event, KeyCode},
@@ -15,6 +14,7 @@ use ratatui::{
     widgets::{Axis, Block, Borders, Chart, Dataset, List, ListItem, Paragraph},
 };
 use std::io;
+use std::io::Read;
 
 pub struct App {
     pub network: Network,

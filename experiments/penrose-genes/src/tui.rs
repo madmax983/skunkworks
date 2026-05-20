@@ -1,4 +1,3 @@
-use std::io::Read;
 use crate::penrose::{PenroseTiling, TriangleType};
 use crate::value::Value;
 use ratatui::{
@@ -11,6 +10,7 @@ use ratatui::{
     },
     Frame,
 };
+use std::io::Read;
 
 pub fn ui(f: &mut Frame, tiling: &PenroseTiling, stack: &[Value], output: &[String], energy: i64) {
     let chunks = Layout::default()

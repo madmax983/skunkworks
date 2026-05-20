@@ -1,6 +1,6 @@
-use std::io::Read;
 use anyhow::Result;
 use std::fs;
+use std::io::Read;
 use syn::Item;
 use walkdir::WalkDir;
 
@@ -29,7 +29,7 @@ impl GardenParser {
             let file = fs::File::open(&file_path)?;
             let mut content = String::new();
             let limit = 1024 * 1024; // 1MB limit
-            let bytes_read = file.take(limit + 1).read_to_string(&mut content,)?;
+            let bytes_read = file.take(limit + 1).read_to_string(&mut content)?;
 
             if bytes_read as u64 <= limit {
                 if let Ok(ast) = syn::parse_file(&content) {

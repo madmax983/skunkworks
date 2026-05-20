@@ -1,4 +1,3 @@
-use std::io::Read;
 use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
 use ratatui::{
@@ -8,6 +7,7 @@ use ratatui::{
     widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
+use std::io::Read;
 
 #[cfg(feature = "nova")]
 #[allow(dead_code)]

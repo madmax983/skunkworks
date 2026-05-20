@@ -1,6 +1,6 @@
-use std::io::Read;
 use anyhow::{Context, Result};
 use git2::{Oid, Repository};
+use std::io::Read;
 use std::path::Path;
 
 #[allow(dead_code)]

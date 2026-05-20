@@ -1,7 +1,6 @@
 mod git;
 mod simulation;
 
-use std::io::Read;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
@@ -15,6 +14,7 @@ use ratatui::{
 };
 use simulation::World;
 use std::collections::HashMap;
+use std::io::Read;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 

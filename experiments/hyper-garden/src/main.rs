@@ -4,11 +4,11 @@ mod monitor;
 mod sexagesimal;
 mod turtle;
 
-use std::io::Read;
 use lsystem::LSystem;
 use math::Vec4;
 use monitor::SystemMonitor;
 use sexagesimal::Sexagesimal;
+use std::io::Read;
 use turtle::{Line4D, Turtle};
 
 use macroquad::prelude::*;
