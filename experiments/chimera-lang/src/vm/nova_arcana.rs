@@ -3,7 +3,6 @@
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use std::io::Read;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 /// Enum for `Arcana`.

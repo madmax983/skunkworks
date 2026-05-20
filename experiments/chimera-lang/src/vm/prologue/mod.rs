@@ -49,7 +49,6 @@
 
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use rand::Rng;
-use std::io::Read;
 
 use std::collections::{HashMap, HashSet, VecDeque};
 

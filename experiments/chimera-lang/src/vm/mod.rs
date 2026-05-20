@@ -37,7 +37,6 @@ pub use locus::Topology;
 use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
 use rand::Rng;
-use std::io::Read;
 /// The `organelles` module.
 /// The `organelles` module.
 /// The `organelles` module.
@@ -48561,805 +48560,805 @@ impl ChimeraVM {
     /// 7.  **Metabolism**: Energy decay (-1 per tick) and starvation check.
     /// 8.  **Gene Execution**: Execute the instruction at the current IP.
     /// 9.  **Organelles**: Update all sub-processes (organelles/symbiotes).
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    /// Performs the `step` operation.
+    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///

@@ -2,8 +2,6 @@ use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
-use std::io::Read;
-
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, PartialEq, Eq)]
 /// Represents a `Rule`.
@@ -13,7 +11,6 @@ pub struct Rule {
     /// The `survival` field.
     pub survival: Vec<u8>,
 }
-
 #[cfg(feature = "nova")]
 impl Default for Rule {
     fn default() -> Self {
@@ -23,7 +20,6 @@ impl Default for Rule {
         }
     }
 }
-
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone)]
 /// Represents a `GardenState`.
@@ -31,14 +27,12 @@ pub struct GardenState {
     /// The `rules` field.
     pub rules: HashMap<i64, Rule>,
 }
-
 #[cfg(feature = "nova")]
 impl Default for GardenState {
     fn default() -> Self {
         Self::new()
     }
 }
-
 impl GardenState {
     /// Creates a new instance.
     ///
@@ -54,18 +48,15 @@ impl GardenState {
         Self { rules }
     }
 }
-
 #[cfg(feature = "nova")]
 fn parse_life_rule(rule: &str) -> Option<(Vec<u8>, Vec<u8>)> {
     let parts: Vec<&str> = rule.split('/').collect();
     if parts.len() != 2 {
         return None;
     }
-
     let parse_part = |s: &str, prefix: char| -> Vec<u8> {
         let s = s.trim();
         let nums = if s.starts_with(prefix) { &s[1..] } else { s };
-
         let mut digits = Vec::new();
         for c in nums.chars() {
             if let Some(d) = c.to_digit(10) {
@@ -74,13 +65,10 @@ fn parse_life_rule(rule: &str) -> Option<(Vec<u8>, Vec<u8>)> {
         }
         digits
     };
-
     let birth = parse_part(parts[0], 'B');
     let survival = parse_part(parts[1], 'S');
-
     Some((birth, survival))
 }
-
 #[cfg(feature = "nova")]
 /// Performs the `exec_sow` operation.
 ///
@@ -94,7 +82,6 @@ pub fn exec_sow(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let id_val = vm.stack.pop().unwrap();
         let rule_val = vm.stack.pop().unwrap();
-
         if let (Value::Int(id), Value::Str(rule_str)) = (id_val, rule_val) {
             if let Some((b, s)) = parse_life_rule(&rule_str) {
                 let rule = Rule {
@@ -116,7 +103,6 @@ pub fn exec_sow(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     None
 }
-
 #[cfg(feature = "nova")]
 /// Performs the `exec_harvest` operation.
 ///
@@ -162,7 +148,6 @@ pub fn exec_harvest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     None
 }
-
 #[cfg(feature = "nova")]
 /// Performs the `exec_evolve` operation.
 ///
@@ -175,17 +160,14 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let rows = vm.grid.len();
     let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
     let mut next_grid = vm.grid.clone();
-
     for (y, row) in next_grid.iter_mut().enumerate().take(rows) {
         for (x, cell) in row.iter_mut().enumerate().take(cols) {
             let current_val = match &vm.grid[y][x] {
                 Value::Int(n) => n,
                 _ => &0,
             };
-
             // Count neighbors per species
             let mut neighbor_counts: HashMap<i64, u8> = HashMap::new();
-
             for dy in -1..=1 {
                 for dx in -1..=1 {
                     if dy == 0 && dx == 0 {
@@ -200,12 +182,10 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     }
                 }
             }
-
             if *current_val > 0 {
                 // Survival
                 let rule = vm.garden.rules.get(current_val);
                 let count = neighbor_counts.get(current_val).unwrap_or(&0);
-
                 let survives = if let Some(r) = rule {
                     r.survival.contains(count)
                 } else if *current_val == 1 {
@@ -213,14 +193,12 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 } else {
                     false
                 };
-
                 if !survives {
                     *cell = Value::Int(0);
                 }
             } else {
                 // Birth
                 let mut born_species = None;
-
                 for (&species, &count) in &neighbor_counts {
                     let rule = vm.garden.rules.get(&species);
                     let born = if let Some(r) = rule {
@@ -230,7 +208,6 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     } else {
                         false
                     };
-
                     if born {
                         // Tie-break: Largest ID wins
                         if let Some(existing) = born_species {
@@ -242,14 +219,12 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         }
                     }
                 }
-
                 if let Some(s) = born_species {
                     *cell = Value::Int(s);
                 }
             }
         }
     }
-
     vm.grid = next_grid;
     vm.energy = vm.energy.saturating_sub(20);
     None

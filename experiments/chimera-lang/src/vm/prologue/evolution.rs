@@ -2,7 +2,6 @@ use super::normalize_coords;
 use crate::ast::Dna;
 use crate::vm::{ChimeraVM, Value, MAX_STRANDS};
 use rand::Rng;
-use std::io::Read;
 
 /// Performs the `apply_evolution_runes` operation.
 ///

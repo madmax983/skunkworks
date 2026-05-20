@@ -1,7 +1,6 @@
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value, GRID_SIZE, MAX_PLANES};
-use std::io::Read;
 
 /// Performs the `exec_planes_op` operation.
 ///

@@ -2,7 +2,6 @@ use crate::tui::state::{AppState, InputMode, ViewMode};
 use crate::vm::ChimeraVM;
 use anyhow::Result;
 use crossterm::event::KeyCode;
-use std::io::Read;
 
 pub(crate) fn handle_char_input(
     c: char,

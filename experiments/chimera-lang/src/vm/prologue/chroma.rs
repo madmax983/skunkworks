@@ -1,6 +1,5 @@
 use super::normalize_coords;
 use crate::vm::Value;
-use std::io::Read;
 
 /// Applies signal propagation rules for Chromatics.
 ///

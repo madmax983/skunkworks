@@ -956,23 +956,23 @@ fn sexpr_to_value_inner(expr: &SExpr, depth: usize) -> Result<Value> {
     match expr {
         SExpr::Atom(s) => {
             if let Ok(n) = s.parse::<i64>() {
-                Ok(Value::Int(n))
-            } else if s.starts_with('"') && s.ends_with('"') {
-                Ok(Value::Str(if s.len() >= 2 {
+                return Ok(Value::Int(n));
+            }
+            if s.starts_with('"') && s.ends_with('"') {
+                return Ok(Value::Str(if s.len() >= 2 {
                     s[1..s.len() - 1].to_string()
                 } else {
                     "".to_string()
-                }))
-            } else {
-                Ok(Value::Str(s.clone()))
+                }));
             }
+            Ok(Value::Str(s.clone()))
         }
         SExpr::List(items) => {
-            let mut vals = Vec::new();
-            for item in items {
-                vals.push(sexpr_to_value_inner(item, depth + 1)?);
-            }
-            Ok(Value::Junction(JunctionType::Any, vals))
+            let vals: Result<Vec<_>> = items
+                .iter()
+                .map(|item| sexpr_to_value_inner(item, depth + 1))
+                .collect();
+            Ok(Value::Junction(JunctionType::Any, vals?))
         }
     }
 }
@@ -3635,23 +3635,23 @@ fn compile_as_data(expr: &SExpr, depth: usize) -> Result<Nucleotide> {
     match expr {
         SExpr::Atom(s) => {
             if let Ok(n) = s.parse::<i64>() {
-                Ok(Nucleotide::Number(n))
-            } else if s.starts_with('"') && s.ends_with('"') {
-                Ok(Nucleotide::String(if s.len() >= 2 {
+                return Ok(Nucleotide::Number(n));
+            }
+            if s.starts_with('"') && s.ends_with('"') {
+                return Ok(Nucleotide::String(if s.len() >= 2 {
                     s[1..s.len() - 1].to_string()
                 } else {
                     "".to_string()
-                }))
-            } else {
-                Ok(Nucleotide::Identifier(s.clone()))
+                }));
             }
+            Ok(Nucleotide::Identifier(s.clone()))
         }
         SExpr::List(items) => {
-            let mut nucleos = Vec::new();
-            for item in items {
-                nucleos.push(compile_as_data(item, depth + 1)?);
-            }
-            Ok(Nucleotide::Junction(JunctionType::Any, nucleos))
+            let nucleos: Result<Vec<_>> = items
+                .iter()
+                .map(|item| compile_as_data(item, depth + 1))
+                .collect();
+            Ok(Nucleotide::Junction(JunctionType::Any, nucleos?))
         }
     }
 }
@@ -3663,24 +3663,25 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
     match expr {
         SExpr::Atom(s) => {
             if let Ok(n) = s.parse::<i64>() {
-                Ok(vec![Gene {
+                return Ok(vec![Gene {
                     op: OpCode::Push,
                     args: vec![Nucleotide::Number(n)],
-                }])
-            } else if s.starts_with('"') && s.ends_with('"') {
+                }]);
+            }
+            if s.starts_with('"') && s.ends_with('"') {
                 let content = if s.len() >= 2 { &s[1..s.len() - 1] } else { "" };
-                Ok(vec![Gene {
+                return Ok(vec![Gene {
                     op: OpCode::Push,
                     args: vec![Nucleotide::String(content.to_string())],
-                }])
-            } else if let Some(op) = map_op(s) {
-                Ok(vec![Gene { op, args: vec![] }])
-            } else {
-                Ok(vec![Gene {
-                    op: OpCode::Push,
-                    args: vec![Nucleotide::String(s.clone())],
-                }])
+                }]);
             }
+            if let Some(op) = map_op(s) {
+                return Ok(vec![Gene { op, args: vec![] }]);
+            }
+            Ok(vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String(s.clone())],
+            }])
         }
         SExpr::List(items) => {
             if items.is_empty() {

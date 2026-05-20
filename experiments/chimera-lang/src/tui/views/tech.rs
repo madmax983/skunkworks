@@ -8,7 +8,6 @@ use ratatui::{
     widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use std::io::Read;
 
 #[cfg(feature = "silicon")]
 pub(crate) fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
