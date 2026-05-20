@@ -1,5 +1,6 @@
 #![cfg(feature = "nova")]
 
+use std::io::Read;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::value::Value;
@@ -208,10 +209,7 @@ impl AkashicRecords {
 
                 let mut content = String::new();
                 let limit = MAX_AKASHIC_SIZE;
-                match std::io::Read::read_to_string(
-                    &mut std::io::Read::take(file, limit + 1),
-                    &mut content,
-                ) {
+                match file.take(limit + 1).read_to_string(&mut content,) {
                     Ok(bytes) if bytes as u64 <= limit => {
                         let mut records: Self =
                             serde_json::from_str(&content).unwrap_or_else(|_| Self {

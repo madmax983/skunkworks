@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value, GRID_SIZE, MAX_PLANES};

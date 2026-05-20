@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::ast::{EvolutionConfig, Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};

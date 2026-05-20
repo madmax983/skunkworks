@@ -2,6 +2,7 @@ mod fs_system;
 pub mod safe_gl;
 mod world;
 
+use std::io::Read;
 use fs_system::scan_dir;
 use macroquad::prelude::*;
 use safe_gl::{clear_depth_buffer, ScopedScissor};

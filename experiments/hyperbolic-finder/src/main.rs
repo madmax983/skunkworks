@@ -3,6 +3,7 @@ mod layout;
 mod tiling;
 mod ui;
 
+use std::io::Read;
 use fs::{get_repo_statuses, get_view_root, FileType, GitStatus};
 use layout::{layout_tree, LayoutNode};
 use macroquad::prelude::*;

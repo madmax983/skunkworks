@@ -47,6 +47,7 @@
 //! | | `\` | **Mirror**: Reflects 90° (N<->E). |
 //! | **Reality** | `🌐` | **World**: Defines local physics (West=Radius, North=Mode). |
 
+use std::io::Read;
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use rand::Rng;
 

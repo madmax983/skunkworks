@@ -3,6 +3,7 @@
 //! Provides tools to convert string text into a spectrogram footprint, which is
 //! then synthesized into raw audio samples via Inverse Fast Fourier Transform (IFFT).
 
+use std::io::Read;
 use crate::font;
 use rand::prelude::*;
 use rustfft::{num_complex::Complex, FftPlanner};

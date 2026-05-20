@@ -1,4 +1,5 @@
 #[cfg(feature = "nova")]
+use std::io::Read;
 use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 use std::collections::HashMap;

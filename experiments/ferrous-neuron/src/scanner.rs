@@ -52,7 +52,7 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
             let mut read_ok = false;
 
             if let Ok(file) = std::fs::File::open(path) {
-                if let Ok(bytes) = std::io::Read::take(file, limit + 1).read_to_string(&mut content)
+                if let Ok(bytes) = file.take(limit + 1).read_to_string(&mut content)
                 {
                     if bytes <= limit as usize {
                         read_ok = true;
@@ -91,7 +91,7 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
         let mut read_ok = false;
 
         if let Ok(file) = std::fs::File::open(&node.path) {
-            if let Ok(bytes) = std::io::Read::take(file, limit + 1).read_to_string(&mut content) {
+            if let Ok(bytes) = file.take(limit + 1).read_to_string(&mut content) {
                 if bytes <= limit as usize {
                     read_ok = true;
                 }

@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
 use ratatui::widgets::canvas::Canvas;

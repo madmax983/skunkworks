@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::tui::state::{AppState, InputMode, ViewMode};
 use crate::vm::ChimeraVM;
 use anyhow::Result;

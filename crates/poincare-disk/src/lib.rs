@@ -211,6 +211,15 @@ impl Geodesic {
 /// ```
 #[doc(alias = "hyperbolic_translation")]
 pub fn mobius_add(z: Point, a: Point) -> Point {
+    if z.re.is_nan()
+        || z.im.is_nan()
+        || a.re.is_nan()
+        || a.im.is_nan()
+        || z.norm_sqr().is_nan()
+        || a.norm_sqr().is_nan()
+    {
+        return Point::new(0.0, 0.0);
+    }
     // If 'a' is outside the disk, this is an invalid translation.
     if a.norm_sqr() >= 1.0 {
         return z;
@@ -220,7 +229,12 @@ pub fn mobius_add(z: Point, a: Point) -> Point {
     if z.norm_sqr() >= 1.0 {
         return z;
     }
-    (z + a) / (1.0 + a.conj() * z)
+    let res = (z + a) / (1.0 + a.conj() * z);
+    if res.re.is_nan() || res.im.is_nan() {
+        Point::new(0.0, 0.0)
+    } else {
+        res
+    }
 }
 
 /// Performs Möbius subtraction: $ (z - a) / (1 - \bar{a}z) $.
@@ -241,13 +255,27 @@ pub fn mobius_add(z: Point, a: Point) -> Point {
 /// ```
 #[doc(alias = "hyperbolic_inverse_translation")]
 pub fn mobius_sub(z: Point, a: Point) -> Point {
+    if z.re.is_nan()
+        || z.im.is_nan()
+        || a.re.is_nan()
+        || a.im.is_nan()
+        || z.norm_sqr().is_nan()
+        || a.norm_sqr().is_nan()
+    {
+        return Point::new(0.0, 0.0);
+    }
     if a.norm_sqr() >= 1.0 {
         return z;
     }
     if z.norm_sqr() >= 1.0 {
         return z;
     }
-    (z - a) / (1.0 - a.conj() * z)
+    let res = (z - a) / (1.0 - a.conj() * z);
+    if res.re.is_nan() || res.im.is_nan() {
+        Point::new(0.0, 0.0)
+    } else {
+        res
+    }
 }
 
 /// Calculates the hyperbolic distance between two points.

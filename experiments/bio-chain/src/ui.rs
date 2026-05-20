@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::network::Network;
 use crossterm::{
     event::{self, Event, KeyCode},

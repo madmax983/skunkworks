@@ -1,6 +1,7 @@
 mod git;
 mod simulation;
 
+use std::io::Read;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{

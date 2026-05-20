@@ -1,3 +1,4 @@
+use std::io::Read;
 use ttf_parser::{Face, OutlineBuilder};
 
 #[derive(Debug, Clone, Copy, PartialEq)]

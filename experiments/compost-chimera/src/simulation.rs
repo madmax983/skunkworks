@@ -51,7 +51,7 @@ impl Simulation {
         if let Ok(f) = std::fs::File::open(&file.path) {
             let mut raw = String::new();
             let limit = 1024 * 1024;
-            if let Ok(bytes) = std::io::Read::take(f, limit + 1).read_to_string(&mut raw) {
+            if let Ok(bytes) = f.take(limit + 1).read_to_string(&mut raw) {
                 if bytes <= limit as usize {
                     content = apply_decay(&raw, file.decay_level);
                     loaded = true;

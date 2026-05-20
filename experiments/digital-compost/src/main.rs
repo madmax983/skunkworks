@@ -47,7 +47,7 @@ fn main() -> Result<()> {
                         let mut raw_content = String::new();
                         let limit = 1024 * 1024;
                         if let Ok(bytes_read) =
-                            std::io::Read::take(f, limit + 1).read_to_string(&mut raw_content)
+                            f.take(limit + 1).read_to_string(&mut raw_content)
                         {
                             if bytes_read <= limit as usize {
                                 let decayed = apply_decay(&raw_content, file.decay_level);

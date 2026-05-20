@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::penrose::{PenroseTiling, TriangleType};
 use crate::value::Value;
 use ratatui::{

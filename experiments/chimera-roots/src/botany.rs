@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::grid::{CellType, Grid};
 use ::rand::Rng;
 use chimera_lang::prelude::*;

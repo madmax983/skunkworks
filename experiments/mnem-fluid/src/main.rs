@@ -1,3 +1,4 @@
+use std::io::Read;
 use macroquad::prelude::*;
 
 mod graph;

@@ -1,3 +1,4 @@
+use std::io::Read;
 use anyhow::{Context, Result};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};

@@ -1,3 +1,4 @@
+use std::io::Read;
 use serde::{Deserialize, Serialize};
 
 /// Constant `GRID_SIZE`.

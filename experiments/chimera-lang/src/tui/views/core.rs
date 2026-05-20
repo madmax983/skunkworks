@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::tui::panel_block;
 use crate::tui::state::AppState;
 use crate::tui::state::{InputMode, ViewMode};

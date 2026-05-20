@@ -5,6 +5,7 @@
 //! networks, evaluates their fitness, and breeds the best performers (with mutation)
 //! to create the next generation.
 
+use std::io::Read;
 use crate::nn::Network;
 use rand::Rng;
 

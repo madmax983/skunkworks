@@ -1,5 +1,6 @@
 #![cfg(feature = "nova")]
 
+use std::io::Read;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 use serde::{Deserialize, Serialize};

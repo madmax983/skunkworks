@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::math::Quasicrystal;
 use rand::prelude::*;
 use rayon::prelude::*;
