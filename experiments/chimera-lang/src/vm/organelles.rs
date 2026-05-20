@@ -9,7 +9,6 @@ use crate::vm::{
 };
 #[cfg(feature = "nova")]
 use rand::Rng;
-use std::io::Read;
 
 impl crate::vm::ChimeraVM {
     #[cfg(feature = "nova")]

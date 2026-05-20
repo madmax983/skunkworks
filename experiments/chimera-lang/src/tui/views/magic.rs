@@ -7,7 +7,6 @@ use ratatui::{
     widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use std::io::Read;
 
 #[cfg(feature = "nova")]
 #[allow(dead_code)]

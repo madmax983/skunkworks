@@ -1,6 +1,5 @@
 use super::normalize_coords;
 use crate::vm::{ChimeraVM, Value};
-use std::io::Read;
 
 /// Applies Narrative Runes (Logic Phase).
 ///

@@ -48,7 +48,6 @@ use rand::seq::SliceRandom;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashSet, VecDeque};
-use std::io::Read;
 
 /// The physical state of the organism, affecting movement and mutation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
@@ -898,7 +897,7 @@ fn exec_conjugate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// - (1, 0) South -> 2
 /// - (0, 1) East -> 4
 /// - (0, -1) West -> 8
-/// Performs the `get_direction_mask` operation.
+///   Performs the `get_direction_mask` operation.
 ///
 /// ## Examples
 ///

@@ -43,7 +43,6 @@
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use std::io::Read;
 
 /// Executes Silicon OpCodes (Wireworld and Circuits).
 ///

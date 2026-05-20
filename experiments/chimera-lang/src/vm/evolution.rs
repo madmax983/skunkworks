@@ -2,7 +2,6 @@ use crate::ast::{EvolutionConfig, Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
-use std::io::Read;
 
 #[derive(Clone, Debug, PartialEq)]
 /// Enum for `Challenge`.

@@ -44,14 +44,14 @@ pub struct Note {
     ///
     /// - 60 = Middle C (C4)
     /// - 69 = A4 (440Hz)
-    /// The `pitch` field.
+    ///   The `pitch` field.
     pub pitch: u8,
     /// Duration in 1/16th notes.
     ///
     /// - 1 = 16th note
     /// - 4 = Quarter note
     /// - 16 = Whole note
-    /// The `duration` field.
+    ///   The `duration` field.
     pub duration: u8,
     /// Velocity (0-127). 0 is silent (Rest).
     ///
@@ -88,7 +88,7 @@ impl Note {
 /// - `Tempo`: Logs tempo change (metadata).
 /// - `Perform`: Compiles the score to ABC notation string on the stack.
 /// - `Compose`: Compiles the score into a DNA strand.
-/// Performs the `exec_bard_op` operation.
+///   Performs the `exec_bard_op` operation.
 ///
 /// ## Examples
 ///

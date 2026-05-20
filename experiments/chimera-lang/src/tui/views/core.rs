@@ -11,7 +11,6 @@ use ratatui::{
     widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use std::io::Read;
 
 pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let main_chunks = Layout::default()

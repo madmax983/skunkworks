@@ -20,3 +20,10 @@
 **[Flattening Nested Match Loops with Iterators]**
 **Learning:** To flatten 'Pyramids of Doom' caused by deeply nested loops containing `match` statements, extracting the innermost match logic into a helper function returning `Option<T>` allows replacing the outer loops with a flat `.filter_map().collect()` iterator pipeline. This drastically improves code readability without altering behavior.
 **Action:** Always extract inner `match` expressions into small helper functions when they cause "Pyramids of Doom" inside multiple `for` loops, then rewrite the iteration using `filter_map`.
+**[Replacing nested for loops and match with iterator mappings]**
+**Learning:** For loops that just push items to a vector inside a  expression arm like `SExpr::List` create unnecessary mutability and boilerplate.
+**Action:** Replace  loops inside list matching arms with an idiomatic iterator pipeline  to map expressions recursively and collect them into a Result vector.
+
+**[Replacing nested loops and conditionals with iterator mappings]**
+**Learning:** For loops that simply push items to a vector inside a `match` expression arm like `SExpr::List` create unnecessary mutability and boilerplate. Flattening them with early returns via guard clauses reduces indentation.
+**Action:** Replace `for` loops inside list matching arms with an idiomatic iterator pipeline `.iter().map(|item| ...).collect()` to map expressions recursively and collect them into a `Result<Vec<_>>`.

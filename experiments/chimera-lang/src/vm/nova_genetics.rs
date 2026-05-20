@@ -6,7 +6,6 @@ use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::Rng;
-use std::io::Read;
 
 /// Constant `MAX_EPIGENOME_SIZE`.
 pub const MAX_EPIGENOME_SIZE: usize = 1024;
@@ -59,7 +58,7 @@ pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
 /// 3. Compile new Strands.
 /// 4. Wipe all state (Stack, Telomeres, Epigenome).
 /// 5. Rebirth.
-/// Performs the `exec_metamorphosis` operation.
+///    Performs the `exec_metamorphosis` operation.
 ///
 /// ## Examples
 ///
