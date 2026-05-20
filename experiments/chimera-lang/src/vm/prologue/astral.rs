@@ -1,7 +1,7 @@
-use std::io::Read;
 use super::PrologueAgent;
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use serde::{Deserialize, Serialize};
+use std::io::Read;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 /// Represents a `AstralState`.

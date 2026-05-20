@@ -1,6 +1,6 @@
-use std::io::Read;
 use crate::boid::{Boid, distance_squared, limit};
 use std::f64::consts::PI;
+use std::io::Read;
 
 pub struct World {
     pub boids: Vec<Boid>,

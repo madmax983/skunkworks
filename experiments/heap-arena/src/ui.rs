@@ -1,4 +1,3 @@
-use std::io::Read;
 use crate::game::Game;
 use crate::level_gen::BlockType;
 use ratatui::{
@@ -8,6 +7,7 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
+use std::io::Read;
 
 pub fn draw(f: &mut Frame, app: &Game) {
     let chunks = Layout::default()

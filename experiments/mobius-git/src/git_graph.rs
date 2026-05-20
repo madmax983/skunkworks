@@ -1,8 +1,8 @@
-use std::io::Read;
 use anyhow::{Context, Result};
 use git2::{Oid, Repository, Sort};
 use petgraph::graph::{Graph, NodeIndex};
 use std::collections::HashMap;
+use std::io::Read;
 use std::path::Path;
 
 #[derive(Debug, Clone)]

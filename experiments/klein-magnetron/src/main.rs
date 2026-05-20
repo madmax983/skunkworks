@@ -3,7 +3,6 @@ mod model;
 mod renderer;
 mod topology;
 
-use std::io::Read;
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode},
@@ -15,6 +14,7 @@ use ratatui::{
     prelude::*,
     widgets::{canvas::Canvas, Block, Borders, Paragraph},
 };
+use std::io::Read;
 use std::time::{Duration, Instant};
 
 use fs::scan_and_populate;

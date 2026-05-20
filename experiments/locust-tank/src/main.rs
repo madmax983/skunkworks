@@ -1,10 +1,10 @@
-use std::io::Read;
 use ::rand::prelude::*;
 use crossbeam_channel::bounded;
 use macroquad::prelude::*;
 #[cfg(feature = "audio")]
 use resonance_audio::audio::AudioSnapshot;
 use resonance_audio::audio::{AudioCommand, AudioModel};
+use std::io::Read;
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};

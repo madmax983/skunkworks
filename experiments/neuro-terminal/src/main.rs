@@ -2,7 +2,6 @@
 //!
 //! This binary provides the visual interface for observing the Neural Network.
 
-use std::io::Read;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use neuro_terminal::nn::Network;
@@ -19,6 +18,7 @@ use ratatui::{
     },
     Frame, Terminal,
 };
+use std::io::Read;
 use std::{
     io,
     time::{Duration, Instant},

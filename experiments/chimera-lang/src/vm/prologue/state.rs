@@ -1,10 +1,10 @@
-use std::io::Read;
 use super::unpack_agent_data;
 use super::{echo, epigenetics, hyper, logos, oneiric, rhythm, weave_reality};
 use crate::vm::Value;
 use crate::vm::GRID_SIZE;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
+use std::io::Read;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]

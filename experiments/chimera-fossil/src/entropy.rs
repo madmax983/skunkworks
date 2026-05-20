@@ -1,7 +1,7 @@
-use std::io::Read;
 use comfy_table::{presets::UTF8_FULL, Cell, Color, ContentArrangement, Table};
 use rand::prelude::*;
 use rand::rngs::StdRng;
+use std::io::Read;
 
 #[derive(Debug, Clone)]
 pub struct Fossil {

@@ -1,5 +1,3 @@
-#[cfg(feature = "phylogeny")]
-use std::io::Read;
 use super::{ChimeraVM, Value};
 #[cfg(feature = "phylogeny")]
 use crate::ast::Nucleotide;
@@ -7,6 +5,8 @@ use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 #[cfg(feature = "phylogeny")]
 use std::fs;
+#[cfg(feature = "phylogeny")]
+use std::io::Read;
 #[cfg(feature = "phylogeny")]
 use std::io::Write;
 #[cfg(feature = "phylogeny")]
@@ -109,7 +109,7 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                             Ok(file) => {
                                 let mut content = String::new();
                                 let limit = 1024 * 1024; // 1MB limit
-                                match file.take(limit + 1).read_to_string(&mut content,) {
+                                match file.take(limit + 1).read_to_string(&mut content) {
                                     Ok(bytes) if bytes as u64 <= limit => {
                                         vm.stack.push(Value::Str(content));
                                         vm.output.push(format!("SEQUENCING: Read {}", path_str));

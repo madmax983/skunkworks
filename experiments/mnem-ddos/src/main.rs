@@ -1,5 +1,5 @@
-use std::io::Read;
 use macroquad::prelude::*;
+use std::io::Read;
 
 mod glitch;
 mod graph;

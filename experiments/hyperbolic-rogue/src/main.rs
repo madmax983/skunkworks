@@ -1,8 +1,8 @@
-use std::io::Read;
 use macroquad::prelude::*;
 use num_complex::Complex;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
+use std::io::Read;
 
 mod geometry;
 mod tiling;

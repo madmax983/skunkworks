@@ -46,9 +46,7 @@ fn main() -> Result<()> {
                     if let Ok(f) = std::fs::File::open(&file.path) {
                         let mut raw_content = String::new();
                         let limit = 1024 * 1024;
-                        if let Ok(bytes_read) =
-                            f.take(limit + 1).read_to_string(&mut raw_content)
-                        {
+                        if let Ok(bytes_read) = f.take(limit + 1).read_to_string(&mut raw_content) {
                             if bytes_read <= limit as usize {
                                 let decayed = apply_decay(&raw_content, file.decay_level);
                                 content_cache = Some((selected, decayed));

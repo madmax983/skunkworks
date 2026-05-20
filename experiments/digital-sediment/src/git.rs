@@ -1,5 +1,5 @@
-use std::io::Read;
 use anyhow::{Context, Result};
+use std::io::Read;
 
 use git2::{Oid, Repository};
 use std::path::Path;

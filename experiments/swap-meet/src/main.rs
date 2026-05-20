@@ -1,4 +1,3 @@
-use std::io::Read;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use rand::Rng;
@@ -9,6 +8,7 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
+use std::io::Read;
 use std::time::{Duration, Instant};
 use swap_meet::model::{Agent, Market};
 use tui_shared::Tui;

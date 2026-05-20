@@ -1,8 +1,8 @@
-use std::io::Read;
 use super::{normalize_coords, PrologueAgent};
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+use std::io::Read;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 /// Represents a `OneiricGrid`.

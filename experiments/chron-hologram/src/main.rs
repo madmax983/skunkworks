@@ -1,4 +1,3 @@
-use std::io::Read;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
@@ -14,6 +13,7 @@ use ratatui::{
     Terminal,
 };
 use rustfft::{num_complex::Complex as FftComplex, FftPlanner};
+use std::io::Read;
 use std::{
     error::Error,
     io,

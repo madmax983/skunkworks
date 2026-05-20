@@ -1,5 +1,5 @@
-use std::io::Read;
 use serde::{Deserialize, Serialize};
+use std::io::Read;
 
 /// Constant `GRID_SIZE`.
 pub const GRID_SIZE: usize = 16;

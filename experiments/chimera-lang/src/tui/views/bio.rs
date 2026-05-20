@@ -1,4 +1,3 @@
-use std::io::Read;
 use crate::tui::panel_block;
 use crate::tui::state::AppState;
 use crate::tui::{layout_tree_node, InputMode};
@@ -11,6 +10,7 @@ use ratatui::{
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
     Frame,
 };
+use std::io::Read;
 
 pub(crate) fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()

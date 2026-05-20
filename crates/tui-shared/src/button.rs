@@ -6,7 +6,6 @@
 //! rectangle on screen. It has been stripped of complex state and generic traits
 //! to keep it simple, direct, and explicit.
 
-use std::io::Read;
 use ratatui::{
     buffer::Buffer,
     layout::Rect,

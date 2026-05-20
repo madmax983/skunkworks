@@ -1,5 +1,5 @@
-use std::io::Read;
 use glam::Vec2;
+use std::io::Read;
 
 #[derive(Clone, Debug)]
 pub struct Mushroom {

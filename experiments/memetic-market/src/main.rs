@@ -1,4 +1,3 @@
-use std::io::Read;
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
@@ -10,6 +9,7 @@ use ratatui::{
     symbols,
     widgets::{Axis, Block, Borders, Chart, Dataset, GraphType, List, ListItem},
 };
+use std::io::Read;
 use std::{
     io,
     time::{Duration, Instant},

@@ -1,10 +1,10 @@
-use std::io::Read;
 use ::rand::Rng;
 use anyhow::Result;
 use git2::Repository;
 use macroquad::prelude::*;
 use rayon::prelude::*;
 use std::collections::HashMap;
+use std::io::Read;
 
 const WIDTH: f32 = 800.0;
 const HEIGHT: f32 = 800.0;

@@ -1,4 +1,3 @@
-use std::io::Read;
 use anyhow::{Context, Result};
 use chrono::{DateTime, TimeZone, Utc};
 use crossterm::{
@@ -15,6 +14,7 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Frame, Terminal,
 };
+use std::io::Read;
 use std::{env, fs, io, path::Path, time::Duration};
 
 #[derive(Debug, Clone)]
@@ -40,7 +40,7 @@ impl App {
         let file = fs::File::open(&path)?;
         let mut content_str = String::new();
         let limit = 1024 * 1024; // 1MB limit
-        let bytes_read = file.take(limit + 1).read_to_string(&mut content_str,)?;
+        let bytes_read = file.take(limit + 1).read_to_string(&mut content_str)?;
 
         if bytes_read as u64 > limit {
             anyhow::bail!("File {:?} exceeds 1MB limit", path);

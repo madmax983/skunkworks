@@ -1,7 +1,7 @@
-use std::io::Read;
 use chimera_lang::vm::ChimeraVM;
 use macroquad::prelude::*;
 use std::collections::HashMap;
+use std::io::Read;
 
 #[derive(Clone, Debug)]
 pub struct Portal {

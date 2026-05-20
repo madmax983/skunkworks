@@ -1,8 +1,8 @@
-use std::io::Read;
 use num_bigint::BigUint;
 use num_rational::Ratio;
 use num_traits::{One, ToPrimitive, Zero};
 use std::fmt;
+use std::io::Read;
 
 /// A Soul represents a process or request for resources.
 /// Its `demand` is a Rational number (e.g., 3/4 of the CPU).

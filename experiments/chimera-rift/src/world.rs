@@ -1,5 +1,5 @@
-use std::io::Read;
 use macroquad::prelude::*;
+use std::io::Read;
 
 pub const GRID_WIDTH: usize = 40;
 pub const GRID_HEIGHT: usize = 30;

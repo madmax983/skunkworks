@@ -35,7 +35,6 @@
 #[doc(hidden)]
 pub mod model;
 
-use std::io::Read;
 use anyhow::{Context, Result};
 use chrono::{TimeZone, Utc};
 use git2::{DiffFlags, Repository, Sort};

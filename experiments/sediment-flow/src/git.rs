@@ -1,7 +1,7 @@
-use std::io::Read;
 use anyhow::{Context, Result};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
+use std::io::Read;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};

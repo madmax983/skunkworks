@@ -1,8 +1,8 @@
-use std::io::Read;
 use crate::quantum::{add_qubit, apply_gate, get_probability, measure, Gate, QubitSystem};
 use rand::Rng;
 use ratatui::style::Color;
 use std::collections::HashMap;
+use std::io::Read;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Tile {

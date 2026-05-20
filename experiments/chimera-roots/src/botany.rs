@@ -1,8 +1,8 @@
-use std::io::Read;
 use crate::grid::{CellType, Grid};
 use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
+use std::io::Read;
 
 pub struct RootTip {
     pub position: (usize, usize),
