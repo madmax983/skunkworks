@@ -5,7 +5,6 @@ members = [
     "experiments/*",
 
 
-    "experiments/myco-ddos",
 
     "experiments/chron-fluid",
     "experiments/myco-fluid",
