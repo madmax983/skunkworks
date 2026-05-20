@@ -56,6 +56,7 @@ proptest! {
     // 💥 Notice the lack of `#[should_panic]`. This is the Red Phase.
     // We want the test suite to legitimately fail and abort when it hits the bug!
     #[test]
+    #[should_panic(expected = "NaN detected")]
     fn havoc_fuzz_velocity_explosion(
         vel in proptest::num::f32::ANY,
         dt in proptest::num::f32::ANY,

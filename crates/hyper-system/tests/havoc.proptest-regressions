@@ -1,0 +1,10 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 2481bec12dfaef27403d100283f750f0049853a714d4141ea0e3b823066ec5e6 # shrinks to stiff = inf
+cc 52be7b588d91e6fb9a91aa209c3c62c9089d310059229609480a1249b79c92ab # shrinks to friction = NaN
+cc c14782352cd18f72bb59fe73b7399df68c3ce477755d8c097eef2d0dd2a1351d # shrinks to vel = inf, dt = 1.5909941e34
+cc 01eec2f1115e43e9a6e748025911261c57625d6053086f9a9c5f584c9d09bcfc # shrinks to dt = 0.001, iterations = 1, friction = 0.9, stiffness = -inf
