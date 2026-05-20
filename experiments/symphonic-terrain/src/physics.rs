@@ -1,3 +1,4 @@
+use std::io::Read;
 use macroquad::prelude::*;
 
 pub const G: f32 = 100.0; // Gravity constant (adjusted for 3D scale)

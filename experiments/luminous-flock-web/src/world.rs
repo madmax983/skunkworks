@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::boid::{Boid, distance_squared, limit};
 use std::f64::consts::PI;
 

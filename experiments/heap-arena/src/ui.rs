@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::game::Game;
 use crate::level_gen::BlockType;
 use ratatui::{

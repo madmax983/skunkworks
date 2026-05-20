@@ -3,6 +3,7 @@ mod monitor;
 mod simulation;
 mod tree;
 
+use std::io::Read;
 use macroquad::prelude::*;
 use monitor::fetch_processes;
 use simulation::{ScheduleMode, Sun};

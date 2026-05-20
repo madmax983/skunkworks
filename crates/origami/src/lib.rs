@@ -274,7 +274,11 @@ fn calculate_horizontal(
         .checked_add(1)
         .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
     {
-        Some(c) if c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() => c,
+        Some(c)
+            if c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() && c < usize::MAX / 2 =>
+        {
+            c
+        }
         _ => return Vec::new(),
     };
     let mut positions = Vec::with_capacity(capacity);
@@ -341,7 +345,11 @@ fn calculate_vertical(
         .checked_add(1)
         .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
     {
-        Some(c) if c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() => c,
+        Some(c)
+            if c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() && c < usize::MAX / 2 =>
+        {
+            c
+        }
         _ => return Vec::new(),
     };
     let mut positions = Vec::with_capacity(capacity);

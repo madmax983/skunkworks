@@ -3,6 +3,7 @@
 //! Provides tools to analyze raw audio samples, generate spectrograms via Fast Fourier Transform (FFT),
 //! and recover embedded textual data previously injected by the encoder.
 
+use std::io::Read;
 use font8x8::{UnicodeFonts, BASIC_FONTS};
 use rustfft::{num_complex::Complex, FftPlanner};
 

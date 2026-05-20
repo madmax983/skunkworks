@@ -40,6 +40,7 @@
 //! pulse(5, 5) // Inject electron
 //! ```
 
+use std::io::Read;
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;

@@ -5,6 +5,7 @@ mod sediment;
 mod simulation;
 mod tree;
 
+use std::io::Read;
 use detritivore::Detritivore;
 use macroquad::prelude::*;
 use monitor::fetch_processes;

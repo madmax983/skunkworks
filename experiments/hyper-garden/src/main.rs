@@ -4,6 +4,7 @@ mod monitor;
 mod sexagesimal;
 mod turtle;
 
+use std::io::Read;
 use lsystem::LSystem;
 use math::Vec4;
 use monitor::SystemMonitor;

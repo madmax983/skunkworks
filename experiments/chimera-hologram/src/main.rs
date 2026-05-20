@@ -1,3 +1,4 @@
+use std::io::Read;
 use anyhow::Result;
 use chimera_lang::{
     prologue_compiler,
@@ -33,10 +34,7 @@ impl App {
         let file = fs::File::open(input_path)?;
         let mut unparsed_file = String::new();
         let limit = 1024 * 1024; // 1MB limit
-        let bytes_read = std::io::Read::read_to_string(
-            &mut std::io::Read::take(file, limit + 1),
-            &mut unparsed_file,
-        )?;
+        let bytes_read = file.take(limit + 1).read_to_string(&mut unparsed_file,)?;
 
         if bytes_read as u64 > limit {
             anyhow::bail!("File {:?} exceeds 1MB limit", input_path);

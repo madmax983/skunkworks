@@ -1,3 +1,4 @@
+use std::io::Read;
 use macroquad::prelude::*;
 use num_complex::Complex;
 use std::collections::hash_map::DefaultHasher;

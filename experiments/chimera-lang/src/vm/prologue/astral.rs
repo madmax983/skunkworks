@@ -1,3 +1,4 @@
+use std::io::Read;
 use super::PrologueAgent;
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use serde::{Deserialize, Serialize};

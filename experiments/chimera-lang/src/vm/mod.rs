@@ -23,6 +23,7 @@
 //! - **Nova**: Epigenetics, Spores (Time Travel), Quantum Entanglement.
 //! - **Cortex**: Neural Network simulation (Synapses, Activation).
 
+use std::io::Read;
 use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 pub use crate::value::Value;

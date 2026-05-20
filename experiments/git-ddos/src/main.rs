@@ -1,3 +1,4 @@
+use std::io::Read;
 use ::rand::Rng;
 use anyhow::Result;
 use git2::Repository;

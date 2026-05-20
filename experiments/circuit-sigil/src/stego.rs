@@ -1,3 +1,4 @@
+use std::io::Read;
 use anyhow::{Context, Result};
 use image::RgbaImage;
 

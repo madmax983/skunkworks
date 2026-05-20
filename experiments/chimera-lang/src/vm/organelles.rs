@@ -1,3 +1,4 @@
+use std::io::Read;
 use crate::opcode::OpCode;
 use crate::value::Value;
 #[cfg(feature = "nova")]

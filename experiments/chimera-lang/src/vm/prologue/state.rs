@@ -1,3 +1,4 @@
+use std::io::Read;
 use super::unpack_agent_data;
 use super::{echo, epigenetics, hyper, logos, oneiric, rhythm, weave_reality};
 use crate::vm::Value;

@@ -21,7 +21,7 @@ pub fn harvest_functions(root: &str) -> Vec<FunctionSignature> {
                 let mut content = String::new();
                 let limit = 1024 * 1024;
                 if let Ok(bytes_read) =
-                    std::io::Read::take(file, limit + 1).read_to_string(&mut content)
+                    file.take(limit + 1).read_to_string(&mut content)
                 {
                     if bytes_read <= limit as usize {
                         signatures.extend(parse_file_content(&content, entry.path()));

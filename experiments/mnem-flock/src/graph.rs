@@ -73,7 +73,7 @@ impl Graph {
                     let mut content = String::new();
                     let limit = 1024 * 1024; // 1MB limit
                     if let Ok(bytes_read) =
-                        std::io::Read::take(file, limit + 1).read_to_string(&mut content)
+                        file.take(limit + 1).read_to_string(&mut content)
                     {
                         if bytes_read <= limit as usize {
                             let id = self.add_node(name.clone(), content);
