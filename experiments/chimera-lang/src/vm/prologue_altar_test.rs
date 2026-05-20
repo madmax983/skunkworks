@@ -1,3 +1,4 @@
+#![cfg(feature = "nova")]
 use crate::ast::{Dna, Helix};
 use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::{ChimeraVM, Value};
