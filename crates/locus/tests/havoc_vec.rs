@@ -38,19 +38,20 @@ mod tests {
     #[test]
     fn havoc_vec2_infinity_overflow() {
         // [HAVOC] Operations on large coordinates overflow to Infinity.
+        // 🔒 Warden: Fixed. It now safely clamps to MAX.
         let huge = Vec2::new(f64::MAX / 2.0, 0.0);
 
         // Magnitude squared overflows
         // (MAX/2)^2 = MAX^2 / 4 -> Infinity
         let mag_sq = huge.magnitude_squared();
-        assert_eq!(mag_sq, f64::INFINITY);
+        assert_eq!(mag_sq, std::f64::MAX);
 
         // Distance calculation overflows intermediate squared distance
         let huge2 = Vec2::new(0.0, f64::MAX / 2.0);
         let dist_sq = huge.distance_squared(huge2);
-        assert_eq!(dist_sq, f64::INFINITY);
+        assert_eq!(dist_sq, std::f64::MAX);
 
-        println!("HAVOC: Vec2 overflowed to Infinity.");
+        println!("HAVOC: Vec2 overflowed to Infinity. (Fixed)");
     }
 
     #[test]

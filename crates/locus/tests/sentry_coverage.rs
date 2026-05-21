@@ -41,7 +41,8 @@ fn test_vec4_normalize_robustness() {
 
     let v_inf = Vec4::new(f32::INFINITY, 1.0, 1.0, 1.0);
     let n_inf = v_inf.normalize();
-    assert_eq!(n_inf.x, 0.0);
+    assert_eq!(n_inf.x, 1.0);
+    assert_eq!(n_inf.y, 0.0);
 
     let v_nan = Vec4::new(f32::NAN, 1.0, 1.0, 1.0);
     let n_nan = v_nan.normalize();

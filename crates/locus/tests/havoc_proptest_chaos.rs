@@ -4,7 +4,6 @@ use proptest::prelude::*;
 
 proptest! {
     #[test]
-    #[should_panic]
     fn test_havoc_length_squared_overflow_proptest(
         x in (f32::MAX / 2.0)..=f32::MAX,
         y in (f32::MAX / 2.0)..=f32::MAX,
@@ -17,7 +16,6 @@ proptest! {
     }
 
     #[test]
-    #[should_panic]
     fn test_havoc_vec2_magnitude_squared_overflow_proptest(
         x in (f64::MAX / 2.0)..=f64::MAX,
         y in (f64::MAX / 2.0)..=f64::MAX,
