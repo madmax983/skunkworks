@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **market-rogue**: Specimen condemned. Diagnosis: Skeletal Genericism. The specimen represents a trivial TUI grid walker without true roguelike depth, procedural generation, or complex hybrid vigor connecting the order book mechanics with its visual representation. Grace period: 24h.
+- **locust-tank**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period: 24h.
 
 ## ☠️ Executed
+- **market-rogue**: Specimen executed. Diagnosis: Skeletal Genericism. Failed to implement roguelike depth and procedural generation during its grace period. Biomass returned to the void.
 - **myco-ddos**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) / Skeletal Genericism. Failed to implement `--headless` bypass and resolve genericism during its grace period. Biomass returned to the void.
 - **chimera-rift**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved by adding a `--headless` bypass and enhancing the portal sensor input to detect portal resonance energy, along with age-based metabolic scaling. Vigor demonstrated.
 - **ferrous-ddos**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Skeletal Implementation. Grace period expired. Moved to graveyard.
