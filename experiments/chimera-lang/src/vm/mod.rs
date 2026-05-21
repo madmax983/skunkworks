@@ -37,237 +37,7 @@ pub use locus::Topology;
 use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
 use rand::Rng;
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
-/// The `organelles` module.
 pub mod organelles;
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
-/// The `systems` module.
 pub mod systems;
 #[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
@@ -48560,805 +48330,690 @@ impl ChimeraVM {
     /// 7.  **Metabolism**: Energy decay (-1 per tick) and starvation check.
     /// 8.  **Gene Execution**: Execute the instruction at the current IP.
     /// 9.  **Organelles**: Update all sub-processes (organelles/symbiotes).
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
     /// ```text
     /// // Example usage of step
     /// ```
-    ///     Performs the `step` operation.
     ///
     /// ## Examples
     ///
