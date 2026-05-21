@@ -29,10 +29,11 @@ fn test_vec4_length_underflow_overflow() {
     assert!(len_sq_tiny >= 0.0 && len_sq_tiny.is_finite());
 
     // Overflow case (large numbers)
+    // 🔒 Warden: Overflow now safely clamps to MAX to prevent Infinity poisoning.
     let huge = 2.0e19; // huge * huge = 4e38 > f32::MAX
     let v_huge = Vec4::new(huge, 0.0, 0.0, 0.0);
     let _ = v_huge.length_squared();
-    assert_eq!(v_huge.length(), f32::INFINITY);
+    assert!(v_huge.length() <= std::f32::MAX.sqrt() && v_huge.length().is_finite());
 }
 
 #[test]

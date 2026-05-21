@@ -19,10 +19,11 @@ mod tests {
         let v = Vec4::new(vec_val, 0.0, 0.0, 0.0);
 
         // Pre-condition check: ensure our assumptions about overflow are correct for this platform
+        // 🔒 Warden: length_squared now safely clamps to MAX to prevent Infinity poisoning.
         assert_eq!(
             v.length_squared(),
-            f32::INFINITY,
-            "Setup failed: Vector length squared should overflow"
+            std::f32::MAX,
+            "Setup failed: Vector length squared should overflow (clamped to MAX)"
         );
         assert_eq!(
             max_val * max_val,
@@ -57,7 +58,7 @@ mod tests {
 
         let v = Vec2::new(vec_val, 0.0);
 
-        assert_eq!(v.magnitude_squared(), f64::INFINITY);
+        assert_eq!(v.magnitude_squared(), std::f64::MAX);
         assert_eq!(max_val * max_val, f64::INFINITY);
 
         let limited = v.limit(max_val);

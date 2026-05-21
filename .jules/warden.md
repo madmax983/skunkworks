@@ -24,3 +24,7 @@
 2025-02-18 - [poincare-disk Geodesic NaN Poisoning]
 **Threat:** Geodesic radius NaN Poisoning due to division by zero
 **Defense:** Return None if determinant is NaN in euclidean_circle
+
+**2025-02-18 - [Infinity Propagation DoS via Squared Math Overflow]**
+**Threat:** The `Vec2` and `Vec4` geometry primitives in `crates/locus` blindly returned the result of squared length/distance calculations. If coordinates were exceedingly large (e.g. `f32::MAX`), the internal squaring operation (`x*x + y*y...`) overflowed to `Infinity`. This bypassed finite assertions and limits, propagating Infinity into dependent systems and potentially causing a Denial of Service via corrupted logic or subsequent NaN generation.
+**Defense:** Explicitly clamped infinite mathematical overflows in `length_squared`, `magnitude_squared`, and `distance_squared` to `std::f32::MAX` (for `Vec4`) and `std::f64::MAX` (for `Vec2`), ensuring bounds are respected and propagation is prevented.

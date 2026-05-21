@@ -42,8 +42,8 @@ proptest! {
 
 proptest! {
     // 👺 Havoc: Prove `length_squared` and `distance_squared` can overflow!
+    // 🔒 Warden: Fixed.
     #[test]
-    #[should_panic]
     fn test_havoc_length_squared_overflow(
         x in (f32::MAX / 2.0)..=f32::MAX,
         y in (f32::MAX / 2.0)..=f32::MAX,
