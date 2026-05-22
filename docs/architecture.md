@@ -594,7 +594,7 @@ classDiagram
 
 ### Origami Logic (crates/origami)
 
-Encapsulates Miura-ori folding geometry, separating mathematical vertex generation from rendering (ADR 040).
+Encapsulates Miura-ori folding geometry, separating mathematical vertex generation from rendering (ADR 040, ADR 098). Includes strict vector capacity bounding to prevent out-of-memory DoS vectors.
 
 ```mermaid
 classDiagram
@@ -779,7 +779,7 @@ classDiagram
 
 **Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
 
-### ChimeraVM Execution Engine (ADR 074, ADR 076, ADR 078, ADR 079, ADR 083, ADR 090)
+### ChimeraVM Execution Engine (ADR 074, ADR 076, ADR 078, ADR 079, ADR 083, ADR 090, ADR 097)
 
 The `ChimeraVM` execution logic is decoupled into domain-specific submodules within the `vm::ops` module.
 
@@ -806,6 +806,7 @@ classDiagram
     class MathOps {
         <<Module: ops/math.rs>>
         +exec_math_op()
+        -binary_op()
     }
 
     class StackOps {
