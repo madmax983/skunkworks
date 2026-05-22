@@ -12,6 +12,10 @@ use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 fn main() -> Result<()> {
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode. Exiting immediately.");
+        return Ok(());
+    }
     let mut tui = Tui::init()?;
     let res = run_app(&mut tui);
     tui.exit()?;

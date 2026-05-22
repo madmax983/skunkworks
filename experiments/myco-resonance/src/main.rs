@@ -20,6 +20,7 @@ fn window_conf() -> macroquad::window::Conf {
 
 fn main() {
     if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode. Exiting immediately.");
         return;
     }
     macroquad::Window::from_config(window_conf(), async_main());
