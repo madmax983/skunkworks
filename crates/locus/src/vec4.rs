@@ -214,10 +214,26 @@ impl Vec4 {
             .max(self.z.abs())
             .max(self.w.abs());
         if m.is_infinite() {
-            let x = if self.x.is_infinite() { self.x.signum() } else { 0.0 };
-            let y = if self.y.is_infinite() { self.y.signum() } else { 0.0 };
-            let z = if self.z.is_infinite() { self.z.signum() } else { 0.0 };
-            let w = if self.w.is_infinite() { self.w.signum() } else { 0.0 };
+            let x = if self.x.is_infinite() {
+                self.x.signum()
+            } else {
+                0.0
+            };
+            let y = if self.y.is_infinite() {
+                self.y.signum()
+            } else {
+                0.0
+            };
+            let z = if self.z.is_infinite() {
+                self.z.signum()
+            } else {
+                0.0
+            };
+            let w = if self.w.is_infinite() {
+                self.w.signum()
+            } else {
+                0.0
+            };
             Vec4::new(x, y, z, w).normalize()
         } else if m > 0.0 && m.is_finite() {
             let s = 1.0 / m;
@@ -266,7 +282,10 @@ impl Vec4 {
         // Check for infinite squared length (overflow) with finite max
         // Also check if sq_len was clamped to MAX but max is also MAX/inf.
         // If max is infinite and sq_len is infinite/MAX due to components, scaling by inf creates NaN if normalize returns 0 for non-finite components.
-        if sq_len > max * max || (sq_len.is_infinite() && max.is_finite()) || (sq_len == f32::MAX && (max * max).is_infinite()) {
+        if sq_len > max * max
+            || (sq_len.is_infinite() && max.is_finite())
+            || (sq_len == f32::MAX && (max * max).is_infinite())
+        {
             if max.is_infinite() {
                 // If we limit to infinity, we can just return the original infinite vector,
                 // or if it was finite, it's covered by the `else` branch below.

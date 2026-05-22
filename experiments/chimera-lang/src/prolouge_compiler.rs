@@ -1183,26 +1183,29 @@ fn compile_market_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> 
     match inner.as_rule() {
         Rule::identifier => {
             let op = inner.as_str().to_ascii_lowercase();
-            match op.as_str() {
-                #[cfg(feature = "nova")]
-                "invest" => genes.push(Gene::new(OpCode::Invest, vec![])),
-                #[cfg(feature = "nova")]
-                "divest" => genes.push(Gene::new(OpCode::Divest, vec![])),
-                #[cfg(feature = "nova")]
-                "buy" => genes.push(Gene::new(OpCode::Buy, vec![])),
-                #[cfg(feature = "nova")]
-                "offer" => genes.push(Gene::new(OpCode::Offer, vec![])),
-                #[cfg(feature = "nova")]
-                "balance" => genes.push(Gene::new(OpCode::Balance, vec![])),
-                #[cfg(feature = "nova")]
-                "ticker" => genes.push(Gene::new(OpCode::Ticker, vec![])),
-                _ => {
-                    if let Ok(opcode) = OpCode::from_str(&op) {
-                        genes.push(Gene::new(opcode, vec![]));
-                    } else {
-                        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
-                    }
-                }
+            #[cfg(feature = "nova")]
+            if op == "invest" {
+                genes.push(Gene::new(OpCode::Invest, vec![]));
+            } else if op == "divest" {
+                genes.push(Gene::new(OpCode::Divest, vec![]));
+            } else if op == "buy" {
+                genes.push(Gene::new(OpCode::Buy, vec![]));
+            } else if op == "offer" {
+                genes.push(Gene::new(OpCode::Offer, vec![]));
+            } else if op == "balance" {
+                genes.push(Gene::new(OpCode::Balance, vec![]));
+            } else if op == "ticker" {
+                genes.push(Gene::new(OpCode::Ticker, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+            #[cfg(not(feature = "nova"))]
+            if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
             }
         }
         Rule::number => {
@@ -1225,15 +1228,12 @@ fn compile_flocking_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
     match inner.as_rule() {
         Rule::identifier => {
             let op = inner.as_str().to_ascii_lowercase();
-            match op.as_str() {
-                "simulate" => genes.push(Gene::new(OpCode::Flock, vec![])),
-                _ => {
-                    if let Ok(opcode) = OpCode::from_str(&op) {
-                        genes.push(Gene::new(opcode, vec![]));
-                    } else {
-                        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
-                    }
-                }
+            if op == "simulate" {
+                genes.push(Gene::new(OpCode::Flock, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
             }
         }
         Rule::number => {
@@ -1257,15 +1257,12 @@ fn compile_origami_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
     match inner.as_rule() {
         Rule::identifier => {
             let op = inner.as_str().to_ascii_lowercase();
-            match op.as_str() {
-                "fold" => genes.push(Gene::new(OpCode::Origami, vec![])),
-                _ => {
-                    if let Ok(opcode) = OpCode::from_str(&op) {
-                        genes.push(Gene::new(opcode, vec![]));
-                    } else {
-                        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
-                    }
-                }
+            if op == "fold" {
+                genes.push(Gene::new(OpCode::Origami, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
             }
         }
         Rule::number => {
@@ -1318,17 +1315,16 @@ fn compile_chaos_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     match inner.as_rule() {
         Rule::identifier => {
             let op = inner.as_str().to_ascii_lowercase();
-            match op.as_str() {
-                "glitch" => genes.push(Gene::new(OpCode::Glitch, vec![])),
-                "chaos" => genes.push(Gene::new(OpCode::Chaos, vec![])),
-                "entropy" => genes.push(Gene::new(OpCode::EntropySurge, vec![])),
-                _ => {
-                    if let Ok(opcode) = OpCode::from_str(&op) {
-                        genes.push(Gene::new(opcode, vec![]));
-                    } else {
-                        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
-                    }
-                }
+            if op == "glitch" {
+                genes.push(Gene::new(OpCode::Glitch, vec![]));
+            } else if op == "chaos" {
+                genes.push(Gene::new(OpCode::Chaos, vec![]));
+            } else if op == "entropy" {
+                genes.push(Gene::new(OpCode::EntropySurge, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
             }
         }
         Rule::number => {
@@ -1354,19 +1350,21 @@ fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
         // Find inner
         let mut inner = pair.into_inner();
         let id = inner.next().unwrap().as_str();
-        match id {
-            "+" | "add" => genes.push(Gene::new(OpCode::HyperAdd, vec![])),
-            "-" | "sub" => genes.push(Gene::new(OpCode::HyperSub, vec![])),
-            "*" | "mul" => genes.push(Gene::new(OpCode::HyperMul, vec![])),
-            "/" | "div" => genes.push(Gene::new(OpCode::HyperDiv, vec![])),
-            _ => {
-                // If it's a general operator
-                genes.push(Gene::new(
-                    OpCode::Push,
-                    vec![Nucleotide::String(id.to_string())],
-                ));
-                genes.push(Gene::new(OpCode::ZipWith, vec![]));
-            }
+        if id == "+" || id == "add" {
+            genes.push(Gene::new(OpCode::HyperAdd, vec![]));
+        } else if id == "-" || id == "sub" {
+            genes.push(Gene::new(OpCode::HyperSub, vec![]));
+        } else if id == "*" || id == "mul" {
+            genes.push(Gene::new(OpCode::HyperMul, vec![]));
+        } else if id == "/" || id == "div" {
+            genes.push(Gene::new(OpCode::HyperDiv, vec![]));
+        } else {
+            // If it's a general operator
+            genes.push(Gene::new(
+                OpCode::Push,
+                vec![Nucleotide::String(id.to_string())],
+            ));
+            genes.push(Gene::new(OpCode::ZipWith, vec![]));
         }
     } else {
         // Just normal instruction parse
@@ -1504,20 +1502,16 @@ fn compile_acoustic_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
     let mut inner = pair.into_inner();
     let op = inner.next().unwrap().as_str().to_ascii_lowercase();
 
-    match op.as_str() {
-        "pluck" => {
-            let strength: i64 = inner.next().unwrap().as_str().parse()?;
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
-            genes.push(Gene::new(OpCode::Pluck, vec![]));
-        }
-        "oscillate" => {
-            let freq: i64 = inner.next().unwrap().as_str().parse()?;
-            let strength: i64 = inner.next().unwrap().as_str().parse()?;
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(freq)]));
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
-            genes.push(Gene::new(OpCode::Oscillate, vec![]));
-        }
-        _ => {}
+    if op == "pluck" {
+        let strength: i64 = inner.next().unwrap().as_str().parse()?;
+        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
+        genes.push(Gene::new(OpCode::Pluck, vec![]));
+    } else if op == "oscillate" {
+        let freq: i64 = inner.next().unwrap().as_str().parse()?;
+        let strength: i64 = inner.next().unwrap().as_str().parse()?;
+        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(freq)]));
+        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
+        genes.push(Gene::new(OpCode::Oscillate, vec![]));
     }
     Ok(genes)
 }
