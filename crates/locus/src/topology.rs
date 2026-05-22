@@ -350,13 +350,13 @@ impl Topology {
                 None
             }
             Topology::Torus => {
-                let ny = y.rem_euclid(h);
-                let nx = x.rem_euclid(w);
+                let ny = y.checked_rem_euclid(h).unwrap_or(0);
+                let nx = x.checked_rem_euclid(w).unwrap_or(0);
                 Some((ny as usize, nx as usize))
             }
             Topology::CylinderH => {
                 if y >= 0 && y < h {
-                    let nx = x.rem_euclid(w);
+                    let nx = x.checked_rem_euclid(w).unwrap_or(0);
                     Some((y as usize, nx as usize))
                 } else {
                     None
@@ -364,24 +364,24 @@ impl Topology {
             }
             Topology::CylinderV => {
                 if x >= 0 && x < w {
-                    let ny = y.rem_euclid(h);
+                    let ny = y.checked_rem_euclid(h).unwrap_or(0);
                     Some((ny as usize, x as usize))
                 } else {
                     None
                 }
             }
             Topology::Klein => {
-                let ny = y.rem_euclid(h);
-                let wrap_y = y.div_euclid(h);
-                let mut nx = x.rem_euclid(w);
+                let ny = y.checked_rem_euclid(h).unwrap_or(0);
+                let wrap_y = y.checked_div_euclid(h).unwrap_or(0);
+                let mut nx = x.checked_rem_euclid(w).unwrap_or(0);
                 if wrap_y % 2 != 0 {
                     nx = (w - 1) - nx;
                 }
                 Some((ny as usize, nx as usize))
             }
             Topology::Mobius => {
-                let nx = x.rem_euclid(w);
-                let wrap_x = x.div_euclid(w);
+                let nx = x.checked_rem_euclid(w).unwrap_or(0);
+                let wrap_x = x.checked_div_euclid(w).unwrap_or(0);
                 if wrap_x % 2 != 0 {
                     // Twisted Y: map y to (h - 1) - y
                     // Use checked arithmetic to prevent panic on i64::MIN
@@ -401,9 +401,9 @@ impl Topology {
                 }
             }
             Topology::Sphere => {
-                let wrap_y = y.div_euclid(h);
-                let mut ny = y.rem_euclid(h);
-                let mut nx = x.rem_euclid(w);
+                let wrap_y = y.checked_div_euclid(h).unwrap_or(0);
+                let mut ny = y.checked_rem_euclid(h).unwrap_or(0);
+                let mut nx = x.checked_rem_euclid(w).unwrap_or(0);
 
                 if wrap_y % 2 != 0 {
                     // Crossed pole: reflect Y and shift X
@@ -422,11 +422,11 @@ impl Topology {
                 Some((ny as usize, nx as usize))
             }
             Topology::Projective => {
-                let wrap_x = x.div_euclid(w);
-                let wrap_y = y.div_euclid(h);
+                let wrap_x = x.checked_div_euclid(w).unwrap_or(0);
+                let wrap_y = y.checked_div_euclid(h).unwrap_or(0);
 
-                let mut nx = x.rem_euclid(w);
-                let mut ny = y.rem_euclid(h);
+                let mut nx = x.checked_rem_euclid(w).unwrap_or(0);
+                let mut ny = y.checked_rem_euclid(h).unwrap_or(0);
 
                 if wrap_x % 2 != 0 {
                     ny = (h - 1) - ny;
