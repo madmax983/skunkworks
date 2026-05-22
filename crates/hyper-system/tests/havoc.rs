@@ -74,4 +74,26 @@ proptest! {
         // This naturally triggers a position overflow -> NaN distance -> panic
         system.step(dt, 1, 1.0);
     }
+
+    // 👺 Havoc: The `factor` in `Constraint4D::Actuator` is checked for `!factor.is_finite()` during `step`.
+    // BUT `min_len` and `max_len` are NOT checked when adding the constraint, nor when calculating `target`.
+    // If `min_len` or `max_len` is `NaN`, `target` becomes `NaN`, and `solve_distance` explicitly panics
+    // because `!target_len.is_finite()`.
+    #[test]
+    #[should_panic(expected = "NaN detected in constraint parameters")]
+    fn havoc_test_actuator_nan_len(
+        min_len in prop_oneof![Just(std::f32::NAN)],
+        max_len in proptest::num::f32::ANY,
+    ) {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+
+        // 🧨 The Trigger: Inject NaN into min_len or max_len
+        // They are unvalidated in `add_actuator_constraint`.
+        let _ = system.add_actuator_constraint(p1, p2, min_len, max_len, 0.5, 1.0);
+
+        // BOOM!
+        system.step(0.016, 1, 1.0);
+    }
 }
