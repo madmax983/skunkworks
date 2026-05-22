@@ -107,8 +107,8 @@ fn main() -> Result<()> {
     }));
 
     let (dna, grid, orca_mode, custom_runes, alchemy_book) = if let Some(input_path) = &cli.input {
-        use std::io::Read;
         use anyhow::Context;
+        use std::io::Read;
         let mut f = fs::File::open(input_path)
             .with_context(|| format!("Failed to open input file '{}'", input_path))?;
         let mut unparsed_file = String::new();

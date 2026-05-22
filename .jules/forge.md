@@ -27,3 +27,10 @@
 **[Replacing nested loops and conditionals with iterator mappings]**
 **Learning:** For loops that simply push items to a vector inside a `match` expression arm like `SExpr::List` create unnecessary mutability and boilerplate. Flattening them with early returns via guard clauses reduces indentation.
 **Action:** Replace `for` loops inside list matching arms with an idiomatic iterator pipeline `.iter().map(|item| ...).collect()` to map expressions recursively and collect them into a `Result<Vec<_>>`.
+**[Flattening Match Pyramids into if/else if Guard Clauses]**
+**Learning:** Many compiler functions have unnecessary nesting where a  arm for an identifier opens a secondary  arm to perform specific actions or catch-all default behaviors. This nesting obfuscates the control flow.
+**Action:** Flatten nested match arms when the inner conditions are just strings. Replace the inner match with a flat  chain, effectively removing a layer of indentation while maintaining exactly the same logic.
+
+**[Flattening Match Pyramids into if/else if Guard Clauses]**
+**Learning:** Many compiler functions have unnecessary nesting where a `match inner.as_rule()` arm for an identifier opens a secondary `match op.as_str()` arm to perform specific actions or catch-all default behaviors. This nesting obfuscates the control flow.
+**Action:** Flatten nested match arms when the inner conditions are just strings. Replace the inner match with a flat `if/else if/else` chain, effectively removing a layer of indentation while maintaining exactly the same logic.
