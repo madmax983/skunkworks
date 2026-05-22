@@ -108,8 +108,9 @@ fn main() -> Result<()> {
 
     let (dna, grid, orca_mode, custom_runes, alchemy_book) = if let Some(input_path) = &cli.input {
         use std::io::Read;
+        use anyhow::Context;
         let mut f = fs::File::open(input_path)
-            .map_err(|e| anyhow::anyhow!("Failed to open input file '{}': {}", input_path, e))?;
+            .with_context(|| format!("Failed to open input file '{}'", input_path))?;
         let mut unparsed_file = String::new();
         let limit = 10 * 1024 * 1024;
         let bytes_read = f
