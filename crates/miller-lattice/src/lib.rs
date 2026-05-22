@@ -297,7 +297,7 @@ fn get_basis_vectors(n: Vector3<i32>) -> (Vector3<i32>, Vector3<i32>) {
 }
 
 fn get_dir_normal(name: &str, parent_normal: Vector3<i32>) -> Vector3<i32> {
-    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+    let mut hasher = rustc_hash::FxHasher::default();
     name.hash(&mut hasher);
     let h = hasher.finish();
 
