@@ -15,6 +15,43 @@ mod tests {
     }
 
     #[test]
+    fn test_prolouge_compiler_poincare() {
+        let source = r#"
+        poincare {
+            move 5
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[1].op, OpCode::Poincare);
+    }
+    #[test]
+    fn test_poincare_execution() {
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("             move 5".to_string())],
+            },
+            Gene {
+                op: OpCode::Poincare,
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(Dna {
+            evolution_config: None,
+            helix: Helix {
+                strands: vec![chimera_lang::ast::Strand { genes }],
+            },
+        });
+        vm.step();
+        vm.step();
+        assert!(vm
+            .output
+            .iter()
+            .any(|s| s.contains("Poincare: Executed hyperbolic translation")));
+    }
+    #[test]
     fn test_prolouge_compiler_mosaic() {
         let source = r#"
         mosaic {

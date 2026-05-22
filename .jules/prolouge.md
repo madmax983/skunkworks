@@ -1,0 +1,1 @@
+>> Prolouge Architecture: Adding a new esoteric block to `chimera-lang` requires updating the Pest grammar (`prolouge_grammar.pest`) and its `section` rule, defining the new `OpCode` in `opcode.rs`, implementing the compilation step in `prolouge_compiler.rs`, and mapping the runtime execution in `vm/ops/nova_dispatch.rs`.

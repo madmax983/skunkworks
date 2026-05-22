@@ -2710,6 +2710,7 @@ pub enum OpCode {
     /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
     ZipWith,
     Flock,
+    Poincare,
 
     /// No Operation. Does nothing.
     Nop,

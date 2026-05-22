@@ -104,7 +104,7 @@ impl Vec2 {
     pub fn magnitude_squared(&self) -> f64 {
         let sq = self.x * self.x + self.y * self.y;
         if sq.is_infinite() {
-            std::f64::MAX
+            f64::MAX
         } else {
             sq
         }
@@ -149,8 +149,8 @@ impl Vec2 {
         let mag_sq = self.magnitude_squared();
         if mag_sq == 0.0 {
             Self::zero()
-        } else if mag_sq == std::f64::MAX || mag_sq.is_infinite() {
-            // Because we clamp magnitude_squared to std::f64::MAX, it might be exactly MAX
+        } else if mag_sq == f64::MAX || mag_sq.is_infinite() {
+            // Because we clamp magnitude_squared to f64::MAX, it might be exactly MAX
             // Check original components for infinity first.
             if self.x.is_infinite() || self.y.is_infinite() {
                 // If components are infinite, normalize by treating infinite components as +/- 1.0
@@ -165,7 +165,7 @@ impl Vec2 {
                     0.0
                 };
                 Vec2::new(x, y).normalize()
-            } else if mag_sq == std::f64::MAX {
+            } else if mag_sq == f64::MAX {
                 // If magnitude was clamped (overflow), scale down using finite components
                 let max_comp = self.x.abs().max(self.y.abs());
                 let scaled = Vec2::new(self.x / max_comp, self.y / max_comp);
@@ -208,9 +208,12 @@ impl Vec2 {
         // If the squared magnitude overflows (is infinite) but the max magnitude is finite,
         // we must still clamp. If max*max overflows (is infinite), the comparison fails.
         // We add a check for infinite sq_mag when max is finite.
-        if sq_mag > max * max || (sq_mag.is_infinite() && max.is_finite()) || sq_mag == std::f64::MAX {
+        if sq_mag > max * max
+            || (sq_mag.is_infinite() && max.is_finite())
+            || sq_mag == f64::MAX
+        {
             // Optimization: Avoid full normalize() if we can
-            if sq_mag.is_finite() && sq_mag != std::f64::MAX {
+            if sq_mag.is_finite() && sq_mag != f64::MAX {
                 // Common case: finite vector, just scale
                 // Optimization: Multiply by reciprocal instead of division
                 if sq_mag > 0.0 {
@@ -245,7 +248,7 @@ impl Vec2 {
         let dy = self.y - other.y;
         let sq = dx * dx + dy * dy;
         if sq.is_infinite() {
-            std::f64::MAX
+            f64::MAX
         } else {
             sq
         }
