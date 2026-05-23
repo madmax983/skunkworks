@@ -31,7 +31,13 @@ use entropy::{fossilize, Fossil};
 use git::{get_file_content, get_files_in_commit, load_history, Commit};
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(
+    name = "Chimera Fossil",
+    author = "The Archaeologist",
+    version,
+    about = "🦕 Chimera Fossil - Genetic Version Control & Excavation Tool",
+    long_about = "Chimera Fossil allows you to excavate and restore ancient genetic material from Git history. Use it to visualize decaying code structures and reanimate them in the Chimera VM."
+)]
 struct Cli {
     /// List fossil history (Git Log) in a table
     #[arg(short, long)]

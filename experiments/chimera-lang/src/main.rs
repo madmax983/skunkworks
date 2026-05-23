@@ -23,8 +23,15 @@ use resonance_audio::AudioModel;
 use rodio::OutputStream;
 
 #[derive(ClapParser)]
-#[command(author, version, about, long_about = None)]
+#[command(
+    name = "Chimera",
+    author = "The Mad Scientist",
+    version,
+    about = "🧬 Chimera VM - A Biological Runtime & Visual Logic Language",
+    long_about = "Chimera is a grid-based biological Virtual Machine and visual logic language.\n\nRun genetic code (.chs) or prologue simulations (.prl) in a rich Terminal User Interface, or execute headlessly for CI and automation."
+)]
 struct Cli {
+    /// Path to the DNA (.chs) or Prologue (.prl) file to execute
     #[arg(short, long)]
     input: Option<String>,
 
