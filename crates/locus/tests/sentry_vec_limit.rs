@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use locus::Vec4;
     use locus::Vec2;
+    use locus::Vec4;
 
     #[test]
     fn sentry_vec4_limit_overflow() {
