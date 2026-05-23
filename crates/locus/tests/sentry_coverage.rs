@@ -1,4 +1,4 @@
-use locus::vec4::Vec4;
+use locus::Vec4;
 use locus::Vec2;
 use std::f32;
 

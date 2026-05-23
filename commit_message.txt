@@ -1,5 +1,6 @@
-🎻 Bard: [documentation update]
+🗺️ Atlas: Enforce Module Boundaries via Facade
 
-📖 Chapter: Added `///` doc comments for public items in `chimera-lang`.
-🔦 Insight: Ensuring all public items are documented helps users understand the purpose of each function and struct.
-🧪 Example: Added generic placeholder documentation to resolve missing docs errors.
+🕸️ Tangle: Internal modules within `crates/git-associates`, `crates/locus`, `crates/resonance-audio`, and `crates/hyper-system` were exposed as `pub mod`, breaking the Facade pattern by leaking implementation details.
+📐 Blueprint: Modified the module definitions to use `pub(crate) mod` and explicitly `pub use` only the intended types/structs to ensure high cohesion and strict encapsulation. Also repaired tests and doctests that depended on the leaked inner modules.
+🧱 Stability: Reduced coupling, faster compile times.
+🔬 Verification: Builds successfully, strict separation enforced. Tests pass for all modified crates.

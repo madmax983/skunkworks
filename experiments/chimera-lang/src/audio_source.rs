@@ -4,7 +4,7 @@
 //! to push dynamically generated `f32` samples out to the system speakers.
 
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioModel;
+use resonance_audio::AudioModel;
 #[cfg(feature = "resonance")]
 use rodio::Source;
 #[cfg(feature = "resonance")]

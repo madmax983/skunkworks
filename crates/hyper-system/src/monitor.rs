@@ -43,7 +43,7 @@ fn lerp(a: f32, b: f32, t: f32) -> f32 {
 /// # Examples
 ///
 /// ```no_run
-/// use hyper_system::monitor::SystemMonitor;
+/// use hyper_system::SystemMonitor;
 /// use std::thread;
 /// use std::time::Duration;
 ///
@@ -100,7 +100,7 @@ impl SystemMonitor {
     ///
     /// # Examples
     /// ```
-    /// use hyper_system::monitor::SystemMonitor;
+    /// use hyper_system::SystemMonitor;
     /// let monitor = SystemMonitor::new();
     /// assert_eq!(monitor.cpu_usage, 0.0);
     /// ```
@@ -193,7 +193,7 @@ impl SystemMonitor {
     ///
     /// # Examples
     /// ```
-    /// use hyper_system::monitor::SystemMonitor;
+    /// use hyper_system::SystemMonitor;
     ///
     /// let mut monitor = SystemMonitor::new();
     /// // Simulate 0.016s passing (1 frame at 60fps), current time is 0.016s

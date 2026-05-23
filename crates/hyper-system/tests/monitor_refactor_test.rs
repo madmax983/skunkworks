@@ -1,4 +1,4 @@
-use hyper_system::monitor::SystemMonitor;
+use hyper_system::SystemMonitor;
 
 #[test]
 fn test_system_monitor_initialization() {

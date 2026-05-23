@@ -21,7 +21,7 @@
 //! commands from a channel and filling an output buffer.
 //!
 //! ```rust
-//! use resonance_audio::audio::{AudioModel, AudioCommand};
+//! use resonance_audio::{AudioModel, AudioCommand};
 //! use crossbeam_channel::bounded;
 //!
 //! // 1. Create channels for communication
@@ -40,5 +40,8 @@
 //! model.process(&mut buffer);
 //! ```
 
-pub mod audio;
-pub mod physics;
+pub(crate) mod audio;
+pub(crate) mod physics;
+
+pub use audio::{AudioCommand, AudioModel, AudioSnapshot};
+pub use physics::PhysicsGrid;

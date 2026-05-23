@@ -1,4 +1,4 @@
-use resonance_audio::physics::PhysicsGrid;
+use resonance_audio::PhysicsGrid;
 
 #[test]
 fn test_zero_dim() {

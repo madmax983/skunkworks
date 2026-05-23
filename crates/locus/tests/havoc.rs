@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use locus::vec4::Vec4;
+    use locus::Vec4;
     use std::f32;
 
     // 👺 Havoc: Prove `length_squared` and `distance_squared` can overflow!

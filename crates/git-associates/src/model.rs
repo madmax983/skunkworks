@@ -16,7 +16,7 @@ use chrono::{DateTime, Utc};
 /// # Examples
 ///
 /// ```
-/// use git_associates::model::Commit;
+/// use git_associates::Commit;
 /// use chrono::Utc;
 ///
 /// let commit = Commit {
@@ -65,7 +65,7 @@ pub struct Commit {
 /// # Examples
 ///
 /// ```
-/// use git_associates::model::CommitStats;
+/// use git_associates::CommitStats;
 ///
 /// let stats = CommitStats {
 ///     insertions: 15,
@@ -90,7 +90,7 @@ pub struct CommitStats {
 /// # Examples
 ///
 /// ```
-/// use git_associates::model::FileChange;
+/// use git_associates::FileChange;
 ///
 /// let change = FileChange {
 ///     path: "src/main.rs".to_string(),
@@ -127,7 +127,7 @@ pub struct FileChange {
 /// # Examples
 ///
 /// ```
-/// use git_associates::model::{DiffStats, FileChange};
+/// use git_associates::{DiffStats, FileChange};
 ///
 /// let diff_stats = DiffStats {
 ///     files: vec![],
@@ -155,7 +155,7 @@ pub struct DiffStats {
 /// # Examples
 ///
 /// ```
-/// use git_associates::model::{Hunk, LineChange};
+/// use git_associates::{Hunk, LineChange};
 ///
 /// let hunk = Hunk {
 ///     header: "@@ -1,3 +1,3 @@".to_string(),
@@ -183,7 +183,7 @@ pub struct Hunk {
 /// # Examples
 ///
 /// ```
-/// use git_associates::model::LineChange;
+/// use git_associates::LineChange;
 ///
 /// let added = LineChange::Added("let x = 5;".to_string());
 /// let removed = LineChange::Removed("let x = 4;".to_string());

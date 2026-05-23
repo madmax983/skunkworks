@@ -1,4 +1,4 @@
-use hyper_system::physics::PbdSystem4D;
+use hyper_system::PbdSystem4D;
 
 #[test]
 fn test_default_impl_coverage() {

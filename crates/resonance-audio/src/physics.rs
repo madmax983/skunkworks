@@ -15,7 +15,7 @@
 /// # Examples
 ///
 /// ```
-/// use resonance_audio::physics::PhysicsGrid;
+/// use resonance_audio::PhysicsGrid;
 ///
 /// // Create a grid
 /// let mut grid = PhysicsGrid::new(50, 50);
@@ -75,7 +75,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let grid = PhysicsGrid::new(10, 10);
     /// assert_eq!(grid.width(), 10);
     /// assert_eq!(grid.height(), 10);
@@ -112,7 +112,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let grid = PhysicsGrid::new(10, 20);
     /// assert_eq!(grid.width(), 10);
     /// ```
@@ -124,7 +124,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let grid = PhysicsGrid::new(10, 20);
     /// assert_eq!(grid.height(), 20);
     /// ```
@@ -136,7 +136,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::{PhysicsGrid, Material};
+    /// use resonance_audio::PhysicsGrid;
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.set_material(5, 5, Material::Wall);
     /// ```
@@ -194,7 +194,7 @@ impl PhysicsGrid {
     /// ## Examples
     ///
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.pluck(5, 5, 1.0);
     /// grid.step();
@@ -275,7 +275,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.pluck(5, 5, 1.0);
     /// assert_eq!(grid.get(5, 5), 1.0);
@@ -293,7 +293,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.add_wall(5, 5);
     /// ```
@@ -305,7 +305,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.add_wall(5, 5);
     /// grid.remove_wall(5, 5);
@@ -318,7 +318,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.pluck(5, 5, 1.0);
     /// grid.clear_waves();
@@ -335,7 +335,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.add_wall(5, 5);
     /// grid.clear_walls();
@@ -356,7 +356,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::physics::PhysicsGrid;
+    /// use resonance_audio::PhysicsGrid;
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.pluck(5, 5, 0.5);
     /// assert_eq!(grid.get(5, 5), 0.5);

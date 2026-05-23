@@ -41,10 +41,10 @@
 //! # }
 //! ```
 
-pub mod topology;
+pub(crate) mod topology;
 pub(crate) mod vec2;
-pub mod vec3;
-pub mod vec4;
+pub(crate) mod vec3;
+pub(crate) mod vec4;
 
 pub use topology::*;
 pub use vec2::*;

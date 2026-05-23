@@ -33,7 +33,7 @@
 //! ```
 
 #[doc(hidden)]
-pub mod model;
+pub(crate) mod model;
 
 use anyhow::{Context, Result};
 use chrono::{TimeZone, Utc};

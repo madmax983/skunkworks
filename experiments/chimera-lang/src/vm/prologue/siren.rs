@@ -2,7 +2,7 @@ use super::normalize_coords;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioCommand;
+use resonance_audio::AudioCommand;
 use std::fmt;
 use std::str::FromStr;
 

@@ -480,7 +480,7 @@ fn apply_propagation_rune(
     rhythm_state: &mut rhythm::RhythmState,
     alchemy_book: &[AlchemyRule],
     #[cfg(feature = "resonance")] audio_tx: &Option<
-        crossbeam_channel::Sender<resonance_audio::audio::AudioCommand>,
+        crossbeam_channel::Sender<resonance_audio::AudioCommand>,
     >,
     #[cfg(not(feature = "resonance"))] audio_tx: &Option<()>,
     output: &mut Vec<String>,

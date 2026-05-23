@@ -15358,7 +15358,7 @@ mod hot_reload_test;
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::{AudioCommand, AudioSnapshot};
+use resonance_audio::{AudioCommand, AudioSnapshot};
 
 #[cfg(feature = "nova")]
 use self::nova::Organelle;
