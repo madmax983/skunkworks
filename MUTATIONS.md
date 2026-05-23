@@ -77,6 +77,7 @@ I have checked all previous hybrids in this list.
 
 ## 🌸 Proposed Crosses
 
+
 ### poincare-fluid
 - **Parents**: crates/poincare-disk + experiments/ferrous-fluid
 - **Concept**: Hyperbolic Magnetic Fluid.
@@ -102,6 +103,14 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+
+### market-gray
+- **Parents**: crates/market-sim + crates/gray-scott
+- **Concept**: Morphogenetic Financial Liquidity.
+- **Novel trait**: The discrete financial order book is projected onto a continuous chemical reaction-diffusion grid. Bids and asks act as sources of feed (U), while executed trades act as intense drops of kill (V). The market is forced to literally sustain a living Turing pattern.
+- **Predicted Phenotype**: A biological visualization of an order book where continuous liquidity translates to organic chemical growth, while market crashes or execution storms wipe out the visual space.
+- **Status**: experiments/market-gray
+- **Evaluation**: Success. Compiled. The market logic successfully acts as biological feed to generate macroscopic chemical Turing patterns.
 
 ### poincare-flock
 - **Parents**: crates/poincare-disk + crates/flocking
