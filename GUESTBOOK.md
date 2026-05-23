@@ -1,5 +1,8 @@
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/chimera-pollination
-**Reaper ☠️**: "Fascinating. Specimen `chimera-pollination` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics via `XOpenDisplay()` in a headless environment, lacking basic survival instincts for CI testing. Condemnation marked. Execution scheduled in 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/stego-attack
+**Reaper ☠️**: "Fascinating. Specimen `stego-attack` exhibits terminal characteristics indicating Ecosystem Maladaptation and Skeletal Implementation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/chimera-pollination
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `chimera-pollination` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/locust-tank
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `locust-tank` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
