@@ -139,6 +139,55 @@ enum SoundKind {
 
 #[cfg(feature = "audio")]
 #[allow(dead_code)]
+impl ActiveSound {
+    fn generate_sample(&mut self, dt: f32) -> Option<f32> {
+        self.t += dt;
+        let s = match self.kind {
+            SoundKind::Kick => {
+                // Sine sweep 120 -> 40 Hz
+                let freq = 120.0 - (80.0 * (self.t * 8.0).min(1.0));
+                let env = (1.0 - self.t * 5.0).max(0.0);
+                if env <= 0.0 {
+                    return None;
+                }
+                (self.t * freq * 2.0 * std::f32::consts::PI).sin() * env * self.amp
+            }
+            SoundKind::Snare => {
+                // Noise + Tone
+                let noise = (rand::random::<f32>() * 2.0 - 1.0) * (1.0 - self.t * 10.0).max(0.0);
+                let tone = (self.t * 180.0 * 2.0 * std::f32::consts::PI).sin()
+                    * (1.0 - self.t * 6.0).max(0.0);
+                let val = noise * 0.8 + tone * 0.2;
+                if self.t > 0.15 {
+                    return None;
+                }
+                val * self.amp
+            }
+            SoundKind::HiHat => {
+                // High freq noise
+                let noise = rand::random::<f32>() * 2.0 - 1.0;
+                let env = (1.0 - self.t * 30.0).max(0.0);
+                if env <= 0.0 {
+                    return None;
+                }
+                noise * env * self.amp
+            }
+            SoundKind::Pluck(freq) => {
+                // Karplus-Strong-ish or just simple plucked string (sine w/ exp decay)
+                let val = (self.t * freq * 2.0 * std::f32::consts::PI).sin();
+                let env = (-self.t * 4.0).exp();
+                if env <= 0.001 {
+                    return None;
+                }
+                val * env * self.amp
+            }
+        };
+        Some(s)
+    }
+}
+
+#[cfg(feature = "audio")]
+#[allow(dead_code)]
 impl AudioEngine {
     /// Creates a new `AudioEngine`.
     ///
@@ -258,52 +307,12 @@ fn process_audio(
 
         // Retain only sounds that are still active
         active_sounds.retain_mut(|sound| {
-            sound.t += dt;
-
-            let s = match sound.kind {
-                SoundKind::Kick => {
-                    // Sine sweep 120 -> 40 Hz
-                    let freq = 120.0 - (80.0 * (sound.t * 8.0).min(1.0));
-                    let env = (1.0 - sound.t * 5.0).max(0.0);
-                    if env <= 0.0 {
-                        return false;
-                    }
-                    (sound.t * freq * 2.0 * std::f32::consts::PI).sin() * env * sound.amp
-                }
-                SoundKind::Snare => {
-                    // Noise + Tone
-                    let noise =
-                        (rand::random::<f32>() * 2.0 - 1.0) * (1.0 - sound.t * 10.0).max(0.0);
-                    let tone = (sound.t * 180.0 * 2.0 * std::f32::consts::PI).sin()
-                        * (1.0 - sound.t * 6.0).max(0.0);
-                    let val = noise * 0.8 + tone * 0.2;
-                    if sound.t > 0.15 {
-                        return false;
-                    }
-                    val * sound.amp
-                }
-                SoundKind::HiHat => {
-                    // High freq noise
-                    let noise = rand::random::<f32>() * 2.0 - 1.0;
-                    let env = (1.0 - sound.t * 30.0).max(0.0);
-                    if env <= 0.0 {
-                        return false;
-                    }
-                    noise * env * sound.amp
-                }
-                SoundKind::Pluck(freq) => {
-                    // Karplus-Strong-ish or just simple plucked string (sine w/ exp decay)
-                    let val = (sound.t * freq * 2.0 * std::f32::consts::PI).sin();
-                    let env = (-sound.t * 4.0).exp();
-                    if env <= 0.001 {
-                        return false;
-                    }
-                    val * env * sound.amp
-                }
-            };
-
-            sample += s;
-            true
+            if let Some(s) = sound.generate_sample(dt) {
+                sample += s;
+                true
+            } else {
+                false
+            }
         });
 
         // Soft clipper

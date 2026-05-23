@@ -1,5 +1,5 @@
-use locus::Vec4;
 use locus::Vec2;
+use locus::Vec4;
 use std::f32;
 
 #[test]
