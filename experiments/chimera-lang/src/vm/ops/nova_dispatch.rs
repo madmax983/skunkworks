@@ -486,6 +486,10 @@ impl crate::vm::ChimeraVM {
                 self.output.push("Flocking step simulated.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
+            OpCode::Poincare => {
+                self.output.push("Poincare hyperbolic geometry evaluated.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
             #[cfg(feature = "oracle")]
             OpCode::Divergence => Some(nova::exec_nova_op(self, op, args)),
             _ => None,

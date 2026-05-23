@@ -1122,6 +1122,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_market_instr(instr)?);
                 }
             }
+            Rule::poincare_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_poincare_instr(instr)?);
+                }
+            }
             Rule::reactor_block => {
                 let content =
                     extract_block_content_preserve_whitespace(inner_block.as_str(), "reactor");
@@ -1170,6 +1175,36 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
                     vec![Nucleotide::String(id.to_string())],
                 ));
             }
+        }
+        _ => {}
+    }
+    Ok(genes)
+}
+
+
+fn compile_poincare_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair.into_inner().next().unwrap();
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "hyperbolic" {
+                genes.push(Gene::new(OpCode::Poincare, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str();
+            let content = s[1..s.len() - 1].to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
         }
         _ => {}
     }
@@ -1591,6 +1626,23 @@ quipu {
         assert_eq!(genes[2].op, OpCode::Push);
         assert_eq!(genes[2].args[0], Nucleotide::String("knot".to_string()));
         assert_eq!(genes[3].op, OpCode::Quipu);
+    }
+
+
+    #[test]
+    fn test_poincare_block() {
+        let code = r#"
+poincare {
+    100
+    hyperbolic
+}
+"#;
+        let dna = compile(code).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::Number(100));
+        assert_eq!(genes[1].op, OpCode::Poincare);
     }
 
     #[test]

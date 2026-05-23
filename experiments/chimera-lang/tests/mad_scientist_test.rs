@@ -90,3 +90,24 @@ mod tests {
         assert_eq!(vm.dna.helix.strands[0].genes[0].op, OpCode::Photosynthesize);
     }
 }
+
+#[test]
+fn test_poincare_execution() {
+    use chimera_lang::compiler::compile;
+    use chimera_lang::vm::ChimeraVM;
+
+    let source = r#"
+        strand main {
+            poincare {
+                100
+                hyperbolic
+            }
+        }
+    "#;
+    let dna = compile(source, None).expect("Failed to compile poincare code");
+    let mut vm = ChimeraVM::new(dna);
+    vm.step(); // Push 100
+    vm.step(); // Poincare
+    println!("VM Output: {:?}", vm.output);
+    assert!(vm.output.iter().any(|s| s.contains("Poincare hyperbolic geometry evaluated.")));
+}

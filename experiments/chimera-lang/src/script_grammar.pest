@@ -62,6 +62,7 @@ instruction = {
     chaos_block |
     oracle_block |
     polyglot_block |
+    poincare_block |
     literal |
     junction |
     crispr_block |
@@ -86,6 +87,7 @@ apply_map_stmt = { "apply_map" ~ "(" ~ string ~ "," ~ number ~ "," ~ number ~ ")
 
 nested_text = @{ ( "{" ~ nested_text ~ "}" | !("{" | "}") ~ ANY )* }
 polyglot_block = { "polyglot" ~ identifier ~ "{" ~ nested_text ~ "}" }
+poincare_block = { "poincare" ~ block }
 
 chaos_block = { "chaos" ~ block }
 
