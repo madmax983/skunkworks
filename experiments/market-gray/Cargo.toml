@@ -1,0 +1,13 @@
+[package]
+name = "market-gray"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+market-sim = { path = "../../crates/market-sim" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = "0.30.0"
+crossterm = "0.28.1"
+anyhow = "1.0"
+rand = "0.8"
