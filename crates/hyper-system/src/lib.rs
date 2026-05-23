@@ -15,8 +15,11 @@
 /// It acts as the mathematical foundation for positioning and projecting
 /// structures in hyper-dimensional space.
 pub mod math {
-    pub use locus::vec3::*;
-    pub use locus::vec4::*;
+    pub use locus::Vec3;
+    pub use locus::Vec4;
 }
-pub mod monitor;
-pub mod physics;
+pub(crate) mod monitor;
+pub(crate) mod physics;
+
+pub use monitor::*;
+pub use physics::*;

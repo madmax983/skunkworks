@@ -164,7 +164,7 @@ impl AudioModel {
     /// # Examples
     ///
     /// ```
-    /// use resonance_audio::audio::{AudioModel, AudioCommand};
+    /// use resonance_audio::{AudioModel, AudioCommand};
     /// use crossbeam_channel::bounded;
     ///
     /// // Set up the communication "nerve fibers" between threads.
@@ -284,7 +284,7 @@ impl AudioModel {
     /// # Examples
     ///
     /// ```
-    /// use resonance_audio::audio::{AudioModel, AudioCommand};
+    /// use resonance_audio::{AudioModel, AudioCommand};
     /// use crossbeam_channel::bounded;
     ///
     /// let (cmd_tx, cmd_rx) = bounded(10);

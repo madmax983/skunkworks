@@ -16,7 +16,7 @@ use crate::vec3::Vec3;
 /// # Examples
 ///
 /// ```
-/// use locus::vec4::Vec4;
+/// use locus::Vec4;
 ///
 /// let v = Vec4::new(1.0, 2.0, 3.0, 4.0);
 /// assert_eq!(v.w, 4.0);
@@ -40,7 +40,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
     /// assert!(v.is_finite());
     /// let v2 = Vec4::new(f32::NAN, 1.0, 1.0, 1.0);
@@ -62,7 +62,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v = Vec4::new(0.0, 1.0, 0.0, 1.0);
     /// ```
     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
@@ -74,7 +74,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v = Vec4::zero();
     /// assert_eq!(v.length(), 0.0);
     /// ```
@@ -87,7 +87,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
     /// let scaled = v.scale(2.0);
     /// assert_eq!(scaled.x, 2.0);
@@ -102,7 +102,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
     /// let scaled = v.scale_dim(2.0, 3.0, 4.0, 5.0);
     /// assert_eq!(scaled.x, 2.0);
@@ -117,7 +117,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
     /// let v2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
     /// let sum = v1.add(v2);
@@ -140,7 +140,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
     /// let v2 = Vec4::new(1.0, 1.0, 1.0, 1.0);
     /// let diff = v1.sub(v2);
@@ -164,7 +164,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
     /// // 1^2 + 1^2 + 1^2 + 1^2 = 4
     /// assert_eq!(v.length_squared(), 4.0);
@@ -183,7 +183,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v = Vec4::new(0.0, 3.0, 0.0, 4.0);
     /// // sqrt(3^2 + 4^2) = 5
     /// assert_eq!(v.length(), 5.0);
@@ -200,7 +200,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// let v = Vec4::new(0.0, 3.0, 0.0, 4.0); // Length is 5
     /// let n = v.normalize();
     /// assert!((n.length() - 1.0).abs() < 1e-6);
@@ -263,7 +263,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     ///
     /// let v = Vec4::new(10.0, 0.0, 0.0, 0.0);
     /// let limited = v.limit(5.0);
@@ -320,7 +320,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     ///
     /// let v1 = Vec4::new(0.0, 0.0, 0.0, 0.0);
     /// let v2 = Vec4::new(1.0, 1.0, 1.0, 1.0);
@@ -353,7 +353,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
@@ -376,7 +376,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let mut points = vec![
@@ -415,7 +415,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
@@ -437,7 +437,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let mut points = vec![
@@ -476,7 +476,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
@@ -500,7 +500,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let mut points = vec![
@@ -538,7 +538,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(0.0, 1.0, 0.0, 0.0);
@@ -561,7 +561,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let mut points = vec![
@@ -600,7 +600,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(0.0, 1.0, 0.0, 0.0);
@@ -623,7 +623,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let mut points = vec![
@@ -661,7 +661,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(0.0, 0.0, 1.0, 0.0);
@@ -684,7 +684,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let mut points = vec![
@@ -733,7 +733,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec4::Vec4;
+    /// use locus::Vec4;
     ///
     /// // A point "far away" in the W dimension (w=0) relative to camera (w=10)
     /// let far = Vec4::new(1.0, 1.0, 1.0, 0.0);

@@ -120,7 +120,7 @@ where
                                     _ => gene.op.to_string().len() as f32 * 50.0 + 200.0,
                                 };
 
-                                use resonance_audio::audio::AudioCommand;
+                                use resonance_audio::AudioCommand;
                                 let _ = tx.send(AudioCommand::Tone {
                                     x: 0,
                                     y: 0,

@@ -29,7 +29,7 @@ use macroquad::prelude::Vec3 as MacroquadVec3;
 /// ## Basic Usage
 ///
 /// ```
-/// use locus::vec3::Vec3;
+/// use locus::Vec3;
 ///
 /// let v = Vec3::new(1.0, 2.0, 3.0);
 /// assert_eq!(v.z, 3.0);
@@ -38,8 +38,8 @@ use macroquad::prelude::Vec3 as MacroquadVec3;
 /// ## From 4D to 3D
 ///
 /// ```
-/// use locus::vec4::Vec4;
-/// use locus::vec3::Vec3;
+/// use locus::Vec4;
+/// use locus::Vec3;
 ///
 /// let v4 = Vec4::new(1.0, 2.0, 3.0, 4.0);
 /// let camera_w = 10.0;
@@ -72,7 +72,7 @@ impl Vec3 {
     /// # Examples
     ///
     /// ```
-    /// use locus::vec3::Vec3;
+    /// use locus::Vec3;
     ///
     /// let point = Vec3::new(1.0, 0.0, -1.0);
     /// assert_eq!(point.x, 1.0);
@@ -92,7 +92,7 @@ impl Vec3 {
 ///
 /// ```ignore
 /// // Requires the `macroquad` feature
-/// use locus::vec3::Vec3;
+/// use locus::Vec3;
 /// use macroquad::prelude::Vec3 as MqVec3;
 ///
 /// let locus_vec = Vec3::new(1.0, 2.0, 3.0);
@@ -116,7 +116,7 @@ impl From<Vec3> for MacroquadVec3 {
 ///
 /// ```ignore
 /// // Requires the `macroquad` feature
-/// use locus::vec3::Vec3;
+/// use locus::Vec3;
 /// use macroquad::prelude::Vec3 as MqVec3;
 ///
 /// let mq_vec = MqVec3::new(10.0, 20.0, 30.0);

@@ -34,7 +34,7 @@ use super::{ChimeraVM, Value};
 use crate::ast::{Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioCommand;
+use resonance_audio::AudioCommand;
 
 /// Represents a single musical event (Note or Rest).
 #[derive(Debug, Clone, PartialEq)]

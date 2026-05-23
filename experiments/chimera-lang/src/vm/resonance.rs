@@ -2,7 +2,7 @@
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use resonance_audio::audio::AudioCommand;
+use resonance_audio::AudioCommand;
 
 pub fn exec_resonance_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     if op == OpCode::Pluck {

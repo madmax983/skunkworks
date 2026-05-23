@@ -35,7 +35,7 @@ use crate::math::Vec4;
 /// # Examples
 /// ```
 /// use hyper_system::math::Vec4;
-/// use hyper_system::physics::Particle4D;
+/// use hyper_system::Particle4D;
 ///
 /// let particle = Particle4D {
 ///     pos: Vec4::new(1.0, 2.0, 3.0, 4.0),
@@ -67,7 +67,7 @@ pub struct Particle4D {
 /// # Examples
 /// ```
 /// use hyper_system::math::Vec4;
-/// use hyper_system::physics::Constraint4D;
+/// use hyper_system::Constraint4D;
 ///
 /// // Create a simple rod holding two particles exactly 2.0 units apart.
 /// let rod = Constraint4D::Distance {
@@ -122,7 +122,7 @@ pub enum Constraint4D {
 /// # Examples
 /// ```
 /// use hyper_system::math::Vec4;
-/// use hyper_system::physics::PbdSystem4D;
+/// use hyper_system::PbdSystem4D;
 ///
 /// let mut system = PbdSystem4D::new();
 ///
@@ -148,7 +148,7 @@ impl PbdSystem4D {
     ///
     /// # Examples
     /// ```
-    /// use hyper_system::physics::PbdSystem4D;
+    /// use hyper_system::PbdSystem4D;
     /// let system = PbdSystem4D::new();
     /// ```
     pub fn new() -> Self {
@@ -172,7 +172,7 @@ impl PbdSystem4D {
     /// # Examples
     /// ```
     /// use hyper_system::math::Vec4;
-    /// use hyper_system::physics::PbdSystem4D;
+    /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
     /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
@@ -212,7 +212,7 @@ impl PbdSystem4D {
     /// # Examples
     /// ```
     /// use hyper_system::math::Vec4;
-    /// use hyper_system::physics::PbdSystem4D;
+    /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
     /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
@@ -259,7 +259,7 @@ impl PbdSystem4D {
     /// # Examples
     /// ```
     /// use hyper_system::math::Vec4;
-    /// use hyper_system::physics::PbdSystem4D;
+    /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
     /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
@@ -304,7 +304,7 @@ impl PbdSystem4D {
     /// # Examples
     /// ```
     /// use hyper_system::math::Vec4;
-    /// use hyper_system::physics::PbdSystem4D;
+    /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
     /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
@@ -339,7 +339,7 @@ impl PbdSystem4D {
     /// # Examples
     /// ```
     /// use hyper_system::math::Vec4;
-    /// use hyper_system::physics::PbdSystem4D;
+    /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
     /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();

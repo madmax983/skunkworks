@@ -1,6 +1,6 @@
 use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioCommand;
+use resonance_audio::AudioCommand;
 
 /// Applies resonance logic for sink runes (♪, ♫, 🥁).
 pub fn apply_resonance_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {

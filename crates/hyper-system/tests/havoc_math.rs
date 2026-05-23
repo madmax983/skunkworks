@@ -54,7 +54,7 @@ proptest! {
 
 #[test]
 fn test_havoc_dt_nan_poison() {
-    let mut system = hyper_system::physics::PbdSystem4D::new();
+    let mut system = hyper_system::PbdSystem4D::new();
     let p1 = system
         .add_particle(hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0)
         .unwrap();
@@ -71,7 +71,7 @@ fn test_havoc_dt_nan_poison() {
 
 #[test]
 fn test_havoc_dt_infinity() {
-    let mut system = hyper_system::physics::PbdSystem4D::new();
+    let mut system = hyper_system::PbdSystem4D::new();
     let p1 = system
         .add_particle(hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0)
         .unwrap();

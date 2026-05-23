@@ -2,7 +2,7 @@ use crate::vm::Value;
 #[cfg(feature = "resonance")]
 use crossbeam_channel::Sender;
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioCommand;
+use resonance_audio::AudioCommand;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

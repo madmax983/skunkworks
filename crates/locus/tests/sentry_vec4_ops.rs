@@ -1,4 +1,4 @@
-use locus::vec4::Vec4;
+use locus::Vec4;
 
 #[test]
 fn test_vec4_distance_squared() {

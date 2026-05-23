@@ -1,5 +1,5 @@
 use git2::{Repository, Signature};
-use git_associates::{model::LineChange, GitModel};
+use git_associates::{LineChange, GitModel};
 use std::fs;
 use std::path::Path;
 
@@ -65,7 +65,7 @@ fn test_hunk_origin_cases() {
 // Ensure the git_associates::model types format traits run
 #[test]
 fn test_model_formatting() {
-    use git_associates::model::{Commit, CommitStats, DiffStats, FileChange, Hunk, LineChange};
+    use git_associates::{Commit, CommitStats, DiffStats, FileChange, Hunk, LineChange};
     let c = Commit {
         hash: "".into(),
         short_hash: "".into(),
