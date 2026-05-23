@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locust-tank**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period: 24h.
+- **chimera-pollination**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Grace period: 24h.
 
 ## ☠️ Executed
+- **locust-tank**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Failed to improve during grace period. Moved to graveyard.
 - **market-rogue**: Specimen executed. Diagnosis: Skeletal Genericism. Failed to implement roguelike depth and procedural generation during its grace period. Biomass returned to the void.
 - **myco-ddos**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) / Skeletal Genericism. Failed to implement `--headless` bypass and resolve genericism during its grace period. Biomass returned to the void.
 - **chimera-rift**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved by adding a `--headless` bypass and enhancing the portal sensor input to detect portal resonance energy, along with age-based metabolic scaling. Vigor demonstrated.

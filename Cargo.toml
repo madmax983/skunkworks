@@ -14,7 +14,6 @@ members = [
 
     "experiments/myco-hologram",
     "experiments/git-diffusion",
-    "experiments/locust-tank",
     "experiments/gray-tank",
     "experiments/git-tank",
     "experiments/neuro-flock",

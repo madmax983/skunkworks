@@ -3,7 +3,7 @@ use crossbeam_channel::bounded;
 use macroquad::prelude::*;
 #[cfg(feature = "audio")]
 use resonance_audio::audio::AudioSnapshot;
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::{AudioCommand, AudioModel};
 use std::io::Read;
 
 #[cfg(feature = "audio")]
@@ -127,6 +127,11 @@ impl World {
 
 #[macroquad::main("Locust Tank")]
 async fn main() {
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode for CI.");
+        return;
+    }
+
     let (cmd_tx, cmd_rx) = bounded(1024);
     let (snap_tx, snap_rx) = bounded(2);
 
