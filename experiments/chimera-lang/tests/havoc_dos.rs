@@ -3,7 +3,7 @@ mod tests {
     use chimera_lang::ast::JunctionType;
 
     use chimera_lang::vm::Value;
-    use std::collections::hash_map::DefaultHasher;
+    use rustc_hash::FxHasher;
     use std::hash::Hash;
 
     #[test]
@@ -14,7 +14,7 @@ mod tests {
             val = Value::Junction(JunctionType::Any, vec![val.clone()]);
         }
         // Try hashing it
-        let mut hasher = DefaultHasher::new();
+        let mut hasher = FxHasher::default();
         val.hash(&mut hasher);
     }
 }

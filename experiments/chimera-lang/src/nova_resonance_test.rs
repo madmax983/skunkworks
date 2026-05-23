@@ -3,7 +3,7 @@ mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
     use crate::vm::ChimeraVM;
-    use resonance_audio::audio::AudioCommand;
+    use resonance_audio::AudioCommand;
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
         let dna = Dna {

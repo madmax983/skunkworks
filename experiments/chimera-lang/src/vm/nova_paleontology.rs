@@ -4,7 +4,7 @@ use super::{ChimeraVM, Value};
 use crate::ast::{Nucleotide, Strand};
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
-use std::collections::hash_map::DefaultHasher;
+use rustc_hash::FxHasher;
 use std::hash::{Hash, Hasher};
 
 /// Performs the `exec_fossilize` operation.
@@ -22,7 +22,7 @@ pub fn exec_fossilize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let strand = &vm.dna.helix.strands[s_idx];
 
             // 1. Calculate Hash
-            let mut hasher = DefaultHasher::new();
+            let mut hasher = FxHasher::default();
             strand.hash(&mut hasher);
             let hash = hasher.finish();
 

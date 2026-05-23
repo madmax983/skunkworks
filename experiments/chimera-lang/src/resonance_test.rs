@@ -3,7 +3,7 @@ use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::ChimeraVM;
 use crossbeam_channel::unbounded;
-use resonance_audio::audio::AudioCommand;
+use resonance_audio::AudioCommand;
 
 fn make_dna(genes: Vec<Gene>) -> Dna {
     Dna {

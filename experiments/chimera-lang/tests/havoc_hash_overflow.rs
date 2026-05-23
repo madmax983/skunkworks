@@ -1,6 +1,6 @@
 use chimera_lang::ast::JunctionType;
 use chimera_lang::vm::Value;
-use std::collections::hash_map::DefaultHasher;
+use rustc_hash::FxHasher;
 use std::env;
 use std::hash::{Hash, Hasher};
 use std::process::Command;
@@ -14,7 +14,7 @@ fn test_hash_overflow_exploit() {
             v = Value::Junction(JunctionType::Any, vec![v]);
         }
 
-        let mut hasher = DefaultHasher::new();
+        let mut hasher = FxHasher::default();
         v.hash(&mut hasher);
         let _ = hasher.finish();
         std::process::exit(0);

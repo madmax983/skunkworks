@@ -1,7 +1,7 @@
 #![cfg(feature = "nova")]
 
 use super::{ChimeraVM, Value};
-use std::collections::hash_map::DefaultHasher;
+use rustc_hash::FxHasher;
 use std::hash::{Hash, Hasher};
 
 /// Converts a value into an abstract Symbol.
@@ -10,7 +10,7 @@ use std::hash::{Hash, Hasher};
 /// **Stack:** `[ ..., value ] -> [ ..., symbol ]`
 pub fn exec_symbolize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
-        let mut hasher = DefaultHasher::new();
+        let mut hasher = FxHasher::default();
         val.hash(&mut hasher);
         let id = hasher.finish();
 
@@ -66,7 +66,7 @@ pub fn exec_interpret(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// **Stack:** `[ ..., value ] -> [ ... ]`
 pub fn exec_context_shift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
-        let mut hasher = DefaultHasher::new();
+        let mut hasher = FxHasher::default();
         val.hash(&mut hasher);
         let shift = hasher.finish();
 
@@ -92,7 +92,7 @@ pub fn exec_deconstruct(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let Value::Str(s) = val {
             let mut symbols = Vec::new();
             for c in s.chars() {
-                let mut hasher = DefaultHasher::new();
+                let mut hasher = FxHasher::default();
                 c.hash(&mut hasher);
                 let id = hasher.finish();
 

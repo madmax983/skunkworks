@@ -2,7 +2,7 @@
 mod tests {
     use crate::ast::JunctionType;
     use crate::vm::Value;
-    use std::collections::hash_map::DefaultHasher;
+    use rustc_hash::FxHasher;
     use std::hash::Hash;
 
     #[test]
@@ -12,7 +12,7 @@ mod tests {
         for _ in 0..1000 {
             val = Value::Junction(JunctionType::Any, vec![val.clone()]);
         }
-        let mut hasher = DefaultHasher::new();
+        let mut hasher = FxHasher::default();
         val.hash(&mut hasher);
     }
 }

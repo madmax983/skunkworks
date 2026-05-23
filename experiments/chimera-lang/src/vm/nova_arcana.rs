@@ -1703,6 +1703,7 @@ pub fn exec_draw(vm: &mut ChimeraVM) {
 /// ```
 pub fn exec_shuffle(vm: &mut ChimeraVM) {
     // Move discard to deck
+    vm.fate.deck.reserve(vm.fate.discard.len());
     vm.fate.deck.append(&mut vm.fate.discard);
     // Shuffle implies just making the deck ready for random draws.
     // Since draw uses random index, we don't strictly need to shuffle the vec itself,

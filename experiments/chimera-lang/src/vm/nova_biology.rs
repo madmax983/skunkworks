@@ -3,7 +3,7 @@ use crate::opcode::OpCode;
 use crate::vm::nova::{Organelle, OrganelleType};
 use crate::vm::nova_bestiary;
 use rand::Rng;
-use std::collections::hash_map::DefaultHasher;
+use rustc_hash::FxHasher;
 use std::hash::{Hash, Hasher};
 
 /// Performs the `organelle_type_from_int` operation.
@@ -58,7 +58,7 @@ pub fn exec_spawn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (kind, direction) = organelle_type_from_int(t);
 
     let strand = &vm.dna.helix.strands[s_idx];
-    let mut hasher = DefaultHasher::new();
+    let mut hasher = FxHasher::default();
     strand.hash(&mut hasher);
     let genome_id = hasher.finish();
     let traits = nova_bestiary::analyze_traits(strand);

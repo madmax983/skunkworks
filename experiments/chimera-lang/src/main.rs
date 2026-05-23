@@ -18,7 +18,7 @@ use chimera_lang::audio_source::RodioAudioSource;
 #[cfg(feature = "resonance")]
 use crossbeam_channel::unbounded;
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioModel;
+use resonance_audio::AudioModel;
 #[cfg(feature = "resonance")]
 use rodio::OutputStream;
 
