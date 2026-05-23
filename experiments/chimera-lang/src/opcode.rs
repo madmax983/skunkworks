@@ -2710,6 +2710,8 @@ pub enum OpCode {
     /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
     ZipWith,
     Flock,
+    /// **`Nova`** Executes hyperbolic geometry operations.
+    Poincare,
 
     /// No Operation. Does nothing.
     Nop,

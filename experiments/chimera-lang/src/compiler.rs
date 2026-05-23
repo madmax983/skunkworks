@@ -1622,6 +1622,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             #[cfg(feature = "nova")]
             Rule::crispr_block => self.parse_crispr_block(inner),
             Rule::chaos_block => self.parse_chaos_block(inner),
+            Rule::poincare_block => self.parse_poincare_block(inner),
             Rule::apply_map_stmt => self.parse_apply_map(inner),
             #[cfg(feature = "oracle")]
             Rule::oracle_block => self.parse_oracle_block(inner),
@@ -1754,6 +1755,28 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             op: OpCode::Push,
             args: vec![val],
         }])
+    }
+
+fn parse_poincare_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let block = inner.into_inner().next().unwrap();
+        let mut genes = Vec::new();
+
+        for stmt in block.into_inner() {
+            let stmt_str = stmt.as_str().trim();
+            if stmt_str == "hyperbolic" {
+                genes.push(Gene::new(crate::opcode::OpCode::Poincare, vec![]));
+            } else if let Ok(g) = self.parse_instruction(stmt) {
+                // Ignore unknown opcodes gracefully inside poincare block since they might be domain specific logic
+                if g.len() == 1 && matches!(g[0].op, OpCode::Unknown(_)) {
+                   genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(stmt_str.to_string())]));
+                } else {
+                   genes.extend(g);
+                }
+            }
+        }
+        genes.push(Gene::new(crate::opcode::OpCode::Poincare, vec![]));
+
+        Ok(genes)
     }
 
     fn parse_chaos_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
