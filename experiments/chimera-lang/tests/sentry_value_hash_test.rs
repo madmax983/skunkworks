@@ -7,7 +7,7 @@ fn test_hash_deeply_nested_no_overflow() {
     if env::var("RUN_CHILD").is_ok() {
         use chimera_lang::ast::JunctionType;
         use chimera_lang::value::Value;
-        use std::collections::hash_map::DefaultHasher;
+        use rustc_hash::FxHasher;
         use std::hash::{Hash, Hasher};
 
         let mut val = Value::Int(42);
@@ -15,7 +15,7 @@ fn test_hash_deeply_nested_no_overflow() {
             val = Value::Junction(JunctionType::Any, vec![val]);
         }
 
-        let mut hasher = DefaultHasher::new();
+        let mut hasher = FxHasher::default();
         val.hash(&mut hasher);
         let _hash = hasher.finish();
 
@@ -25,7 +25,7 @@ fn test_hash_deeply_nested_no_overflow() {
             val = Value::Superposition(vec![(val, 1.0)]);
         }
 
-        let mut hasher = DefaultHasher::new();
+        let mut hasher = FxHasher::default();
         val.hash(&mut hasher);
         let _hash = hasher.finish();
 

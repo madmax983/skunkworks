@@ -1,7 +1,7 @@
 use super::{ChimeraVM, Value};
 use crate::ast::{Nucleotide, Strand};
 use crate::opcode::OpCode;
-use std::collections::hash_map::DefaultHasher;
+use rustc_hash::FxHasher;
 use std::hash::{Hash, Hasher};
 
 /// Performs the `hash_strand` operation.
@@ -12,7 +12,7 @@ use std::hash::{Hash, Hasher};
 /// // Example usage of hash_strand
 /// ```
 pub fn hash_strand(strand: &Strand) -> u64 {
-    let mut hasher = DefaultHasher::new();
+    let mut hasher = FxHasher::default();
     strand.hash(&mut hasher);
     hasher.finish()
 }

@@ -3,7 +3,7 @@ use crate::vm::nova_genetics;
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::Rng;
-use std::collections::hash_map::DefaultHasher;
+use rustc_hash::FxHasher;
 use std::hash::{Hash, Hasher};
 
 /// Performs the `exec_quantum_jump` operation.
@@ -236,7 +236,7 @@ pub fn exec_horcrux(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if idx < vm.dna.helix.strands.len() {
                 if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                     let strand = &vm.dna.helix.strands[idx];
-                    let mut hasher = DefaultHasher::new();
+                    let mut hasher = FxHasher::default();
                     strand.hash(&mut hasher);
                     let hash = hasher.finish();
                     let gene_str = nova_genetics::strand_to_string(strand);

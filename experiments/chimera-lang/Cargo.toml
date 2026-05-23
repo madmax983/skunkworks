@@ -39,6 +39,7 @@ origami = { version = "0.1.0", path = "../../crates/origami" }
 comfy-table = "7.2.2"
 rodio = { version = "0.17", optional = true }
 hyper-system = { version = "0.1.0", path = "../../crates/hyper-system", default-features = false }
+rustc-hash = "2.1.2"
 
 [dev-dependencies]
 loom = "0.7"
