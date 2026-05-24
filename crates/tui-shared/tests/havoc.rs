@@ -15,6 +15,20 @@ mod tests {
             assert!(!status.success(), "👺 Havoc: System safely handled massive allocations without OOM crashing! Our chaos hunt failed!");
         }
     }
+
+    // 👺 Havoc: Fuzzing Snapshot for crashes on massive capacity limits!
+    #[test]
+    fn havoc_snapshot_oom_allocation() {
+        let status = std::process::Command::new(std::env::current_exe().unwrap())
+            .arg("--exact")
+            .arg("havoc_snapshot_oom_allocation_inner")
+            .arg("--nocapture")
+            .status();
+
+        if let Ok(status) = status {
+            assert!(!status.success(), "👺 Havoc: System safely handled massive allocations without OOM crashing! Our chaos hunt failed!");
+        }
+    }
 }
 
 #[test]
@@ -34,5 +48,14 @@ fn havoc_log_system_oom_allocation_inner() {
         let area = ratatui::layout::Rect::new(0, 0, 100, 100);
         let mut buffer = ratatui::buffer::Buffer::empty(area);
         list.render(area, &mut buffer);
+    }
+}
+
+#[test]
+fn havoc_snapshot_oom_allocation_inner() {
+    if std::env::args().any(|arg| arg == "havoc_snapshot_oom_allocation_inner") {
+        use tui_shared::Snapshot;
+        let massive_entities = Vec::with_capacity(usize::MAX);
+        let _snap = Snapshot::new("test").with_entities(massive_entities);
     }
 }
