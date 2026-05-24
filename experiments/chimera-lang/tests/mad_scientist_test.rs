@@ -109,5 +109,8 @@ fn test_poincare_execution() {
     vm.step(); // Push 100
     vm.step(); // Poincare
     println!("VM Output: {:?}", vm.output);
-    assert!(vm.output.iter().any(|s| s.contains("Poincare hyperbolic geometry evaluated.")));
+    assert!(vm
+        .output
+        .iter()
+        .any(|s| s.contains("Poincare hyperbolic geometry evaluated.")));
 }

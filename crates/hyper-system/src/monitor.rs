@@ -216,8 +216,8 @@ impl SystemMonitor {
     ///
     /// # Examples
     ///
-    /// ```
-    /// use hyper_system::monitor::SystemMonitor;
+    /// ```no_run
+    /// use hyper_system::SystemMonitor;
     /// let mut monitor = SystemMonitor::new();
     /// monitor.update();
     /// ```

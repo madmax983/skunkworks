@@ -7,7 +7,6 @@ fn test_default_impl_coverage() {
 }
 
 #[test]
-#[should_panic]
 fn test_solve_distance_nan_params() {
     let mut system = PbdSystem4D::new();
     let p1 = system
@@ -18,12 +17,11 @@ fn test_solve_distance_nan_params() {
         .unwrap();
 
     // Test poison
-    let _ = system.add_distance_constraint(p1, p2, f32::NAN);
+    assert!(system.add_distance_constraint(p1, p2, f32::NAN).is_err());
     system.step(0.1, 1, 0.99);
 }
 
 #[test]
-#[should_panic]
 fn test_solve_actuator_nan_factor() {
     let mut system = PbdSystem4D::new();
     let p1 = system
@@ -33,7 +31,9 @@ fn test_solve_actuator_nan_factor() {
         .add_particle(hyper_system::math::Vec4::zero(), 1.0)
         .unwrap();
 
-    let _ = system.add_actuator_constraint(p1, p2, 1.0, 2.0, f32::NAN, 1.0);
+    assert!(system
+        .add_actuator_constraint(p1, p2, 1.0, 2.0, f32::NAN, 1.0)
+        .is_err());
     system.step(0.1, 1, 0.99);
 }
 
