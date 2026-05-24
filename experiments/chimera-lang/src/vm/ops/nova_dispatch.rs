@@ -487,7 +487,8 @@ impl crate::vm::ChimeraVM {
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             OpCode::Poincare => {
-                self.output.push("Poincare hyperbolic geometry evaluated.".to_string());
+                self.output
+                    .push("Poincare hyperbolic geometry evaluated.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             #[cfg(feature = "oracle")]

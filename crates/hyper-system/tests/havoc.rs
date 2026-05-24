@@ -4,7 +4,6 @@ use proptest::prelude::*;
 
 proptest! {
     #[test]
-    #[should_panic]
     fn havoc_test_step_fuzzed(
         dt in 0.001f32..0.1f32,
         iterations in 1..100usize,
@@ -20,7 +19,6 @@ proptest! {
     }
 
     #[test]
-    #[should_panic]
     fn havoc_test_actuator_nan_stiffness(
         stiff in proptest::num::f32::ANY,
     ) {
@@ -33,7 +31,6 @@ proptest! {
     }
 
     #[test]
-    #[should_panic]
     fn havoc_test_friction_nan(
         friction in prop_oneof![Just(f32::NAN), Just(f32::INFINITY), Just(f32::NEG_INFINITY)]
     ) {
@@ -53,10 +50,7 @@ proptest! {
 // `len = delta.length()` -> `NaN`.
 // `!len.is_finite()` -> panic!("NaN detected in particle distance");
 proptest! {
-    // 💥 Notice the lack of `#[should_panic]`. This is the Red Phase.
-    // We want the test suite to legitimately fail and abort when it hits the bug!
     #[test]
-    #[should_panic(expected = "NaN detected")]
     fn havoc_fuzz_velocity_explosion(
         vel in proptest::num::f32::ANY,
         dt in proptest::num::f32::ANY,
@@ -71,18 +65,13 @@ proptest! {
 
         let _ = system.add_distance_constraint(p1, p2, 1.0);
 
-        // This naturally triggers a position overflow -> NaN distance -> panic
+        // This naturally triggers a position overflow, but it should now be safely handled
         system.step(dt, 1, 1.0);
     }
 
-    // 👺 Havoc: The `factor` in `Constraint4D::Actuator` is checked for `!factor.is_finite()` during `step`.
-    // BUT `min_len` and `max_len` are NOT checked when adding the constraint, nor when calculating `target`.
-    // If `min_len` or `max_len` is `NaN`, `target` becomes `NaN`, and `solve_distance` explicitly panics
-    // because `!target_len.is_finite()`.
     #[test]
-    #[should_panic(expected = "NaN detected in constraint parameters")]
     fn havoc_test_actuator_nan_len(
-        min_len in prop_oneof![Just(std::f32::NAN)],
+        min_len in prop_oneof![Just(f32::NAN)],
         max_len in proptest::num::f32::ANY,
     ) {
         let mut system = PbdSystem4D::new();
@@ -90,10 +79,9 @@ proptest! {
         let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
 
         // 🧨 The Trigger: Inject NaN into min_len or max_len
-        // They are unvalidated in `add_actuator_constraint`.
+        // They are now validated in `add_actuator_constraint`, returning an Err.
         let _ = system.add_actuator_constraint(p1, p2, min_len, max_len, 0.5, 1.0);
 
-        // BOOM!
         system.step(0.016, 1, 1.0);
     }
 }

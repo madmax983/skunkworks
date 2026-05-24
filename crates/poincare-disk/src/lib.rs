@@ -169,7 +169,9 @@ impl Geodesic {
         // 2*x2*x + 2*y2*y = d2
 
         let det = 4.0 * (x1 * y2 - x2 * y1);
-        if det.is_nan() { return None; }
+        if det.is_nan() {
+            return None;
+        }
 
         if det.is_nan() || det.abs() < 1e-9 {
             // Collinear with origin (or points are coincident/too close)
