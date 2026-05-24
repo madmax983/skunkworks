@@ -550,10 +550,17 @@ classDiagram
         +String hash
         +String message
         +CommitStats stats
+        +Vec~FileChange~ files
+    }
+
+    class FileChange {
+        +String path
+        +Vec~Hunk~ hunks
     }
 
     GitAssociates *-- GitModel : Exports
     GitModel ..> Commit : Produces
+    Commit *-- FileChange : Contains
 ```
 
 
