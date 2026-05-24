@@ -1112,6 +1112,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_origami_instr(instr)?);
                 }
             }
+            Rule::weave_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_weave_instr(instr)?);
+                }
+            }
             Rule::flocking_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_flocking_instr(instr)?);
@@ -1181,6 +1186,40 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     Ok(genes)
 }
 
+
+fn compile_weave_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair.into_inner().next().unwrap();
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "weave" {
+                genes.push(Gene::new(OpCode::Weave, vec![]));
+            } else if op == "unravel" {
+                genes.push(Gene::new(OpCode::Unravel, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let mut s = inner.as_str().to_string();
+            if s.starts_with('"') && s.ends_with('"') {
+                s = s[1..s.len() - 1].to_string();
+            }
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
+}
 
 fn compile_poincare_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
