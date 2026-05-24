@@ -1757,7 +1757,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         }])
     }
 
-fn parse_poincare_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+    fn parse_poincare_block(
+        &mut self,
+        inner: pest::iterators::Pair<'i, Rule>,
+    ) -> Result<Vec<Gene>> {
         let block = inner.into_inner().next().unwrap();
         let mut genes = Vec::new();
 
@@ -1768,9 +1771,12 @@ fn parse_poincare_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Re
             } else if let Ok(g) = self.parse_instruction(stmt) {
                 // Ignore unknown opcodes gracefully inside poincare block since they might be domain specific logic
                 if g.len() == 1 && matches!(g[0].op, OpCode::Unknown(_)) {
-                   genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(stmt_str.to_string())]));
+                    genes.push(Gene::new(
+                        OpCode::Push,
+                        vec![Nucleotide::String(stmt_str.to_string())],
+                    ));
                 } else {
-                   genes.extend(g);
+                    genes.extend(g);
                 }
             }
         }

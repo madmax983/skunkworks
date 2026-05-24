@@ -1,4 +1,4 @@
-🦠 Threat: `Geodesic::euclidean_circle` propagates `NaN` when coordinates are malformed, crashing processes like `havoc_geodesic` natively.
-🛡️ Defense: Added `if det.is_nan() { return None; }` before calculation.
-💥 Severity: Moderate - mathematical propagation.
-🧪 Verification: Fuzzing Havoc property test `havoc_test_geodesic_nan_poison` now passes successfully by catching the NaN early.
+💡 What: Replaced `.extend(source.clone())` with `.extend(source.iter().cloned())` across five compilation and virtual machine modules in `chimera-lang`.
+🎯 Why: `.extend(source.clone())` unnecessarily creates a complete clone of the source vector on the heap, only to immediately consume it and drop the intermediate allocation. Using `.iter().cloned()` streams the elements directly into the target vector, completely avoiding the intermediate heap allocation.
+📊 Impact: Eliminates significant intermediate O(N) heap allocations during critical VM evaluation paths like genetic splicing and block compilation, reducing memory fragmentation and garbage collection overhead.
+🔬 Measurement: Verify compilation and tests with `cargo test -p chimera-lang` to ensure all compilation logic still functions correctly.

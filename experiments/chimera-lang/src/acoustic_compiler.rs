@@ -286,7 +286,7 @@ fn compile_block(
 
                     // Unroll
                     for _ in 0..count {
-                        genes.extend(block_genes.clone());
+                        genes.extend(block_genes.iter().cloned());
                     }
                 }
                 Rule::loop_stmt => {

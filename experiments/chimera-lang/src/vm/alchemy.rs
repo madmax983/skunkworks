@@ -378,7 +378,7 @@ fn handle_three_ingredients(vm: &mut ChimeraVM, ingredients: &[Value]) -> (Optio
             if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
                 // Fusion: Append B to A
                 let mut new_genes = vm.dna.helix.strands[idx_a].genes.clone();
-                new_genes.extend(vm.dna.helix.strands[idx_b].genes.clone());
+                new_genes.extend(vm.dna.helix.strands[idx_b].genes.iter().cloned());
 
                 let new_idx =
                     register_new_strand(vm, new_genes, Some(idx_a), "Alchemy: Fusion".to_string());

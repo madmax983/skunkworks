@@ -13,3 +13,7 @@
 **[Replace DefaultHasher with FxHasher]**
 **Learning:** `std::collections::hash_map::DefaultHasher` is a cryptographically secure SipHash, which is incredibly slow for non-security-critical applications like procedural generation. In tests, swapping to `FxHasher` yielded roughly 117,000x performance improvement when hashing strings to generate branch normals.
 **Action:** Replace `DefaultHasher` with `rustc_hash::FxHasher` for high-frequency string or integer hashing where cryptographic security is not required.
+
+**[Vec Extension Iterator]**
+**Learning:** Replaced `.extend(source.clone())` with `.extend(source.iter().cloned())`
+**Action:** Always prefer `.extend(source.iter().cloned())` over `.extend(source.clone())` to avoid intermediate heap allocations during extension operations.

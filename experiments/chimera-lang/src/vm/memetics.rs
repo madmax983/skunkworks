@@ -4502,7 +4502,7 @@ pub fn exec_memetics_op(
                                             {
                                                 vm.dna.helix.strands[g_id]
                                                     .genes
-                                                    .extend(payload_genes.clone());
+                                                    .extend(payload_genes.iter().cloned());
                                                 mutation_count += 1;
                                                 vm.output.push(format!("TRANSDUCTION: Virus {} injected Strand {} into Organelle {} (Genome {})", state.virus_id, payload_idx, org.name, g_id));
                                             } else {

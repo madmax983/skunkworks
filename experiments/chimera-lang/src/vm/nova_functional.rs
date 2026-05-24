@@ -159,7 +159,7 @@ fn exec_curry(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     };
 
     let mut new_genes = vec![push_gene];
-    new_genes.extend(vm.dna.helix.strands[s_idx].genes.clone());
+    new_genes.extend(vm.dna.helix.strands[s_idx].genes.iter().cloned());
 
     let new_idx = register_new_strand(vm, new_genes, Some(s_idx), format!("Curry({})", s_idx));
 

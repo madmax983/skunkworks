@@ -199,7 +199,7 @@ pub fn apply_hybridize_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
             let strand_b = &vm.dna.helix.strands[idx_b as usize];
 
             let mut new_genes = strand_a.genes.clone();
-            new_genes.extend(strand_b.genes.clone());
+            new_genes.extend(strand_b.genes.iter().cloned());
 
             if vm.dna.helix.strands.len() < MAX_STRANDS {
                 let new_strand = crate::ast::Strand { genes: new_genes };

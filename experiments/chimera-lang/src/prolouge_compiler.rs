@@ -1181,7 +1181,6 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     Ok(genes)
 }
 
-
 fn compile_poincare_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let inner = pair.into_inner().next().unwrap();
@@ -1627,7 +1626,6 @@ quipu {
         assert_eq!(genes[2].args[0], Nucleotide::String("knot".to_string()));
         assert_eq!(genes[3].op, OpCode::Quipu);
     }
-
 
     #[test]
     fn test_poincare_block() {
