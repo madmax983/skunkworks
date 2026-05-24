@@ -34,6 +34,19 @@ use glam::Vec3;
 
 /// A point mass in the physics simulation.
 #[derive(Debug, Clone, Copy)]
+///
+/// # Examples
+///
+/// ```
+/// use physics_pbd::Particle;
+/// use glam::Vec3;
+/// let p = Particle {
+///     pos: Vec3::new(0.0, 0.0, 0.0),
+///     prev_pos: Vec3::new(0.0, 0.0, 0.0),
+///     vel: Vec3::new(0.0, 0.0, 0.0),
+///     inv_mass: 1.0,
+/// };
+/// ```
 pub struct Particle {
     /// Current position of the particle.
     pub pos: Vec3,
@@ -47,6 +60,18 @@ pub struct Particle {
 
 /// A constraint that limits the movement of particles.
 #[derive(Debug, Clone, Copy)]
+///
+/// # Examples
+///
+/// ```
+/// use physics_pbd::Constraint;
+/// let c = Constraint::Distance {
+///     p1: 0,
+///     p2: 1,
+///     rest_length: 10.0,
+///     stiffness: 1.0,
+/// };
+/// ```
 pub enum Constraint {
     /// Constrains two particles to be at a fixed distance from each other.
     Distance {

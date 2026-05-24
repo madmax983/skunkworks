@@ -20,6 +20,14 @@
 /// - **Negative Values**: `decay` respects the sign of values but zeroes them out if their *absolute* magnitude is below `0.001`.
 /// - **Aliases**: Generic aliases like `saturate` and `get` are available for non-magnetic contexts (e.g. fluid simulation).
 #[derive(Debug, Clone)]
+///
+/// # Examples
+///
+/// ```
+/// use platter::Platter;
+/// let p = Platter::new(10, 10);
+/// assert_eq!(p.width(), 10);
+/// ```
 pub struct Platter {
     /// The flat vector of field values.
     magnetism: Vec<f64>,

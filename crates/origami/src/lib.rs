@@ -39,6 +39,13 @@ use macroquad::prelude::*;
 /// The Miura-ori pattern is anisotropic. The "zig-zag" happens along one axis,
 /// creating different structural properties and visual appearances.
 #[derive(Clone, Copy, Debug, PartialEq, Default)]
+///
+/// # Examples
+///
+/// ```
+/// use origami::Orientation;
+/// let o = Orientation::Horizontal;
+/// ```
 pub enum Orientation {
     /// Zig-zag along X axis (rows shift). Height map forms stripes along Y.
     ///
@@ -55,6 +62,19 @@ pub enum Orientation {
 ///
 /// A Miura-ori pattern is defined by a repeating parallelogram unit cell.
 #[derive(Clone, Copy, Debug)]
+///
+/// # Examples
+///
+/// ```
+/// use origami::MiuraParams;
+/// use origami::Orientation;
+/// let params = MiuraParams {
+///     a: 10.0,
+///     b: 10.0,
+///     gamma: std::f32::consts::PI / 4.0,
+///     orientation: Orientation::Horizontal,
+/// };
+/// ```
 pub struct MiuraParams {
     /// Length of the edge `a` of the unit cell.
     pub a: f32,

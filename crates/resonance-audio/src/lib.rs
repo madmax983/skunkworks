@@ -17,7 +17,7 @@
 //!
 //! ## Usage
 //!
-//! The main entry point is the [`AudioModel`](audio::AudioModel). It runs on the audio thread, processing
+//! The main entry point is the [`AudioModel`]. It runs on the audio thread, processing
 //! commands from a channel and filling an output buffer.
 //!
 //! ```rust
@@ -43,5 +43,5 @@
 pub(crate) mod audio;
 pub(crate) mod physics;
 
-pub use audio::{AudioCommand, AudioModel, AudioSnapshot};
-pub use physics::PhysicsGrid;
+pub use audio::{AudioCommand, AudioModel, AudioSnapshot, Oscillator};
+pub use physics::{PhysicsGrid, Material};

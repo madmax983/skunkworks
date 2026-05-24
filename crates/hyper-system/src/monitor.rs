@@ -213,6 +213,14 @@ impl SystemMonitor {
     /// This method is only available when the `macroquad` feature is enabled.
     /// It automatically calls [`get_frame_time()`] and [`get_time()`].
     #[cfg(feature = "macroquad")]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::monitor::SystemMonitor;
+    /// let mut monitor = SystemMonitor::new();
+    /// monitor.update();
+    /// ```
     pub fn update(&mut self) {
         self.update_with_time(get_frame_time(), get_time());
     }

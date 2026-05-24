@@ -15,6 +15,14 @@ use ratatui::widgets::canvas::Context;
 /// This is not a standard `Widget` but a helper for drawing onto a `Canvas` context.
 /// It encapsulates the visual design of the bobber, including state-dependent icons (hooked vs idle)
 /// and environmental effects (ripples, splashes).
+///
+/// # Examples
+///
+/// ```
+/// use tui_shared::Bobber;
+/// let mut bobber = Bobber::new(50.0, 50.0, false);
+/// bobber.x = 5.0;
+/// ```
 pub struct Bobber {
     /// X coordinate on the Canvas (0.0 - 100.0 usually).
     pub x: f64,

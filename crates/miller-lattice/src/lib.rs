@@ -46,6 +46,13 @@ pub struct LatticePoint {
 
 impl LatticePoint {
     /// Creates a new `LatticePoint` from x, y, z coordinates.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use miller_lattice::LatticePoint;
+    /// let p = LatticePoint::new(1, 0, 0);
+    /// ```
     pub fn new(x: i32, y: i32, z: i32) -> Self {
         Self { x, y, z }
     }
@@ -74,6 +81,19 @@ impl LatticePoint {
 /// An atom carries metadata about the file system entry it represents, including
 /// its position in the 3D grid and the normal vector that defined its placement plane.
 #[derive(Debug, Clone)]
+///
+/// # Examples
+///
+/// ```
+/// use miller_lattice::{Atom, LatticePoint};
+/// let atom = Atom {
+///     position: LatticePoint::new(0, 0, 0),
+///     is_dir: true,
+///     name: "Fe".to_string(),
+///     path: std::path::PathBuf::from("Fe"),
+///     normal: cgmath::Vector3::new(1, 0, 0),
+/// };
+/// ```
 pub struct Atom {
     /// The discrete 3D position of this atom in the crystal.
     pub position: LatticePoint,
@@ -123,6 +143,13 @@ impl Default for Crystal {
 
 impl Crystal {
     /// Creates a new, empty Crystal.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use miller_lattice::Crystal;
+    /// let crystal = Crystal::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             atoms: Vec::new(),
@@ -145,6 +172,14 @@ impl Crystal {
     /// # Errors
     ///
     /// Returns an error if the root path cannot be read.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use miller_lattice::Crystal;
+    /// use std::path::Path;
+    /// let crystal = Crystal::build_from_path(Path::new(".")).unwrap();
+    /// ```
     pub fn build_from_path(root: &Path) -> Result<Self> {
         let mut crystal = Crystal::new();
         let mut occupied = FxHashSet::default();
