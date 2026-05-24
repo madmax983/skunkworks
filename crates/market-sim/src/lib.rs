@@ -56,6 +56,13 @@ pub const DEFAULT_TRADE_AGE: u8 = 5;
 
 /// A fundamental unit of the market simulation.
 #[derive(Clone, Copy, PartialEq, Debug)]
+///
+/// # Examples
+///
+/// ```
+/// use market_sim::Particle;
+/// let p = Particle::Bid(100);
+/// ```
 pub enum Particle {
     /// Empty space. No order exists here.
     Empty,
@@ -90,6 +97,17 @@ pub enum Particle {
 
 /// A record of a successful transaction between a Buyer and a Seller.
 #[derive(Debug, Clone, Copy, PartialEq)]
+///
+/// # Examples
+///
+/// ```
+/// use market_sim::TradeEvent;
+/// let trade = TradeEvent {
+///     buyer: 1,
+///     seller: 2,
+///     price: 100.0,
+/// };
+/// ```
 pub struct TradeEvent {
     /// The ID of the buyer (from the `Bid` particle).
     pub buyer: usize,
@@ -109,6 +127,13 @@ pub struct TradeEvent {
 /// *   **Width**: Represents simulated time or parallel order streams.
 /// *   **Height**: Represents the Price axis.
 #[derive(Debug)]
+///
+/// # Examples
+///
+/// ```
+/// use market_sim::Grid;
+/// let grid = Grid::new(10, 10);
+/// ```
 pub struct Grid {
     /// Width of the grid (number of columns).
     pub width: usize,
@@ -238,6 +263,14 @@ impl Grid {
     /// previous frame's trade count. This avoids O(log N) dynamic heap reallocations
     /// during the hot market simulation tick.
     /// Impact: Eliminates 4-6 heap reallocations per tick on high-volume markets.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use market_sim::Grid;
+    /// let mut grid = Grid::new(10, 10);
+    /// let trades = grid.update();
+    /// ```
     pub fn update(&mut self) -> Vec<TradeEvent> {
         let mut rng = rand::thread_rng();
 

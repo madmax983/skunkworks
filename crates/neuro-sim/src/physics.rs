@@ -154,6 +154,14 @@ impl Izhikevich {
     /// Typical of cortical excitatory neurons.
     ///
     /// Parameters: $a=0.02, b=0.2, c=-65.0, d=8.0, \tau=10.0$.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Izhikevich;
+    /// let neuron = Izhikevich::new_regular_spiking();
+    /// assert_eq!(neuron.a, 0.02);
+    /// ```
     pub fn new_regular_spiking() -> Self {
         Self {
             v: -65.0,
@@ -172,6 +180,14 @@ impl Izhikevich {
     /// Typical of inhibitory interneurons.
     ///
     /// Parameters: $a=0.1, b=0.2, c=-65.0, d=2.0, \tau=5.0$.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Izhikevich;
+    /// let neuron = Izhikevich::new_fast_spiking();
+    /// assert_eq!(neuron.a, 0.1);
+    /// ```
     pub fn new_fast_spiking() -> Self {
         Self {
             v: -65.0,
@@ -190,6 +206,14 @@ impl Izhikevich {
     /// Typical of bursting cortical neurons.
     ///
     /// Parameters: $a=0.02, b=0.2, c=-50.0, d=2.0, \tau=10.0$.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Izhikevich;
+    /// let neuron = Izhikevich::new_chattering();
+    /// assert_eq!(neuron.c, -50.0);
+    /// ```
     pub fn new_chattering() -> Self {
         Self {
             v: -65.0,

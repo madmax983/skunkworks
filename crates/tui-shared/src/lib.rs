@@ -104,6 +104,14 @@ use std::io::{self, Stdout};
 ///
 /// When dropped (or when [`Tui::exit`] is called), it reverses these actions to restore
 /// the terminal to its original state.
+///
+/// # Examples
+///
+/// ```ignore
+/// use tui_shared::Tui;
+/// let mut tui = Tui::new().expect("Failed to initialize TUI");
+/// tui.exit().expect("Failed to exit TUI");
+/// ```
 pub struct Tui {
     /// The underlying Ratatui `Terminal` instance.
     pub terminal: Terminal<CrosstermBackend<Stdout>>,

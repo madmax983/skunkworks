@@ -169,6 +169,7 @@ impl Geodesic {
         // 2*x2*x + 2*y2*y = d2
 
         let det = 4.0 * (x1 * y2 - x2 * y1);
+        if det.is_nan() { return None; }
 
         if det.is_nan() || det.abs() < 1e-9 {
             // Collinear with origin (or points are coincident/too close)
@@ -443,21 +444,53 @@ impl Mobius {
     }
 
     /// Returns the coefficient `a`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Mobius, Point};
+    /// let m = Mobius::translation(Point::new(0.5, 0.0));
+    /// let a = m.a();
+    /// ```
     pub fn a(&self) -> Complex<f64> {
         self.a
     }
 
     /// Returns the coefficient `b`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Mobius, Point};
+    /// let m = Mobius::translation(Point::new(0.5, 0.0));
+    /// let b = m.b();
+    /// ```
     pub fn b(&self) -> Complex<f64> {
         self.b
     }
 
     /// Returns the coefficient `c`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Mobius, Point};
+    /// let m = Mobius::translation(Point::new(0.5, 0.0));
+    /// let c = m.c();
+    /// ```
     pub fn c(&self) -> Complex<f64> {
         self.c
     }
 
     /// Returns the coefficient `d`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Mobius, Point};
+    /// let m = Mobius::translation(Point::new(0.5, 0.0));
+    /// let d = m.d();
+    /// ```
     pub fn d(&self) -> Complex<f64> {
         self.d
     }

@@ -13,6 +13,17 @@ use std::f32::consts::PI;
 
 /// A snapshot of the simulation state for visualization.
 #[derive(Clone, Debug)]
+///
+/// # Examples
+///
+/// ```
+/// use resonance_audio::AudioSnapshot;
+/// let snapshot = AudioSnapshot {
+///     pressure: vec![0.0; 100],
+///     materials: vec![],
+///     energy: vec![0.0; 100],
+/// };
+/// ```
 pub struct AudioSnapshot {
     /// A flat map of acoustic pressure across the grid.
     pub pressure: Vec<f32>,
@@ -26,6 +37,13 @@ pub struct AudioSnapshot {
 ///
 /// These commands are typically sent from the main thread (UI/Input) to the audio thread.
 #[derive(Debug, Clone)]
+///
+/// # Examples
+///
+/// ```
+/// use resonance_audio::AudioCommand;
+/// let cmd = AudioCommand::Pluck { x: 5, y: 5, strength: 1.0 };
+/// ```
 pub enum AudioCommand {
     /// Injects a sudden burst of energy at the specified coordinates.
     ///
@@ -110,6 +128,20 @@ pub enum AudioCommand {
 
 /// A continuous oscillator that injects energy into the grid.
 #[derive(Debug, Clone)]
+///
+/// # Examples
+///
+/// ```
+/// use resonance_audio::Oscillator;
+/// let osc = Oscillator {
+///     x: 5,
+///     y: 5,
+///     idx: 0,
+///     frequency: 440.0,
+///     strength: 1.0,
+///     phase: 0.0,
+/// };
+/// ```
 pub struct Oscillator {
     /// The X coordinate.
     pub x: usize,
@@ -129,6 +161,16 @@ pub struct Oscillator {
 ///
 /// This struct runs on the audio thread and manages the physics grid, processes commands,
 /// and generates audio samples.
+///
+/// # Examples
+///
+/// ```
+/// use resonance_audio::AudioModel;
+/// use crossbeam_channel::bounded;
+/// let (cmd_tx, cmd_rx) = bounded(128);
+/// let (snap_tx, snap_rx) = bounded(1);
+/// let model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
+/// ```
 pub struct AudioModel {
     /// The underlying physics simulation grid.
     pub grid: PhysicsGrid,

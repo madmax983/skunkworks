@@ -54,6 +54,20 @@ pub use physics::Izhikevich;
 /// When the `from` neuron spikes, a signal travels along this synapse.
 /// After `delay` steps, the `weight` is added to the `to` neuron's input current.
 #[derive(Clone, Debug)]
+///
+/// # Examples
+///
+/// ```
+/// use neuro_sim::Synapse;
+/// let synapse = Synapse {
+///     from: 0,
+///     to: 1,
+///     weight: 15.0,
+///     delay: 1,
+///     active: false,
+///     spikes_in_transit: vec![],
+/// };
+/// ```
 pub struct Synapse {
     /// Index of the source neuron.
     pub from: usize,
@@ -79,6 +93,13 @@ pub struct Synapse {
 /// This is the main container for the simulation. It owns all neurons and synapses
 /// and orchestrates the update loop.
 #[derive(Clone, Debug)]
+///
+/// # Examples
+///
+/// ```
+/// use neuro_sim::Network;
+/// let network = Network::new();
+/// ```
 pub struct Network {
     /// The collection of neurons in the network.
     pub neurons: Vec<Izhikevich>,

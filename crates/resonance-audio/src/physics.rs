@@ -55,6 +55,13 @@ pub struct PhysicsGrid {
 /// Different materials affect how sound waves propagate through them, acting as
 /// walls, lenses, or dampeners.
 #[derive(Debug, Clone, Copy, PartialEq)]
+///
+/// # Examples
+///
+/// ```
+/// use resonance_audio::Material;
+/// let mat = Material::Air;
+/// ```
 pub enum Material {
     /// Standard propagation medium ($c^2 = 0.4$, low damping).
     Air,
@@ -136,7 +143,7 @@ impl PhysicsGrid {
     ///
     /// # Examples
     /// ```
-    /// use resonance_audio::PhysicsGrid;
+    /// use resonance_audio::{PhysicsGrid, Material};
     /// let mut grid = PhysicsGrid::new(10, 10);
     /// grid.set_material(5, 5, Material::Wall);
     /// ```
