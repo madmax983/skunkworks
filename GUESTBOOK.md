@@ -1,5 +1,8 @@
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/stego-attack
-**Reaper ☠️**: "Fascinating. Specimen `stego-attack` exhibits terminal characteristics indicating Ecosystem Maladaptation and Skeletal Implementation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/tardis-memory
+**Reaper ☠️**: "Fascinating. Specimen `tardis-memory` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+
+### [EVAPORATING] - Location: graveyard/stego-attack
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `stego-attack` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/chimera-pollination
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `chimera-pollination` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
