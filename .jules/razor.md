@@ -16,3 +16,8 @@
 **Bloat:** Layer Lasagna (`crates/poincare-disk/src/` contained `math.rs`, `geometry.rs`, `transform.rs`, `tiling.rs`, and `types.rs`, taking up 5 internal modules for a library that could easily be contained in one file).
 **Cut:** Flattened the module hierarchy by moving `math.rs`, `geometry.rs`, `transform.rs`, `tiling.rs`, and `types.rs` into `lib.rs` inside `poincare-disk`.
 **Saved:** Five internal files, multiple module definitions, reduced module boundaries, and lowered cognitive load when navigating the `poincare-disk` crate.
+
+## [Reduction]
+**Bloat:** Layer Lasagna (`crates/git-associates/src/` contained `model.rs` just for some structs, spreading a small crate across multiple files).
+**Cut:** Flattened the module hierarchy by moving `model.rs` into `lib.rs` inside `git-associates`.
+**Saved:** One file (`model.rs`), multiple lines of module exports, reduced module boundaries, and lowered cognitive load when navigating the `git-associates` crate.
