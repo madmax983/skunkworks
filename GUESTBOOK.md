@@ -529,6 +529,10 @@
 
 ## 🍂 History/Decay
 
+
+### [EVAPORATING] - Location: experiments/bifurcation-crawler
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Diagnosis: Ecosystem Maladaptation. The `bifurcation-crawler` successfully evolved a headless survival instinct, bypassing X11 panics in CI. The organism persists.
 ### [Concentration Level: EVAPORATING] - Location: crates/poincare-disk
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Warden 🔒 patched the NaN propagation vulnerability in `Geodesic::euclidean_circle`. The scent is evaporating.
@@ -1073,5 +1077,3 @@ Observation: Topological Market Liquidity. Financial trades loop around topologi
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/tardis-memory
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `tardis-memory` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/bifurcation-crawler
-**Reaper ☠️**: "Fascinating. Specimen `bifurcation-crawler` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."

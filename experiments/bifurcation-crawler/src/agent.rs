@@ -66,7 +66,7 @@ impl Crawler {
             let p1 = particle_indices[i];
             let p2 = particle_indices[i + 1];
             // Min/Max/Stiffness
-            system.add_actuator_constraint(p1, p2, 0.02, 0.10, 0.8);
+            let _ = system.add_actuator_constraint(p1, p2, 0.02, 0.10, 0.8);
             let c_idx = system.constraints.len() - 1;
             actuator_indices.push(c_idx);
         }
@@ -129,7 +129,7 @@ impl Crawler {
 
         // Run VM
         for _ in 0..50 {
-            let _ = self.vm.step();
+            self.vm.step();
         }
 
         // Output: Muscle contractions
