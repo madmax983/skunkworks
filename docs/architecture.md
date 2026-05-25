@@ -1557,6 +1557,42 @@ sequenceDiagram
     VM->>TUI: Render LayoutDef (Ratatui)
 ```
 
+### Nova Feature: Weave Syntax (ADR 100)
+
+The `weave` block enables complex, native structural modification of execution strands. The compiler parses this block and generates an `OpCode::Weave` instruction.
+
+```mermaid
+sequenceDiagram
+    participant Script as Script Source
+    participant Compiler as PrologueCompiler
+    participant VM as ChimeraVM
+
+    Note over Script: weave { Rules }
+    Script->>Compiler: parse_weave_block()
+    Compiler-->>VM: push(OpCode::Weave)
+
+    Note over VM: Execution Phase
+    VM->>VM: execute_gene(Weave)
+```
+
+### Nova Feature: Fluid Syntax (ADR 101)
+
+The `fluid` block allows native invocation of fluid dynamics simulations. The compiler translates this block into an `OpCode::Fluid` instruction, triggering specialized physical simulation subsystems.
+
+```mermaid
+sequenceDiagram
+    participant Script as Script Source
+    participant Compiler as PrologueCompiler
+    participant VM as ChimeraVM
+
+    Note over Script: fluid { Rules }
+    Script->>Compiler: parse_fluid_block()
+    Compiler-->>VM: push(OpCode::Fluid)
+
+    Note over VM: Execution Phase
+    VM->>VM: execute_gene(Fluid)
+```
+
 ### Nova Feature: Prologue System (ADR 042, ADR 091)
 
 The Prologue system enables visual, grid-based logic execution, allowing for the creation of digital circuits and autonomous agents.
