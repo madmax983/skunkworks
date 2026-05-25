@@ -44,12 +44,12 @@ mod tests {
         // Magnitude squared overflows
         // (MAX/2)^2 = MAX^2 / 4 -> Infinity
         let mag_sq = huge.magnitude_squared();
-        assert_eq!(mag_sq, std::f64::MAX);
+        assert_eq!(mag_sq, f64::MAX);
 
         // Distance calculation overflows intermediate squared distance
         let huge2 = Vec2::new(0.0, f64::MAX / 2.0);
         let dist_sq = huge.distance_squared(huge2);
-        assert_eq!(dist_sq, std::f64::MAX);
+        assert_eq!(dist_sq, f64::MAX);
 
         println!("HAVOC: Vec2 overflowed to Infinity. (Fixed)");
     }

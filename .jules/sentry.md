@@ -45,3 +45,7 @@
 **Action:** Rely on `replace_with_git_merge_diff` for exact patch application, or manually patch files using isolated string replacement tools. Never commit scratchpad python files to version control; always run `git clean -fd` or manually remove them after use.
 **Threat:** Unbounded numerical inputs (e.g. `usize::MAX`) or lack of recursion depth checks triggering panics inside hot paths, specifically Out-Of-Memory (OOM) capacity overflows via `Vec::with_capacity` and stack overflows via AST traversal in `syn::parse_file`.
 **Defense:** Explicitly limit dynamic capacities and recursion bounds using `count.min(SAFE_LIMIT)` and iterate character depths before delegating to deeply-recursive third-party parsers.
+
+**[Capacity Overflow in with_entities]**
+**Learning:** Functions that accept an `impl IntoIterator` and call `.extend()` on a vector might inherit an aggressively large or unconstrained `size_hint()` from the iterator (e.g. `std::iter::repeat(...).take(usize::MAX)`), which the standard library uses to allocate capacity via `Vec::reserve()`, leading immediately to an Out-Of-Memory panic before any elements are actually processed.
+**Action:** When implementing collection builder methods (`with_X`), cap the reserved capacity using `iter.size_hint().upper.unwrap_or(lower).min(SAFE_LIMIT)` and limit the number of elements consumed to prevent malicious or accidental memory exhaustion.

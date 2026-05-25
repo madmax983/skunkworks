@@ -144,7 +144,15 @@ impl Snapshot {
     /// let snap = Snapshot::new("game").with_entities(enemies);
     /// ```
     pub fn with_entities(mut self, entities: impl IntoIterator<Item = Entity>) -> Self {
-        self.entities.extend(entities);
+        let iter = entities.into_iter();
+        let (lower, upper) = iter.size_hint();
+        // 🔒 Warden: Cap the capacity allocation based on a safe upper bound limit to avoid capacity overflow
+        let count = upper.unwrap_or(lower).min(100_000);
+        self.entities.reserve(count);
+
+        for entity in iter.take(100_000 - self.entities.len()) {
+            self.entities.push(entity);
+        }
         self
     }
 

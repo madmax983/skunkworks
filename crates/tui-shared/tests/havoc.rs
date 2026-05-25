@@ -17,6 +17,7 @@ mod tests {
     }
 
     // 👺 Havoc: Fuzzing Snapshot for crashes on massive capacity limits!
+    // 🔒 Warden: Fixed with explicit capacity clamping in with_entities.
     #[test]
     fn havoc_snapshot_oom_allocation() {
         let status = std::process::Command::new(std::env::current_exe().unwrap())
@@ -26,7 +27,7 @@ mod tests {
             .status();
 
         if let Ok(status) = status {
-            assert!(!status.success(), "👺 Havoc: System safely handled massive allocations without OOM crashing! Our chaos hunt failed!");
+            assert!(status.success(), "👺 Havoc: Wait, Sentry supposedly fixed this, but the process still aborted!");
         }
     }
 }
@@ -55,7 +56,8 @@ fn havoc_log_system_oom_allocation_inner() {
 fn havoc_snapshot_oom_allocation_inner() {
     if std::env::args().any(|arg| arg == "havoc_snapshot_oom_allocation_inner") {
         use tui_shared::Snapshot;
-        let massive_entities = Vec::with_capacity(usize::MAX);
+        // In the updated `with_entities`, we iterate up to 100_000 elements.
+        let massive_entities = std::iter::repeat(tui_shared::Entity::new("enemy"));
         let _snap = Snapshot::new("test").with_entities(massive_entities);
     }
 }

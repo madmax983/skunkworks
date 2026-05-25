@@ -33,7 +33,7 @@ fn test_vec4_length_underflow_overflow() {
     let huge = 2.0e19; // huge * huge = 4e38 > f32::MAX
     let v_huge = Vec4::new(huge, 0.0, 0.0, 0.0);
     let _ = v_huge.length_squared();
-    assert!(v_huge.length() <= std::f32::MAX.sqrt() && v_huge.length().is_finite());
+    assert!(v_huge.length() <= f32::MAX.sqrt() && v_huge.length().is_finite());
 }
 
 #[test]
