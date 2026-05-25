@@ -1,6 +1,6 @@
-🗺️ Atlas: Enforce Module Boundaries via Facade
+⚡ Bolt: Replace `.extend(collection.clone())` with `.extend(collection.iter().cloned())`
 
-🕸️ Tangle: Internal modules within `crates/git-associates`, `crates/locus`, `crates/resonance-audio`, and `crates/hyper-system` were exposed as `pub mod`, breaking the Facade pattern by leaking implementation details.
-📐 Blueprint: Modified the module definitions to use `pub(crate) mod` and explicitly `pub use` only the intended types/structs to ensure high cohesion and strict encapsulation. Also repaired tests and doctests that depended on the leaked inner modules.
-🧱 Stability: Reduced coupling, faster compile times.
-🔬 Verification: Builds successfully, strict separation enforced. Tests pass for all modified crates.
+💡 What: Replaced `.extend(collection.clone())` with `.extend(collection.iter().cloned())` in several files within `chimera-lang`.
+🎯 Why: To avoid unnecessary intermediate heap allocations. Calling `clone()` on a collection allocates a new vector on the heap before extending the target vector. `iter().cloned()` avoids this by chaining an iterator.
+📊 Impact: Eliminates unnecessary `Vec` allocations during gene collection operations, such as in genetics processing, alchemy fusion, and acoustic compilation.
+🔬 Measurement: Run `cargo clippy` and test suite `cargo test -p chimera-lang` to verify safety and correctness.
