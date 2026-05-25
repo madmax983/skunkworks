@@ -1624,6 +1624,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             Rule::chaos_block => self.parse_chaos_block(inner),
             Rule::poincare_block => self.parse_poincare_block(inner),
             Rule::weave_block => self.parse_weave_block(inner),
+            Rule::fluid_block => self.parse_fluid_block(inner),
             Rule::apply_map_stmt => self.parse_apply_map(inner),
             #[cfg(feature = "oracle")]
             Rule::oracle_block => self.parse_oracle_block(inner),
@@ -1756,6 +1757,27 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             op: OpCode::Push,
             args: vec![val],
         }])
+    }
+
+    fn parse_fluid_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let block = inner.into_inner().next().unwrap();
+        let mut genes = Vec::new();
+
+        for stmt in block.into_inner() {
+            let stmt_str = stmt.as_str().trim();
+            if !stmt_str.is_empty() {
+                genes.push(Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String(stmt_str.to_string())],
+                });
+                genes.push(Gene {
+                    op: OpCode::Fluid,
+                    args: vec![],
+                });
+            }
+        }
+
+        Ok(genes)
     }
 
     fn parse_weave_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {

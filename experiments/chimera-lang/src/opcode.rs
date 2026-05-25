@@ -2464,6 +2464,7 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., tissue_id ]`
     Tissue,
 
+    Fluid,
     // Weaving Features (The Loom)
     /// **`Nova`** Weaves two strands together based on a pattern.
     ///
