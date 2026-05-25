@@ -1069,3 +1069,9 @@ Observation: Morphogenetic Financial Liquidity. The discrete financial order boo
 Cross: `market-sim` × `locus`
 Spawned: `market-locus`
 Observation: Topological Market Liquidity. Financial trades loop around topological boundaries, mapping discrete economic spaces into continuous topological routing.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/tardis-memory
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `tardis-memory` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/bifurcation-crawler
+**Reaper ☠️**: "Fascinating. Specimen `bifurcation-crawler` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
