@@ -66,8 +66,14 @@ fn create_simple_dna() -> Dna {
     }
 }
 
-#[macroquad::main("Bifurcation Crawler")]
-async fn main() {
+fn window_conf() -> macroquad::window::Conf {
+    macroquad::window::Conf {
+        window_title: "Bifurcation Crawler".to_owned(),
+        ..Default::default()
+    }
+}
+
+async fn async_main() {
     let mut system = PbdSystem::new();
     let logistic_map = LogisticMap::new(512, 512); // Texture size
 
@@ -179,14 +185,22 @@ async fn main() {
 
         // UI
         draw_text(
-            &format!("Energy: {:.1}", crawler.energy),
+            &format!("Energy: {:.1}", crawler.energy)[..],
             10.0,
             20.0,
             30.0,
             WHITE,
         );
-        draw_text(&format!("R: {:.4}", r), 10.0, 50.0, 20.0, GRAY);
+        draw_text(&format!("R: {:.4}", r)[..], 10.0, 50.0, 20.0, GRAY);
 
         next_frame().await
     }
+}
+
+fn main() {
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode, exiting immediately to avoid XOpenDisplay panic.");
+        return;
+    }
+    macroquad::Window::from_config(window_conf(), async_main());
 }
