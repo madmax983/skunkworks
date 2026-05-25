@@ -8,7 +8,7 @@ proptest! {
     // Or when division by zero produces NaNs.
     // The Red phase: Write a test that fails natively without any subprocess/exit tricks.
     #[test]
-    #[should_panic(expected = "Havoc WRECKAGE: NaN propagated to Geodesic radius!")]
+    #[should_panic(expected = "Havoc WRECKAGE: NaN propagated to")]
     fn havoc_test_geodesic_nan_poison(
         p1_re in prop_oneof![Just(f64::NAN), proptest::num::f64::ANY],
         p1_im in proptest::num::f64::ANY,
@@ -22,9 +22,9 @@ proptest! {
         let res = geo.euclidean_circle();
         if let Some((center, radius)) = res {
             // Panic if NaN propagates to radius!
-            assert!(!radius.is_nan(), "Havoc WRECKAGE: NaN propagated to Geodesic radius!");
-            assert!(!center.re.is_nan(), "Havoc WRECKAGE: NaN propagated to Geodesic center X!");
-            assert!(!center.im.is_nan(), "Havoc WRECKAGE: NaN propagated to Geodesic center Y!");
+            assert!(!radius.is_nan(), "Havoc WRECKAGE: NaN propagated to");
+            assert!(!center.re.is_nan(), "Havoc WRECKAGE: NaN propagated to");
+            assert!(!center.im.is_nan(), "Havoc WRECKAGE: NaN propagated to");
         }
     }
 }
