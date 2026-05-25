@@ -2,7 +2,7 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use crossbeam_channel::bounded;
 use macroquad::prelude::*;
 use myco_transit::World as MycoWorld;
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::{AudioCommand, AudioModel};
 use std::sync::{Arc, Mutex};
 use std::thread;
 

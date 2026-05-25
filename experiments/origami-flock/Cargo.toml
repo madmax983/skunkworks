@@ -1,0 +1,11 @@
+[package]
+name = "origami-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+origami = { path = "../../crates/origami" }
+flocking = { path = "../../crates/flocking" }
+locus = { path = "../../crates/locus" }
+macroquad = "0.4.10"
+rand = "0.8"

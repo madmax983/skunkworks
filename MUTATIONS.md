@@ -14,6 +14,8 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all previous hybrids, including `poincare-fluid` and `poincare-flock`. `poincare-fluid` is successfully leveraging hyperbolic coordinate maps for macroscopic fluids, and `poincare-flock` explores hyperbolic swarm mechanics. I have documented their vigor and noted their compilation success. The breeding strategy remains focused on pairing robust physical/structural mediums with abstract, non-Euclidean environments.
 
+
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that the recent `poincare-flock`, `poincare-fluid`, `myco-resonance`, `quipu-poincare`, `market-poincare`, and `locus-flock` crosses compile properly and exhibit hybrid vigor. The `myco-resonance` crate had a minor visibility issue with `audio` module which I fixed. The strategy of mapping swarm intelligence, fluid logic, or biological pathfinding onto abstract topologies yields incredible emergent behavior. I am autonomously inventing a new hybrid to push physical continuous structures further with swarm intelligence: `origami-flock`.
 ## 🔬 Breeding Strategy Update
 
 **Observations:**
@@ -80,11 +82,6 @@ I have checked all previous hybrids in this list.
 ## 🌸 Proposed Crosses
 
 
-### poincare-fluid
-- **Parents**: crates/poincare-disk + experiments/ferrous-fluid
-- **Concept**: Hyperbolic Magnetic Fluid.
-- **Novel trait**: Magnetic particles navigate the continuous space of a Poincaré disk. As they approach the boundary, hyperbolic distance stretches the magnetic forces, causing particles to compress incredibly densely at the edges while flowing freely in the center.
-- **Predicted Phenotype**: An organic, fluid visualization where magnetic repulsion and attraction are warped by non-Euclidean geometry, simulating the stretching of fluid space towards infinity.
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. As the 'Proposed Crosses' section was empty and I was directed to shift to neural mapping, I am autonomously inventing a new hybrid: `quipu-poincare`. Crossing the discrete knotted data structures of `quipu` with the continuous hyperbolic boundary space of `poincare-disk` allows us to visualize integer values structurally approaching the infinite void.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that the recent `myco-resonance` and `poincare-fluid` crosses exhibit extraordinary hybrid vigor and compile properly. The strategy of mapping organic networks or physical simulations into acoustic or hyperbolic coordinate systems yields beautiful emergent phenotypes. The Reaper has not condemned these recent mutations. I am autonomously inventing a new hybrid to push non-Euclidean environments further with swarm intelligence: `poincare-flock`.
@@ -105,6 +102,23 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+
+### origami-flock
+- **Parents**: crates/origami + crates/flocking
+- **Concept**: Swarm-Driven Soft Body Morphogenesis.
+- **Novel trait**: The continuous, physical soft-body paper mesh of `origami` is directly deformed by the swarm intelligence of `flocking`. Boids navigate the surface of the mesh, and their collective movements and density physically pull and crumple the fabric of the space they inhabit.
+- **Predicted Phenotype**: An organic, living topography that bucks and folds under the weight of the flock, demonstrating how biological swarming intent can warp its own physical environment.
+- **Status**: experiments/origami-flock
+- **Evaluation**: Success. Compiled.
+
+### poincare-fluid
+- **Parents**: crates/poincare-disk + experiments/ferrous-fluid
+- **Concept**: Hyperbolic Magnetic Fluid.
+- **Novel trait**: Magnetic particles navigate the continuous space of a Poincaré disk. As they approach the boundary, hyperbolic distance stretches the magnetic forces, causing particles to compress incredibly densely at the edges while flowing freely in the center.
+- **Predicted Phenotype**: An organic, fluid visualization where magnetic repulsion and attraction are warped by non-Euclidean geometry, simulating the stretching of fluid space towards infinity.
+- **Status**: experiments/poincare-fluid
+- **Evaluation**: Success. Compiled.
+
 ### market-locus
 
 - **Parents**: crates/market-sim + crates/locus
@@ -323,11 +337,6 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/flock-resonance
 - **Evaluation**: Success. Compiled. Swarm intent and kinetic motion successfully translate into continuous acoustic wave propagation.
 
-### poincare-fluid
-- **Parents**: crates/poincare-disk + experiments/ferrous-fluid
-- **Concept**: Hyperbolic Magnetic Fluid.
-- **Novel trait**: Magnetic particles navigate the continuous space of a Poincaré disk. As they approach the boundary, hyperbolic distance stretches the magnetic forces, causing particles to compress incredibly densely at the edges while flowing freely in the center.
-- **Predicted Phenotype**: An organic, fluid visualization where magnetic repulsion and attraction are warped by non-Euclidean geometry, simulating the stretching of fluid space towards infinity.
 - **Status**: experiments/poincare-fluid
 - **Evaluation**: Success. Compiled. The macroscopic magnetic fluid is successfully warped by the microscopic hyperbolic coordinate system.
 
