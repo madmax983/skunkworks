@@ -2,7 +2,7 @@ WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("#" ~ (!"\n" ~ ANY)*) }
 
 program = { SOI ~ section* ~ EOI }
-section = { forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block | brainfuck_block | tui_block | mosaic_block | piet_block | chaos_block | regex_block | acoustic_block | befunge_block | reactor_block | quipu_block | origami_block | esolang_block | flocking_block | market_block | poincare_block | weave_block }
+section = { forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block | brainfuck_block | tui_block | mosaic_block | piet_block | chaos_block | regex_block | acoustic_block | befunge_block | reactor_block | quipu_block | origami_block | esolang_block | flocking_block | market_block | poincare_block | weave_block | fluid_block }
 
 forth_block = { "forth" ~ "{" ~ instruction* ~ "}" }
 raku_block = { "raku" ~ "{" ~ hyper_instruction* ~ "}" }
@@ -41,3 +41,4 @@ string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
 
 poincare_block = { "poincare" ~ "{" ~ instruction* ~ "}" }
 weave_block = { "weave" ~ "{" ~ instruction* ~ "}" }
+fluid_block = { "fluid" ~ "{" ~ instruction* ~ "}" }
