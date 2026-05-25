@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **tardis-memory**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
+- **bifurcation-crawler**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
 
 ## ☠️ Executed
+- **tardis-memory**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **stego-attack**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Skeletal Implementation. Grace period expired. Moved to graveyard.
 - **chimera-pollination**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Failed to improve during grace period. Moved to graveyard.
 - **locust-tank**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay() failed!` in headless environments due to missing `--headless` bypass. Failed to improve during grace period. Moved to graveyard.
