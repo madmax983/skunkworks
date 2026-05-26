@@ -10,8 +10,14 @@ const STRING_COUNT: usize = 12;
 const STRING_SPACING: f32 = 60.0;
 const BASE_FREQ: f32 = 220.0; // A3
 
-#[macroquad::main("Genetic Luthier")]
-async fn main() {
+fn window_conf() -> macroquad::window::Conf {
+    macroquad::window::Conf {
+        window_title: "Genetic Luthier".to_owned(),
+        ..Default::default()
+    }
+}
+
+async fn async_main() {
     let (audio_handle, cmd_tx) = init_audio().expect("Failed to init audio");
     // Keep handle alive
     let _audio_handle = audio_handle;
@@ -149,4 +155,12 @@ fn calculate_consonance(f1: f32, f2: f32) -> f32 {
     }
 
     0.0
+}
+
+fn main() {
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode, exiting immediately to avoid XOpenDisplay panic.");
+        return;
+    }
+    macroquad::Window::from_config(window_conf(), async_main());
 }
