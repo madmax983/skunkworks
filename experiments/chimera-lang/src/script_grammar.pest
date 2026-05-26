@@ -63,6 +63,10 @@ instruction = {
     oracle_block |
     polyglot_block |
     poincare_block |
+    gray_scott_block |
+    locus_block |
+    neuro_block |
+    platter_block |
     weave_block |
     fluid_block |
     literal |
@@ -127,3 +131,7 @@ junction_type = { "any" | "all" }
 identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 number = @{ "-"? ~ ASCII_DIGIT+ }
 string = @{ "\"" ~ ( "\\\"" | (!"\"" ~ ANY) )* ~ "\"" }
+gray_scott_block = { "gray_scott" ~ "{" ~ instruction* ~ "}" }
+locus_block = { "locus" ~ "{" ~ instruction* ~ "}" }
+neuro_block = { "neuro" ~ "{" ~ instruction* ~ "}" }
+platter_block = { "platter" ~ "{" ~ instruction* ~ "}" }

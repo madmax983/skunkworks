@@ -492,6 +492,23 @@ impl crate::vm::ChimeraVM {
                     .push("Poincare hyperbolic geometry evaluated.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
+
+            OpCode::GrayScott => {
+                self.output.push("Gray-Scott diffusion evaluated.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
+            OpCode::Locus => {
+                self.output.push("Locus topology evaluated.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
+            OpCode::Neuro => {
+                self.output.push("Neural network simulated.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
+            OpCode::Platter => {
+                self.output.push("Platter heatmap simulated.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
             #[cfg(feature = "oracle")]
             OpCode::Divergence => Some(nova::exec_nova_op(self, op, args)),
             _ => None,
