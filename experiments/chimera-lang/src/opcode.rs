@@ -1294,6 +1294,15 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     /// **Effect:** Injects extreme genetic chaos and random Orca signal bursts.
     Prolouge,
+
+    /// **`Prolouge`** GrayScott block execution
+    GrayScott,
+    /// **`Prolouge`** Locus block execution
+    Locus,
+    /// **`Prolouge`** Neuro block execution
+    Neuro,
+    /// **`Prolouge`** Platter block execution
+    Platter,
     /// **`Prologue`** Places a Rune on the grid.
     ///
     /// **Stack:** `[ ..., rune_char, y, x ] -> [ ... ]`

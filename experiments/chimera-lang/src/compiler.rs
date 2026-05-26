@@ -1623,6 +1623,11 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             Rule::crispr_block => self.parse_crispr_block(inner),
             Rule::chaos_block => self.parse_chaos_block(inner),
             Rule::poincare_block => self.parse_poincare_block(inner),
+
+            Rule::gray_scott_block => self.parse_gray_scott_block(inner),
+            Rule::locus_block => self.parse_locus_block(inner),
+            Rule::neuro_block => self.parse_neuro_block(inner),
+            Rule::platter_block => self.parse_platter_block(inner),
             Rule::weave_block => self.parse_weave_block(inner),
             Rule::fluid_block => self.parse_fluid_block(inner),
             Rule::apply_map_stmt => self.parse_apply_map(inner),
@@ -1801,6 +1806,71 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         Ok(genes)
     }
 
+
+
+    fn parse_gray_scott_block(
+        &mut self,
+        inner: pest::iterators::Pair<'i, Rule>,
+    ) -> Result<Vec<Gene>> {
+        let mut genes = Vec::new();
+        for stmt in inner.into_inner() {
+            let stmt_str = stmt.as_str().trim();
+            if stmt_str == "simulate" {
+                genes.push(Gene::new(crate::opcode::OpCode::GrayScott, vec![]));
+            } else if let Ok(g) = self.parse_instruction(stmt) {
+                genes.extend(g);
+            }
+        }
+        Ok(genes)
+    }
+
+    fn parse_locus_block(
+        &mut self,
+        inner: pest::iterators::Pair<'i, Rule>,
+    ) -> Result<Vec<Gene>> {
+        let mut genes = Vec::new();
+        for stmt in inner.into_inner() {
+            let stmt_str = stmt.as_str().trim();
+            if stmt_str == "simulate" {
+                genes.push(Gene::new(crate::opcode::OpCode::Locus, vec![]));
+            } else if let Ok(g) = self.parse_instruction(stmt) {
+                genes.extend(g);
+            }
+        }
+        Ok(genes)
+    }
+
+    fn parse_neuro_block(
+        &mut self,
+        inner: pest::iterators::Pair<'i, Rule>,
+    ) -> Result<Vec<Gene>> {
+        let mut genes = Vec::new();
+        for stmt in inner.into_inner() {
+            let stmt_str = stmt.as_str().trim();
+            if stmt_str == "simulate" {
+                genes.push(Gene::new(crate::opcode::OpCode::Neuro, vec![]));
+            } else if let Ok(g) = self.parse_instruction(stmt) {
+                genes.extend(g);
+            }
+        }
+        Ok(genes)
+    }
+
+    fn parse_platter_block(
+        &mut self,
+        inner: pest::iterators::Pair<'i, Rule>,
+    ) -> Result<Vec<Gene>> {
+        let mut genes = Vec::new();
+        for stmt in inner.into_inner() {
+            let stmt_str = stmt.as_str().trim();
+            if stmt_str == "simulate" {
+                genes.push(Gene::new(crate::opcode::OpCode::Platter, vec![]));
+            } else if let Ok(g) = self.parse_instruction(stmt) {
+                genes.extend(g);
+            }
+        }
+        Ok(genes)
+    }
     fn parse_poincare_block(
         &mut self,
         inner: pest::iterators::Pair<'i, Rule>,
