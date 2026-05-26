@@ -1,7 +1,7 @@
-pub mod dungeon;
-pub mod entity;
-pub mod game;
-pub mod render;
+mod dungeon;
+mod entity;
+mod game;
+mod render;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use bevy_rapier2d::prelude::*;
-use clockwork_concerto::{audio, cpu, mechanism, view};
+use clockwork_concerto::*;
 
 fn main() {
     App::new()
@@ -15,12 +15,7 @@ fn main() {
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(20.0)) // Zoom out a bit
         // .add_plugins(RapierDebugRenderPlugin::default()) // Enable for debugging physics
         .add_plugins(ShapePlugin)
-        .add_plugins((
-            mechanism::MechanismPlugin,
-            cpu::CpuPlugin,
-            audio::AudioPlugin,
-            view::ViewPlugin,
-        ))
+        .add_plugins((MechanismPlugin, CpuPlugin, AudioPlugin, ViewPlugin))
         .add_systems(Startup, setup)
         .add_systems(Update, handle_torque)
         .run();
@@ -37,17 +32,17 @@ fn setup(mut commands: Commands) {
     let radius = 8.0;
     let density = 2.0;
 
-    mechanism::spawn_gear(&mut commands, wheel_pos, teeth, radius, density);
+    spawn_gear(&mut commands, wheel_pos, teeth, radius, density);
 
     // Spawn Anchor
     // Position needs tuning.
     // For radius 8, teeth 12, gap between teeth is large.
     // Anchor spans roughly 90 degrees?
     // Let's put anchor at Y=12.0
-    mechanism::spawn_anchor(&mut commands, Vec2::new(0.0, 12.0));
+    spawn_anchor(&mut commands, Vec2::new(0.0, 12.0));
 
     // Spawn CPU
-    commands.spawn(cpu::CpuState::default());
+    commands.spawn(CpuState::default());
 
     // Load Program (Music Box)
     // C Major Scale with rhythm
@@ -55,20 +50,20 @@ fn setup(mut commands: Commands) {
     let mut program = Vec::new();
 
     for note in notes {
-        program.push(cpu::Instruction::Note(note));
+        program.push(Instruction::Note(note));
         // Add wait instructions (NOPs)
         for _ in 0..4 {
-            program.push(cpu::Instruction::Load(0, 0)); // NOP effectively
+            program.push(Instruction::Load(0, 0)); // NOP effectively
         }
     }
-    program.push(cpu::Instruction::Jmp(0)); // Loop
+    program.push(Instruction::Jmp(0)); // Loop
 
-    commands.insert_resource(cpu::Program(program));
+    commands.insert_resource(Program(program));
 }
 
 fn handle_torque(
     input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<&mut ExternalForce, With<mechanism::EscapeWheel>>,
+    mut query: Query<&mut ExternalForce, With<EscapeWheel>>,
 ) {
     let torque_mag = 50000.0; // High torque due to high mass/inertia
     for mut force in &mut query {

@@ -2,9 +2,9 @@ use macroquad::miniquad::{
     BlendFactor, BlendState, BlendValue, Comparison, Equation, PrimitiveType,
 };
 use macroquad::prelude::*;
-use system_attractor::audio::Synth;
-use system_attractor::lyapunov::LyapunovMonitor;
-use system_attractor::simulation::{Particle, Simulation};
+use system_attractor::LyapunovMonitor;
+use system_attractor::Synth;
+use system_attractor::{Particle, Simulation};
 
 const PARTICLE_COUNT: usize = 500_000;
 const BATCH_SIZE: usize = 60_000;
@@ -258,9 +258,9 @@ async fn main() {
         std::mem::swap(&mut trails_a, &mut trails_b);
 
         draw_text("System Attractor", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("FPS: {}", get_fps()), 10.0, 50.0, 20.0, LIGHTGRAY);
+        draw_text(format!("FPS: {}", get_fps()), 10.0, 50.0, 20.0, LIGHTGRAY);
         draw_text(
-            &format!("Particles: {}", PARTICLE_COUNT),
+            format!("Particles: {}", PARTICLE_COUNT),
             10.0,
             70.0,
             20.0,
@@ -269,23 +269,23 @@ async fn main() {
 
         let p = &sim.monitor.params;
         draw_text(
-            &format!("Sigma (CPU): {:.2}", p.sigma),
+            format!("Sigma (CPU): {:.2}", p.sigma),
             10.0,
             100.0,
             20.0,
             RED,
         );
-        draw_text(&format!("Rho (RAM): {:.2}", p.rho), 10.0, 120.0, 20.0, BLUE);
-        draw_text(&format!("Beta: {:.2}", p.beta), 10.0, 140.0, 20.0, GREEN);
+        draw_text(format!("Rho (RAM): {:.2}", p.rho), 10.0, 120.0, 20.0, BLUE);
+        draw_text(format!("Beta: {:.2}", p.beta), 10.0, 140.0, 20.0, GREEN);
         draw_text(
-            &format!("Jitter (Swap): {:.3}", p.jitter),
+            format!("Jitter (Swap): {:.3}", p.jitter),
             10.0,
             160.0,
             20.0,
             MAGENTA,
         );
         draw_text(
-            &format!("Shift (Load): {:.2}", p.color_shift),
+            format!("Shift (Load): {:.2}", p.color_shift),
             10.0,
             180.0,
             20.0,
@@ -293,7 +293,7 @@ async fn main() {
         );
 
         draw_text(
-            &format!("Lyapunov Exp: {:.4}", lyapunov.get_exponent()),
+            format!("Lyapunov Exp: {:.4}", lyapunov.get_exponent()),
             10.0,
             210.0,
             20.0,

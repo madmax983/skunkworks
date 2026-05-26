@@ -9,8 +9,8 @@ use ratatui::{
     style::{Color, Modifier, Style},
     widgets::{Block, BorderType, Borders, Paragraph, Wrap},
 };
-use spqr_rsa::crypto::{KeyPair, decrypt, encrypt, generate_keys};
-use spqr_rsa::roman::Roman;
+use spqr_rsa::Roman;
+use spqr_rsa::{KeyPair, decrypt, encrypt, generate_keys};
 use std::io;
 use std::time::Duration;
 

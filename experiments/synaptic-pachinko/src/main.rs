@@ -5,13 +5,13 @@
 //! building charge until they reach a threshold and emit audio synthesis.
 
 /// Audio module for sound synthesis mapping neuronal action potentials to audio.
-pub mod audio;
+mod audio;
 /// Game state and game logic (updating the position of packets, handling neuron charge, scoring).
-pub mod game;
+mod game;
 /// Neural definitions re-exported from neuro-sim.
-pub mod neuron;
+mod neuron;
 /// Physics structures and collision resolution for packets dropping on the neuron pins.
-pub mod physics;
+mod physics;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};

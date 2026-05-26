@@ -1,6 +1,6 @@
-use system_attractor::lyapunov::LyapunovMonitor;
-use system_attractor::simulation::LorenzParams;
-use system_attractor::simulation::{update_particles, Particle};
+use system_attractor::LyapunovMonitor;
+use system_attractor::LorenzParams;
+use system_attractor::{update_particles, Particle};
 
 #[test]
 fn test_lyapunov_positive() {

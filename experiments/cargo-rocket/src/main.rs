@@ -13,9 +13,9 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-pub mod physics;
-pub mod recorder;
-pub mod world;
+mod physics;
+mod recorder;
+mod world;
 
 use physics::{System, Vec2};
 use recorder::{Recorder, Replayer};

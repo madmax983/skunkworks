@@ -7,7 +7,6 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
-use std::io::Read;
 
 pub fn draw(f: &mut Frame, app: &Game) {
     let chunks = Layout::default()

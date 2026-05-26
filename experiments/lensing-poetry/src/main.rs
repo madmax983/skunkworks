@@ -1,8 +1,10 @@
+use lensing_poetry::{
+    generate_poetry_target, get_fragment_shader, get_uniforms, get_vertex_shader, integrate,
+    MAX_BODIES,
+};
 use macroquad::prelude::*;
 
-use lensing_poetry::physics::{self, Body, G};
-use lensing_poetry::shader;
-use lensing_poetry::text_gen;
+use lensing_poetry::{Body, G};
 
 fn window_conf() -> Conf {
     Conf {
@@ -20,17 +22,17 @@ async fn main() {
     let mut height = screen_height() as u32;
 
     // Generate Text Texture
-    let mut text_target = text_gen::generate_poetry_target(width, height);
+    let mut text_target = generate_poetry_target(width, height);
 
     // Load Shader
-    let frag_src = shader::get_fragment_shader();
+    let frag_src = get_fragment_shader();
     let material = load_material(
         ShaderSource::Glsl {
-            vertex: shader::get_vertex_shader(),
+            vertex: get_vertex_shader(),
             fragment: &frag_src,
         },
         MaterialParams {
-            uniforms: shader::get_uniforms(),
+            uniforms: get_uniforms(),
             pipeline_params: PipelineParams {
                 depth_write: false,
                 depth_test: Comparison::Always,
@@ -42,7 +44,7 @@ async fn main() {
     .unwrap();
 
     // Bodies
-    let mut bodies = Vec::with_capacity(shader::MAX_BODIES);
+    let mut bodies = Vec::with_capacity(MAX_BODIES);
 
     // Initial Setup
     bodies.push(Body {
@@ -78,11 +80,11 @@ async fn main() {
         if new_w != width || new_h != height {
             width = new_w;
             height = new_h;
-            text_target = text_gen::generate_poetry_target(width, height);
+            text_target = generate_poetry_target(width, height);
         }
 
         // Input
-        if is_mouse_button_pressed(MouseButton::Left) && bodies.len() < shader::MAX_BODIES {
+        if is_mouse_button_pressed(MouseButton::Left) && bodies.len() < MAX_BODIES {
             let mpos = mouse_position();
             let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
 
@@ -100,7 +102,7 @@ async fn main() {
             });
         }
 
-        if is_mouse_button_pressed(MouseButton::Right) && bodies.len() < shader::MAX_BODIES {
+        if is_mouse_button_pressed(MouseButton::Right) && bodies.len() < MAX_BODIES {
             let mpos = mouse_position();
             let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
 
@@ -125,7 +127,7 @@ async fn main() {
         let substeps = 4;
         let sdt = dt / substeps as f32;
         for _ in 0..substeps {
-            physics::integrate(&mut bodies, sdt);
+            integrate(&mut bodies, sdt);
         }
 
         // Draw
