@@ -30,7 +30,7 @@ use ratatui::{
     Terminal,
 };
 use std::io::{self, Read};
-use tui_shared::semantic::Snapshot;
+use tui_shared::Snapshot;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -106,7 +106,7 @@ impl App {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tui_shared::semantic::Entity;
+    use tui_shared::Entity;
 
     #[test]
     fn test_app_navigation() {
@@ -363,10 +363,10 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
 
         for (k, v) in &entity.props {
             let v_str = match v {
-                tui_shared::semantic::PropValue::Int(i) => i.to_string(),
-                tui_shared::semantic::PropValue::Float(f) => format!("{:.2}", f),
-                tui_shared::semantic::PropValue::Bool(b) => b.to_string(),
-                tui_shared::semantic::PropValue::Text(t) => t.to_string(),
+                tui_shared::PropValue::Int(i) => i.to_string(),
+                tui_shared::PropValue::Float(f) => format!("{:.2}", f),
+                tui_shared::PropValue::Bool(b) => b.to_string(),
+                tui_shared::PropValue::Text(t) => t.to_string(),
             };
 
             let mut value_style = Style::default();

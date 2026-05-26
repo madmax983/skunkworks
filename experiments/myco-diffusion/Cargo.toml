@@ -7,5 +7,5 @@ edition = "2021"
 macroquad = "0.4"
 rayon = "1.8"
 rand = { workspace = true }
-glam = "0.27"
+glam = "0.28"
 gray-scott = { workspace = true, features = ["parallel"] }

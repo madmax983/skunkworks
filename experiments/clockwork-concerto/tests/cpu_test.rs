@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use clockwork_concerto::*;
 
-
 #[derive(Resource, Default)]
 struct NoteCount(usize);
 
