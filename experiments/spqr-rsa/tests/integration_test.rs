@@ -1,5 +1,5 @@
-use spqr_rsa::crypto::{decrypt, encrypt, generate_keys};
-use spqr_rsa::roman::Roman;
+use spqr_rsa::Roman;
+use spqr_rsa::{decrypt, encrypt, generate_keys};
 use std::str::FromStr;
 
 #[test]

@@ -5,7 +5,7 @@ use ratatui::style::Color;
 use std::f64::consts::TAU;
 
 #[derive(Clone, Debug)]
-pub struct DNA {
+pub struct Dna {
     pub max_speed: f64,
     pub max_force: f64,
     pub view_radius: f64,
@@ -17,7 +17,7 @@ pub struct DNA {
     pub original_word: String,
 }
 
-impl DNA {
+impl Dna {
     pub fn new(word: String) -> Self {
         let mut rng = rand::thread_rng();
         Self {
@@ -39,7 +39,7 @@ pub struct Boid {
     pub position: Vec2,
     pub velocity: Vec2,
     pub acceleration: Vec2,
-    pub dna: DNA,
+    pub dna: Dna,
     pub energy: f64,
 }
 
@@ -47,7 +47,7 @@ impl Boid {
     pub fn new(x: f64, y: f64, word: String) -> Self {
         let mut rng = rand::thread_rng();
         let angle = rng.gen_range(0.0..TAU);
-        let dna = DNA::new(word);
+        let dna = Dna::new(word);
 
         Self {
             position: Vec2::new(x, y),

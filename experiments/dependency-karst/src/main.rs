@@ -1,9 +1,9 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use dependency_karst::graph::load_graph;
-use dependency_karst::layout::Layout;
-use dependency_karst::simulation::{VoxelGrid, GRID_SIZE};
-use dependency_karst::tui::{CaveWidget, TuiState};
+use dependency_karst::load_graph;
+use dependency_karst::Layout;
+use dependency_karst::{CaveWidget, TuiState};
+use dependency_karst::{VoxelGrid, GRID_SIZE};
 use tui_shared::Tui;
 
 fn main() -> Result<()> {

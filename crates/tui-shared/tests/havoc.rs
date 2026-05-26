@@ -27,7 +27,10 @@ mod tests {
             .status();
 
         if let Ok(status) = status {
-            assert!(status.success(), "👺 Havoc: Wait, Sentry supposedly fixed this, but the process still aborted!");
+            assert!(
+                status.success(),
+                "👺 Havoc: Wait, Sentry supposedly fixed this, but the process still aborted!"
+            );
         }
     }
 }

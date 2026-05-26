@@ -1,7 +1,7 @@
-pub mod allocator;
-pub mod game;
-pub mod level_gen;
-pub mod ui;
+mod allocator;
+mod game;
+mod level_gen;
+mod ui;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};

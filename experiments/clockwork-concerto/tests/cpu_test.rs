@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use clockwork_concerto::cpu::{self, CpuState, Instruction, NoteEvent, Program};
-use clockwork_concerto::mechanism::TickEvent;
+use clockwork_concerto::*;
+
 
 #[derive(Resource, Default)]
 struct NoteCount(usize);
@@ -15,14 +15,14 @@ fn count_notes(mut events: EventReader<NoteEvent>, mut count: ResMut<NoteCount>)
 fn test_cpu_note_event() {
     let mut app = App::new();
     app.add_plugins(MinimalPlugins);
-    app.add_plugins(cpu::CpuPlugin);
+    app.add_plugins(CpuPlugin);
     app.add_event::<TickEvent>(); // Need to add the event we trigger
     app.init_resource::<NoteCount>();
-    app.add_systems(Update, count_notes.after(cpu::cpu_tick_system));
+    app.add_systems(Update, count_notes.after(cpu_tick_system));
 
     app.world_mut().spawn(CpuState {
         pc: 0,
-        phase: cpu::CpuPhase::Fetch,
+        phase: CpuPhase::Fetch,
         instructions: 0,
         registers: [0; 4],
     });

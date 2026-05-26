@@ -381,7 +381,7 @@ impl crate::vm::ChimeraVM {
                 }
                 Some(None)
             }
-            OpCode::Fluid => { Some(None) }
+            OpCode::Fluid => Some(None),
             OpCode::Weave | OpCode::Unravel => Some(nova_weaver::exec_weave_op(self, op, args)),
             OpCode::Mutagen => Some(self.exec_mutagen_op()),
             OpCode::Scavenge => Some(self.exec_scavenge_op()),

@@ -1,3 +1,7 @@
-pub mod ant;
-pub mod audio;
-pub mod graph;
+pub(crate) mod ant;
+pub(crate) mod audio;
+pub(crate) mod graph;
+
+pub use ant::*;
+pub use audio::*;
+pub use graph::*;

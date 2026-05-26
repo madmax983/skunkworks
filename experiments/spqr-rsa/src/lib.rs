@@ -1,3 +1,7 @@
-pub mod crypto;
-pub mod math;
-pub mod roman;
+pub(crate) mod crypto;
+pub(crate) mod math;
+pub(crate) mod roman;
+
+pub use crypto::*;
+pub use math::*;
+pub use roman::*;

@@ -16,9 +16,9 @@ use ratatui::{
     Terminal,
 };
 
-pub mod boid;
-pub mod phonology;
-pub mod world;
+mod boid;
+mod phonology;
+mod world;
 
 use world::World;
 
