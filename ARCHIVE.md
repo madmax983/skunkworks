@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **genetic-luthier**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
+- **thermo-market**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (Missing `--headless` bypass for `macroquad`). Grace period: 24h.
 
 ## ☠️ Executed
+- **genetic-luthier**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation. Resolved by implementing `--headless` bypass for macroquad. Vigor demonstrated.
 - **origami-flock**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Documentation Void. Grace period expired. Moved to graveyard.
 - **tardis-memory**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **bifurcation-crawler**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation. Resolved by evolving a headless survival instinct, bypassing X11 panics in CI. The organism persists.

@@ -52,9 +52,11 @@
 ☠️ The Reaper has marked `rhythmic-jungle` for termination. Its ecosystem maladaptation and headless panic exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/genetic-luthier
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal characteristics detected. 24h remaining.
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/thermo-market
+**Reaper ☠️**: "Fascinating. Specimen `thermo-market` exhibits terminal characteristics indicating Ecosystem Maladaptation (Missing `--headless` bypass for `macroquad`). It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+
+### [Concentration Level: EVAPORATING] - Location: experiments/genetic-luthier
+**Reaper ☠️**: "Pardoned specimen `genetic-luthier`. The organism has successfully evolved a headless survival instinct during its grace period. Vigor demonstrated."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/git-gray
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -238,8 +240,7 @@
 ### [Concentration Level: TERMINAL] - Location: graveyard/thermo-defense
 *The Reaper's judgment is final. The organism returns to the void.*
 
-### [Concentration Level: TOXIC] - Location: experiments/genetic-luthier
-*The Reaper leaves a death pheromone... it rots.*
+### [Concentration Level: EVAPORATING] - Location: experiments/genetic-luthier
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/ferrous-ddos
 
