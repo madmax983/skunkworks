@@ -1575,6 +1575,24 @@ sequenceDiagram
     VM->>VM: execute_gene(Weave)
 ```
 
+### Nova Feature: Physics Blocks (ADR 102)
+
+The physics and TUI experiment blocks (`gray_scott_block`, `locus_block`, `neuro_block`, `platter_block`) allow native invocation of specialized simulations. The compiler translates these blocks into specific OpCodes, triggering their respective subsystems.
+
+```mermaid
+sequenceDiagram
+    participant Script as Script Source
+    participant Compiler as PrologueCompiler
+    participant VM as ChimeraVM
+
+    Note over Script: gray_scott { ... }<br/>locus { ... }<br/>neuro { ... }<br/>platter { ... }
+    Script->>Compiler: parse_physics_blocks()
+    Compiler-->>VM: push(OpCode::GrayScott / Locus / Neuro / Platter)
+
+    Note over VM: Execution Phase
+    VM->>VM: execute_gene(OpCode)
+```
+
 ### Nova Feature: Fluid Syntax (ADR 101)
 
 The `fluid` block allows native invocation of fluid dynamics simulations. The compiler translates this block into an `OpCode::Fluid` instruction, triggering specialized physical simulation subsystems.
