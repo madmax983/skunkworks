@@ -1,5 +1,5 @@
-use system_attractor::LyapunovMonitor;
 use system_attractor::LorenzParams;
+use system_attractor::LyapunovMonitor;
 use system_attractor::{update_particles, Particle};
 
 #[test]

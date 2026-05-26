@@ -64,7 +64,10 @@ impl App {
 
             boids.push(Boid {
                 position: Vec2::new(cx + angle.cos() * radius, cy + angle.sin() * radius),
-                velocity: Vec2::new(angle.cos() * params.max_speed, angle.sin() * params.max_speed),
+                velocity: Vec2::new(
+                    angle.cos() * params.max_speed,
+                    angle.sin() * params.max_speed,
+                ),
             });
         }
 
@@ -108,7 +111,9 @@ impl App {
             self.boids[i].velocity += flock_force + gradient;
 
             // Limit speed
-            if self.boids[i].velocity.magnitude_squared() > self.params.max_speed * self.params.max_speed {
+            if self.boids[i].velocity.magnitude_squared()
+                > self.params.max_speed * self.params.max_speed
+            {
                 self.boids[i].velocity = self.boids[i].velocity.normalize() * self.params.max_speed;
             }
 
@@ -116,15 +121,25 @@ impl App {
             self.boids[i].position += vel;
 
             // Wrap around boundaries
-            if self.boids[i].position.x < 0.0 { self.boids[i].position.x += self.width as f64; }
-            if self.boids[i].position.x >= self.width as f64 { self.boids[i].position.x -= self.width as f64; }
-            if self.boids[i].position.y < 0.0 { self.boids[i].position.y += self.height as f64; }
-            if self.boids[i].position.y >= self.height as f64 { self.boids[i].position.y -= self.height as f64; }
+            if self.boids[i].position.x < 0.0 {
+                self.boids[i].position.x += self.width as f64;
+            }
+            if self.boids[i].position.x >= self.width as f64 {
+                self.boids[i].position.x -= self.width as f64;
+            }
+            if self.boids[i].position.y < 0.0 {
+                self.boids[i].position.y += self.height as f64;
+            }
+            if self.boids[i].position.y >= self.height as f64 {
+                self.boids[i].position.y -= self.height as f64;
+            }
 
             // Deposit heat onto platter
             // Fix rounding out of bounds issue by modulo wrapping before casting to usize
-            let nx = ((self.boids[i].position.x.trunc() as isize).rem_euclid(self.width as isize)) as usize;
-            let ny = ((self.boids[i].position.y.trunc() as isize).rem_euclid(self.height as isize)) as usize;
+            let nx = ((self.boids[i].position.x.trunc() as isize).rem_euclid(self.width as isize))
+                as usize;
+            let ny = ((self.boids[i].position.y.trunc() as isize).rem_euclid(self.height as isize))
+                as usize;
             self.platter.saturate(nx, ny, 1.0); // max heat
         }
 
@@ -177,12 +192,19 @@ fn ui(f: &mut Frame, app: &App) {
             if colors[y as usize][x as usize] == Color::Black {
                 style = Style::default();
             }
-            spans.push(Span::styled(grid[y as usize][x as usize].to_string(), style));
+            spans.push(Span::styled(
+                grid[y as usize][x as usize].to_string(),
+                style,
+            ));
         }
         lines.push(ratatui::text::Line::from(spans));
     }
 
-    let p = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Flock Platter - Pheromone Swarming"));
+    let p = Paragraph::new(lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Flock Platter - Pheromone Swarming"),
+    );
     f.render_widget(p, size);
 }
 
