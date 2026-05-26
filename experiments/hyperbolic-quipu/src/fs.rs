@@ -88,39 +88,41 @@ impl DirNode {
 pub fn get_repo_statuses(root: &Path) -> HashMap<PathBuf, GitStatus> {
     let mut map = HashMap::new();
     // Try to find repo starting from root
-    if let Ok(repo) = Repository::discover(root) {
-        if let Ok(statuses) = repo.statuses(None) {
-            for entry in statuses.iter() {
-                if let Some(path_str) = entry.path() {
-                    // entry.path() is relative to repo workdir
-                    if let Some(workdir) = repo.workdir() {
-                        let full_path = workdir.join(path_str);
+    let Ok(repo) = Repository::discover(root) else {
+        return map;
+    };
+    let Ok(statuses) = repo.statuses(None) else {
+        return map;
+    };
+    let Some(workdir) = repo.workdir() else {
+        return map;
+    };
 
-                        let status = entry.status();
-                        let s = if status.is_conflicted() {
-                            GitStatus::Conflict
-                        } else if status.is_wt_new() || status.is_index_new() {
-                            GitStatus::New
-                        } else if status.is_wt_modified() || status.is_index_modified() {
-                            GitStatus::Modified
-                        } else if status.is_wt_deleted() || status.is_index_deleted() {
-                            GitStatus::Deleted
-                        } else if status.is_ignored() {
-                            GitStatus::Ignored
-                        } else if status.is_index_renamed() {
-                            GitStatus::Renamed
-                        } else {
-                            // clean
-                            GitStatus::Clean
-                        };
+    for entry in statuses.iter() {
+        let Some(path_str) = entry.path() else {
+            continue;
+        };
+        let full_path = workdir.join(path_str);
 
-                        // We only care if it's not clean, but map.insert overwrites
-                        if s != GitStatus::Clean {
-                            map.insert(full_path, s);
-                        }
-                    }
-                }
-            }
+        let status = entry.status();
+        let s = if status.is_conflicted() {
+            GitStatus::Conflict
+        } else if status.is_wt_new() || status.is_index_new() {
+            GitStatus::New
+        } else if status.is_wt_modified() || status.is_index_modified() {
+            GitStatus::Modified
+        } else if status.is_wt_deleted() || status.is_index_deleted() {
+            GitStatus::Deleted
+        } else if status.is_ignored() {
+            GitStatus::Ignored
+        } else if status.is_index_renamed() {
+            GitStatus::Renamed
+        } else {
+            GitStatus::Clean
+        };
+
+        if s != GitStatus::Clean {
+            map.insert(full_path, s);
         }
     }
     map
