@@ -64,6 +64,9 @@
 ☠️ The Reaper has marked `rhythmic-jungle` for termination. Its ecosystem maladaptation and headless panic exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/genetic-luthier
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal characteristics detected. 24h remaining.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/git-gray
 - **Scent Origin:** The Splice Surgeon 🧬
