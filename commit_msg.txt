@@ -1,6 +1,0 @@
-🛡️ Sentry: [test coverage improvement]
-
-🎯 Target: `SystemMonitor` in `hyper-system`
-💣 Risk: NaN poisoning. A non-finite `dt` or `now` could yield an infinite interpolation speed, permanently corrupting CPU/Mem metrics with NaNs.
-🧪 Strategy: Clamped `speed` interpolation factor and added boundary checks `.is_finite()`. Covered with table-driven tests checking against Infinity and NaN inputs.
-🔬 Verification: `cargo test -p hyper-system`
