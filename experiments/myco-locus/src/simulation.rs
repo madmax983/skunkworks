@@ -38,7 +38,11 @@ impl Agent {
         let h = world.height;
         let mut trail_strength = 0.0;
 
-        if let Some((ny, nx)) = world.topology.normalize(sensor_y.round() as i64, sensor_x.round() as i64, w, h) {
+        if let Some((ny, nx)) =
+            world
+                .topology
+                .normalize(sensor_y.round() as i64, sensor_x.round() as i64, w, h)
+        {
             trail_strength = world.get_trail(nx, ny);
         }
 
@@ -94,7 +98,12 @@ impl Agent {
         self.position.x += self.angle.cos() * speed;
         self.position.y += self.angle.sin() * speed;
 
-        if let Some((ny, nx)) = world.topology.normalize(self.position.y.round() as i64, self.position.x.round() as i64, world.width, world.height) {
+        if let Some((ny, nx)) = world.topology.normalize(
+            self.position.y.round() as i64,
+            self.position.x.round() as i64,
+            world.width,
+            world.height,
+        ) {
             self.position.x = nx as f64;
             self.position.y = ny as f64;
             Some(AgentUpdateResult {
@@ -157,7 +166,13 @@ impl World {
                         target = rng.gen_range(0..num_cities);
                     }
                 }
-                agents.push(Agent::new(c.x, c.y, rng.gen_range(0.0..2.0 * PI), i, target));
+                agents.push(Agent::new(
+                    c.x,
+                    c.y,
+                    rng.gen_range(0.0..2.0 * PI),
+                    i,
+                    target,
+                ));
             }
         }
 

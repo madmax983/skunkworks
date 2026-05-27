@@ -160,7 +160,7 @@ impl SystemMonitor {
     }
 
     fn interpolate_metrics(&mut self, dt: f32) {
-        let speed = LERP_SPEED_MULTIPLIER * dt;
+        let speed = (LERP_SPEED_MULTIPLIER * dt).min(1.0);
 
         self.cpu_usage = lerp(self.cpu_usage, self.target_cpu, speed);
         self.mem_usage = lerp(self.mem_usage, self.target_mem, speed);
@@ -200,12 +200,14 @@ impl SystemMonitor {
     /// monitor.update_with_time(0.016, 0.016);
     /// ```
     pub fn update_with_time(&mut self, dt: f32, now: f64) {
-        if now - self.last_update > UPDATE_INTERVAL {
+        if now.is_finite() && now - self.last_update > UPDATE_INTERVAL {
             self.poll_system_metrics();
             self.last_update = now;
         }
 
-        self.interpolate_metrics(dt);
+        if dt.is_finite() && dt >= 0.0 {
+            self.interpolate_metrics(dt);
+        }
     }
 
     /// Updates the system metrics using macroquad's time functions.
@@ -290,5 +292,40 @@ mod tests {
     fn test_default() {
         let monitor = SystemMonitor::default();
         assert_eq!(monitor.last_update, INITIAL_UPDATE_TIMESTAMP);
+    }
+
+    #[test]
+    fn test_interpolate_metrics_nan_poisoning() {
+        let mut monitor = SystemMonitor::new();
+        // Trigger target updating
+        monitor.update_with_time(0.016, 0.0);
+        // Simulate an infinite delta time
+        monitor.update_with_time(f32::INFINITY, 0.016);
+
+        assert!(
+            monitor.cpu_usage.is_finite(),
+            "CPU usage became non-finite!"
+        );
+        assert!(
+            monitor.mem_usage.is_finite(),
+            "Mem usage became non-finite!"
+        );
+        assert!(
+            monitor.swap_usage.is_finite(),
+            "Swap usage became non-finite!"
+        );
+        assert!(monitor.load_avg.is_finite(), "Load avg became non-finite!");
+    }
+
+    #[test]
+    fn test_interpolate_metrics_nan_dt() {
+        let mut monitor = SystemMonitor::new();
+        monitor.update_with_time(0.016, 0.0);
+        monitor.update_with_time(f32::NAN, 0.016);
+
+        assert!(
+            monitor.cpu_usage.is_finite(),
+            "CPU usage became NaN due to dt!"
+        );
     }
 }
