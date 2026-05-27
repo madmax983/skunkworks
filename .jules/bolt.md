@@ -13,3 +13,7 @@
 **[Replace DefaultHasher with FxHasher]**
 **Learning:** `std::collections::hash_map::DefaultHasher` is a cryptographically secure SipHash, which is incredibly slow for non-security-critical applications like procedural generation. In tests, swapping to `FxHasher` yielded roughly 117,000x performance improvement when hashing strings to generate branch normals.
 **Action:** Replace `DefaultHasher` with `rustc_hash::FxHasher` for high-frequency string or integer hashing where cryptographic security is not required.
+
+**[Optimize String allocations when parsing strings from C FFI buffers]**
+**Learning:** `String::from_utf8_lossy(bytes).into_owned()` allocates a `String` immediately regardless of whether it will be used. When parsing enumerations or matching constants (like git diff line origins `+`, `-`, ` `), checking the criteria before allocating the `String` avoids massive unnecessary allocations for lines that will be dropped or ignored.
+**Action:** Wait to allocate `String` objects from buffers until *after* the parsing condition or origin is verified.

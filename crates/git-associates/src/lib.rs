@@ -366,11 +366,18 @@ impl GitModel {
 
     /// Helper to convert a git2::DiffLine into a LineChange based on origin.
     fn parse_line_change(line: &git2::DiffLine) -> Option<LineChange> {
-        let content = String::from_utf8_lossy(line.content()).into_owned();
+        // Optimization: Do not allocate a String until we know the line origin is valid,
+        // preventing unnecessary allocations for ignored line types (like file headers).
         match line.origin() {
-            '+' => Some(LineChange::Added(content)),
-            '-' => Some(LineChange::Removed(content)),
-            ' ' => Some(LineChange::Context(content)),
+            '+' => Some(LineChange::Added(
+                String::from_utf8_lossy(line.content()).into_owned(),
+            )),
+            '-' => Some(LineChange::Removed(
+                String::from_utf8_lossy(line.content()).into_owned(),
+            )),
+            ' ' => Some(LineChange::Context(
+                String::from_utf8_lossy(line.content()).into_owned(),
+            )),
             _ => None,
         }
     }
