@@ -1806,8 +1806,6 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         Ok(genes)
     }
 
-
-
     fn parse_gray_scott_block(
         &mut self,
         inner: pest::iterators::Pair<'i, Rule>,
@@ -1824,10 +1822,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         Ok(genes)
     }
 
-    fn parse_locus_block(
-        &mut self,
-        inner: pest::iterators::Pair<'i, Rule>,
-    ) -> Result<Vec<Gene>> {
+    fn parse_locus_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut genes = Vec::new();
         for stmt in inner.into_inner() {
             let stmt_str = stmt.as_str().trim();
@@ -1840,10 +1835,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         Ok(genes)
     }
 
-    fn parse_neuro_block(
-        &mut self,
-        inner: pest::iterators::Pair<'i, Rule>,
-    ) -> Result<Vec<Gene>> {
+    fn parse_neuro_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut genes = Vec::new();
         for stmt in inner.into_inner() {
             let stmt_str = stmt.as_str().trim();
@@ -1856,10 +1848,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         Ok(genes)
     }
 
-    fn parse_platter_block(
-        &mut self,
-        inner: pest::iterators::Pair<'i, Rule>,
-    ) -> Result<Vec<Gene>> {
+    fn parse_platter_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut genes = Vec::new();
         for stmt in inner.into_inner() {
             let stmt_str = stmt.as_str().trim();

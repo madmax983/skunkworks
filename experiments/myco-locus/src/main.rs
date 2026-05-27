@@ -2,6 +2,7 @@ mod simulation;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
+use locus::Topology;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -14,7 +15,6 @@ use ratatui::{
 use simulation::World;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use locus::Topology;
 
 fn main() -> Result<()> {
     // ☠️ REAPER BYPASS: Ensure headless CI test survivability
@@ -40,7 +40,8 @@ fn main() -> Result<()> {
     let mut current_topo_idx = 1; // Start with Torus
     let mut topology = topologies[current_topo_idx];
 
-    let (mut world, mut agents) = World::with_cities_and_agents(width, height, num_cities, topology);
+    let (mut world, mut agents) =
+        World::with_cities_and_agents(width, height, num_cities, topology);
 
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
@@ -99,11 +100,10 @@ fn main() -> Result<()> {
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .title(format!("Myco-Locus: Topological Transit [{:?}]", world.topology)),
-                )
+                .block(Block::default().borders(Borders::ALL).title(format!(
+                    "Myco-Locus: Topological Transit [{:?}]",
+                    world.topology
+                )))
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {

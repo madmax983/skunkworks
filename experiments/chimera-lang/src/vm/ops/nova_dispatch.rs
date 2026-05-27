@@ -494,7 +494,8 @@ impl crate::vm::ChimeraVM {
             }
 
             OpCode::GrayScott => {
-                self.output.push("Gray-Scott diffusion evaluated.".to_string());
+                self.output
+                    .push("Gray-Scott diffusion evaluated.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             OpCode::Locus => {
