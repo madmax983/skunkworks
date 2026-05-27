@@ -1,7 +1,0 @@
-🧬 Splice: Cross myco-transit × locus
-
-- Created `myco-locus` bridging `myco-transit` biological slime mold pheromone-guided pathfinding and `locus` topological 2D non-Euclidean boundary constraints.
-- Updated `MUTATIONS.md` with phase 1 evaluation of all previous hybrids and the new hybrid `myco-locus`.
-- Pheromone trails successfully navigate topological boundaries (Torus, Klein Bottle, Sphere, etc.) seamlessly wrapping and guiding agents out of bounds.
-- Added Reaper bypass headless CI mechanism.
-- Added `GUESTBOOK.md` pheromone signature.
