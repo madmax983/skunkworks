@@ -1,0 +1,14 @@
+[package]
+name = "myco-locus"
+version = "0.1.0"
+edition = "2021"
+description = "Topological Mycelial Transit"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+tui-shared = { workspace = true }
+rayon = "1.11.0"
+locus = { path = "../../crates/locus" }

@@ -1,6 +1,7 @@
-⚡ Bolt: Replace `.extend(collection.clone())` with `.extend(collection.iter().cloned())`
+🧬 Splice: Cross myco-transit × locus
 
-💡 What: Replaced `.extend(collection.clone())` with `.extend(collection.iter().cloned())` in several files within `chimera-lang`.
-🎯 Why: To avoid unnecessary intermediate heap allocations. Calling `clone()` on a collection allocates a new vector on the heap before extending the target vector. `iter().cloned()` avoids this by chaining an iterator.
-📊 Impact: Eliminates unnecessary `Vec` allocations during gene collection operations, such as in genetics processing, alchemy fusion, and acoustic compilation.
-🔬 Measurement: Run `cargo clippy` and test suite `cargo test -p chimera-lang` to verify safety and correctness.
+- Created `myco-locus` bridging `myco-transit` biological slime mold pheromone-guided pathfinding and `locus` topological 2D non-Euclidean boundary constraints.
+- Updated `MUTATIONS.md` with phase 1 evaluation of all previous hybrids and the new hybrid `myco-locus`.
+- Pheromone trails successfully navigate topological boundaries (Torus, Klein Bottle, Sphere, etc.) seamlessly wrapping and guiding agents out of bounds.
+- Added Reaper bypass headless CI mechanism.
+- Added `GUESTBOOK.md` pheromone signature.
