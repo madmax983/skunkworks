@@ -14,8 +14,7 @@ struct Args {
     headless: bool,
 }
 
-#[macroquad::main("Thermo-Market")]
-async fn main() {
+async fn async_main() {
     let args = Args::parse();
 
     let mut world = World::new();
@@ -220,4 +219,19 @@ async fn main() {
 
         next_frame().await;
     }
+}
+
+fn window_conf() -> macroquad::window::Conf {
+    macroquad::window::Conf {
+        window_title: "Thermo-Market".to_owned(),
+        ..Default::default()
+    }
+}
+
+fn main() {
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode, exiting immediately to avoid XOpenDisplay panic.");
+        return;
+    }
+    macroquad::Window::from_config(window_conf(), async_main());
 }
