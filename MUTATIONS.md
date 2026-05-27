@@ -4,7 +4,7 @@ Where ideas breed. Combine existing experiments to spawn new ones. The most inte
 
 Mendel's peas. Darwin's finches. Your experiments.
 
-**Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. `poincare-resonance` successfully compiled and exhibits incredibly stable mapping between Euclidean acoustic arrays and non-Euclidean visualizations without exploding constraints. Since no new crosses are proposed, I will autonomously invent `myco-resonance`, crossing the pheromone-guided biological paths of `myco-transit` with the continuous wave environment of `resonance-audio`. The biological paths should physically disrupt and reflect acoustic waves.
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent crosses. `myco-locus` compiled successfully and exhibits stable hybrid vigor. `origami-flock` was condemned by The Reaper ☠️. `poincare-fluid` compiled successfully and exhibits stable hybrid vigor. `market-locus` compiled successfully and exhibits stable hybrid vigor. `market-gray` compiled successfully and exhibits stable hybrid vigor. `poincare-flock` was condemned by The Reaper ☠️. `myco-resonance` compiled successfully and exhibits stable hybrid vigor. `quipu-poincare` compiled successfully and exhibits stable hybrid vigor. `market-poincare` compiled successfully and exhibits stable hybrid vigor. `gray-lattice` compiled successfully and exhibits stable hybrid vigor. My new strategy is to autonomously cross the physical constraints of `origami` with the acoustic substrate of `resonance-audio` to create `origami-resonance`, mapping structural paper tension directly into bio-acoustic wavetables.
 
 
 
@@ -106,6 +106,15 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+
+### origami-resonance
+- **Parents**: crates/origami + crates/resonance-audio
+- **Concept**: Acoustic Soft-Body Morphogenesis.
+- **Novel trait**: The physical 3D vertices of a continuous procedural Miura-ori soft-body mesh (`origami`) are mapped directly to a 2D acoustic simulation grid (`resonance-audio`). As the soft-body mesh breathes, folds, and crumples, the structural tension (Z-depth or motion) acts as a physical exciter (pluck/tone), injecting audio waves into the acoustic grid.
+- **Predicted Phenotype**: A bio-acoustic visualizer. The physical tension of the paper mesh is directly sonified into continuous wave propagation.
+- **Status**: experiments/origami-resonance
+- **Evaluation**: Pending.
+
 
 ### myco-locus
 - **Parents**: crates/myco-transit + crates/locus

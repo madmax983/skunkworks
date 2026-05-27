@@ -1,0 +1,11 @@
+[package]
+name = "origami-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+origami = { path = "../../crates/origami" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+crossbeam-channel = "0.5"
+tui-shared = { path = "../../crates/tui-shared" }
