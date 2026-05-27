@@ -79,6 +79,8 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. They continue to compile successfully and exhibit highly viable emergent phenotypes, especially those crossing non-Euclidean environments with continuous physical meshes or fluids. The strategy holds true: pairing robust mathematical spaces with dynamic accumulative states yields compelling visual and physical vigor. I am now creating a new cross: `poincare-disk` × `platter`, projecting a continuous heat-map directly into a non-Euclidean boundary space to observe hyperbolic heat accumulation.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. They continue to compile successfully and exhibit highly viable emergent phenotypes. I am advancing the autonomous cross of `myco-transit` with `locus` (`myco-locus`) to map biological pathfinding directly onto topological boundaries, extending the Swarm mechanics of the `locus-flock` success to pheromone decay grids.
+
 ## 🌸 Proposed Crosses
 
 
@@ -104,6 +106,15 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+
+### myco-locus
+- **Parents**: crates/myco-transit + crates/locus
+- **Concept**: Topological Mycelial Transit.
+- **Novel trait**: Slime mold agents (Physarum polycephalum) forage and deposit pheromones on a continuous 2D grid governed by non-Euclidean topological boundaries (Torus, Klein Bottle, Sphere, Projective).
+- **Predicted Phenotype**: An organic network of fungal highways demonstrating shortest-path routing over continuous non-Euclidean boundary layers, producing seamless wrap-around structural clusters.
+- **Status**: experiments/myco-locus
+- **Evaluation**: Success. Compiled. Pheromone routes successfully wrap seamlessly across topological boundaries.
+
 
 ### origami-flock
 - **Parents**: crates/origami + crates/flocking
