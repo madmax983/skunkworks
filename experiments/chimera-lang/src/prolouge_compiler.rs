@@ -1428,11 +1428,20 @@ fn compile_quipu_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
         }
         Rule::identifier => {
             let id = inner.as_str();
-            genes.push(Gene::new(
-                OpCode::Push,
-                vec![Nucleotide::String(id.to_string())],
-            ));
-            genes.push(Gene::new(OpCode::Quipu, vec![]));
+            match id {
+                "tie" => genes.push(Gene::new(OpCode::Knot, vec![])),
+                "untie" => genes.push(Gene::new(OpCode::Unknot, vec![])),
+                "select" => genes.push(Gene::new(OpCode::Cord, vec![])),
+                "read" => genes.push(Gene::new(OpCode::ReadCord, vec![])),
+                "tangle" => genes.push(Gene::new(OpCode::Tangle, vec![])),
+                _ => {
+                    genes.push(Gene::new(
+                        OpCode::Push,
+                        vec![Nucleotide::String(id.to_string())],
+                    ));
+                    genes.push(Gene::new(OpCode::Quipu, vec![]));
+                }
+            }
         }
         _ => {}
     }
@@ -1709,7 +1718,13 @@ genetics {
         let code = r#"
 quipu {
     100
+    tie
     "knot"
+    quipu
+    untie
+    select
+    read
+    tangle
 }
 "#;
         let dna = compile(code).unwrap();
@@ -1719,9 +1734,20 @@ quipu {
         assert_eq!(genes[0].args[0], Nucleotide::Number(100));
         assert_eq!(genes[1].op, OpCode::Quipu);
 
-        assert_eq!(genes[2].op, OpCode::Push);
-        assert_eq!(genes[2].args[0], Nucleotide::String("knot".to_string()));
-        assert_eq!(genes[3].op, OpCode::Quipu);
+        assert_eq!(genes[2].op, OpCode::Knot);
+
+        assert_eq!(genes[3].op, OpCode::Push);
+        assert_eq!(genes[3].args[0], Nucleotide::String("knot".to_string()));
+        assert_eq!(genes[4].op, OpCode::Quipu);
+
+        assert_eq!(genes[5].op, OpCode::Push);
+        assert_eq!(genes[5].args[0], Nucleotide::String("quipu".to_string()));
+        assert_eq!(genes[6].op, OpCode::Quipu);
+
+        assert_eq!(genes[7].op, OpCode::Unknot);
+        assert_eq!(genes[8].op, OpCode::Cord);
+        assert_eq!(genes[9].op, OpCode::ReadCord);
+        assert_eq!(genes[10].op, OpCode::Tangle);
     }
 
     #[test]
