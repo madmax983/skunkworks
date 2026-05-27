@@ -7,6 +7,8 @@
 It unifies the concepts of **Cellular Automata** (Wireworld, Game of Life), **Concatenative Programming** (Forth), and **Biological Simulation** (DNA, Mitosis).
 
 ## 🚀 Quick Start
+> **REQUIRES FEATURE NOVA**
+
 
 Run the Hello World Prologue example to see the Prologue engine in action:
 
