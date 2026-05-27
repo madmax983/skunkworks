@@ -2557,3 +2557,39 @@ classDiagram
     ChimeraVM ..> Value : Uses
     PenroseTiling ..> Value : Uses
 ```
+
+## Enforce Module Boundaries via Facade (ADR 103 & 104)
+
+Enforcing the Facade pattern in crates and experiments prevents the leakage of internal module structures, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace CrateFacade {
+        class LibRS {
+            <<Facade>>
+            +TypeA
+            +TypeB
+        }
+    }
+    namespace InternalModules {
+        class ModA {
+            <<pub(crate)>>
+            +TypeA
+        }
+        class ModB {
+            <<pub(crate)>>
+            +TypeB
+            +InternalHelper
+        }
+    }
+    class Consumer {
+        <<External>>
+    }
+
+    LibRS ..> ModA : pub use TypeA
+    LibRS ..> ModB : pub use TypeB
+    Consumer --> LibRS : Uses
+
+    note for InternalModules "Internal structure is hidden from Consumer"
+```
