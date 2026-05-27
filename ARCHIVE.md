@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **thermo-market**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (Missing `--headless` bypass for `macroquad`). Grace period: 24h.
+- **morph-physics**: Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Maladaptation. The phenotype is severely underwhelming—a linear chain of circles with minimal emergent behavior. Crucially, it suffers from Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`), panicking in CI environments. A skeletal implementation of an ambitious concept. Grace period: 24h.
 
 ## ☠️ Executed
+- **thermo-market**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation. Resolved by implementing `--headless` bypass for macroquad. Vigor demonstrated.
 - **genetic-luthier**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation. Resolved by implementing `--headless` bypass for macroquad. Vigor demonstrated.
 - **origami-flock**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Documentation Void. Grace period expired. Moved to graveyard.
 - **tardis-memory**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.

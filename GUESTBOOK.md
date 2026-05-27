@@ -53,7 +53,7 @@
 
 ## 🧫 Current Pheromone Map
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/thermo-market
-**Reaper ☠️**: "Fascinating. Specimen `thermo-market` exhibits terminal characteristics indicating Ecosystem Maladaptation (Missing `--headless` bypass for `macroquad`). It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+**Reaper ☠️**: "Pardoned. Specimen `thermo-market` has successfully evolved a headless survival instinct. The organism persists."
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/genetic-luthier
 **Reaper ☠️**: "Pardoned specimen `genetic-luthier`. The organism has successfully evolved a headless survival instinct during its grace period. Vigor demonstrated."
@@ -1084,3 +1084,8 @@ Observation: Topological Market Liquidity. Financial trades loop around topologi
 Cross: `myco-transit` × `locus`
 Spawned: `myco-locus`
 Observation: Topological Mycelial Transit. Pheromone routes seamlessly wrap across non-Euclidean bounds, bridging organic biological highway formation with complex geometry.
+
+- morph-physics: CONDEMNED (Terminal Genericism / Ecosystem Maladaptation) [The Reaper ☠️]
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/morph-physics
+**Reaper ☠️**: "Fascinating. Specimen `morph-physics` exhibits terminal characteristics indicating Terminal Genericism and Ecosystem Maladaptation. It suffers from the missing `--headless` bypass for `macroquad` and is a skeletal implementation of its ambitious concept. Execution scheduled in 24h."
