@@ -1102,6 +1102,12 @@ pub fn compile(source: &str) -> Result<Dna> {
                 #[cfg(feature = "nova")]
                 genes.push(Gene::new(OpCode::Eval, vec![]));
             }
+            Rule::madness_block => {
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "madness");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
+                genes.push(Gene::new(OpCode::Prolouge, vec![]));
+            }
             Rule::quipu_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_quipu_instr(instr)?);
@@ -1661,129 +1667,7 @@ fn compile_acoustic_instr(_pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene
     Ok(Vec::new())
 }
 
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod tests {
-    use super::*;
 
-    #[cfg(feature = "nova")]
-    #[test]
-    fn test_prolouge_compiler_esolang() {
-        let source = r#"
-        esolang {
-            "Hello World" print
-        }
-        "#;
-        let dna = compile(source).unwrap();
-        let genes = &dna.helix.strands[0].genes;
-
-        assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(
-            genes[0].args[0],
-            Nucleotide::String("            \"Hello World\" print".to_string())
-        );
-        assert_eq!(genes[1].op, OpCode::Eval);
-    }
-
-    #[test]
-    fn test_genetics_block() {
-        let code = r#"
-genetics {
-    splice dna1 dna2
-    recombine a b
-}
-"#;
-        let dna = compile(code).unwrap();
-        let genes = &dna.helix.strands[0].genes;
-
-        // "splice dna1 dna2" -> Push("dna1"), Push("dna2"), Push(0), Splice
-        assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(genes[0].args[0], Nucleotide::String("dna1".to_string()));
-        assert_eq!(genes[1].op, OpCode::Push);
-        assert_eq!(genes[1].args[0], Nucleotide::String("dna2".to_string()));
-        assert_eq!(genes[2].op, OpCode::Push);
-        assert_eq!(genes[2].args[0], Nucleotide::Number(0));
-        assert_eq!(genes[3].op, OpCode::Splice);
-
-        // "recombine a b" -> Push("a"), Push("b"), Recombine
-        assert_eq!(genes[4].op, OpCode::Push);
-        assert_eq!(genes[4].args[0], Nucleotide::String("a".to_string()));
-        assert_eq!(genes[5].op, OpCode::Push);
-        assert_eq!(genes[5].args[0], Nucleotide::String("b".to_string()));
-        assert_eq!(genes[6].op, OpCode::Recombine);
-    }
-
-    #[test]
-    fn test_quipu_block() {
-        let code = r#"
-quipu {
-    100
-    tie
-    "knot"
-    quipu
-    untie
-    select
-    read
-    tangle
-}
-"#;
-        let dna = compile(code).unwrap();
-        let genes = &dna.helix.strands[0].genes;
-
-        assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(genes[0].args[0], Nucleotide::Number(100));
-        assert_eq!(genes[1].op, OpCode::Quipu);
-
-        assert_eq!(genes[2].op, OpCode::Knot);
-
-        assert_eq!(genes[3].op, OpCode::Push);
-        assert_eq!(genes[3].args[0], Nucleotide::String("knot".to_string()));
-        assert_eq!(genes[4].op, OpCode::Quipu);
-
-        assert_eq!(genes[5].op, OpCode::Push);
-        assert_eq!(genes[5].args[0], Nucleotide::String("quipu".to_string()));
-        assert_eq!(genes[6].op, OpCode::Quipu);
-
-        assert_eq!(genes[7].op, OpCode::Unknot);
-        assert_eq!(genes[8].op, OpCode::Cord);
-        assert_eq!(genes[9].op, OpCode::ReadCord);
-        assert_eq!(genes[10].op, OpCode::Tangle);
-    }
-
-    #[test]
-    fn test_poincare_block() {
-        let code = r#"
-poincare {
-    100
-    hyperbolic
-}
-"#;
-        let dna = compile(code).unwrap();
-        let genes = &dna.helix.strands[0].genes;
-
-        assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(genes[0].args[0], Nucleotide::Number(100));
-        assert_eq!(genes[1].op, OpCode::Poincare);
-    }
-
-    #[test]
-    fn test_chaos_block() {
-        let code = r#"
-chaos {
-    100
-    glitch
-    entropy
-}
-"#;
-        let dna = compile(code).unwrap();
-        let genes = &dna.helix.strands[0].genes;
-
-        assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(genes[0].args[0], Nucleotide::Number(100));
-        assert_eq!(genes[1].op, OpCode::Glitch);
-        assert_eq!(genes[2].op, OpCode::EntropySurge);
-    }
-}
 
 fn compile_gray_scott_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
@@ -1911,4 +1795,128 @@ fn compile_platter_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
     }
 
     Ok(genes)
+}
+
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[cfg(feature = "nova")]
+    #[test]
+    fn test_prolouge_compiler_esolang() {
+        let source = r#"
+        esolang {
+            "Hello World" print
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("            \"Hello World\" print".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::Eval);
+    }
+
+    #[test]
+    fn test_genetics_block() {
+        let code = r#"
+genetics {
+    splice dna1 dna2
+    recombine a b
+}
+"#;
+        let dna = compile(code).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        // "splice dna1 dna2" -> Push("dna1"), Push("dna2"), Push(0), Splice
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::String("dna1".to_string()));
+        assert_eq!(genes[1].op, OpCode::Push);
+        assert_eq!(genes[1].args[0], Nucleotide::String("dna2".to_string()));
+        assert_eq!(genes[2].op, OpCode::Push);
+        assert_eq!(genes[2].args[0], Nucleotide::Number(0));
+        assert_eq!(genes[3].op, OpCode::Splice);
+
+        // "recombine a b" -> Push("a"), Push("b"), Recombine
+        assert_eq!(genes[4].op, OpCode::Push);
+        assert_eq!(genes[4].args[0], Nucleotide::String("a".to_string()));
+        assert_eq!(genes[5].op, OpCode::Push);
+        assert_eq!(genes[5].args[0], Nucleotide::String("b".to_string()));
+        assert_eq!(genes[6].op, OpCode::Recombine);
+    }
+
+    #[test]
+    fn test_quipu_block() {
+        let code = r#"
+quipu {
+    100
+    tie
+    "knot"
+    quipu
+    untie
+    select
+    read
+    tangle
+}
+"#;
+        let dna = compile(code).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::Number(100));
+        assert_eq!(genes[1].op, OpCode::Quipu);
+
+        assert_eq!(genes[2].op, OpCode::Knot);
+
+        assert_eq!(genes[3].op, OpCode::Push);
+        assert_eq!(genes[3].args[0], Nucleotide::String("knot".to_string()));
+        assert_eq!(genes[4].op, OpCode::Quipu);
+
+        assert_eq!(genes[5].op, OpCode::Push);
+        assert_eq!(genes[5].args[0], Nucleotide::String("quipu".to_string()));
+        assert_eq!(genes[6].op, OpCode::Quipu);
+
+        assert_eq!(genes[7].op, OpCode::Unknot);
+        assert_eq!(genes[8].op, OpCode::Cord);
+        assert_eq!(genes[9].op, OpCode::ReadCord);
+        assert_eq!(genes[10].op, OpCode::Tangle);
+    }
+
+    #[test]
+    fn test_poincare_block() {
+        let code = r#"
+poincare {
+    100
+    hyperbolic
+}
+"#;
+        let dna = compile(code).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::Number(100));
+        assert_eq!(genes[1].op, OpCode::Poincare);
+    }
+
+    #[test]
+    fn test_chaos_block() {
+        let code = r#"
+chaos {
+    100
+    glitch
+    entropy
+}
+"#;
+        let dna = compile(code).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::Number(100));
+        assert_eq!(genes[1].op, OpCode::Glitch);
+        assert_eq!(genes[2].op, OpCode::EntropySurge);
+    }
 }
