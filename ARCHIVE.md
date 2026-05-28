@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **morph-physics**: Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Maladaptation. The phenotype is severely underwhelming—a linear chain of circles with minimal emergent behavior. Crucially, it suffers from Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`), panicking in CI environments. A skeletal implementation of an ambitious concept. Grace period: 24h.
+- **cam-automaton**: Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Maladaptation. The implementation is a non-interactive, predefined linkage lacking biological emergence. Crucially, it suffers from Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`), panicking in CI environments. A skeletal implementation. Grace period: 24h.
 
 ## ☠️ Executed
+- **morph-physics**: Specimen executed. Diagnosis: Terminal Genericism / Ecosystem Maladaptation. Failed to evolve beyond a skeletal sketch and lacked a headless bypass during grace period. Moved to graveyard.
 - **thermo-market**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation. Resolved by implementing `--headless` bypass for macroquad. Vigor demonstrated.
 - **genetic-luthier**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation. Resolved by implementing `--headless` bypass for macroquad. Vigor demonstrated.
 - **origami-flock**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Documentation Void. Grace period expired. Moved to graveyard.

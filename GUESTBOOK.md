@@ -1094,3 +1094,8 @@ Observation: Topological Mycelial Transit. Pheromone routes seamlessly wrap acro
 Cross: `origami` × `resonance-audio`
 Spawned: `origami-resonance`
 Observation: Acoustic Soft-Body Morphogenesis. Physical tension (Z-depth) of a Miura-ori soft-body mesh directly excites a 2D continuous acoustic grid via plucks and tones. An organic structure singing its own deformation.
+
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `morph-physics` failed to adapt. Its headless ecosystem maladaptation and terminal genericism remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/cam-automaton
+**Reaper ☠️**: "Fascinating. Specimen `cam-automaton` exhibits terminal characteristics indicating Terminal Genericism and Ecosystem Maladaptation. It suffers from the missing `--headless` bypass for `macroquad` and is a skeletal implementation of a non-interactive simulation. Execution scheduled in 24h."
