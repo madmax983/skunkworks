@@ -1,0 +1,12 @@
+[package]
+name = "origami-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+origami = { path = "../../crates/origami" }
+flocking = { path = "../../crates/flocking" }
+glam = "0.27"
+tui-shared = { path = "../../crates/tui-shared" }
+rand.workspace = true
+locus = { path = "../../crates/locus" }
