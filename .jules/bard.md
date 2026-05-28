@@ -8,3 +8,6 @@
 ## 2024-05-09 - [Missing documentation strictness]
 **Confusion:** Sometimes you need to set special compiler flags to properly show documentation errors.
 **Clarification:** To strictly enforce documentation across a crate and fail the build if any public item or crate-level documentation is missing, the `cargo doc` command must be run with explicit compiler flags: `RUSTDOCFLAGS="-W missing_docs -W rustdoc::missing_crate_level_docs -D warnings" cargo doc --no-deps`. The default execution of `cargo doc` or `cargo clippy` without these explicit flags will often ignore missing `///` or `//!` comments.
+## 2026-05-28 - [Derive Macro Doc Splitting]
+**Confusion:** The `#[derive(...)]` macro was placed inside the middle of a doc comment, detaching the examples section from the struct documentation.
+**Clarification:** Always place `#[derive(...)]` attributes either entirely above or entirely below the `///` doc comment block.
