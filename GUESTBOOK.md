@@ -1104,3 +1104,7 @@ Observation: Knotted Data Morphogenesis. The discrete integers from ancient Quip
 Cross: `origami` × `flocking`
 Spawned: `origami-flock`
 Observation: Swarm-Driven Soft Body Morphogenesis. Boids navigating a continuous physical mesh actively warp the underlying structural geometry. As agents flock and cluster, they exert physical displacement on the continuous soft-body Miura-ori paper, resulting in procedural folding strictly driven by localized swarm density.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The complex example `genesis.chs` explicitly documented in the README is missing from the codebase entirely, causing users to encounter `os error 2` when attempting to run it.
