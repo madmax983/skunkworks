@@ -421,3 +421,13 @@ fn test_prolouge_compiler_flocking() {
 
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Flock);
 }
+
+#[test]
+fn test_prolouge_compiler_madness() {
+    let source = "madness { execute }";
+    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let genes = &dna.helix.strands[0].genes;
+
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Prolouge);
+}
