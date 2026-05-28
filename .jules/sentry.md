@@ -49,3 +49,11 @@
 **[Capacity Overflow in with_entities]**
 **Learning:** Functions that accept an `impl IntoIterator` and call `.extend()` on a vector might inherit an aggressively large or unconstrained `size_hint()` from the iterator (e.g. `std::iter::repeat(...).take(usize::MAX)`), which the standard library uses to allocate capacity via `Vec::reserve()`, leading immediately to an Out-Of-Memory panic before any elements are actually processed.
 **Action:** When implementing collection builder methods (`with_X`), cap the reserved capacity using `iter.size_hint().upper.unwrap_or(lower).min(SAFE_LIMIT)` and limit the number of elements consumed to prevent malicious or accidental memory exhaustion.
+
+**[Macroquad Type Conversions in Headless]**
+**Learning:** `cargo tarpaulin` might completely miss `#[cfg(feature = "macroquad")]` implementations inside tests if not specifically told to build with those features. When writing standard rust tests for `Into` / `From` implementations wrapped in a macroquad cfg, you must explicitly enable the feature via `cargo test -p locus --features "macroquad"`.
+**Action:** Audit and ensure math traits (`Vec3`, `Vec2`) converting to and from `macroquad::prelude` equivalents are covered by explicitly setting `--features="macroquad"` in tests or by maintaining standard default implementations for the structures without the macro.
+
+**[TUI PropValue Missing Match Coverage]**
+**Learning:** `tui-shared` structs like `Action`, `Entity`, `Region`, `LogList`, `Snapshot`, and `TensionBar` contain significant logic that constructs structures but goes uncovered when only integration or fuzzing tests exercise the crate.
+**Action:** Use specific, isolated tests (like `test_snapshot_methods`, `test_tension_bar_fractions`, `test_button_states`) creating and checking bounds/state rather than relying entirely on `sentry_semantic_coverage`.

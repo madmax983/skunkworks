@@ -62,3 +62,10 @@ fn test_vec2_rotate_coverage() {
     assert!((rotated.x - -1.0).abs() < 1e-10);
     assert!((rotated.y - 0.0).abs() < 1e-10);
 }
+
+#[test]
+fn test_vec2_reflect_zero_normal() {
+    let v = Vec2::new(1.0, 1.0);
+    let normal = Vec2::new(0.0, 0.0);
+    assert_eq!(v.reflect(normal), v);
+}
