@@ -17,3 +17,7 @@
 **[Optimize String allocations when parsing strings from C FFI buffers]**
 **Learning:** `String::from_utf8_lossy(bytes).into_owned()` allocates a `String` immediately regardless of whether it will be used. When parsing enumerations or matching constants (like git diff line origins `+`, `-`, ` `), checking the criteria before allocating the `String` avoids massive unnecessary allocations for lines that will be dropped or ignored.
 **Action:** Wait to allocate `String` objects from buffers until *after* the parsing condition or origin is verified.
+
+**[Optimizing Vectors]**
+**Learning:** `Vec::with_capacity` paired with loop allocation is generally more performant than chaining map operations into `Vec::new` or relying on unhinted `filter_map` iterators. When dealing with iterators of unbounded potential sizes, we can use `size_hint` to `reserve` capacity appropriately without aggressively loading elements if we only care about memory efficiency and prevent DoS. Be careful as standard library's `collect()` will query `size_hint()` natively so don't manually reimplement it on known structures.
+**Action:** When working on performance, actively identify `filter_map(...).collect()` calls and replace them with capacity-pre-allocated loops if the iterator boundaries are well-understood. Ensure large size_hints are handled efficiently using `min` and bounds to avoid over allocation.

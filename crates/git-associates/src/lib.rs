@@ -346,10 +346,16 @@ impl GitModel {
                 continue;
             };
 
-            let lines: Vec<LineChange> = (0..lines_count)
-                .filter_map(|l_idx| patch.line_in_hunk(h_idx, l_idx).ok())
-                .filter_map(|line| Self::parse_line_change(&line))
-                .collect();
+            // Optimization: Pre-allocate capacity for `lines`. `filter_map` yields a size hint of 0,
+            // causing `.collect()` to perform multiple heap reallocations for large diff hunks.
+            let mut lines = Vec::with_capacity(lines_count);
+            for l_idx in 0..lines_count {
+                if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
+                    if let Some(lc) = Self::parse_line_change(&line) {
+                        lines.push(lc);
+                    }
+                }
+            }
 
             hunks.push(Hunk {
                 header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
