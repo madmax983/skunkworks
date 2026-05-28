@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use macroquad::prelude::*;
 
 pub const G_REPULSE: f32 = 500.0; // Reduced for macroquad scale potentially

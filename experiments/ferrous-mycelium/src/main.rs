@@ -44,7 +44,7 @@ async fn main() {
             let action = hypha.update(&mut field, dt);
             match action {
                 HyphaAction::Branch(child) => {
-                    new_hyphae.push(child);
+                    new_hyphae.push(*child);
                 }
                 HyphaAction::Die => {
                     dead_indices.push(i);
@@ -97,13 +97,13 @@ async fn main() {
         }
 
         draw_text(
-            &format!("Hyphae: {}", hyphae.len()),
+            format!("Hyphae: {}", hyphae.len()),
             10.0,
             20.0,
             20.0,
             WHITE,
         );
-        draw_text(&format!("FPS: {}", get_fps()), 10.0, 40.0, 20.0, WHITE);
+        draw_text(format!("FPS: {}", get_fps()), 10.0, 40.0, 20.0, WHITE);
 
         next_frame().await;
     }

@@ -15,6 +15,7 @@ pub struct Hypha {
 }
 
 #[derive(Clone)]
+#[allow(dead_code)]
 pub struct Stalk {
     pub pos: Vec2,
     pub magnetism: f32,
@@ -23,7 +24,7 @@ pub struct Stalk {
 
 pub enum HyphaAction {
     None,
-    Branch(Hypha),
+    Branch(Box<Hypha>),
     Die,
 }
 
@@ -45,6 +46,7 @@ impl Hypha {
         }
     }
 
+    #[allow(clippy::vec_init_then_push)]
     pub fn random_dna() -> Dna {
         let mut genes = vec![];
 
@@ -247,7 +249,7 @@ impl Hypha {
             // Generate new ID
             child.id = ID_COUNTER.fetch_add(1, Ordering::Relaxed) + 1;
 
-            return HyphaAction::Branch(child);
+            return HyphaAction::Branch(Box::new(child));
         }
 
         if self.energy <= 0.0 {
