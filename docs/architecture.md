@@ -2558,6 +2558,31 @@ classDiagram
     PenroseTiling ..> Value : Uses
 ```
 
+
+### Parsing Error Normalization (ADR 105)
+
+The Babel module normalizes parsing operations by enforcing a strictly typed `ParseError` struct to gracefully handle malformed code syntax.
+
+```mermaid
+classDiagram
+    direction TB
+    class BabelParser {
+        +run_parser(input) Result~AST, ParseError~
+    }
+
+    class ParseError {
+        <<Struct>>
+        +fmt()
+    }
+
+    class ChimeraVM {
+        +exec_babel_op()
+    }
+
+    ChimeraVM ..> BabelParser : Invokes
+    BabelParser ..> ParseError : Returns
+```
+
 ## Enforce Module Boundaries via Facade (ADR 103 & 104)
 
 Enforcing the Facade pattern in crates and experiments prevents the leakage of internal module structures, ensuring consumers rely only on the exported API.
