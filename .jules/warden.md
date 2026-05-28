@@ -35,3 +35,7 @@
 **2025-05-24 - [PbdSystem4D NaN DoS Vulnerability]**
 **Threat:** Unvalidated parameters (e.g., NaN `min_len`, `max_len`, `stiffness`, or `friction`) in `PbdSystem4D` methods and extreme `vel` values in integration allowed properties to explode to Infinity and propagate to `NaN`. This corrupted the physics state, causing explicit engine panics on constraints solver routines (`NaN detected in particle distance`), representing a Denial of Service (DoS) vulnerability.
 **Defense:** Applied Defense in Depth. 1) Validated inputs at the boundary in `add_actuator_constraint` and `add_distance_constraint` ensuring finite properties. 2) Clamped the integration layer by enforcing `friction.is_finite()` and only updating `p.pos` if `new_pos.is_finite()`, resetting explosive velocity to zero to contain numerical corruption.
+
+**2024-05-28 - [Security Audit]**
+**Threat:** Potential Denial of Service (DoS) and path traversal via `OpCode::Scavenge` and `OpCode::Digest`.
+**Defense:** Confirmed existing bounds checking limits file allocations to 1MB and sanitizes path directories via `canonicalize` and `starts_with` against the sandbox root. Memory boundaries are protected.

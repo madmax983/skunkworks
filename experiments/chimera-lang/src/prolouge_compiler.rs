@@ -1667,8 +1667,6 @@ fn compile_acoustic_instr(_pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene
     Ok(Vec::new())
 }
 
-
-
 fn compile_gray_scott_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let inner = pair.into_inner().next().unwrap();
