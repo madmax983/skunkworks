@@ -1099,3 +1099,8 @@ Observation: Acoustic Soft-Body Morphogenesis. Physical tension (Z-depth) of a M
 Cross: `quipu` × `origami`
 Spawned: `quipu-origami`
 Observation: Knotted Data Morphogenesis. The discrete integers from ancient Quipu cord data effectively dictate the physical tension, expansion constraints, and breathing rhythm of a 3D soft-body Miura-ori mesh landscape.
+
+[STABLE TRAIL] The Splice Surgeon 🧬
+Cross: `origami` × `flocking`
+Spawned: `origami-flock`
+Observation: Swarm-Driven Soft Body Morphogenesis. Boids navigating a continuous physical mesh actively warp the underlying structural geometry. As agents flock and cluster, they exert physical displacement on the continuous soft-body Miura-ori paper, resulting in procedural folding strictly driven by localized swarm density.

@@ -83,6 +83,9 @@ I have checked all previous hybrids in this list.
 
 ## 🌸 Proposed Crosses
 
+- origami-flock
+- **Status**: Moved to Attempted Crosses
+
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all prior crosses. `origami-resonance` successfully compiled and exhibits stable hybrid vigor. The physical tension of the soft-body mesh effectively acts as a dynamic spatial exciter for continuous acoustic waves. I will now autonomously cross the discrete knotted data structures of `quipu` with the continuous physical soft-body mesh of `origami` to create `quipu-origami`, mapping discrete integer values structurally into continuous tension.
 
@@ -115,7 +118,7 @@ I have checked all previous hybrids in this list.
 - **Novel trait**: The discrete integer values encoded in the clusters of `quipu` cords are mapped directly to the structural expansion constraints of continuous soft-body meshes (`origami`). The encoded values determine the breathing frequency and maximum structural extension of various paper mesh clusters.
 - **Predicted Phenotype**: A physical visualization of discrete knotted data, where abstract integer values materialize as physical tension and breathing patterns across a topological paper mesh landscape.
 - **Status**: experiments/quipu-origami
-- **Evaluation**: Pending.
+- **Evaluation**: Success. Compiled. The soft-body mesh successfully translates discrete knot data into localized physical deformation constraints.
 
 ### origami-resonance
 - **Parents**: crates/origami + crates/resonance-audio
@@ -1288,3 +1291,18 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: A visual mapping showing how different Euclidean boundaries affect heat.
 - **Status**: experiments/locus-platter
 - **Evaluation**: Success. Compiled. The scalar field correctly diffuses across Torus, Klein Bottle, and Cylinder boundaries, creating bounded topological hotspots.
+### neuro-origami
+- **Parents**: crates/neuro-sim + crates/origami
+- **Concept**: Biological Neural Morphogenesis.
+- **Novel trait**: Spiking Neural Network (SNN) activations drive the physical tension and expansion constraints of continuous soft-body meshes (`origami`). The neural firings determine the breathing frequency, folding, and maximum structural extension of various paper mesh clusters.
+- **Predicted Phenotype**: A biological physical visualizer where discrete neuronal spiking patterns materialize as physical tension and breathing rhythms across a topological paper mesh landscape.
+- **Status**: experiments/neuro-origami
+- **Evaluation**: Success. Compiled.
+
+### origami-flock
+- **Parents**: crates/origami + crates/flocking
+- **Concept**: Swarm-Driven Soft Body Morphogenesis.
+- **Novel trait**: The swarm intelligence of flocking boids actively deforms the physical topography of a 3D soft-body Miura-ori mesh. As agents move and cluster, they exert physical pull on the paper constraints.
+- **Predicted Phenotype**: An organic structural visualizer where continuous swarm behavior results in procedural structural folding driven by localized swarm density.
+- **Status**: experiments/origami-flock
+- **Evaluation**: Success. Compiled.
