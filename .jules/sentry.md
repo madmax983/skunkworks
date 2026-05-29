@@ -57,3 +57,7 @@
 **[TUI PropValue Missing Match Coverage]**
 **Learning:** `tui-shared` structs like `Action`, `Entity`, `Region`, `LogList`, `Snapshot`, and `TensionBar` contain significant logic that constructs structures but goes uncovered when only integration or fuzzing tests exercise the crate.
 **Action:** Use specific, isolated tests (like `test_snapshot_methods`, `test_tension_bar_fractions`, `test_button_states`) creating and checking bounds/state rather than relying entirely on `sentry_semantic_coverage`.
+
+**[Target] crates/hyper-system/src/physics.rs**
+**Learning:** `cargo tarpaulin` can occasionally be misleading with exact line-by-line coverage in its terminal output, missing hidden branching or specific macro traces. Use `cargo llvm-cov --lcov` and analyze `lcov.info` (specifically `DA:` lines showing `0` hits) for a much more accurate line-by-line breakdown. Also, do not remove `unreachable!()` guards just to eliminate an "uncovered" line, as this degrades the reliability of the test suite.
+**Action:** When tracking down the final few percentage points of coverage, generate an lcov report via `cargo llvm-cov --lcov --output-path lcov.info`, parse for `0` hit lines, and explicitly target those edge cases (e.g., manually inserting bad data into internal states if necessary to trigger a specific fallback branch) without removing safety nets.
