@@ -3,7 +3,7 @@
 Date: 2026-05-26
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Various physics and TUI experiments (`gray_scott`, `locus`, `neuro`, `platter`) required direct integration into the `chimera-lang` esolang to allow scripts to natively invoke and configure their specialized simulations without external workarounds.

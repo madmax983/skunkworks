@@ -3,7 +3,7 @@
 Date: 2026-05-27
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Several experimental crates (e.g., `spqr-rsa`, `lensing-poetry`, `colony-concerto`, `system-attractor`, `clockwork-concerto`, `dependency-karst`, `cargo-rocket`, `phonetic-flock`, `synaptic-pachinko`, `hyperbolic-dungeon`, `heap-arena`) leaked their internal submodules directly via `pub mod`, breaking the Facade pattern.

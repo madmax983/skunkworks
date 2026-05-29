@@ -3,7 +3,7 @@
 Date: 2026-05-01
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `vm/mod.rs` file retained the "Blob" anti-pattern due to a large `match` block inside `exec_core_op` that functioned as a routing table for core VM operations. This central routing logic created an unnecessary bottleneck in the core VM module.

@@ -3,7 +3,7 @@
 Date: 2026-05-27
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Internal modules within `crates/git-associates`, `crates/locus`, `crates/resonance-audio`, and `crates/hyper-system` were exposed as `pub mod`. This breaks the Facade pattern by leaking internal implementation details to consumers, leading to tight coupling.

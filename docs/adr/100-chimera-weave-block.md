@@ -3,7 +3,7 @@
 Date: 2026-05-25
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The esolang `chimera-lang` was missing a native way to perform complex structural modifications on concurrent execution strands. A mechanism was needed to express weaving operations directly in the esolang script for advanced genetic manipulations.

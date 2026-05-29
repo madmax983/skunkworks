@@ -3,7 +3,7 @@
 Date: 2026-05-02
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `crates/tui-shared/src/semantic/` directory exhibited the "Layer Lasagna" anti-pattern. It contained a nested folder hierarchy for only four very simple modules (`action.rs`, `entity.rs`, `region.rs`, and `snapshot.rs`), requiring an unnecessary `semantic/mod.rs` to wire them up. This created redundant directory clutter and increased the cognitive load required to navigate the crate's internal structure without providing any meaningful architectural boundary.

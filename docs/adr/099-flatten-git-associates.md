@@ -3,7 +3,7 @@
 Date: 2026-05-24
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `crates/git-associates` crate suffered from the "Layer Lasagna" anti-pattern, where overly nested module directories obscured its relatively simple API. This unnecessary hierarchy increased cognitive load for developers trying to use or modify the crate's core components (`Commit`, `FileChange`, `GitModel`, etc.), without providing a meaningful architectural boundary.

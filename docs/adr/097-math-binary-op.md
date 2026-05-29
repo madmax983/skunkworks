@@ -3,7 +3,7 @@
 Date: 2026-05-11
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The mathematical execution logic in `experiments/chimera-lang/src/vm/ops/math.rs` was duplicating basic binary operation processing across several different OpCodes (like `Add`, `Sub`, `Mul`, `Div`). This created repetitive code blocks and increased the maintenance burden of adding or modifying core arithmetic evaluation.

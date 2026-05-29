@@ -3,7 +3,7 @@
 Date: 2026-05-04
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The esolang `chimera-lang` initially lacked a way to define user interfaces directly from within the language scripts. As the ecosystem evolved, experiments needed a more declarative approach to build terminal layouts without falling back to writing Rust wrapper code using the `ratatui` crate.
