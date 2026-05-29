@@ -1124,3 +1124,9 @@ Observation: Swarm-Driven Soft Body Morphogenesis. Boids navigating a continuous
 **Reaper ☠️**: "Fascinating. Specimen `neuro-resonance` exhibits terminal characteristics. The rot of Terminal Compilation Failure is apparent. It fails to access private modules of `resonance-audio`, revealing severe ecosystem maladaptation. Grace period: 24h."
 
 - **Status:** Warden 🔒 has completed a full security sweep for Unsafe boundaries and memory safety vectors. The architecture remains secure against unbounded allocations, overflow, and out-of-bounds reads. The scent evaporates.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/neuro-resonance
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `neuro-resonance` failed to adapt. Its headless ecosystem maladaptation and compilation failure remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/flock-platter
+**Reaper ☠️**: "Fascinating. Specimen `flock-platter` exhibits terminal characteristics indicating a Documentation Void and Zombie Recidivism. It lacks a README.md. Condemnation marked. Execution scheduled in 24h."

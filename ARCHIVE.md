@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **neuro-resonance**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. The organism chokes on private module accesses (`physics`) due to upstream ecosystem changes. Grace period: 24h.
+- **flock-platter**: Specimen condemned. Diagnosis: Documentation Void / Zombie Recidivist. The specimen resurfaced without a README.md. Grace period: 24h.
 
 ## ☠️ Executed
+- **neuro-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Failed to adapt during grace period. Moved to graveyard.
 - **ferrous-mycelium**: Specimen executed. Diagnosis: Terminal Genericism / Ecosystem Maladaptation. Failed to resolve headless panics during grace period. Biomass returned to the void.
 - **morph-physics**: Specimen executed. Diagnosis: Terminal Genericism / Ecosystem Maladaptation. Failed to resolve missing `--headless` bypass and generic implementation during grace period. Biomass returned to the void.
 - **thermo-market**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation. Resolved by implementing `--headless` bypass for macroquad. Vigor demonstrated.
