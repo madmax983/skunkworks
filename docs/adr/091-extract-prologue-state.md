@@ -3,7 +3,7 @@
 Date: 2026-04-30
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `experiments/chimera-lang/src/vm/prologue/mod.rs` file exhibited signs of becoming an architectural "Blob", housing both the massive `exec_prologue_tick` logic and the underlying shared data structures like `PrologueState` and `PrologueAgent`. Attempting to extract modular execution logic (e.g., decoupling submodules into independent units) was blocked by tight coupling: submodules relied heavily on implicit state access provided by `mod.rs`. Furthermore, extracting the execution loop without first extracting the data structures led to broken type inferences and lost implicit scope, as dependent submodules could no longer dereference the shared state.

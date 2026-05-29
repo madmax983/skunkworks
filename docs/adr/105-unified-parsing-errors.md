@@ -3,7 +3,7 @@
 Date: 2026-06-01
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 During the evolution of `chimera-lang`, parsing operations in the VM (specifically within modules like `babel.rs`) relied on loosely structured error handling, sometimes causing implicit panics or returning ambiguous string-based errors. This fragmentation made it difficult to reliably catch, debug, and surface specific parsing failures when running complex esolang scripts or dynamically generating AST nodes.

@@ -1611,7 +1611,7 @@ sequenceDiagram
     VM->>VM: execute_gene(Fluid)
 ```
 
-### Nova Feature: Prologue System (ADR 042, ADR 091)
+### Nova Feature: Prologue System (ADR 042, ADR 091, ADR 106)
 
 The Prologue system enables visual, grid-based logic execution, allowing for the creation of digital circuits and autonomous agents.
 
@@ -1621,7 +1621,11 @@ classDiagram
     class ChimeraVM {
         +PrologueState prologue_state
         +PetriDish grid
-        +exec_prologue_tick()
+    }
+
+    class PrologueExecution {
+        <<Module: prologue/mod.rs>>
+        +exec_prologue_tick(vm)
     }
 
     class PrologueState {
@@ -1664,7 +1668,8 @@ classDiagram
 
     ChimeraVM *-- PrologueState : Owns
     PrologueState *-- PrologueAgent : Manages
-    ChimeraVM ..> PrologueModules : Delegates to
+    PrologueExecution ..> PrologueModules : Delegates to
+    ChimeraVM --> PrologueExecution : Calls
 ```
 
 ```mermaid

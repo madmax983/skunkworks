@@ -3,7 +3,7 @@
 Date: 2026-05-14
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `generate_miura_grid` and `generate_miura_mesh` functions within `crates/origami` calculated vector capacity allocations using unchecked and partially checked inputs. When supplied with extremely large values (e.g., `usize::MAX - 1`), this led to fatal `capacity overflow` panics, creating a Denial of Service vulnerability if those dimensions were externally provided.

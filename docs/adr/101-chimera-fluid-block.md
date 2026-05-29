@@ -3,7 +3,7 @@
 Date: 2026-05-25
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Simulating continuous environments within the discrete execution model of `chimera-lang` was inefficient and syntactically verbose. We needed a native way to execute fluid dynamics operations directly from scripts.
