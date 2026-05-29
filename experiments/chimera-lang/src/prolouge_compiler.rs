@@ -1108,6 +1108,13 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::Prolouge, vec![]));
             }
+            Rule::prolouge_block => {
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "prolouge");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
+                genes.push(Gene::new(OpCode::TuiDraw, vec![]));
+                genes.push(Gene::new(OpCode::Prolouge, vec![]));
+            }
             Rule::quipu_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_quipu_instr(instr)?);
