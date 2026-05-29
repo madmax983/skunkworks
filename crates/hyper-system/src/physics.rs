@@ -747,4 +747,47 @@ mod tests {
         assert!(system.add_distance_constraint(p1, p2, f32::NAN).is_err());
         system.step(0.1, 10, 1.0);
     }
+
+    #[test]
+    fn test_add_actuator_constraint_out_of_bounds() {
+        let mut system = PbdSystem4D::new();
+        let result = system.add_actuator_constraint(99, 100, 1.0, 2.0, 1.0, 1.0);
+        assert_eq!(result, Err("Particle index out of bounds"));
+    }
+
+    #[test]
+    fn test_add_pin_constraint_out_of_bounds() {
+        let mut system = PbdSystem4D::new();
+        let result = system.add_pin_constraint(99, Vec4::zero());
+        assert_eq!(result, Err("Particle index out of bounds"));
+    }
+
+    #[test]
+    fn test_solve_distance_internal_out_of_bounds() {
+        let mut system = PbdSystem4D::new();
+        // Call the internal solve_distance with out-of-bounds indices.
+        // It should return early without panicking.
+        PbdSystem4D::solve_distance(&mut system.particles, 99, 100, 1.0, 1.0);
+    }
+
+    #[test]
+    fn test_step_with_invalid_pin_constraint() {
+        let mut system = PbdSystem4D::new();
+        // Add a particle but the pin constraint will be for an out of bounds particle
+        let _p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        // Force an invalid pin constraint
+        system.constraints.push(Constraint4D::Pin {
+            p: 99,
+            pos: Vec4::zero(),
+        });
+        // This should run the branch where particles.get_mut(*p) returns None
+        system.step(0.1, 1, 1.0);
+    }
+
+    #[test]
+    fn test_add_distance_constraint_out_of_bounds() {
+        let mut system = PbdSystem4D::new();
+        let result = system.add_distance_constraint(99, 100, 1.0);
+        assert_eq!(result, Err("Particle index out of bounds"));
+    }
 }
