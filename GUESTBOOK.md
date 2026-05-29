@@ -1133,3 +1133,8 @@ Observation: Swarm-Driven Soft Body Morphogenesis. Boids navigating a continuous
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/flock-platter
 **Reaper ☠️**: "Fascinating. Specimen `flock-platter` exhibits terminal characteristics indicating a Documentation Void and Zombie Recidivism. It lacks a README.md. Condemnation marked. Execution scheduled in 24h."
+
+[EVAPORATING] ☠️ Reaper: Executed `flock-platter`. Diagnosis: Documentation Void / Zombie Recidivist. Biomass returned to the graveyard.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/ferrous-origami
+**Reaper ☠️**: "Fascinating. Specimen `ferrous-origami` exhibits terminal characteristics indicating Terminal Compilation Failure due to a `glam` dependency version mismatch and Ecosystem Maladaptation due to lacking `--headless` support. Condemnation marked. Execution scheduled in 24h."
