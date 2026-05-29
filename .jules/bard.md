@@ -11,3 +11,7 @@
 ## 2026-05-28 - [Derive Macro Doc Splitting]
 **Confusion:** The `#[derive(...)]` macro was placed inside the middle of a doc comment, detaching the examples section from the struct documentation.
 **Clarification:** Always place `#[derive(...)]` attributes either entirely above or entirely below the `///` doc comment block.
+## 2024-05-30 - [README vs lib.rs Synchronization]
+**Confusion:** The README.md often falls out of sync with the module-level documentation () in  and lacks the comprehensive story/examples.
+**Confusion:** The README.md often falls out of sync with the module-level documentation in lib.rs and lacks the comprehensive story/examples.
+**Clarification:** When updating the overarching story for a crate, ensure the README.md mirrors the module-level documentation. This can be done by parsing the module-level comments from lib.rs and writing them into the README.
