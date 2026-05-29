@@ -355,20 +355,18 @@ impl Topology {
                 Some((ny as usize, nx as usize))
             }
             Topology::CylinderH => {
-                if y >= 0 && y < h {
-                    let nx = x.checked_rem_euclid(w).unwrap_or(0);
-                    Some((y as usize, nx as usize))
-                } else {
-                    None
+                if y < 0 || y >= h {
+                    return None;
                 }
+                let nx = x.checked_rem_euclid(w).unwrap_or(0);
+                Some((y as usize, nx as usize))
             }
             Topology::CylinderV => {
-                if x >= 0 && x < w {
-                    let ny = y.checked_rem_euclid(h).unwrap_or(0);
-                    Some((ny as usize, x as usize))
-                } else {
-                    None
+                if x < 0 || x >= w {
+                    return None;
                 }
+                let ny = y.checked_rem_euclid(h).unwrap_or(0);
+                Some((ny as usize, x as usize))
             }
             Topology::Klein => {
                 let ny = y.checked_rem_euclid(h).unwrap_or(0);
@@ -382,23 +380,19 @@ impl Topology {
             Topology::Mobius => {
                 let nx = x.checked_rem_euclid(w).unwrap_or(0);
                 let wrap_x = x.checked_div_euclid(w).unwrap_or(0);
-                if wrap_x % 2 != 0 {
+
+                let final_y = if wrap_x % 2 != 0 {
                     // Twisted Y: map y to (h - 1) - y
                     // Use checked arithmetic to prevent panic on i64::MIN
-                    if let Some(twisted_y) = (h - 1).checked_sub(y) {
-                        if twisted_y >= 0 && twisted_y < h {
-                            Some((twisted_y as usize, nx as usize))
-                        } else {
-                            None
-                        }
-                    } else {
-                        None
-                    }
-                } else if y >= 0 && y < h {
-                    Some((y as usize, nx as usize))
+                    (h - 1).checked_sub(y)?
                 } else {
-                    None
+                    y
+                };
+
+                if final_y < 0 || final_y >= h {
+                    return None;
                 }
+                Some((final_y as usize, nx as usize))
             }
             Topology::Sphere => {
                 let wrap_y = y.checked_div_euclid(h).unwrap_or(0);
