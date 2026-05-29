@@ -23,8 +23,7 @@ members = [
     "experiments/neuro-origami",
         "experiments/poincare-resonance",
 
-    "experiments/neuro-resonance",
-    "experiments/gray-lattice",
+        "experiments/gray-lattice",
     "experiments/market-poincare",
     "experiments/quipu-poincare",
     "experiments/myco-resonance",
@@ -34,7 +33,6 @@ exclude = [
     "experiments/clockwork-chimera",
 
     "experiments/ik-codewalker",
-    "experiments/neuro-resonance",
 
     "experiments/system-turbulence",
 
