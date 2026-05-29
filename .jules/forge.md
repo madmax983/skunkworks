@@ -37,3 +37,7 @@
 **[Flattening the "Pyramid of Doom" in nested if lets]**
 **Learning:** Deeply nested `if let Ok(x) = y` statements obfuscate logic, pushing the happy path deep to the right while making the code harder to read. Replacing them with guard clauses (`let Ok(x) = y else { return; }`) drastically flattens the execution flow.
 **Action:** When auditing files, search for multiple nested `if let` blocks or loops wrapped inside `if let`. Extract the conditionals to the top using `let ... else` guard clauses to achieve a linear sequence of execution.
+
+**[Topology Normalization Pyramid of Doom]
+**Learning:** Found deeply nested if/else blocks (Pyramid of Doom) and reversed guard clause logic in `Topology::Mobius`, `Topology::CylinderH`, and `Topology::CylinderV` normalization logic.
+**Action:** Use early returns to flip guard clauses and flatten the structure, improving readability and adhering to Forge's principles.
