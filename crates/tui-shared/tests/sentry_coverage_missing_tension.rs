@@ -18,3 +18,10 @@ fn test_tension_bar_fractions() {
         bar.render(Rect::new(0, 0, 10, 10), &mut buf);
     }
 }
+
+#[test]
+fn test_tension_bar_no_block() {
+    let mut buffer = Buffer::empty(Rect::new(0, 0, 10, 10));
+    let widget = TensionBar::new(0.5);
+    widget.render(Rect::new(0, 0, 10, 10), &mut buffer);
+}
