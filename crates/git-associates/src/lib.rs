@@ -350,11 +350,13 @@ impl GitModel {
             // causing `.collect()` to perform multiple heap reallocations for large diff hunks.
             let mut lines = Vec::with_capacity(lines_count);
             for l_idx in 0..lines_count {
-                if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                    if let Some(lc) = Self::parse_line_change(&line) {
-                        lines.push(lc);
-                    }
-                }
+                let Ok(line) = patch.line_in_hunk(h_idx, l_idx) else {
+                    continue;
+                };
+                let Some(lc) = Self::parse_line_change(&line) else {
+                    continue;
+                };
+                lines.push(lc);
             }
 
             hunks.push(Hunk {
