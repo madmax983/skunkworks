@@ -209,7 +209,13 @@ impl Crystal {
         while let Some((path, parent_idx, parent_normal)) = queue.pop_front() {
             let entries = match std::fs::read_dir(&path) {
                 Ok(read_dir) => {
-                    let mut entries: Vec<_> = read_dir.flatten().collect();
+                    // ⚡ Bolt Optimization: `flatten()` obscures iterator bounds from `collect()`,
+                    // causing multiple small heap allocations. Pre-allocating with a typical directory
+                    // size bound avoids O(log N) vector reallocations during filesystem traversal.
+                    let mut entries = Vec::with_capacity(32);
+                    for entry in read_dir.flatten() {
+                        entries.push(entry);
+                    }
                     // Optimization: `DirEntry::file_name()` allocates an `OsString`.
                     // Using `sort_by_cached_key` avoids O(N log N) heap allocations
                     // compared to `sort_by_key`.
