@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **market-platter**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Lacks a README.md and exhibits minimal emergent complexity. Grace period: 24h.
+- **cam-automaton**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Lacks `--headless` bypass for `macroquad`. Grace period: 24h.
 
 ## ☠️ Executed
+- **market-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Grace period expired without a README.md. Moved to graveyard.
 - **ferrous-origami**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `glam` version collision and headless bypass during grace period. Biomass returned to the void.
 - **flock-platter**: Specimen executed. Diagnosis: Documentation Void / Zombie Recidivist. Grace period expired without a README.md. Moved to graveyard.
 - **neuro-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Failed to adapt during grace period. Moved to graveyard.
@@ -38,7 +39,6 @@
 - **locus-platter**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a README.md and remains a skeletal UI visualizer without true bidirectional emergence. Grace period expired. Moved to graveyard.
 - **struct-harmonics**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `audio` feature fundamentally fails to compile out-of-the-box on headless environments without `libasound2-dev` being installed system-wide (`alsa-sys` build script panic). It is maladapted for CI testing and user onboarding. Failed to improve during grace period. Moved to graveyard.
 - **flock-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It lacked a `main.rs` binary executable and visualizer, remaining an unrealized data structure without true emergent complexity. Grace period expired. Moved to graveyard.
-- **market-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It remained a trivial 76-line terminal loop script without true emergent complexity. Grace period expired. Moved to graveyard.
 - **clockwork-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Panics in headless environments due to missing WAYLAND_DISPLAY/DISPLAY. Grace period expired. Moved to graveyard.
 - **gray-poincare**: Specimen executed. Diagnosis: Skeletal Implementation / Minimal Execution Quality. The specimen remained a trivial UI wrapper around existing math, failing to demonstrate true emergence or novel physics interaction. Grace period expired. Moved to graveyard.
 

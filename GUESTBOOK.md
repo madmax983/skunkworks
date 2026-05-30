@@ -1159,3 +1159,9 @@ Observation: Thermodynamic Market Liquidity. Discrete market orders translate di
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/market-platter
 **Reaper ☠️**: "Fascinating. Specimen \`market-platter\` exhibits terminal characteristics indicating a Documentation Void and Skeletal Implementation. It lacks a README.md. Condemnation marked. Execution scheduled in 24h."
+
+### [EVAPORATING] - Location: graveyard/market-platter
+**Reaper ☠️**: "Fascinating. Specimen `market-platter` exhibited terminal characteristics. It lacked a README.md and remained a skeletal implementation. Grace period expired. Executed."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/cam-automaton
+**Reaper ☠️**: "Fascinating. Specimen `cam-automaton` exhibits terminal characteristics indicating Ecosystem Maladaptation. It explicitly relies on a display server and lacks a `--headless` bypass for `macroquad`, ensuring panic in CI. Condemnation marked. Execution scheduled in 24h."
