@@ -61,3 +61,7 @@
 **[Target] crates/hyper-system/src/physics.rs**
 **Learning:** `cargo tarpaulin` can occasionally be misleading with exact line-by-line coverage in its terminal output, missing hidden branching or specific macro traces. Use `cargo llvm-cov --lcov` and analyze `lcov.info` (specifically `DA:` lines showing `0` hits) for a much more accurate line-by-line breakdown. Also, do not remove `unreachable!()` guards just to eliminate an "uncovered" line, as this degrades the reliability of the test suite.
 **Action:** When tracking down the final few percentage points of coverage, generate an lcov report via `cargo llvm-cov --lcov --output-path lcov.info`, parse for `0` hit lines, and explicitly target those edge cases (e.g., manually inserting bad data into internal states if necessary to trigger a specific fallback branch) without removing safety nets.
+[[sentry]]
+**TUI Shared Coverage Learning:**
+**Learning:** Found coverage gaps in test cases where boundary limits caused `usize::MAX/4` panics and trivial functions like `Button::new` lacked explicit non-destructive verification without testing global state.
+**Action:** Replaced destructive alloc fuzzer with realistic loads `1_000_000` capacity limits, increasing predictability, and added missing logic evaluations while deleting noisy debug OOM tests. Avoided `Buffer::empty` bounds gaps by ensuring default styles are directly rendered without blocking constraints.

@@ -47,3 +47,17 @@ fn test_button_out_of_bounds() {
     // Provide a rendering area totally outside the buffer
     btn.render(Rect::new(10, 10, 10, 10), &mut buf);
 }
+
+#[test]
+fn test_button_no_block_default_style() {
+    let mut buffer = Buffer::empty(Rect::new(0, 0, 10, 10));
+    let widget = Button::new("Click Me");
+    widget.render(Rect::new(0, 0, 10, 10), &mut buffer);
+}
+
+#[test]
+fn test_button_active_false() {
+    let mut buffer = Buffer::empty(Rect::new(0, 0, 10, 10));
+    let widget = Button::new("Click Me").active(false);
+    widget.render(Rect::new(0, 0, 10, 10), &mut buffer);
+}
