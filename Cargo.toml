@@ -25,7 +25,7 @@ members = [
 
         "experiments/gray-lattice",
     "experiments/market-poincare",
-    "experiments/market-platter",
+    "graveyard/market-platter",
     "experiments/quipu-poincare",
     "experiments/myco-resonance",
 
