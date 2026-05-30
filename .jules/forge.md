@@ -41,3 +41,6 @@
 **[Topology Normalization Pyramid of Doom]
 **Learning:** Found deeply nested if/else blocks (Pyramid of Doom) and reversed guard clause logic in `Topology::Mobius`, `Topology::CylinderH`, and `Topology::CylinderV` normalization logic.
 **Action:** Use early returns to flip guard clauses and flatten the structure, improving readability and adhering to Forge's principles.
+**Flattening Deep Nesting in Core Loops**
+**Learning:** Replaced deeply nested `if let` and bounds checking inside hot loops (`market-sim`, `git-associates`, `resonance-audio`) with `let else { continue; }` and early `return`/`continue`. This dramatically reduces cognitive load and rightward drift, enforcing a flat architecture without sacrificing performance.
+**Action:** Proactively apply guard clauses in iterators or block bounds checks before delving into inner loop logic.

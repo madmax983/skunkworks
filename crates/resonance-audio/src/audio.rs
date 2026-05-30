@@ -372,12 +372,15 @@ impl AudioModel {
                     }
                     let val = phase.sin() * *strength;
 
-                    if *x < self.grid.width && *y < self.grid.height {
-                        let idx = *y * self.grid.width + *x;
-                        if self.grid.materials[idx] != Material::Wall {
-                            self.grid.u[idx] += val;
-                        }
+                    if *x >= self.grid.width || *y >= self.grid.height {
+                        return true;
                     }
+
+                    let idx = *y * self.grid.width + *x;
+                    if self.grid.materials[idx] != Material::Wall {
+                        self.grid.u[idx] += val;
+                    }
+
                     true
                 });
 

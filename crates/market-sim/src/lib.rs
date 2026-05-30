@@ -300,11 +300,13 @@ impl Grid {
                 if self.updated[idx] {
                     continue;
                 }
-                if let Particle::Bid(owner) = self.cells[idx] {
-                    if let Some(event) = self.process_bid(x, y, idx, owner, &mut rng) {
-                        trade_events.push(event);
-                    }
-                }
+                let Particle::Bid(owner) = self.cells[idx] else {
+                    continue;
+                };
+                let Some(event) = self.process_bid(x, y, idx, owner, &mut rng) else {
+                    continue;
+                };
+                trade_events.push(event);
             }
         }
 
@@ -317,11 +319,13 @@ impl Grid {
                 if self.updated[idx] {
                     continue;
                 }
-                if let Particle::Ask(owner) = self.cells[idx] {
-                    if let Some(event) = self.process_ask(x, y, idx, owner, &mut rng) {
-                        trade_events.push(event);
-                    }
-                }
+                let Particle::Ask(owner) = self.cells[idx] else {
+                    continue;
+                };
+                let Some(event) = self.process_ask(x, y, idx, owner, &mut rng) else {
+                    continue;
+                };
+                trade_events.push(event);
             }
         }
 
@@ -346,15 +350,19 @@ impl Grid {
         let dxs = if rng.gen_bool(0.5) { [-1, 1] } else { [1, -1] };
         for dx in dxs {
             let nx = x as isize + dx;
-            if nx >= 0 && nx < self.width as isize {
-                let n_idx = (current_idx as isize + dx) as usize;
-                if !self.updated[n_idx] && matches!(self.cells[n_idx], Particle::Empty) {
-                    self.cells[n_idx] = particle;
-                    self.cells[current_idx] = Particle::Empty;
-                    self.updated[n_idx] = true;
-                    return;
-                }
+            if nx < 0 || nx >= self.width as isize {
+                continue;
             }
+
+            let n_idx = (current_idx as isize + dx) as usize;
+            if self.updated[n_idx] || !matches!(self.cells[n_idx], Particle::Empty) {
+                continue;
+            }
+
+            self.cells[n_idx] = particle;
+            self.cells[current_idx] = Particle::Empty;
+            self.updated[n_idx] = true;
+            return;
         }
     }
 
