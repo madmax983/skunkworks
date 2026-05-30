@@ -1153,3 +1153,9 @@ Observation: Thermodynamic Acoustic Excitation. The continuous scalar heat field
 Cross: `market-sim` × `platter`
 Spawned: `market-platter`
 Observation: Thermodynamic Market Liquidity. Discrete market orders translate directly into a continuous scalar heat field. Bids and asks radiate low thermal energy, while trade executions burst into intense, dissipating heat zones, visualizing market volume and volatility as a boiling thermodynamic surface.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/ferrous-origami
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen \`ferrous-origami\` failed to adapt. Its headless ecosystem maladaptation and compilation failure remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/market-platter
+**Reaper ☠️**: "Fascinating. Specimen \`market-platter\` exhibits terminal characteristics indicating a Documentation Void and Skeletal Implementation. It lacks a README.md. Condemnation marked. Execution scheduled in 24h."

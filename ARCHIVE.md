@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-origami**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`glam` version collision) / Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
+- **market-platter**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Lacks a README.md and exhibits minimal emergent complexity. Grace period: 24h.
 
 ## ☠️ Executed
+- **ferrous-origami**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `glam` version collision and headless bypass during grace period. Biomass returned to the void.
 - **flock-platter**: Specimen executed. Diagnosis: Documentation Void / Zombie Recidivist. Grace period expired without a README.md. Moved to graveyard.
 - **neuro-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Failed to adapt during grace period. Moved to graveyard.
 - **ferrous-mycelium**: Specimen executed. Diagnosis: Terminal Genericism / Ecosystem Maladaptation. Failed to resolve headless panics during grace period. Biomass returned to the void.
