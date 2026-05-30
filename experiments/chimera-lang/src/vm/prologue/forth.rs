@@ -194,6 +194,13 @@ pub fn process_forth_agent(
                                     }
                                 } else if gi as usize >= strand.genes.len() {
                                     // Append/Extend
+                                    if gi as usize > crate::vm::MAX_GENES_PER_STRAND {
+                                        vm.output.push(format!(
+                                            "Error: Gene index {} exceeds MAX_GENES_PER_STRAND",
+                                            gi
+                                        ));
+                                        return None;
+                                    }
                                     if let Ok(op) = op_s.parse::<OpCode>() {
                                         while strand.genes.len() <= gi as usize {
                                             strand.genes.push(Gene {
