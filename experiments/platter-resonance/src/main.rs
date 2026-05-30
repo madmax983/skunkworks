@@ -33,12 +33,12 @@ impl PlatterResonanceApp {
         self.time += 0.1;
 
         // 1. Heat injection pattern
-        let cx1 =
-            (self.width as f32 / 2.0 + (self.time * 0.5).cos() * (self.width as f32 / 4.0)) as usize;
+        let cx1 = (self.width as f32 / 2.0 + (self.time * 0.5).cos() * (self.width as f32 / 4.0))
+            as usize;
         let cy1 = (self.height as f32 / 2.0 + (self.time * 0.7).sin() * (self.height as f32 / 4.0))
             as usize;
-        let cx2 =
-            (self.width as f32 / 2.0 + (self.time * 0.3).sin() * (self.width as f32 / 3.0)) as usize;
+        let cx2 = (self.width as f32 / 2.0 + (self.time * 0.3).sin() * (self.width as f32 / 3.0))
+            as usize;
         let cy2 = (self.height as f32 / 2.0 + (self.time * 0.4).cos() * (self.height as f32 / 3.0))
             as usize;
 
@@ -116,11 +116,10 @@ impl PlatterResonanceApp {
 
         frame.render_widget(canvas, chunks[0]);
 
-        let info = Paragraph::new(
-            "Injecting heat droplets... Critical heat boils into acoustic ripples.",
-        )
-        .style(Style::default().fg(Color::Cyan))
-        .block(Block::default().borders(Borders::ALL));
+        let info =
+            Paragraph::new("Injecting heat droplets... Critical heat boils into acoustic ripples.")
+                .style(Style::default().fg(Color::Cyan))
+                .block(Block::default().borders(Borders::ALL));
         frame.render_widget(info, chunks[1]);
     }
 }

@@ -1148,3 +1148,8 @@ Observation: Topological Soft-Body Heatmap. The physical 3D vertices of a contin
 Cross: `platter` × `resonance-audio`
 Spawned: `platter-resonance`
 Observation: Thermodynamic Acoustic Excitation. The continuous scalar heat field maps directly to physical acoustic wave excitation. High thermal zones literally boil into audio ripples in the simulated FDTD medium.
+
+[STABLE TRAIL] The Splice Surgeon 🧬
+Cross: `market-sim` × `platter`
+Spawned: `market-platter`
+Observation: Thermodynamic Market Liquidity. Discrete market orders translate directly into a continuous scalar heat field. Bids and asks radiate low thermal energy, while trade executions burst into intense, dissipating heat zones, visualizing market volume and volatility as a boiling thermodynamic surface.
