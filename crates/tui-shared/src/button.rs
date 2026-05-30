@@ -217,6 +217,8 @@ impl<'a> Widget for Button<'a> {
         } else if self.is_loading {
             final_style = final_style.bg(Color::Yellow).fg(Color::Black);
             self.icon = Some(Cow::Borrowed("⏳"));
+        } else if self.is_clicked && self.is_hovered {
+            final_style = final_style.bg(Color::Magenta).fg(Color::Black).add_modifier(Modifier::BOLD);
         } else if self.is_clicked {
             final_style = final_style.bg(Color::Red).fg(Color::White);
         } else if self.is_hovered {
@@ -415,5 +417,20 @@ mod tests {
             found_icon,
             "Expected to find success icon '✅' in rendered buffer"
         );
+    }
+
+    #[test]
+    fn test_button_clicked_and_hovered_state() {
+        let button = Button::new("Press Me").clicked(true).hovered(true);
+
+        let area = Rect::new(0, 0, 20, 3);
+        let mut buffer = Buffer::empty(area);
+
+        button.render(area, &mut buffer);
+
+        // Check border style (Magenta bg, Black fg)
+        let cell = &buffer[(0, 0)];
+        assert_eq!(cell.fg, Color::Black);
+        assert_eq!(cell.bg, Color::Magenta);
     }
 }
