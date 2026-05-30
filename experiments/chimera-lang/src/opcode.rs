@@ -2729,6 +2729,14 @@ pub enum OpCode {
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),
+
+    // Mad Scientist Experimental Opcodes
+    /// Triggers the Miller Lattice esolang logic
+    MillerLattice,
+    /// Triggers the Hyper System esolang logic
+    HyperSystem,
+    /// Triggers the Physics PBD esolang logic
+    PhysicsPbd,
 }
 
 impl fmt::Display for OpCode {

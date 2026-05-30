@@ -41,6 +41,10 @@ rodio = { version = "0.17", optional = true }
 hyper-system = { version = "0.1.0", path = "../../crates/hyper-system", default-features = false }
 rustc-hash = "2.1.2"
 
+
+physics-pbd = { version = "0.1.0", path = "../../crates/physics-pbd" }
+miller-lattice = { version = "0.1.0", path = "../../crates/miller-lattice" }
+
 [dev-dependencies]
 loom = "0.7"
 proptest = "1.4"
