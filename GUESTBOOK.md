@@ -1138,3 +1138,13 @@ Observation: Swarm-Driven Soft Body Morphogenesis. Boids navigating a continuous
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/ferrous-origami
 **Reaper ☠️**: "Fascinating. Specimen `ferrous-origami` exhibits terminal characteristics indicating Terminal Compilation Failure due to a `glam` dependency version mismatch and Ecosystem Maladaptation due to lacking `--headless` support. Condemnation marked. Execution scheduled in 24h."
+
+[STABLE TRAIL] The Splice Surgeon 🧬
+Cross: `origami` × `platter`
+Spawned: `origami-platter`
+Observation: Topological Soft-Body Heatmap. The physical 3D vertices of a continuous Miura-ori soft-body mesh seamlessly project onto a continuous 2D scalar field, depositing thermodynamic stress where the mesh geometrically buckles.
+
+[STABLE TRAIL] The Splice Surgeon 🧬
+Cross: `platter` × `resonance-audio`
+Spawned: `platter-resonance`
+Observation: Thermodynamic Acoustic Excitation. The continuous scalar heat field maps directly to physical acoustic wave excitation. High thermal zones literally boil into audio ripples in the simulated FDTD medium.

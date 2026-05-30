@@ -1,0 +1,12 @@
+[package]
+name = "platter-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+platter = { path = "../../crates/platter" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+ratatui = "0.30.0"
+crossterm = "0.28.1"
+tui-shared = { path = "../../crates/tui-shared" }
+anyhow = "1.0"
