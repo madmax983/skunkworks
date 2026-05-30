@@ -21,3 +21,8 @@
 **[Optimizing Vectors]**
 **Learning:** `Vec::with_capacity` paired with loop allocation is generally more performant than chaining map operations into `Vec::new` or relying on unhinted `filter_map` iterators. When dealing with iterators of unbounded potential sizes, we can use `size_hint` to `reserve` capacity appropriately without aggressively loading elements if we only care about memory efficiency and prevent DoS. Be careful as standard library's `collect()` will query `size_hint()` natively so don't manually reimplement it on known structures.
 **Action:** When working on performance, actively identify `filter_map(...).collect()` calls and replace them with capacity-pre-allocated loops if the iterator boundaries are well-understood. Ensure large size_hints are handled efficiently using `min` and bounds to avoid over allocation.
+
+
+**[Eliminate `collect()` reallocations on flattened `read_dir` streams]**
+**Learning:** Calling `std::fs::read_dir(...).flatten().collect()` discards the exact size hint from `read_dir`, forcing `Vec` to allocate small bounds and iteratively reallocate during deep filesystem traversal.
+**Action:** Replace `flatten().collect()` with an explicit `Vec::with_capacity(32)` (or a similarly bounded heuristic capacity) followed by a `for` loop that pushes elements to prevent O(log N) heap reallocations.
