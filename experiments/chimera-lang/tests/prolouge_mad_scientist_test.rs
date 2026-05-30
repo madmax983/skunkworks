@@ -431,3 +431,34 @@ fn test_prolouge_compiler_madness() {
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
     assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Prolouge);
 }
+
+
+#[test]
+fn test_prolouge_compiler_miller() {
+    let source = "miller { 42 simulate }";
+    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let genes = &dna.helix.strands[0].genes;
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(42));
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::MillerLattice);
+}
+
+#[test]
+fn test_prolouge_compiler_hyper() {
+    let source = "hyper { 10 simulate }";
+    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let genes = &dna.helix.strands[0].genes;
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(10));
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::HyperSystem);
+}
+
+#[test]
+fn test_prolouge_compiler_physics() {
+    let source = "physics { 5 simulate }";
+    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let genes = &dna.helix.strands[0].genes;
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(5));
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::PhysicsPbd);
+}
