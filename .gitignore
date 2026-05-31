@@ -13,3 +13,4 @@ tarpaulin-report.json
 tarpaulin-report.html
 **/target/
 target/
+lcov.info
