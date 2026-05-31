@@ -511,15 +511,18 @@ impl crate::vm::ChimeraVM {
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             OpCode::MillerLattice => {
-                self.output.push("Miller Lattice simulation triggered.".to_string());
+                self.output
+                    .push("Miller Lattice simulation triggered.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             OpCode::HyperSystem => {
-                self.output.push("Hyper System monitoring triggered.".to_string());
+                self.output
+                    .push("Hyper System monitoring triggered.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             OpCode::PhysicsPbd => {
-                self.output.push("Physics PBD position-based dynamics triggered.".to_string());
+                self.output
+                    .push("Physics PBD position-based dynamics triggered.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             #[cfg(feature = "oracle")]

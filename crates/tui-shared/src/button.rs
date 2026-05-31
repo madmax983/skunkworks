@@ -218,7 +218,10 @@ impl<'a> Widget for Button<'a> {
             final_style = final_style.bg(Color::Yellow).fg(Color::Black);
             self.icon = Some(Cow::Borrowed("⏳"));
         } else if self.is_clicked && self.is_hovered {
-            final_style = final_style.bg(Color::Magenta).fg(Color::Black).add_modifier(Modifier::BOLD);
+            final_style = final_style
+                .bg(Color::Magenta)
+                .fg(Color::Black)
+                .add_modifier(Modifier::BOLD);
         } else if self.is_clicked {
             final_style = final_style.bg(Color::Red).fg(Color::White);
         } else if self.is_hovered {

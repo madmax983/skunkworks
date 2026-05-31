@@ -1,7 +1,7 @@
 use std::env;
 use std::io::{self};
-use std::time::{Duration, Instant};
 use std::thread;
+use std::time::{Duration, Instant};
 
 use crossbeam_channel::{bounded, Receiver, Sender};
 use crossterm::{
@@ -11,7 +11,6 @@ use crossterm::{
 };
 use ratatui::{
     backend::CrosstermBackend,
-
     style::{Color, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
@@ -19,8 +18,8 @@ use ratatui::{
 };
 
 use market_sim::{Grid, Particle};
-use resonance_audio::{AudioCommand, AudioModel, AudioSnapshot};
 use rand::Rng;
+use resonance_audio::{AudioCommand, AudioModel, AudioSnapshot};
 
 const TICK_RATE: Duration = Duration::from_millis(50);
 const MARKET_WIDTH: usize = 60;
@@ -84,7 +83,7 @@ impl App {
 
         // Ask for a snapshot periodically
         if self.ticks % 2 == 0 {
-             // No RequestSnapshot in resonance-audio. Snapshots are sent automatically by the audio thread based on its sample counter (every 735 samples).
+            // No RequestSnapshot in resonance-audio. Snapshots are sent automatically by the audio thread based on its sample counter (every 735 samples).
         }
 
         self.ticks += 1;
@@ -137,10 +136,7 @@ impl App {
                         Particle::Wall => ("#", Color::DarkGray),
                     };
 
-                    spans.push(Span::styled(
-                        ch,
-                        Style::default().fg(fg_color).bg(bg_color),
-                    ));
+                    spans.push(Span::styled(ch, Style::default().fg(fg_color).bg(bg_color)));
                 }
                 lines.push(Line::from(spans));
             }
@@ -201,7 +197,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // In headless or if stream failed, fallback to a dummy thread to drain the commands
     let _fallback_thread = if _stream.is_none() {
-        let mut model = AudioModel::new(MARKET_WIDTH, MARKET_HEIGHT, bounded(1).1, bounded(1).0, None);
+        let mut model = AudioModel::new(
+            MARKET_WIDTH,
+            MARKET_HEIGHT,
+            bounded(1).1,
+            bounded(1).0,
+            None,
+        );
         Some(thread::spawn(move || {
             let mut buffer = vec![0.0; 256];
             loop {

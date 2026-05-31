@@ -26,3 +26,7 @@
 **[Eliminate `collect()` reallocations on flattened `read_dir` streams]**
 **Learning:** Calling `std::fs::read_dir(...).flatten().collect()` discards the exact size hint from `read_dir`, forcing `Vec` to allocate small bounds and iteratively reallocate during deep filesystem traversal.
 **Action:** Replace `flatten().collect()` with an explicit `Vec::with_capacity(32)` (or a similarly bounded heuristic capacity) followed by a `for` loop that pushes elements to prevent O(log N) heap reallocations.
+
+**[git2 commit parent string extraction]**
+**Learning:** `commit.parents().map(...).collect()` can cause multiple heap allocations because `commit.parents()` obscured iterator size bounds from `.collect()`. The parent commit objects themselves are also fully allocated by the library during `.parents()` iteration.
+**Action:** Extract the count first with `commit.parent_count()` and pre-allocate the capacity using `Vec::with_capacity`, then loop over `commit.parent_ids()` instead of full commit objects to avoid cloning commits.
