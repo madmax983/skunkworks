@@ -123,18 +123,9 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 #[cfg(feature = "audio")]
 #[allow(dead_code)]
 struct ActiveSound {
-    kind: SoundKind,
+    kind: AudioEvent,
     t: f32, // Time in seconds
     amp: f32,
-}
-
-#[cfg(feature = "audio")]
-#[allow(dead_code)]
-enum SoundKind {
-    Kick,
-    Snare,
-    HiHat,
-    Pluck(f32),
 }
 
 #[cfg(feature = "audio")]
@@ -143,7 +134,7 @@ impl ActiveSound {
     fn generate_sample(&mut self, dt: f32) -> Option<f32> {
         self.t += dt;
         let s = match self.kind {
-            SoundKind::Kick => {
+            AudioEvent::Kick => {
                 // Sine sweep 120 -> 40 Hz
                 let freq = 120.0 - (80.0 * (self.t * 8.0).min(1.0));
                 let env = (1.0 - self.t * 5.0).max(0.0);
@@ -152,7 +143,7 @@ impl ActiveSound {
                 }
                 (self.t * freq * 2.0 * std::f32::consts::PI).sin() * env * self.amp
             }
-            SoundKind::Snare => {
+            AudioEvent::Snare => {
                 // Noise + Tone
                 let noise = (rand::random::<f32>() * 2.0 - 1.0) * (1.0 - self.t * 10.0).max(0.0);
                 let tone = (self.t * 180.0 * 2.0 * std::f32::consts::PI).sin()
@@ -163,7 +154,7 @@ impl ActiveSound {
                 }
                 val * self.amp
             }
-            SoundKind::HiHat => {
+            AudioEvent::HiHat => {
                 // High freq noise
                 let noise = rand::random::<f32>() * 2.0 - 1.0;
                 let env = (1.0 - self.t * 30.0).max(0.0);
@@ -172,7 +163,7 @@ impl ActiveSound {
                 }
                 noise * env * self.amp
             }
-            SoundKind::Pluck(freq) => {
+            AudioEvent::Pluck(freq) => {
                 // Karplus-Strong-ish or just simple plucked string (sine w/ exp decay)
                 let val = (self.t * freq * 2.0 * std::f32::consts::PI).sin();
                 let env = (-self.t * 4.0).exp();
@@ -278,22 +269,22 @@ fn process_audio(
     while let Ok(event) = rx.try_recv() {
         match event {
             AudioEvent::Kick => active_sounds.push(ActiveSound {
-                kind: SoundKind::Kick,
+                kind: event,
                 t: 0.0,
                 amp: 0.8,
             }),
             AudioEvent::Snare => active_sounds.push(ActiveSound {
-                kind: SoundKind::Snare,
+                kind: event,
                 t: 0.0,
                 amp: 0.6,
             }),
             AudioEvent::HiHat => active_sounds.push(ActiveSound {
-                kind: SoundKind::HiHat,
+                kind: event,
                 t: 0.0,
                 amp: 0.4,
             }),
-            AudioEvent::Pluck(f) => active_sounds.push(ActiveSound {
-                kind: SoundKind::Pluck(f),
+            AudioEvent::Pluck(_) => active_sounds.push(ActiveSound {
+                kind: event,
                 t: 0.0,
                 amp: 0.5,
             }),

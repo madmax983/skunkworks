@@ -21,3 +21,8 @@
 **Bloat:** Layer Lasagna (`crates/git-associates/src/` contained `model.rs` just for some structs, spreading a small crate across multiple files).
 **Cut:** Flattened the module hierarchy by moving `model.rs` into `lib.rs` inside `git-associates`.
 **Saved:** One file (`model.rs`), multiple lines of module exports, reduced module boundaries, and lowered cognitive load when navigating the `git-associates` crate.
+
+## [Reduction]
+**Bloat:** A 1:1 duplicate enum `SoundKind` that exactly mirrored the public `AudioEvent` enum in `crates/quipu/src/audio.rs`, causing unnecessary mapping inside `process_audio`.
+**Cut:** Eliminated `SoundKind` entirely, allowing `ActiveSound` to directly store and switch on `AudioEvent`.
+**Saved:** Multiple lines of boilerplate pattern-matching and the cognitive overhead of maintaining two identical enums.
