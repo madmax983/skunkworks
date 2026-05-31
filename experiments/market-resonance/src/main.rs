@@ -1,158 +1,260 @@
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use crossbeam_channel::bounded;
-use macroquad::prelude::*;
-use market_sim::{Grid as MarketGrid, Particle};
-use resonance_audio::audio::{AudioCommand, AudioModel};
 use std::env;
+use std::io::{self};
+use std::time::{Duration, Instant};
+use std::thread;
 
-const GRID_W: usize = 120;
-const GRID_H: usize = 120;
+use crossbeam_channel::{bounded, Receiver, Sender};
+use crossterm::{
+    event::{self, Event, KeyCode},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+};
+use ratatui::{
+    backend::CrosstermBackend,
 
-fn window_conf() -> Conf {
-    Conf {
-        window_title: "Market Resonance".to_owned(),
-        ..Default::default()
-    }
+    style::{Color, Style},
+    text::{Line, Span},
+    widgets::{Block, Borders, Paragraph},
+    Terminal,
+};
+
+use market_sim::{Grid, Particle};
+use resonance_audio::{AudioCommand, AudioModel, AudioSnapshot};
+use rand::Rng;
+
+const TICK_RATE: Duration = Duration::from_millis(50);
+const MARKET_WIDTH: usize = 60;
+const MARKET_HEIGHT: usize = 30;
+
+struct App {
+    market: Grid,
+    cmd_tx: Sender<AudioCommand>,
+    snap_rx: Receiver<AudioSnapshot>,
+    latest_snapshot: Option<AudioSnapshot>,
+    running: bool,
+    ticks: u64,
 }
 
-async fn async_main() {
-    let args: Vec<String> = env::args().collect();
-    if args.iter().any(|arg| arg == "--headless") {
-        println!("Acoustic Market Sonification running in headless mode for CI bypass.");
-        return;
+impl App {
+    fn new(cmd_tx: Sender<AudioCommand>, snap_rx: Receiver<AudioSnapshot>) -> Self {
+        Self {
+            market: Grid::new(MARKET_WIDTH, MARKET_HEIGHT),
+            cmd_tx,
+            snap_rx,
+            latest_snapshot: None,
+            running: true,
+            ticks: 0,
+        }
     }
 
-    let (cmd_tx, cmd_rx) = bounded(1024);
-    let (snap_tx, snap_rx) = bounded(2);
+    fn update(&mut self) {
+        let mut rng = rand::thread_rng();
 
-    let host = cpal::default_host();
-    let device = host
-        .default_output_device()
-        .expect("No output device available");
-    let config = device.default_output_config().unwrap();
-
-    let mut model = AudioModel::new(GRID_W, GRID_H, cmd_rx, snap_tx, None);
-
-    let stream = match config.sample_format() {
-        cpal::SampleFormat::F32 => device.build_output_stream(
-            &config.into(),
-            move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-                model.process(data);
-            },
-            |err| eprintln!("Audio stream error: {}", err),
-            None,
-        ),
-        _ => panic!("Unsupported sample format"),
-    }
-    .unwrap();
-
-    stream.play().unwrap();
-
-    let mut image = Image::gen_image_color(GRID_W as u16, GRID_H as u16, BLANK);
-    let texture = Texture2D::from_image(&image);
-    texture.set_filter(FilterMode::Nearest);
-
-    let mut market = MarketGrid::new(GRID_W, GRID_H);
-
-    loop {
-        clear_background(Color::new(0.05, 0.05, 0.08, 1.0));
-
-        // Inject orders
-        if macroquad::rand::gen_range(0.0, 1.0) < 0.3 {
-            let x = macroquad::rand::gen_range(0, GRID_W);
-            market.set(x, 0, Particle::Ask(macroquad::rand::gen_range(0, 1000000)));
+        // Inject new orders occasionally
+        if rng.gen_bool(0.4) {
+            let x = rng.gen_range(0..MARKET_WIDTH);
+            self.market.set(x, MARKET_HEIGHT - 1, Particle::Bid(1)); // Buyer at bottom
         }
-        if macroquad::rand::gen_range(0.0, 1.0) < 0.3 {
-            let x = macroquad::rand::gen_range(0, GRID_W);
-            market.set(
-                x,
-                GRID_H - 1,
-                Particle::Bid(macroquad::rand::gen_range(0, 1000000)),
-            );
+        if rng.gen_bool(0.4) {
+            let x = rng.gen_range(0..MARKET_WIDTH);
+            self.market.set(x, 0, Particle::Ask(2)); // Seller at top
         }
 
-        // Add some random noise trades to keep it lively if we want, or just wait for collisions.
+        // Run market simulation
+        let _trades = self.market.update();
 
-        let trades = market.update();
-        for trade in trades {
-            // A trade happens at a given price (Y axis) and some X axis (which we don't directly know from TradeEvent,
-            // but we can just pluck randomly or along the price line).
-            // Actually, we can approximate the position. TradeEvent gives price. Price = height - 1 - Y.
-            // So Y = height - 1 - price.
-            let y = (GRID_H as f32 - 1.0 - trade.price) as usize;
-            let x = macroquad::rand::gen_range(0, GRID_W);
-
-            // The strength could be proportional to price or just fixed.
-            let strength = (trade.price / GRID_H as f32).clamp(0.1, 1.0);
-
-            cmd_tx.send(AudioCommand::Pluck { x, y, strength }).unwrap();
-        }
-
-        if let Ok(snapshot) = snap_rx.try_recv() {
-            let pixels = image.get_image_data_mut();
-            for y in 0..GRID_H {
-                for x in 0..GRID_W {
-                    let p_idx = y * GRID_W + x;
-                    let pressure = snapshot.pressure[p_idx];
-
-                    // Base color from acoustic pressure
-                    let c = ((pressure + 1.0) * 0.5 * 255.0).clamp(0.0, 255.0) as u8;
-                    let mut col = [c, c, 255, 255]; // blueish wave
-
-                    // Overlay market particles
-                    let particle = market.get(x, y);
-                    match particle {
-                        Particle::Bid(_) => col = [0, 255, 0, 255], // Green for Bids
-                        Particle::Ask(_) => col = [255, 0, 0, 255], // Red for Asks
-                        Particle::Trade { .. } => col = [255, 255, 0, 255], // Yellow for Trades
-                        Particle::Wall => col = [100, 100, 100, 255],
-                        Particle::Empty => {}
-                    }
-
-                    pixels[p_idx] = col;
+        // Find trade coordinates and trigger acoustic plucks
+        for y in 0..MARKET_HEIGHT {
+            for x in 0..MARKET_WIDTH {
+                if let Particle::Trade { .. } = self.market.get(x, y) {
+                    // Send an acoustic pluck at this coordinate
+                    let _ = self.cmd_tx.send(AudioCommand::Pluck {
+                        x,
+                        y,
+                        strength: 0.8,
+                    });
                 }
             }
-            texture.update(&image);
         }
 
-        let scale = (screen_height() / GRID_H as f32).min(screen_width() / GRID_W as f32);
-        let w = GRID_W as f32 * scale;
-        let h = GRID_H as f32 * scale;
-        let x = (screen_width() - w) / 2.0;
-        let y = (screen_height() - h) / 2.0;
+        // Receive the latest snapshot
+        while let Ok(snap) = self.snap_rx.try_recv() {
+            self.latest_snapshot = Some(snap);
+        }
 
-        draw_texture_ex(
-            &texture,
-            x,
-            y,
-            WHITE,
-            DrawTextureParams {
-                dest_size: Some(vec2(w, h)),
-                ..Default::default()
-            },
-        );
+        // Ask for a snapshot periodically
+        if self.ticks % 2 == 0 {
+             // No RequestSnapshot in resonance-audio. Snapshots are sent automatically by the audio thread based on its sample counter (every 735 samples).
+        }
 
-        draw_text("Market Resonance", 10.0, 20.0, 30.0, WHITE);
-        draw_text("Acoustic Market Sonification", 10.0, 50.0, 20.0, GRAY);
-        draw_text("Bids (Green) vs Asks (Red)", 10.0, 70.0, 20.0, GRAY);
-        draw_text(
-            format!("Trades: {}", market.trade_count).as_str(),
-            10.0,
-            90.0,
-            20.0,
-            YELLOW,
-        );
+        self.ticks += 1;
+    }
 
-        next_frame().await;
+    fn render(&self, terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> io::Result<()> {
+        terminal.draw(|f| {
+            let size = f.size();
+            let block = Block::default()
+                .title(" Acoustic Market Volatility 📉🔊 ")
+                .borders(Borders::ALL);
+
+            let inner_area = block.inner(size);
+            f.render_widget(block, size);
+
+            let mut lines = Vec::new();
+
+            let pressure_map = self.latest_snapshot.as_ref().map(|s| &s.pressure);
+
+            for y in 0..MARKET_HEIGHT.min(inner_area.height as usize) {
+                let mut spans = Vec::new();
+                for x in 0..MARKET_WIDTH.min(inner_area.width as usize) {
+                    let particle = self.market.get(x, y);
+
+                    let mut p = 0.0;
+                    if let Some(map) = pressure_map {
+                        if y < MARKET_HEIGHT && x < MARKET_WIDTH {
+                            p = map[y * MARKET_WIDTH + x];
+                        }
+                    }
+
+                    // Visualize wave pressure in the background
+                    let bg_color = if p > 0.5 {
+                        Color::LightBlue
+                    } else if p > 0.1 {
+                        Color::Blue
+                    } else if p < -0.5 {
+                        Color::Red
+                    } else if p < -0.1 {
+                        Color::LightRed
+                    } else {
+                        Color::Reset
+                    };
+
+                    let (ch, fg_color) = match particle {
+                        Particle::Bid(_) => ("B", Color::Green),
+                        Particle::Ask(_) => ("A", Color::Yellow),
+                        Particle::Trade { .. } => ("X", Color::White),
+                        Particle::Empty => (" ", Color::Reset),
+                        Particle::Wall => ("#", Color::DarkGray),
+                    };
+
+                    spans.push(Span::styled(
+                        ch,
+                        Style::default().fg(fg_color).bg(bg_color),
+                    ));
+                }
+                lines.push(Line::from(spans));
+            }
+
+            let paragraph = Paragraph::new(lines);
+            f.render_widget(paragraph, inner_area);
+        })?;
+        Ok(())
     }
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
-    if args.iter().any(|arg| arg == "--headless") {
-        println!("Acoustic Market Sonification running in headless mode for CI bypass.");
-        return;
+
+    let (cmd_tx, cmd_rx) = bounded(1024);
+    let (snap_tx, snap_rx) = bounded(1);
+
+    // Create and spawn AudioModel in a background thread
+    use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+
+    let model = AudioModel::new(MARKET_WIDTH, MARKET_HEIGHT, cmd_rx, snap_tx, None);
+
+    let host = cpal::default_host();
+    let _stream = if let Some(device) = host.default_output_device() {
+        if let Ok(config) = device.default_output_config() {
+            let model_lock = std::sync::Arc::new(std::sync::Mutex::new(model));
+            let model_clone = model_lock.clone();
+
+            let stream = match config.sample_format() {
+                cpal::SampleFormat::F32 => device.build_output_stream(
+                    &config.into(),
+                    move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                        if let Ok(mut model) = model_clone.lock() {
+                            model.process(data);
+                        }
+                    },
+                    |err| eprintln!("an error occurred on stream: {}", err),
+                    None,
+                ),
+                _ => Err(cpal::BuildStreamError::StreamConfigNotSupported),
+            };
+
+            if let Ok(s) = stream {
+                if s.play().is_ok() {
+                    Some((s, model_lock))
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
+    // In headless or if stream failed, fallback to a dummy thread to drain the commands
+    let _fallback_thread = if _stream.is_none() {
+        let mut model = AudioModel::new(MARKET_WIDTH, MARKET_HEIGHT, bounded(1).1, bounded(1).0, None);
+        Some(thread::spawn(move || {
+            let mut buffer = vec![0.0; 256];
+            loop {
+                model.process(&mut buffer);
+                thread::sleep(Duration::from_millis(5));
+            }
+        }))
+    } else {
+        None
+    };
+
+    if args.contains(&"--headless".to_string()) {
+        let mut app = App::new(cmd_tx, snap_rx);
+        for _ in 0..10 {
+            app.update();
+        }
+        println!("Headless execution completed successfully.");
+        return Ok(());
     }
 
-    macroquad::Window::from_config(window_conf(), async_main());
+    enable_raw_mode()?;
+    let mut stdout = io::stdout();
+    execute!(stdout, EnterAlternateScreen)?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
+
+    let mut app = App::new(cmd_tx, snap_rx);
+    let mut last_tick = Instant::now();
+
+    while app.running {
+        let timeout = TICK_RATE
+            .checked_sub(last_tick.elapsed())
+            .unwrap_or_else(|| Duration::from_secs(0));
+
+        if event::poll(timeout)? {
+            if let Event::Key(key) = event::read()? {
+                if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
+                    app.running = false;
+                }
+            }
+        }
+
+        if last_tick.elapsed() >= TICK_RATE {
+            app.update();
+            last_tick = Instant::now();
+        }
+
+        app.render(&mut terminal)?;
+    }
+
+    disable_raw_mode()?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+    terminal.show_cursor()?;
+
+    Ok(())
 }
