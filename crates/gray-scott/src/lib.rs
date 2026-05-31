@@ -93,7 +93,7 @@ impl GrayScott {
         }
     }
 
-    /// Returns the width of the simulation grid.
+    /// Exposes the horizontal extent of the grid, which determines the maximum X-coordinate for spatial iteration.
     ///
     /// This is the total number of cells along the X-axis. Used when iterating over the
     /// grid to calculate row/column bounds, such as when rendering.
@@ -110,7 +110,7 @@ impl GrayScott {
         self.width
     }
 
-    /// Returns the height of the simulation grid.
+    /// Exposes the vertical extent of the grid, establishing the maximum Y-coordinate bounds for spatial iteration.
     ///
     /// This is the total number of cells along the Y-axis. Used when calculating the total
     /// capacity or setting up bounds checks for external components interacting with the grid.

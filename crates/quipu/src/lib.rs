@@ -99,7 +99,7 @@ pub enum Knot {
 }
 
 impl Knot {
-    /// Returns the numeric value of the knot.
+    /// Retrieves the mathematical weight of this knot, which contributes to the total value of its parent cord.
     ///
     /// # Examples
     ///
@@ -118,7 +118,7 @@ impl Knot {
         }
     }
 
-    /// Returns the symbol used for TUI display.
+    /// Provides the character representation of this knot's form, mapped to visual meaning in the UI.
     ///
     /// - `●`: Simple Knot
     /// - `≡N`: Long Knot (where N is the value)

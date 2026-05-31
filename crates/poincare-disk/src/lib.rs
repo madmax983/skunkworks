@@ -116,9 +116,19 @@ impl Geodesic {
         Self { p1, p2 }
     }
 
-    /// Returns the Euclidean center and radius of the circular arc representing the geodesic.
+    /// Calculates the Euclidean parameters (center point and radius) required to render the geodesic as a circular arc on a 2D canvas.
     ///
     /// Returns `None` if the geodesic is a straight line passing through the origin.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Geodesic, Point};
+    /// let g = Geodesic::new(Point::new(0.1, 0.1), Point::new(0.5, 0.5));
+    /// // Since it passes through the origin, it's a straight line.
+    /// let g_straight = Geodesic::new(Point::new(0.1, 0.1), Point::new(-0.1, -0.1));
+    /// assert!(g_straight.euclidean_circle().is_none());
+    /// ```
     ///
     /// # Theory
     ///
@@ -445,7 +455,7 @@ impl Mobius {
         Some(Self { a, b, c, d })
     }
 
-    /// Returns the coefficient `a`.
+    /// Retrieves the `a` parameter of the complex matrix representation $\begin{pmatrix} a & b \\ c & d \end{pmatrix}$.
     ///
     /// # Examples
     ///
@@ -458,7 +468,7 @@ impl Mobius {
         self.a
     }
 
-    /// Returns the coefficient `b`.
+    /// Retrieves the `b` parameter of the complex matrix representation $\begin{pmatrix} a & b \\ c & d \end{pmatrix}$.
     ///
     /// # Examples
     ///
@@ -471,7 +481,7 @@ impl Mobius {
         self.b
     }
 
-    /// Returns the coefficient `c`.
+    /// Retrieves the `c` parameter of the complex matrix representation $\begin{pmatrix} a & b \\ c & d \end{pmatrix}$.
     ///
     /// # Examples
     ///
@@ -484,7 +494,7 @@ impl Mobius {
         self.c
     }
 
-    /// Returns the coefficient `d`.
+    /// Retrieves the `d` parameter of the complex matrix representation $\begin{pmatrix} a & b \\ c & d \end{pmatrix}$.
     ///
     /// # Examples
     ///
@@ -497,7 +507,7 @@ impl Mobius {
         self.d
     }
 
-    /// Returns the identity transformation $f(z) = z$.
+    /// Constructs the identity transformation $f(z) = z$, effectively yielding a neutral translation and rotation.
     ///
     /// Corresponds to the matrix $\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$.
     ///
@@ -592,7 +602,7 @@ impl Mobius {
         }
     }
 
-    /// Returns the inverse of the transformation.
+    /// Computes the geometric inverse $f^{-1}$ that precisely undoes the spatial distortion of the current transformation.
     ///
     /// The inverse $f^{-1}$ undoes the effect of $f$.
     /// If you move forward with `f`, you can move back with `inverse()`.
@@ -799,10 +809,19 @@ impl TilingConsts {
     }
 }
 
-/// Returns the point `a` representing the center of a neighbor in the given direction.
+/// Calculates the target translation point needed to step seamlessly into an adjacent spatial neighborhood.
 ///
 /// This point `a` can be used to construct a `Mobius::translation(a)` that moves the view
 /// to that neighbor.
+///
+/// # Examples
+///
+/// ```
+/// use poincare_disk::{neighbor_transform_a, TilingConsts, Point};
+/// let consts = TilingConsts::new_4_5();
+/// let p = neighbor_transform_a(0, &consts); // Right neighbor
+/// assert!(p.re > 0.0);
+/// ```
 ///
 /// # Arguments
 ///

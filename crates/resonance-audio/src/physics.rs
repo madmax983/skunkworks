@@ -115,7 +115,7 @@ impl PhysicsGrid {
         }
     }
 
-    /// Returns the width of the grid.
+    /// Exposes the total number of wave nodes along the X-axis to assist with spatial bounds checking.
     ///
     /// # Examples
     /// ```
@@ -127,7 +127,7 @@ impl PhysicsGrid {
         self.width
     }
 
-    /// Returns the height of the grid.
+    /// Exposes the total number of wave nodes along the Y-axis to define the vertical limit of the acoustic field.
     ///
     /// # Examples
     /// ```
@@ -357,7 +357,7 @@ impl PhysicsGrid {
         }
     }
 
-    /// Gets the current wave value (pressure) at the specified coordinates.
+    /// Samples the acoustic wave pressure at a specific point on the grid, yielding 0.0 if queried out of bounds.
     ///
     /// Returns 0.0 if coordinates are out of bounds.
     ///
