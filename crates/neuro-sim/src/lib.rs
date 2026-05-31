@@ -240,6 +240,14 @@ impl Network {
     /// net.step(&[]);
     /// ```
     pub fn step(&mut self, external_inputs: &[f32]) {
+        // 🔒 Warden Defense: Ensure vectors aren't smaller than neurons to prevent bounds panic
+        if self.inputs.len() < self.neurons.len() {
+            self.inputs.resize(self.neurons.len(), 0.0);
+        }
+        if self.spikes.len() < self.neurons.len() {
+            self.spikes.resize(self.neurons.len(), false);
+        }
+
         // By pre-allocating we remove a vector allocation per frame.
         self.inputs.fill(0.0);
 
@@ -310,8 +318,11 @@ impl Network {
     /// 3. Update Neurons
     fn update_neurons(neurons: &mut [Izhikevich], spikes: &mut [bool], inputs: &[f32], dt: f32) {
         for (i, neuron) in neurons.iter_mut().enumerate() {
-            let (_, spiked) = neuron.update(dt, inputs[i]);
-            spikes[i] = spiked;
+            let input_val = inputs.get(i).copied().unwrap_or(0.0);
+            let (_, spiked) = neuron.update(dt, input_val);
+            if let Some(spike) = spikes.get_mut(i) {
+                *spike = spiked;
+            }
         }
     }
 
