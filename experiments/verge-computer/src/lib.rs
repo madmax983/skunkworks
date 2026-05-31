@@ -1,8 +1,11 @@
 use bevy::prelude::*;
 
-pub mod cpu;
-pub mod mechanism;
-pub mod view;
+pub(crate) mod cpu;
+pub use cpu::*;
+pub(crate) mod mechanism;
+pub use mechanism::*;
+pub(crate) mod view;
+pub use view::*;
 
 use cpu::{cpu_tick_system, Program, TickEvent};
 

@@ -13,7 +13,7 @@ use ratatui::{
 use std::time::Duration;
 use tui_shared::Tui;
 
-pub mod simulation;
+mod simulation;
 use simulation::{Node, NodeState, Ring, World};
 
 fn main() -> Result<()> {

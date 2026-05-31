@@ -1,8 +1,8 @@
 use macroquad::prelude::*;
 
-pub mod attractor;
-pub mod grammar;
-pub mod turtle;
+mod attractor;
+mod grammar;
+mod turtle;
 
 use attractor::LorenzParams;
 use grammar::LSystem;

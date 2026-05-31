@@ -1,6 +1,6 @@
-pub mod audio;
-pub mod physics;
-pub mod render;
+mod audio;
+mod physics;
+mod render;
 
 use anyhow::Result;
 use crossterm::{

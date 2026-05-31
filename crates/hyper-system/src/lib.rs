@@ -18,8 +18,8 @@ pub mod math {
     pub use locus::Vec3;
     pub use locus::Vec4;
 }
-pub mod monitor;
-pub mod physics;
+pub(crate) mod monitor;
+pub(crate) mod physics;
 
 pub use monitor::*;
 pub use physics::*;

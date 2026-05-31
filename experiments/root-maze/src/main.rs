@@ -1,5 +1,5 @@
-pub mod maze;
-pub mod root;
+mod maze;
+mod root;
 
 use macroquad::prelude::*;
 use maze::{Grid, Soil};
