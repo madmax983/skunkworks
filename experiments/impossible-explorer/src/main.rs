@@ -1,5 +1,5 @@
 mod fs_system;
-pub mod safe_gl;
+mod safe_gl;
 mod world;
 
 use fs_system::scan_dir;

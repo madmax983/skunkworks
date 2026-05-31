@@ -1,4 +1,4 @@
-pub mod world;
+mod world;
 
 use anyhow::Result;
 use crossterm::{

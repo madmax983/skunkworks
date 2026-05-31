@@ -13,3 +13,7 @@
 **[Title] Enforce Module Boundaries in Experiments via Facade**
 **Tangle:** Several experimental crates (`spqr-rsa`, `lensing-poetry`, `colony-concerto`, `system-attractor`, `clockwork-concerto`, `dependency-karst`, `cargo-rocket`, `phonetic-flock`, `synaptic-pachinko`, `hyperbolic-dungeon`, `heap-arena`) leaked their internal submodules directly via `pub mod`, breaking the Facade pattern and exposing implementation details.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` in library `lib.rs` files, and demoted to `mod` in binary `main.rs` files. Enforces a strict structural boundary while preserving the external API.
+
+**[Title] Further Enforce Module Boundaries via Facade**
+**Tangle:** Several experimental crates leaked their internal submodules directly via `pub mod`, breaking the Facade pattern and exposing implementation details. `crates/hyper-system` also leaked `monitor` and `physics` modules.
+**Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` in library `lib.rs` files, and demoted to `mod` in binary `main.rs` files across various experimental crates and `hyper-system`.

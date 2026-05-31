@@ -13,8 +13,8 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-pub mod game;
-pub mod physics;
+mod game;
+mod physics;
 
 use crate::game::GameState;
 use crate::physics::PacketKind;

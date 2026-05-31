@@ -3,7 +3,10 @@
 //! Encodes text strings into audio files by translating characters into
 //! spectrogram footprints, and decoding them back into text.
 
-pub mod decoder;
-pub mod encoder;
+pub(crate) mod decoder;
+pub use decoder::*;
+pub(crate) mod encoder;
+pub use encoder::*;
 /// Bitmapped font rendering mapping module.
-pub mod font;
+pub(crate) mod font;
+pub use font::*;

@@ -1,5 +1,5 @@
-pub mod blame;
-pub mod physics;
+mod blame;
+mod physics;
 
 use anyhow::Result;
 use blame::BlameAnalyzer;
