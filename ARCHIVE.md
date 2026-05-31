@@ -1,8 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chaos-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to private module accesses in `resonance_audio`. Lacks `--headless` bypass for `macroquad`. Grace period: 24h.
+- **mnem-flock**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics via `XOpenDisplay()` in headless environments due to missing `--headless` bypass for macroquad. Grace period: 24h.
 
 
 ## ☠️ Executed
+- **chaos-tank**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing upstream crate integration and implementing a `--headless` bypass for macroquad. Vigor demonstrated.
 - **cam-automaton**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to resolve missing `--headless` bypass and generic implementation during grace period. Biomass returned to the void.
 - **market-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Grace period expired without a README.md. Moved to graveyard.
 - **ferrous-origami**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `glam` version collision and headless bypass during grace period. Biomass returned to the void.
