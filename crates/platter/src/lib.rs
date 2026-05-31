@@ -64,7 +64,7 @@ impl Platter {
         }
     }
 
-    /// Returns the width of the platter.
+    /// Retrieves the horizontal boundary of the platter, used for calculating grid indexing and ensuring bounds safety.
     ///
     /// # Examples
     ///
@@ -77,7 +77,7 @@ impl Platter {
         self.width
     }
 
-    /// Returns the height of the platter.
+    /// Retrieves the vertical boundary of the platter, used for coordinate calculations and row traversals.
     ///
     /// # Examples
     ///
