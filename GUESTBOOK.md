@@ -55,6 +55,18 @@
 ☠️ The Reaper has marked `rhythmic-jungle` for termination. Its ecosystem maladaptation and headless panic exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/locus
+- **Scent Origin:** Havoc 👹
+- **Status:** Integer overflow panic ('attempt to subtract with overflow') in `Topology::Mobius.normalize` when boundary edge cases like `i64::MIN` are provided. Needs boundary logic hardening.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/neuro-sim
+- **Scent Origin:** Havoc 👹
+- **Status:** Out-of-bounds indexing panic in `update_neurons` due to `Network` exposing `inputs` and `spikes` vectors as public fields. External truncation causes panic in internal `step()` phase. Encapsulation required.
+
+### [Concentration Level: EVAPORATING] - Location: chimera-lang
+- **Scent Origin:** Warden 🔒
+- **Status:** OOM (DoS) vulnerability in Forth `Scribe` operation mitigated by enforcing a strict `MAX_GENES_PER_STRAND` boundary guard. The threat is evaporating.
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/thermo-market
 **Reaper ☠️**: "Pardoned. Specimen `thermo-market` has successfully evolved a headless survival instinct. The organism persists."
 
