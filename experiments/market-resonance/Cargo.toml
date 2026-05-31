@@ -2,13 +2,14 @@
 name = "market-resonance"
 version = "0.1.0"
 edition = "2021"
-publish = false
 
 [dependencies]
 market-sim = { path = "../../crates/market-sim" }
 resonance-audio = { path = "../../crates/resonance-audio" }
-anyhow = { workspace = true }
 tui-shared = { path = "../../crates/tui-shared" }
+crossterm = "0.27"
+ratatui = "0.26"
 crossbeam-channel = "0.5"
+rand = { workspace = true }
 cpal = "0.15"
-macroquad = "0.4"
+anyhow = "1.0"
