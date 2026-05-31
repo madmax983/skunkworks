@@ -2,6 +2,7 @@ use macroquad::prelude::Vec2;
 
 const SUB_STEPS: usize = 20;
 
+#[allow(dead_code)]
 #[derive(Clone)]
 pub struct Node {
     pub pos: Vec2,
@@ -125,6 +126,7 @@ impl PendulumSystem {
         }
     }
 
+    #[allow(dead_code)]
     pub fn total_energy(&self, dt: f32) -> f32 {
         let mut kinetic = 0.0;
         let mut potential = 0.0;

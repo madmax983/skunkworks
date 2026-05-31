@@ -1,6 +1,6 @@
 use crossbeam_channel::bounded;
 use macroquad::prelude::*;
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::{AudioCommand, AudioModel};
 
 mod physics;
 use physics::PendulumSystem;
@@ -15,8 +15,22 @@ const SAMPLE_RATE: f32 = 44100.0;
 // Size of the tank visually
 const TANK_DRAW_SIZE: f32 = 600.0;
 
-#[macroquad::main("Chaos Tank")]
-async fn main() {
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Chaos Tank".to_owned(),
+        ..Default::default()
+    }
+}
+
+fn main() {
+    if std::env::args().any(|arg| arg == "--headless") || std::env::var("WAYLAND_DISPLAY").is_err() && std::env::var("DISPLAY").is_err() {
+        println!("Running in headless mode. Exiting gracefully to prevent X11 panic.");
+        return;
+    }
+    macroquad::Window::from_config(window_conf(), async_main());
+}
+
+async fn async_main() {
     let (cmd_tx, cmd_rx) = bounded(1024);
     let (snap_tx, snap_rx) = bounded(2);
 
@@ -237,7 +251,7 @@ async fn main() {
 #[cfg(feature = "audio")]
 fn init_audio(
     cmd_rx: crossbeam_channel::Receiver<AudioCommand>,
-    snap_tx: crossbeam_channel::Sender<resonance_audio::audio::AudioSnapshot>,
+    snap_tx: crossbeam_channel::Sender<resonance_audio::AudioSnapshot>,
 ) -> anyhow::Result<cpal::Stream> {
     let host = cpal::default_host();
     let device = host
