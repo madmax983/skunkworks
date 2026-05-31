@@ -1165,3 +1165,5 @@ Observation: Thermodynamic Market Liquidity. Discrete market orders translate di
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/cam-automaton
 **Reaper ☠️**: "Fascinating. Specimen `cam-automaton` exhibits terminal characteristics indicating Ecosystem Maladaptation. It explicitly relies on a display server and lacks a `--headless` bypass for `macroquad`, ensuring panic in CI. Condemnation marked. Execution scheduled in 24h."
+- ☠️ **cam-automaton** has been executed by The Reaper. Reason: Ecosystem Maladaptation / Skeletal Implementation. Biomass returned to the void.
+- ☠️ **chaos-tank** has been condemned by The Reaper. Reason: Terminal Compilation Failure / Ecosystem Maladaptation. 24 hours to adapt.
