@@ -1,7 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **cam-automaton**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Lacks `--headless` bypass for `macroquad`. Grace period: 24h.
+- **chaos-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to private module accesses in `resonance_audio`. Lacks `--headless` bypass for `macroquad`. Grace period: 24h.
+
 
 ## ☠️ Executed
+- **cam-automaton**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to resolve missing `--headless` bypass and generic implementation during grace period. Biomass returned to the void.
 - **market-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Grace period expired without a README.md. Moved to graveyard.
 - **ferrous-origami**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `glam` version collision and headless bypass during grace period. Biomass returned to the void.
 - **flock-platter**: Specimen executed. Diagnosis: Documentation Void / Zombie Recidivist. Grace period expired without a README.md. Moved to graveyard.
