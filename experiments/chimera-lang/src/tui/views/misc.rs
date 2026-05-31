@@ -184,26 +184,27 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     if app_state.fishing_hooked {
         let area = scene_chunks[0];
         let popup_area = ratatui::layout::Rect {
-            x: area.x + (area.width.saturating_sub(20)) / 2,
-            y: area.y + (area.height.saturating_sub(3)) / 2,
-            width: 20,
-            height: 3,
+            x: area.x + (area.width.saturating_sub(30)) / 2,
+            y: area.y + (area.height.saturating_sub(5)) / 2,
+            width: 30,
+            height: 5,
         };
         // Clear background for popup
         f.render_widget(ratatui::widgets::Clear, popup_area);
 
-        let popup = Paragraph::new("FISH ON!")
+        let popup = Paragraph::new("\nFISH ON!")
             .style(
                 Style::default()
                     .fg(Color::White)
                     .bg(Color::Red)
-                    .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK),
+                    .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK),
             )
             .alignment(ratatui::layout::Alignment::Center)
             .block(
                 Block::default()
+                    .title(" 🎣 ALERT ")
                     .borders(Borders::ALL)
-                    .border_style(Style::default().fg(Color::Yellow)),
+                    .border_style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
             );
 
         f.render_widget(popup, popup_area);
