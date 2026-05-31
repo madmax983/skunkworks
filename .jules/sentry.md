@@ -65,3 +65,6 @@
 **TUI Shared Coverage Learning:**
 **Learning:** Found coverage gaps in test cases where boundary limits caused `usize::MAX/4` panics and trivial functions like `Button::new` lacked explicit non-destructive verification without testing global state.
 **Action:** Replaced destructive alloc fuzzer with realistic loads `1_000_000` capacity limits, increasing predictability, and added missing logic evaluations while deleting noisy debug OOM tests. Avoided `Buffer::empty` bounds gaps by ensuring default styles are directly rendered without blocking constraints.
+**[Quipu Cord PartialEq Evaluation]**
+**Learning:** `cargo llvm-cov` accurately reports total lines missed versus branch statements. `cargo tarpaulin` might mistakenly flag multi-condition `if/else` checks or `while let` loop termination braces inside `PartialEq` as missing lines, even when 100% path coverage is verified via `lcov`. Using `.push()` on nested structs to directly evaluate tree boundaries (color, structure depth, children mismatches) completely evaluates `impl PartialEq`.
+**Action:** When `PartialEq` is implemented over recursively defined structures (e.g., ASTs or N-ary trees), inject tests that mismatch on every structural bound explicitly (`color`, `length`, `inner arrays`) to enforce correct short-circuit returns without modifying internal bounds checking logic.

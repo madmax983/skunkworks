@@ -676,4 +676,40 @@ mod tests {
         assert!(display_str.contains("Cord 0:\n●\n  |  \n  |  "));
         assert!(display_str.contains("Cord 1:\n● ● ● ●\n≡2"));
     }
+
+    #[test]
+    fn test_partial_eq_coverage() {
+        let mut c1 = Cord::new();
+        let mut c2 = Cord::new();
+
+        // Equal
+        assert_eq!(c1, c2);
+
+        // Differing color
+        c1.color = Color::Red;
+        c2.color = Color::Blue;
+        assert_ne!(c1, c2);
+
+        // Differing clusters
+        c1.color = Color::default();
+        c2.color = Color::default();
+        c1.clusters.push(vec![Knot::Simple]);
+        assert_ne!(c1, c2);
+
+        // Differing subsidiaries lengths
+        c2.clusters.push(vec![Knot::Simple]);
+        c1.subsidiaries.push(Cord::new());
+        assert_ne!(c1, c2);
+
+        // Differing inner subsidiaries
+        c2.subsidiaries.push(Cord::from(5));
+        assert_ne!(c1, c2);
+
+        // Test the recursive push
+        let mut c3 = Cord::new();
+        c3.subsidiaries.push(Cord::new());
+        let mut c4 = Cord::new();
+        c4.subsidiaries.push(Cord::new());
+        assert_eq!(c3, c4);
+    }
 }
