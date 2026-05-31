@@ -60,7 +60,11 @@ impl PhysicsPoincareApp {
             .split(frame.area());
 
         let canvas = Canvas::default()
-            .block(Block::default().title(" 🧬 Splice: physics-pbd × poincare-disk ").borders(Borders::ALL))
+            .block(
+                Block::default()
+                    .title(" 🧬 Splice: physics-pbd × poincare-disk ")
+                    .borders(Borders::ALL),
+            )
             .x_bounds([-1.1, 1.1])
             .y_bounds([-1.1, 1.1])
             .paint(|ctx| {
@@ -89,8 +93,16 @@ impl PhysicsPoincareApp {
                     pt = self.transform.apply(pt);
                     projected.push(pt);
 
-                    let color = if p.inv_mass == 0.0 { Color::Red } else { Color::Green };
-                    ctx.print(pt.re, pt.im, ratatui::text::Span::styled("●", Style::default().fg(color)));
+                    let color = if p.inv_mass == 0.0 {
+                        Color::Red
+                    } else {
+                        Color::Green
+                    };
+                    ctx.print(
+                        pt.re,
+                        pt.im,
+                        ratatui::text::Span::styled("●", Style::default().fg(color)),
+                    );
                 }
 
                 // Draw Constraints

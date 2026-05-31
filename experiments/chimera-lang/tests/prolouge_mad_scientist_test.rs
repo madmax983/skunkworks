@@ -432,7 +432,6 @@ fn test_prolouge_compiler_madness() {
     assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Prolouge);
 }
 
-
 #[test]
 fn test_prolouge_compiler_miller() {
     let source = "miller { 42 simulate }";

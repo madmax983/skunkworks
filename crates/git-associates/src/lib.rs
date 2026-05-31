@@ -176,7 +176,14 @@ impl GitModel {
                 .single()
                 .unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap());
 
-            let parents: Vec<String> = commit.parents().map(|p| p.id().to_string()).collect();
+            // ⚡ Bolt Optimization: Replace `.map(|p| p.id().to_string()).collect()`
+            // with exact-sized pre-allocation using `commit.parent_count()`.
+            // This avoids multiple heap reallocations when iterator bounds are obscured from `collect()`.
+            let num_parents = commit.parent_count();
+            let mut parents = Vec::with_capacity(num_parents);
+            for parent_id in commit.parent_ids() {
+                parents.push(parent_id.to_string());
+            }
 
             // Stats
             let (stats, files) = if compute_diffs {
