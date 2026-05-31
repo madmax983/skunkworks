@@ -150,7 +150,7 @@ impl Snapshot {
         let count = upper.unwrap_or(lower).min(100_000);
         self.entities.reserve(count);
 
-        for entity in iter.take(100_000 - self.entities.len()) {
+        for entity in iter.take(100_000usize.saturating_sub(self.entities.len())) {
             self.entities.push(entity);
         }
         self
