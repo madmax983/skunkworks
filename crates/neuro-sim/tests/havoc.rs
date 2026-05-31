@@ -4,7 +4,7 @@ use neuro_sim::Network;
 // `inputs` vector is exposed publicly and can be truncated or manipulated, causing an out-of-bounds error
 // during the internal step phase. Or `spikes[i]` can also be out of bounds!
 #[test]
-#[should_panic(expected = "index out of bounds")]
+
 fn havoc_neuro_oob_panic() {
     let mut net = Network::new();
     // Add a neuron normally

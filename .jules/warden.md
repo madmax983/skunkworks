@@ -39,3 +39,7 @@
 **2024-05-28 - [Security Audit]**
 **Threat:** Potential Denial of Service (DoS) and path traversal via `OpCode::Scavenge` and `OpCode::Digest`.
 **Defense:** Confirmed existing bounds checking limits file allocations to 1MB and sanitizes path directories via `canonicalize` and `starts_with` against the sandbox root. Memory boundaries are protected.
+
+**2025-05-18 - [Out-Of-Bounds Read/Write Panic in `neuro-sim`]
+**Threat:** The `Network` struct in `neuro-sim/src/lib.rs` exposed its `inputs` and `spikes` vectors publicly. If an attacker or user logic dynamically cleared or truncated these vectors, the `step()` and `update_neurons()` functions would index directly into them (`inputs[i]` and `spikes[i]`) causing an out-of-bounds slice indexing panic leading to Denial of Service (DoS).
+**Defense:** Added explicit boundary resizing checks at the beginning of `step()` to ensure `inputs` and `spikes` are appropriately sized relative to `neurons.len()`. Furthermore, replaced direct indexing in `update_neurons()` with safe slice boundary handlers (`inputs.get(i)` and `spikes.get_mut(i)`).
