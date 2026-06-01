@@ -228,90 +228,121 @@ impl Crystal {
             let parent_pos = crystal.atoms[parent_idx].position;
             let (u, v) = get_basis_vectors(parent_normal);
 
-            // Max radius depends on number of entries, roughly sqrt(N)
-            let max_r = ((entries.len() as f32).sqrt() as i32) + 2;
-
-            // Generate potential coordinates in a spiral
-            // Optimization: Pre-allocate VecDeque capacity to prevent multiple heap reallocations.
-            // The number of coordinates added per radius `r` is `8 * r`.
-            // The total capacity is `sum(8 * r) from r=1 to max_r + 5`, which equals `4 * R * (R + 1)` where `R = max_r + 5`.
-            let max_radius = max_r + 5;
-            let capacity = 4 * max_radius * (max_radius + 1);
-            let mut coords = VecDeque::with_capacity(capacity as usize);
-
-            // First point (0,0) is skipped because it's the parent itself?
-            // Actually, the parent is already placed. We want to place children AROUND it.
-            // So start r=1.
-            for r in 1..=max_r + 5 {
-                // Add padding
-                // Perimeter of square radius r
-                // Top: y=r, x from -r to r
-                for dx in -r..=r {
-                    coords.push_back((dx, r));
-                }
-                // Right: x=r, y from r-1 down to -r
-                for dy in (-r..r).rev() {
-                    coords.push_back((r, dy));
-                }
-                // Bottom: y=-r, x from r-1 down to -r
-                for dx in (-r..r).rev() {
-                    coords.push_back((dx, -r));
-                }
-                // Left: x=-r, y from -r+1 up to r-1
-                for dy in (-r + 1)..r {
-                    coords.push_back((-r, dy));
-                }
-            }
-
-            for entry in entries {
-                let is_dir = entry.file_type().map(|t| t.is_dir()).unwrap_or(false);
-                let name = entry.file_name().to_string_lossy().into_owned();
-
-                let mut found_pos = None;
-
-                // Search for next free spot
-                while let Some((du, dv)) = coords.pop_front() {
-                    let pos = LatticePoint::new(
-                        parent_pos.x + du * u.x + dv * v.x,
-                        parent_pos.y + du * u.y + dv * v.y,
-                        parent_pos.z + du * u.z + dv * v.z,
-                    );
-
-                    if !occupied.contains(&pos) {
-                        found_pos = Some(pos);
-                        break;
-                    }
-                }
-
-                if let Some(pos) = found_pos {
-                    occupied.insert(pos);
-                    let idx = crystal.atoms.len();
-
-                    // Determine new normal for directory
-                    let new_normal = if is_dir {
-                        get_dir_normal(&name, parent_normal)
-                    } else {
-                        parent_normal
-                    };
-
-                    crystal.atoms.push(Atom {
-                        position: pos,
-                        is_dir,
-                        name,
-                        path: entry.path(),
-                        normal: new_normal,
-                    });
-                    crystal.bonds.push((parent_idx, idx));
-                    crystal.lookup.insert(pos, idx);
-
-                    if is_dir {
-                        queue.push_back((entry.path(), idx, new_normal));
-                    }
-                }
-            }
+            Self::place_children(
+                &entries,
+                parent_idx,
+                parent_pos,
+                parent_normal,
+                u,
+                v,
+                &mut crystal,
+                &mut occupied,
+                &mut queue,
+            );
         }
 
         Ok(crystal)
+    }
+
+    fn generate_spiral_coords(entry_count: usize) -> VecDeque<(i32, i32)> {
+        // Max radius depends on number of entries, roughly sqrt(N)
+        let max_r = ((entry_count as f32).sqrt() as i32) + 2;
+
+        // Generate potential coordinates in a spiral
+        // Optimization: Pre-allocate VecDeque capacity to prevent multiple heap reallocations.
+        // The number of coordinates added per radius `r` is `8 * r`.
+        // The total capacity is `sum(8 * r) from r=1 to max_r + 5`, which equals `4 * R * (R + 1)` where `R = max_r + 5`.
+        let max_radius = max_r + 5;
+        let capacity = 4 * max_radius * (max_radius + 1);
+        let mut coords = VecDeque::with_capacity(capacity as usize);
+
+        // First point (0,0) is skipped because it's the parent itself?
+        // Actually, the parent is already placed. We want to place children AROUND it.
+        // So start r=1.
+        for r in 1..=max_r + 5 {
+            // Add padding
+            // Perimeter of square radius r
+            // Top: y=r, x from -r to r
+            for dx in -r..=r {
+                coords.push_back((dx, r));
+            }
+            // Right: x=r, y from r-1 down to -r
+            for dy in (-r..r).rev() {
+                coords.push_back((r, dy));
+            }
+            // Bottom: y=-r, x from r-1 down to -r
+            for dx in (-r..r).rev() {
+                coords.push_back((dx, -r));
+            }
+            // Left: x=-r, y from -r+1 up to r-1
+            for dy in (-r + 1)..r {
+                coords.push_back((-r, dy));
+            }
+        }
+
+        coords
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn place_children(
+        entries: &[std::fs::DirEntry],
+        parent_idx: usize,
+        parent_pos: LatticePoint,
+        parent_normal: Vector3<i32>,
+        u: Vector3<i32>,
+        v: Vector3<i32>,
+        crystal: &mut Crystal,
+        occupied: &mut FxHashSet<LatticePoint>,
+        queue: &mut VecDeque<(PathBuf, usize, Vector3<i32>)>,
+    ) {
+        let mut coords = Self::generate_spiral_coords(entries.len());
+
+        for entry in entries {
+            let is_dir = entry.file_type().map(|t| t.is_dir()).unwrap_or(false);
+            let name = entry.file_name().to_string_lossy().into_owned();
+
+            let mut found_pos = None;
+
+            // Search for next free spot
+            while let Some((du, dv)) = coords.pop_front() {
+                let pos = LatticePoint::new(
+                    parent_pos.x + du * u.x + dv * v.x,
+                    parent_pos.y + du * u.y + dv * v.y,
+                    parent_pos.z + du * u.z + dv * v.z,
+                );
+
+                if !occupied.contains(&pos) {
+                    found_pos = Some(pos);
+                    break;
+                }
+            }
+
+            if let Some(pos) = found_pos {
+                occupied.insert(pos);
+                let idx = crystal.atoms.len();
+
+                // Determine new normal for directory
+                let new_normal = if is_dir {
+                    get_dir_normal(&name, parent_normal)
+                } else {
+                    parent_normal
+                };
+
+                crystal.atoms.push(Atom {
+                    position: pos,
+                    is_dir,
+                    name,
+                    path: entry.path(),
+                    normal: new_normal,
+                });
+                crystal.bonds.push((parent_idx, idx));
+                crystal.lookup.insert(pos, idx);
+
+                if is_dir {
+                    queue.push_back((entry.path(), idx, new_normal));
+                }
+            }
+        }
     }
 }
 
