@@ -227,7 +227,7 @@ ChimeraScript is a high-level, Concatenative syntax for writing Chimera DNA. It 
 
 ```chimera
 strand main {
-    "Hello World" print
+    "Genesis Sequence Initiated" print
     5 3 add print
 
     # Conditional jump
@@ -253,11 +253,11 @@ You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 
 ```bash
 # Basic usage with standard DNA files (from repository root)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/mad_scientist.prl
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs
 
 
 # Headless mode (no TUI)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/mad_scientist.prl --headless
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs --headless
 ```
 
 ## Nova Features
