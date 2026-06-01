@@ -204,7 +204,11 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                 Block::default()
                     .title(" 🎣 ALERT ")
                     .borders(Borders::ALL)
-                    .border_style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+                    .border_style(
+                        Style::default()
+                            .fg(Color::White)
+                            .add_modifier(Modifier::BOLD),
+                    ),
             );
 
         f.render_widget(popup, popup_area);

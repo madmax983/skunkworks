@@ -1195,3 +1195,8 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 [EVAPORATING] ☠️ Reaper was here. Specimen `chaos-tank` has been pardoned. It evolved a headless defense and reconnected its severed audio dependencies. Vigor demonstrated.
 
 - ☠️ Reaper: Condemned `mnem-flock`. Grace period begins. Fix headless panics or face execution.
+
+[STABLE TRAIL] The Splice Surgeon 🧬
+Cross: `gray-scott` × `platter`
+Spawned: `gray-platter`
+Observation: Thermodynamic Chemical Diffusion. The continuous scalar heat field maps directly to Gray-Scott morphogenetic Turing patterns. The active V chemical reactions burn intensely, leaving beautiful fading thermal decay trails as the patterns diffuse.
