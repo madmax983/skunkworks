@@ -44,3 +44,6 @@
 **Flattening Deep Nesting in Core Loops**
 **Learning:** Replaced deeply nested `if let` and bounds checking inside hot loops (`market-sim`, `git-associates`, `resonance-audio`) with `let else { continue; }` and early `return`/`continue`. This dramatically reduces cognitive load and rightward drift, enforcing a flat architecture without sacrificing performance.
 **Action:** Proactively apply guard clauses in iterators or block bounds checks before delving into inner loop logic.
+**[Extracting God Functions with Complex State]**
+**Learning:** When extracting logic from "God Functions" that mutate a large amount of state (like `crystal`, `occupied` set, and a `queue`), extracting the logic can result in helper functions with too many arguments. It's often acceptable to use `#[allow(clippy::too_many_arguments)]` on the extracted private helper to bypass clippy warnings when the alternative is creating unnecessary boilerplate config structs just for one function call, keeping the focus strictly on flattening the pyramid of doom.
+**Action:** Extract deeply nested loops into private helpers. If they require many mutable references from the parent scope, use `#[allow(clippy::too_many_arguments)]` to maintain velocity and readability, rather than over-engineering temporary structs.
