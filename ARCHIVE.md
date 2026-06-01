@@ -1,8 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **mnem-flock**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics via `XOpenDisplay()` in headless environments due to missing `--headless` bypass for macroquad. Grace period: 24h.
+- **bio-transit**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics via `XOpenDisplay()` in headless environments due to missing `--headless` bypass for macroquad. Grace period: 24h.
 
 
 ## ☠️ Executed
+- **mnem-flock**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **chaos-tank**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing upstream crate integration and implementing a `--headless` bypass for macroquad. Vigor demonstrated.
 - **cam-automaton**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to resolve missing `--headless` bypass and generic implementation during grace period. Biomass returned to the void.
 - **market-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Grace period expired without a README.md. Moved to graveyard.
