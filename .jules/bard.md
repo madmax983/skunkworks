@@ -15,3 +15,7 @@
 **Confusion:** The README.md often falls out of sync with the module-level documentation () in  and lacks the comprehensive story/examples.
 **Confusion:** The README.md often falls out of sync with the module-level documentation in lib.rs and lacks the comprehensive story/examples.
 **Clarification:** When updating the overarching story for a crate, ensure the README.md mirrors the module-level documentation. This can be done by parsing the module-level comments from lib.rs and writing them into the README.
+
+## 2025-02-05 - [Fixing Intra-Doc Links for Private Modules]
+**Confusion:** Intra-doc links to `[`monitor`]` and `[`physics`]` were throwing warnings in `hyper-system` because these modules are `pub(crate)` and not public APIs, yet they were documented under `//! # Modules` in the crate root.
+**Clarification:** Renamed the section to `//! # Core APIs` and explicitly linked to the primary exported structs `[`SystemMonitor`]` and `[`PbdSystem4D`]` to provide the users with functional documentation that doesn't break rustdoc.

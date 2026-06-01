@@ -346,6 +346,10 @@ impl PbdSystem4D {
     /// * `iterations` - Precision solver passes. Higher is stiffer but slower. `10` to `20` is typical.
     /// * `friction` - Velocity multiplier applied *before* integration. `0.98` represents 2% energy loss per tick.
     ///
+    /// # Panics
+    /// This function will panic if an `Actuator` constraint contains a non-finite `factor` (e.g., `NaN`),
+    /// indicating a corrupted physics state that must not be integrated.
+    ///
     /// # Examples
     /// ```
     /// use hyper_system::math::Vec4;
@@ -497,6 +501,12 @@ impl PbdSystem4D {
 
 impl Default for PbdSystem4D {
     /// Identical to [`PbdSystem4D::new`].
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::PbdSystem4D;
+    /// let system = PbdSystem4D::default();
+    /// ```
     fn default() -> Self {
         Self::new()
     }
