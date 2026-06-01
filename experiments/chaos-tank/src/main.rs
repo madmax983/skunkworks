@@ -23,7 +23,9 @@ fn window_conf() -> Conf {
 }
 
 fn main() {
-    if std::env::args().any(|arg| arg == "--headless") || std::env::var("WAYLAND_DISPLAY").is_err() && std::env::var("DISPLAY").is_err() {
+    if std::env::args().any(|arg| arg == "--headless")
+        || std::env::var("WAYLAND_DISPLAY").is_err() && std::env::var("DISPLAY").is_err()
+    {
         println!("Running in headless mode. Exiting gracefully to prevent X11 panic.");
         return;
     }

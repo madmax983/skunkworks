@@ -1,0 +1,13 @@
+[package]
+name = "gray-platter"
+version = "0.1.0"
+edition = "2021"
+description = "A thermodynamic reaction-diffusion visualization"
+
+[dependencies]
+anyhow = "1.0"
+crossterm = "0.28"
+ratatui = "0.30"
+gray-scott = { path = "../../crates/gray-scott" }
+platter = { path = "../../crates/platter" }
+tui-shared = { path = "../../crates/tui-shared" }

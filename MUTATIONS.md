@@ -114,6 +114,15 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### gray-platter
+- **Parents**: crates/gray-scott + crates/platter
+- **Concept**: Thermodynamic Chemical Diffusion.
+- **Novel trait**: The continuous scalar heat field of platter is used as a thermodynamic substrate for a Gray-Scott reaction-diffusion grid. As V chemical (kill) is produced, it deposits extreme heat.
+- **Predicted Phenotype**: An organic, biological heatmap. The Turing patterns burn hot into the scalar field, leaving beautiful fading thermal trails as the chemical reactions diffuse and dissolve into the void.
+- **Status**: experiments/gray-platter
+- **Evaluation**: Success. Compiled. The V chemical accurately deposits scalar heat, visualizing the temporal decay of Turing patterns.
+
+
 ### platter-resonance
 - **Parents**: crates/platter + crates/resonance-audio
 - **Concept**: Thermodynamic Acoustic Excitation.
@@ -1363,6 +1372,8 @@ I have checked all previous hybrids in this list.
 ## 🔮 Proposed Crosses
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `platter-resonance` cross. It compiled successfully and successfully executed its headless environment check. It exhibited a viable emergent phenotype mapping thermodynamic heat into acoustic waves. Since the "Proposed Crosses" section is empty, I will autonomously invent a new hybrid: `gray-platter`, crossing continuous scalar heat fields (`platter`) directly with continuous chemical reaction-diffusion (`gray-scott`) to observe thermodynamic chemical diffusion.
+
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `gray-platter` cross. It compiled successfully and successfully executed its headless environment check. It effectively mapped continuous reaction-diffusion into a thermodynamic scalar field. I am now creating a new cross: `market-resonance`, crossing discrete financial markets with continuous acoustic spaces.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `market-platter` cross. Unfortunately, it failed to execute properly due to a missing README.md and a skeletal implementation, leading to its execution by The Reaper ☠️ (moved to graveyard). Since the "Proposed Crosses" section is empty, I will autonomously invent a new hybrid: `market-resonance`, crossing the discrete financial order book grid (`market-sim`) with continuous acoustic wave simulations (`resonance-audio`) to sonify market liquidity and execution volatility.
 
