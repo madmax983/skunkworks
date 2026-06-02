@@ -34,7 +34,7 @@ use crate::math::Vec4;
 ///
 /// # Examples
 /// ```
-/// use hyper_system::math::Vec4;
+/// use hyper_system::Vec4;
 /// use hyper_system::Particle4D;
 ///
 /// let particle = Particle4D {
@@ -66,7 +66,7 @@ pub struct Particle4D {
 ///
 /// # Examples
 /// ```
-/// use hyper_system::math::Vec4;
+/// use hyper_system::Vec4;
 /// use hyper_system::Constraint4D;
 ///
 /// // Create a simple rod holding two particles exactly 2.0 units apart.
@@ -121,7 +121,7 @@ pub enum Constraint4D {
 ///
 /// # Examples
 /// ```
-/// use hyper_system::math::Vec4;
+/// use hyper_system::Vec4;
 /// use hyper_system::PbdSystem4D;
 ///
 /// let mut system = PbdSystem4D::new();
@@ -171,7 +171,7 @@ impl PbdSystem4D {
     ///
     /// # Examples
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use hyper_system::Vec4;
     /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
@@ -211,7 +211,7 @@ impl PbdSystem4D {
     ///
     /// # Examples
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use hyper_system::Vec4;
     /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
@@ -261,7 +261,7 @@ impl PbdSystem4D {
     ///
     /// # Examples
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use hyper_system::Vec4;
     /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
@@ -313,7 +313,7 @@ impl PbdSystem4D {
     ///
     /// # Examples
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use hyper_system::Vec4;
     /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
@@ -352,7 +352,7 @@ impl PbdSystem4D {
     ///
     /// # Examples
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use hyper_system::Vec4;
     /// use hyper_system::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();

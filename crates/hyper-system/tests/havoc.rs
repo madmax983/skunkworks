@@ -1,4 +1,4 @@
-use hyper_system::math::Vec4;
+use hyper_system::Vec4;
 use hyper_system::*;
 use proptest::prelude::*;
 

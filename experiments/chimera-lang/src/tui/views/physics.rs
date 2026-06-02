@@ -1,7 +1,7 @@
 use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
 #[cfg(feature = "nova")]
-use hyper_system::math::Vec4;
+use hyper_system::Vec4;
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     layout::{Constraint, Direction, Layout},

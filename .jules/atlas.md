@@ -17,3 +17,6 @@
 **[Title] Further Enforce Module Boundaries via Facade**
 **Tangle:** Several experimental crates leaked their internal submodules directly via `pub mod`, breaking the Facade pattern and exposing implementation details. `crates/hyper-system` also leaked `monitor` and `physics` modules.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` in library `lib.rs` files, and demoted to `mod` in binary `main.rs` files across various experimental crates and `hyper-system`.
+**[Title] Enforce Module Boundaries via Facade in hyper-system
+**Tangle:** The `crates/hyper-system/src/lib.rs` leaked the internal `math` module via `pub mod`, breaking the Facade pattern.
+**Blueprint:** Replaced `pub mod math` with `pub(crate) mod math` combined with `pub use math::*;` to enforce a strict boundary while preserving the external API.
