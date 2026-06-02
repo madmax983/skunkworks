@@ -5,7 +5,7 @@
 //!
 //! # Core APIs
 //!
-//! - [`math`]: A 4D vector math library optimized for visualization.
+//! - `math`: A 4D vector math library optimized for visualization.
 //! - [`SystemMonitor`]: A system resource monitor with smoothed metric interpolation.
 //! - [`PbdSystem4D`]: A shared 4D Position-Based Dynamics physics engine.
 
