@@ -1,0 +1,286 @@
+use crossbeam_channel::{bounded, Receiver, Sender};
+use crossterm::{
+    event::{self, Event, KeyCode},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+};
+use gray_scott::GrayScott;
+use ratatui::{
+    backend::CrosstermBackend,
+
+    style::{Color, Style},
+    text::{Line, Span},
+    widgets::{Block, Borders, Paragraph},
+    Terminal,
+};
+use resonance_audio::{AudioCommand, AudioModel, AudioSnapshot};
+use std::env;
+use std::io;
+use std::thread;
+use std::time::{Duration, Instant};
+
+const AUDIO_WIDTH: usize = 64;
+const AUDIO_HEIGHT: usize = 64;
+const TICK_RATE: Duration = Duration::from_millis(16);
+
+struct App {
+    gray_scott: GrayScott,
+    cmd_tx: Sender<AudioCommand>,
+    snap_rx: Receiver<AudioSnapshot>,
+    latest_snapshot: Option<AudioSnapshot>,
+    running: bool,
+    ticks: u64,
+}
+
+impl App {
+    fn new(cmd_tx: Sender<AudioCommand>, snap_rx: Receiver<AudioSnapshot>) -> Self {
+        let mut gs = GrayScott::new(AUDIO_WIDTH, AUDIO_HEIGHT);
+
+        // Seed the center with chemical V
+        for y in AUDIO_HEIGHT / 2 - 2..AUDIO_HEIGHT / 2 + 2 {
+            for x in AUDIO_WIDTH / 2 - 2..AUDIO_WIDTH / 2 + 2 {
+                gs.add_chemical(x, y, 1.0);
+            }
+        }
+
+        Self {
+            gray_scott: gs,
+            cmd_tx,
+            snap_rx,
+            latest_snapshot: None,
+            running: true,
+            ticks: 0,
+        }
+    }
+
+    fn update(&mut self) {
+        // Step the Gray-Scott simulation
+        // "Cell Division" parameters: f = 0.0367, k = 0.0649
+        let feed = 0.0367;
+        let kill = 0.0649;
+        let dt = 1.0;
+
+        self.gray_scott.update(feed, kill, dt);
+
+        // Map chemical V concentrations to acoustic grid plucks
+        let v_grid = self.gray_scott.v();
+        for y in 0..AUDIO_HEIGHT {
+            for x in 0..AUDIO_WIDTH {
+                let idx = y * AUDIO_WIDTH + x;
+                let v = v_grid[idx];
+
+                // Only pluck if the V concentration is significant and accelerating
+                // To avoid deafening noise, scale down the strength
+                if v > 0.3 {
+                    let energy = (v - 0.3) * 0.5;
+                    if energy > 0.01 {
+                        let _ = self.cmd_tx.send(AudioCommand::Pluck {
+                            x,
+                            y,
+                            strength: energy.min(1.0),
+                        });
+                    }
+                }
+            }
+        }
+
+        // Receive the latest audio snapshot
+        while let Ok(snap) = self.snap_rx.try_recv() {
+            self.latest_snapshot = Some(snap);
+        }
+
+        self.ticks += 1;
+
+        if self.ticks % 100 == 0 {
+            // Periodically add some noise to keep the reaction going if it dies
+            self.gray_scott.add_chemical(AUDIO_WIDTH / 2, AUDIO_HEIGHT / 2, 0.5);
+        }
+    }
+
+    fn render(&self, terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> io::Result<()> {
+        terminal.draw(|f| {
+            let size = f.size();
+            let block = Block::default()
+                .title(" Acoustic Chemical Morphogenesis 🧪🔊 ")
+                .borders(Borders::ALL);
+
+            let inner_area = block.inner(size);
+            f.render_widget(block, size);
+
+            let mut lines = Vec::new();
+
+            let pressure_map = self.latest_snapshot.as_ref().map(|s| &s.pressure);
+            let v_grid = self.gray_scott.v();
+
+            // Determine rendering boundaries
+            let max_y = inner_area.height as usize;
+            let max_x = inner_area.width as usize;
+            let r_height = AUDIO_HEIGHT.min(max_y * 2); // Terminal characters are roughly 2:1 height/width
+            let r_width = AUDIO_WIDTH.min(max_x);
+
+            // Create a small frame buffer
+            let mut display_chars =
+                vec![vec![(" ", Color::Reset, Color::Reset); r_width]; r_height / 2];
+
+            // Render audio pressure to background colors and V chemical to foreground
+            #[allow(clippy::needless_range_loop)]
+            for y in 0..r_height / 2 {
+                for x in 0..r_width {
+                    let sim_x = (x as f32 / r_width as f32 * AUDIO_WIDTH as f32) as usize;
+                    let sim_y = (y as f32 / (r_height / 2) as f32 * AUDIO_HEIGHT as f32) as usize;
+                    let idx = sim_y * AUDIO_WIDTH + sim_x;
+
+                    // Audio pressure (Background)
+                    if let Some(map) = pressure_map {
+                        let p = map[idx];
+                        let bg_color = if p > 0.5 {
+                            Color::LightMagenta
+                        } else if p > 0.1 {
+                            Color::Magenta
+                        } else if p < -0.5 {
+                            Color::LightCyan
+                        } else if p < -0.1 {
+                            Color::Cyan
+                        } else {
+                            Color::Reset
+                        };
+                        display_chars[y][x].2 = bg_color;
+                    }
+
+                    // Chemical V concentration (Foreground)
+                    let v = v_grid[idx];
+                    if v > 0.5 {
+                        display_chars[y][x].0 = "@";
+                        display_chars[y][x].1 = Color::LightGreen;
+                    } else if v > 0.2 {
+                        display_chars[y][x].0 = "*";
+                        display_chars[y][x].1 = Color::Green;
+                    } else if v > 0.05 {
+                        display_chars[y][x].0 = ".";
+                        display_chars[y][x].1 = Color::DarkGray;
+                    }
+                }
+            }
+
+            #[allow(clippy::needless_range_loop)]
+            for y in 0..r_height / 2 {
+                let mut spans = Vec::new();
+                for x in 0..r_width {
+                    let (ch, fg, bg) = display_chars[y][x];
+                    spans.push(Span::styled(ch, Style::default().fg(fg).bg(bg)));
+                }
+                lines.push(Line::from(spans));
+            }
+
+            let paragraph = Paragraph::new(lines);
+            f.render_widget(paragraph, inner_area);
+        })?;
+        Ok(())
+    }
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let args: Vec<String> = env::args().collect();
+
+    let (cmd_tx, cmd_rx) = bounded(1024);
+    let (snap_tx, snap_rx) = bounded(1);
+
+    use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+
+    let model = AudioModel::new(AUDIO_WIDTH, AUDIO_HEIGHT, cmd_rx, snap_tx, None);
+
+    let host = cpal::default_host();
+    let _stream = if let Some(device) = host.default_output_device() {
+        if let Ok(config) = device.default_output_config() {
+            let model_lock = std::sync::Arc::new(std::sync::Mutex::new(model));
+            let model_clone = model_lock.clone();
+
+            let stream = match config.sample_format() {
+                cpal::SampleFormat::F32 => device.build_output_stream(
+                    &config.into(),
+                    move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                        if let Ok(mut model) = model_clone.lock() {
+                            model.process(data);
+                        }
+                    },
+                    |err| eprintln!("an error occurred on stream: {}", err),
+                    None,
+                ),
+                _ => Err(cpal::BuildStreamError::StreamConfigNotSupported),
+            };
+
+            if let Ok(s) = stream {
+                if s.play().is_ok() {
+                    Some((s, model_lock))
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
+    let _fallback_thread = if _stream.is_none() {
+        let mut model =
+            AudioModel::new(AUDIO_WIDTH, AUDIO_HEIGHT, bounded(1).1, bounded(1).0, None);
+        Some(thread::spawn(move || {
+            let mut buffer = vec![0.0; 256];
+            loop {
+                model.process(&mut buffer);
+                thread::sleep(Duration::from_millis(5));
+            }
+        }))
+    } else {
+        None
+    };
+
+    if args.contains(&"--headless".to_string()) {
+        let mut app = App::new(cmd_tx, snap_rx);
+        for _ in 0..10 {
+            app.update();
+        }
+        println!("Headless execution completed successfully.");
+        return Ok(());
+    }
+
+    enable_raw_mode()?;
+    let mut stdout = io::stdout();
+    execute!(stdout, EnterAlternateScreen)?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
+
+    let mut app = App::new(cmd_tx, snap_rx);
+    let mut last_tick = Instant::now();
+
+    while app.running {
+        let timeout = TICK_RATE
+            .checked_sub(last_tick.elapsed())
+            .unwrap_or_else(|| Duration::from_secs(0));
+
+        if event::poll(timeout)? {
+            if let Event::Key(key) = event::read()? {
+                if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
+                    app.running = false;
+                }
+            }
+        }
+
+        if last_tick.elapsed() >= TICK_RATE {
+            app.update();
+            last_tick = Instant::now();
+        }
+
+        app.render(&mut terminal)?;
+    }
+
+    disable_raw_mode()?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+    terminal.show_cursor()?;
+
+    Ok(())
+}

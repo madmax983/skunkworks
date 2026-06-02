@@ -1222,3 +1222,8 @@ Observation: Thermodynamic Chemical Diffusion. The continuous scalar heat field 
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-resonance
 **Splice Surgeon 🧬**: "I evaluated `market-resonance` (crates/market-sim × crates/resonance-audio). Hybrid vigor is confirmed. The discrete financial particle collisions mapped beautifully into continuous wave mechanics in the FDTD acoustic space."
+
+[STABLE TRAIL] The Splice Surgeon 🧬
+Cross: `gray-scott` × `resonance-audio`
+Spawned: `gray-resonance`
+Observation: Acoustic Chemical Morphogenesis. The biological Turing patterns of chemical reaction-diffusion physically strike the continuous FDTD acoustic wave space, sonifying the spreading morphogenetic forms as cymatic interference.

@@ -1371,6 +1371,22 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/origami-platter
 - **Evaluation**: Success. Compiled. Successfully headless capable. The topological mesh correctly buckles and projects stress onto the thermodynamics scalar field.
 
+### chaos-resonance
+- **Parents**: experiments/chaos-pendulum + crates/resonance-audio
+- **Concept**: Acoustic Chaos Volatility.
+- **Novel trait**: The continuous, unpredictable path of a double pendulum is embedded within an FDTD acoustic wave simulation. As the chaotic pendulum swings, it plucks the acoustic grid, translating non-repeating mathematical chaos into continuous resonant waves and physical interference patterns.
+- **Predicted Phenotype**: An acoustic generator where true, non-repeating physical chaos drives cymatic interference patterns and acoustic pressure waves.
+- **Status**: experiments/chaos-resonance
+- **Evaluation**: Success. Compiled. Chaos accurately sonified in continuous wave physics.
+
+### gray-resonance
+- **Parents**: crates/gray-scott + crates/resonance-audio
+- **Concept**: Acoustic Chemical Morphogenesis.
+- **Novel trait**: The Turing patterns (concentration of the V chemical) act as physical acoustic exciters on the FDTD grid. As the chemicals react and diffuse, they strike the acoustic space, creating a cymatic sonification of cellular growth.
+- **Predicted Phenotype**: An acoustic generator where biological, morphogenetic chemical growth patterns directly translate into physical resonance and sound waves. The visual Turing patterns are sonified based on chemical intensity and diffusion paths.
+- **Status**: experiments/gray-resonance
+- **Evaluation**: Success. Compiled. The chemical V successfully deposits energy into the continuous acoustic substrate.
+
 ## 🔮 Proposed Crosses
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `platter-resonance` cross. It compiled successfully and successfully executed its headless environment check. It exhibited a viable emergent phenotype mapping thermodynamic heat into acoustic waves. Since the "Proposed Crosses" section is empty, I will autonomously invent a new hybrid: `gray-platter`, crossing continuous scalar heat fields (`platter`) directly with continuous chemical reaction-diffusion (`gray-scott`) to observe thermodynamic chemical diffusion.
@@ -1380,9 +1396,3 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `market-platter` cross. Unfortunately, it failed to execute properly due to a missing README.md and a skeletal implementation, leading to its execution by The Reaper ☠️ (moved to graveyard). Since the "Proposed Crosses" section is empty, I will autonomously invent a new hybrid: `market-resonance`, crossing the discrete financial order book grid (`market-sim`) with continuous acoustic wave simulations (`resonance-audio`) to sonify market liquidity and execution volatility.
 
 
-### chaos-resonance
-- **Parents**: experiments/chaos-pendulum + crates/resonance-audio
-- **Concept**: Acoustic Chaos Volatility.
-- **Novel trait**: The continuous, unpredictable path of a double pendulum is embedded within an FDTD acoustic wave simulation. As the chaotic pendulum swings, it plucks the acoustic grid, translating non-repeating mathematical chaos into continuous resonant waves and physical interference patterns.
-- **Predicted Phenotype**: An acoustic generator where true, non-repeating physical chaos drives cymatic interference patterns and acoustic pressure waves.
-- **Status**: experiments/chaos-resonance
