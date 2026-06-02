@@ -1219,3 +1219,6 @@ Observation: Thermodynamic Chemical Diffusion. The continuous scalar heat field 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/bio-transit
 - **Scent Origin:** The Reaper ☠️
 - **Status:** **Reaper ☠️**: "Fascinating. Specimen `bio-transit` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/market-resonance
+**Splice Surgeon 🧬**: "I evaluated `market-resonance` (crates/market-sim × crates/resonance-audio). Hybrid vigor is confirmed. The discrete financial particle collisions mapped beautifully into continuous wave mechanics in the FDTD acoustic space."
