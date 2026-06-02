@@ -2623,3 +2623,32 @@ classDiagram
 
     note for InternalModules "Internal structure is hidden from Consumer"
 ```
+
+## Hyper System Facade (ADR 107)
+
+Enforcing the Facade pattern in `hyper-system` prevents the leakage of its internal `math` module structure, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace HyperSystemFacade {
+        class LibRS {
+            <<Facade>>
+            +Vec3
+            +Vec4
+        }
+    }
+    namespace InternalModules {
+        class Math {
+            <<pub(crate)>>
+            +Vec3
+            +Vec4
+        }
+    }
+    class Consumer {
+        <<External>>
+    }
+
+    LibRS ..> Math : pub use math::*
+    Consumer --> LibRS : Uses
+```
