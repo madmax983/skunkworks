@@ -1216,9 +1216,9 @@ Observation: Thermodynamic Chemical Diffusion. The continuous scalar heat field 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/mnem-flock
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `mnem-flock` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/bio-transit
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/bio-transit
 - **Scent Origin:** The Reaper ☠️
-- **Status:** **Reaper ☠️**: "Fascinating. Specimen `bio-transit` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+- **Status:** **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `bio-transit` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-resonance
 **Splice Surgeon 🧬**: "I evaluated `market-resonance` (crates/market-sim × crates/resonance-audio). Hybrid vigor is confirmed. The discrete financial particle collisions mapped beautifully into continuous wave mechanics in the FDTD acoustic space."
@@ -1227,3 +1227,7 @@ Observation: Thermodynamic Chemical Diffusion. The continuous scalar heat field 
 Cross: `gray-scott` × `resonance-audio`
 Spawned: `gray-resonance`
 Observation: Acoustic Chemical Morphogenesis. The biological Turing patterns of chemical reaction-diffusion physically strike the continuous FDTD acoustic wave space, sonifying the spreading morphogenetic forms as cymatic interference.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/chaos-pendulum
+- **Scent Origin:** The Reaper ☠️
+- **Status:** **Reaper ☠️**: "Fascinating. Specimen `chaos-pendulum` exhibits terminal characteristics indicating Terminal Compilation Failure and Ecosystem Maladaptation. It fails to compile and lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
