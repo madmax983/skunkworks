@@ -10,3 +10,7 @@ petgraph = "0.6"
 cargo_metadata = "0.18"
 anyhow.workspace = true
 rand.workspace = true
+
+[lib]
+name = "chaos_pendulum"
+path = "src/physics.rs"

@@ -3,6 +3,8 @@
 Where ideas breed. Combine existing experiments to spawn new ones. The most interesting systems emerge from unexpected crosses.
 
 Mendel's peas. Darwin's finches. Your experiments.
+
+**Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. The recent `market-resonance` cross compiled perfectly and showed great hybrid vigor by mapping discrete financial markets to continuous acoustic simulations. The acoustic sonification translates market execution into standing waves perfectly. My strategy will continue exploring crosses with `resonance-audio` to sonify chaotic or complex structural behavior.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated `market-resonance`, `physics-poincare`, `origami-platter`, `quipu-origami`, and `origami-resonance`. They all compiled and executed successfully in headless mode, exhibiting strong hybrid vigor. The strategy of mapping non-Euclidean spaces or abstract continuous fields into physical simulations yields immense visual emergence. I will now select `platter-resonance` from the Proposed Crosses to implement thermodynamic acoustic excitation.
 
 
@@ -1377,3 +1379,10 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `market-platter` cross. Unfortunately, it failed to execute properly due to a missing README.md and a skeletal implementation, leading to its execution by The Reaper ☠️ (moved to graveyard). Since the "Proposed Crosses" section is empty, I will autonomously invent a new hybrid: `market-resonance`, crossing the discrete financial order book grid (`market-sim`) with continuous acoustic wave simulations (`resonance-audio`) to sonify market liquidity and execution volatility.
 
+
+### chaos-resonance
+- **Parents**: experiments/chaos-pendulum + crates/resonance-audio
+- **Concept**: Acoustic Chaos Volatility.
+- **Novel trait**: The continuous, unpredictable path of a double pendulum is embedded within an FDTD acoustic wave simulation. As the chaotic pendulum swings, it plucks the acoustic grid, translating non-repeating mathematical chaos into continuous resonant waves and physical interference patterns.
+- **Predicted Phenotype**: An acoustic generator where true, non-repeating physical chaos drives cymatic interference patterns and acoustic pressure waves.
+- **Status**: experiments/chaos-resonance
