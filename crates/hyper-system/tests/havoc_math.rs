@@ -1,4 +1,4 @@
-use hyper_system::math::Vec4;
+use hyper_system::Vec4;
 use proptest::prelude::*;
 
 proptest! {
@@ -56,10 +56,10 @@ proptest! {
 fn test_havoc_dt_nan_poison() {
     let mut system = hyper_system::PbdSystem4D::new();
     let p1 = system
-        .add_particle(hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0)
+        .add_particle(hyper_system::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0)
         .unwrap();
 
-    system.particles[p1].vel = hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0);
+    system.particles[p1].vel = hyper_system::Vec4::new(1.0, 1.0, 1.0, 1.0);
 
     system.step(f32::NAN, 0, 0.99);
 
@@ -73,10 +73,10 @@ fn test_havoc_dt_nan_poison() {
 fn test_havoc_dt_infinity() {
     let mut system = hyper_system::PbdSystem4D::new();
     let p1 = system
-        .add_particle(hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0)
+        .add_particle(hyper_system::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0)
         .unwrap();
 
-    system.particles[p1].vel = hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0);
+    system.particles[p1].vel = hyper_system::Vec4::new(1.0, 1.0, 1.0, 1.0);
 
     system.step(f32::INFINITY, 0, 0.99);
 

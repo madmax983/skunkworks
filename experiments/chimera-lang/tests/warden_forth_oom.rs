@@ -24,22 +24,22 @@ fn test_forth_scribe_limit() {
 
     if si >= 0 && (si as usize) < vm.dna.helix.strands.len() {
         let strand = &mut vm.dna.helix.strands[si as usize];
-        if gi >= 0 && (gi as usize) < strand.genes.len() {
-        } else if gi as usize >= strand.genes.len() {
-            if gi as usize > chimera_lang::vm::MAX_GENES_PER_STRAND {
+        if gi < strand.genes.len() {
+        } else if gi >= strand.genes.len() {
+            if gi > chimera_lang::vm::MAX_GENES_PER_STRAND {
                 vm.output.push(format!(
                     "Error: Gene index {} exceeds MAX_GENES_PER_STRAND",
                     gi
                 ));
             } else {
                 if let Ok(op) = op_s.parse::<OpCode>() {
-                    while strand.genes.len() <= gi as usize {
+                    while strand.genes.len() <= gi {
                         strand.genes.push(Gene {
                             op: OpCode::Nop,
                             args: vec![],
                         });
                     }
-                    strand.genes[gi as usize] = Gene {
+                    strand.genes[gi] = Gene {
                         op,
                         args: vec![Nucleotide::Number(arg_i)],
                     };
