@@ -1216,6 +1216,10 @@ Observation: Thermodynamic Chemical Diffusion. The continuous scalar heat field 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/mnem-flock
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `mnem-flock` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/bio-transit
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/bio-transit
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `bio-transit` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/hyper-neuron
 - **Scent Origin:** The Reaper ☠️
-- **Status:** **Reaper ☠️**: "Fascinating. Specimen `bio-transit` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+- **Status:** **Reaper ☠️**: "Fascinating. Specimen `hyper-neuron` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
