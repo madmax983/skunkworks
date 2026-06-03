@@ -46,3 +46,30 @@ fn havoc_resonance_zero_width_panic_inner() {
         std::process::exit(0);
     }
 }
+
+#[test]
+fn havoc_resonance_pluck_underflow() {
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .arg("--exact")
+        .arg("havoc_resonance_pluck_underflow_inner")
+        .arg("--nocapture")
+        .arg("--ignored")
+        .status();
+
+    if let Ok(status) = status {
+        assert!(
+            !status.success(),
+            "👺 Havoc: PhysicsGrid::pluck should panic on underflow when width=0"
+        );
+    }
+}
+
+#[test]
+#[ignore]
+fn havoc_resonance_pluck_underflow_inner() {
+    if std::env::args().any(|arg| arg == "havoc_resonance_pluck_underflow_inner") {
+        let mut grid = PhysicsGrid::new(0, 0);
+        grid.pluck(1, 0, 1.0);
+        std::process::exit(0);
+    }
+}
