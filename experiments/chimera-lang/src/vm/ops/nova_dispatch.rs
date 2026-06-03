@@ -338,7 +338,7 @@ impl crate::vm::ChimeraVM {
             | OpCode::TuiMod
             | OpCode::Cambrian
             | OpCode::Prologue
-            | OpCode::Prolouge
+            | OpCode::PrologueEsolang
             | OpCode::Rune
             | OpCode::BioHack
             | OpCode::SelfReplicate

@@ -1289,19 +1289,19 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     Prologue,
 
-    /// **`Prologue`** Toggles the Prolouge Mad Scientist experiment mode.
+    /// **`Prologue`** Toggles the PrologueEsolang Mad Scientist experiment mode.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
     /// **Effect:** Injects extreme genetic chaos and random Orca signal bursts.
-    Prolouge,
+    PrologueEsolang,
 
-    /// **`Prolouge`** GrayScott block execution
+    /// **`PrologueEsolang`** GrayScott block execution
     GrayScott,
-    /// **`Prolouge`** Locus block execution
+    /// **`PrologueEsolang`** Locus block execution
     Locus,
-    /// **`Prolouge`** Neuro block execution
+    /// **`PrologueEsolang`** Neuro block execution
     Neuro,
-    /// **`Prolouge`** Platter block execution
+    /// **`PrologueEsolang`** Platter block execution
     Platter,
     /// **`Prologue`** Places a Rune on the grid.
     ///
@@ -1757,12 +1757,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., bf_code_string, input_string ] -> [ ..., output_string ]`
     Brainfuck,
 
-    /// **`Prolouge`** Renders a TUI element or manipulates the grid based on a TUI instruction string.
+    /// **`PrologueEsolang`** Renders a TUI element or manipulates the grid based on a TUI instruction string.
     ///
     /// **Stack:** `[ ..., instruction_string ] -> [ ... ]`
     TuiDraw,
 
-    /// **`Prolouge`** Renders a native ratatui UI layout based on a mosaic instruction string.
+    /// **`PrologueEsolang`** Renders a native ratatui UI layout based on a mosaic instruction string.
     ///
     /// **Stack:** `[ ..., instruction_string ] -> [ ... ]`
     MosaicDraw,

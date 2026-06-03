@@ -116,7 +116,7 @@ fn exec_shatter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             ));
         }
 
-        vm.energy = vm.energy.saturating_sub(force * 2);
+        vm.energy = vm.energy.saturating_sub(force.saturating_mul(2));
     } else {
         vm.output
             .push("Error: Type mismatch for shatter".to_string());
@@ -151,7 +151,7 @@ fn exec_anneal(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
         }
 
-        vm.energy = vm.energy.saturating_sub(r.abs() * 2);
+        vm.energy = vm.energy.saturating_sub(r.abs().saturating_mul(2));
         vm.output.push(format!(
             "ANNEAL: Sorted {} cells radius {}",
             values.len(),
