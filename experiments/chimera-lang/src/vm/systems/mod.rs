@@ -1,10 +1,10 @@
 /// The `chaos` module.
-pub mod chaos;
+pub(crate) mod chaos;
 /// The `environment` module.
-pub mod environment;
+pub(crate) mod environment;
 /// The `nova_environment` module.
-pub mod nova_environment;
+pub(crate) mod nova_environment;
 /// The `subsystems` module.
-pub mod subsystems;
+pub(crate) mod subsystems;
 /// The `symbiotes` module.
-pub mod symbiotes;
+pub(crate) mod symbiotes;

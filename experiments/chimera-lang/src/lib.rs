@@ -320,7 +320,7 @@ pub struct ChimeraParser;
 /// The `acoustic_compiler` module.
 /// The `acoustic_compiler` module.
 /// The `acoustic_compiler` module.
-pub mod acoustic_compiler;
+pub(crate) mod acoustic_compiler;
 /// The `ast` module.
 /// The `ast` module.
 /// The `ast` module.
@@ -553,7 +553,7 @@ pub mod ast;
 /// The `audio_source` module.
 /// The `audio_source` module.
 /// The `audio_source` module.
-pub mod audio_source;
+pub(crate) mod audio_source;
 /// The `compiler` module.
 /// The `compiler` module.
 /// The `compiler` module.
@@ -785,7 +785,7 @@ pub mod compiler;
 /// The `constants` module.
 /// The `constants` module.
 /// The `constants` module.
-pub mod constants;
+pub(crate) mod constants;
 /// The `lisp` module.
 /// The `lisp` module.
 /// The `lisp` module.
@@ -1017,7 +1017,7 @@ pub mod lisp;
 /// The `matrix_rain` module.
 /// The `matrix_rain` module.
 /// The `matrix_rain` module.
-pub mod matrix_rain;
+pub(crate) mod matrix_rain;
 /// The `opcode` module.
 /// The `opcode` module.
 /// The `opcode` module.
@@ -1835,7 +1835,7 @@ pub mod vm;
 /// The `prelude` module.
 pub mod prelude {
     pub use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
-    pub use crate::compiler;
+    pub(crate) use crate::compiler;
     pub use crate::opcode::OpCode;
     pub use crate::value::Value;
     pub use crate::vm::ChimeraVM;

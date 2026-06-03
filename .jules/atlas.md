@@ -17,3 +17,7 @@
 **[Title] Further Enforce Module Boundaries via Facade**
 **Tangle:** Several experimental crates leaked their internal submodules directly via `pub mod`, breaking the Facade pattern and exposing implementation details. `crates/hyper-system` also leaked `monitor` and `physics` modules.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` in library `lib.rs` files, and demoted to `mod` in binary `main.rs` files across various experimental crates and `hyper-system`.
+
+**[Encapsulate Chimera VM Modules]**
+**Tangle:** The `chimera-lang` VM contained over 100 submodules exposed publicly as `pub mod`. This leaked the internal VM architecture and created a massive, tightly coupled surface area.
+**Blueprint:** Replaced `pub mod` with `pub(crate) mod` across `vm/mod.rs`, `vm/ops/mod.rs`, `vm/systems/mod.rs`, `vm/prologue/mod.rs`, `tui/mod.rs`, and `tui/views/mod.rs`. Fixed fallout in internal tests by re-exposing necessary sub-modules for testing where needed. This enforces a facade pattern over the massive VM codebase.

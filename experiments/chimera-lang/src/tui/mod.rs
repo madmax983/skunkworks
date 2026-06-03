@@ -21,7 +21,7 @@ use std::io;
 pub(crate) const GRIMOIRE_TEXT: &str = include_str!("../../GRIMOIRE.md");
 
 /// The `state` module.
-pub mod state;
+pub(crate) mod state;
 pub use state::*;
 pub(crate) mod app;
 pub(crate) mod views;

@@ -53,150 +53,150 @@ use rand::Rng;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 /// The `alchemist` module.
-pub mod alchemist;
+pub(crate) mod alchemist;
 /// The `alchemy` module.
-pub mod alchemy;
+pub(crate) mod alchemy;
 /// The `altar` module.
-pub mod altar;
+pub(crate) mod altar;
 /// The `architect` module.
-pub mod architect;
+pub(crate) mod architect;
 /// The `astral` module.
 pub mod astral;
 /// The `automaton` module.
-pub mod automaton;
+pub(crate) mod automaton;
 /// The `biolum` module.
-pub mod biolum;
+pub(crate) mod biolum;
 /// The `catalyst` module.
-pub mod catalyst;
+pub(crate) mod catalyst;
 /// The `chaos` module.
-pub mod chaos;
+pub(crate) mod chaos;
 /// The `chroma` module.
-pub mod chroma;
+pub(crate) mod chroma;
 /// The `chromatin` module.
-pub mod chromatin;
+pub(crate) mod chromatin;
 /// The `chronos` module.
-pub mod chronos;
+pub(crate) mod chronos;
 /// The `construct` module.
-pub mod construct;
+pub(crate) mod construct;
 /// The `critter` module.
-pub mod critter;
+pub(crate) mod critter;
 /// The `echo` module.
-pub mod echo;
+pub(crate) mod echo;
 /// The `elektra` module.
-pub mod elektra;
+pub(crate) mod elektra;
 /// The `elemental` module.
-pub mod elemental;
+pub(crate) mod elemental;
 /// The `epigenetics` module.
-pub mod epigenetics;
+pub(crate) mod epigenetics;
 /// The `evolution` module.
-pub mod evolution;
+pub(crate) mod evolution;
 /// The `fission` module.
-pub mod fission;
+pub(crate) mod fission;
 /// The `forth` module.
-pub mod forth;
+pub(crate) mod forth;
 /// The `gardener` module.
-pub mod gardener;
+pub(crate) mod gardener;
 /// The `genetics` module.
-pub mod genetics;
+pub(crate) mod genetics;
 /// The `golem` module.
-pub mod golem;
+pub(crate) mod golem;
 /// The `hyper` module.
-pub mod hyper;
+pub(crate) mod hyper;
 /// The `io` module.
-pub mod io;
+pub(crate) mod io;
 /// The `lexicon` module.
-pub mod lexicon;
+pub(crate) mod lexicon;
 /// The `library` module.
-pub mod library;
+pub(crate) mod library;
 /// The `ligase` module.
-pub mod ligase;
+pub(crate) mod ligase;
 /// The `linguistics` module.
-pub mod linguistics;
+pub(crate) mod linguistics;
 /// The `list` module.
-pub mod list;
+pub(crate) mod list;
 /// The `logic` module.
-pub mod logic;
+pub(crate) mod logic;
 /// The `logic_agent` module.
-pub mod logic_agent;
+pub(crate) mod logic_agent;
 /// The `logos` module.
 pub mod logos;
 /// The `math` module.
-pub mod math;
+pub(crate) mod math;
 /// The `memetics` module.
-pub mod memetics;
+pub(crate) mod memetics;
 /// The `mesmerist` module.
-pub mod mesmerist;
+pub(crate) mod mesmerist;
 /// The `mycelium` module.
-pub mod mycelium;
+pub(crate) mod mycelium;
 /// The `narrative` module.
-pub mod narrative;
+pub(crate) mod narrative;
 /// The `necromancy` module.
-pub mod necromancy;
+pub(crate) mod necromancy;
 #[cfg(feature = "biophysics")]
 /// The `neural` module.
 pub mod neural;
 /// The `oneiric` module.
-pub mod oneiric;
+pub(crate) mod oneiric;
 /// The `optics` module.
-pub mod optics;
+pub(crate) mod optics;
 /// The `oracle` module.
-pub mod oracle;
+pub(crate) mod oracle;
 /// The `pandemonium` module.
-pub mod pandemonium;
+pub(crate) mod pandemonium;
 /// The `phage` module.
-pub mod phage;
+pub(crate) mod phage;
 /// The `philosopher` module.
-pub mod philosopher;
+pub(crate) mod philosopher;
 /// The `phonetics` module.
-pub mod phonetics;
+pub(crate) mod phonetics;
 /// The `pilot` module.
-pub mod pilot;
+pub(crate) mod pilot;
 /// The `plasmid` module.
-pub mod plasmid;
+pub(crate) mod plasmid;
 /// The `prism` module.
-pub mod prism;
+pub(crate) mod prism;
 /// The `psionics` module.
-pub mod psionics;
+pub(crate) mod psionics;
 /// The `quantum` module.
-pub mod quantum;
+pub(crate) mod quantum;
 /// The `resonance` module.
-pub mod resonance;
+pub(crate) mod resonance;
 /// The `rhythm` module.
-pub mod rhythm;
+pub(crate) mod rhythm;
 /// The `ribozyme` module.
-pub mod ribozyme;
+pub(crate) mod ribozyme;
 /// The `runecraft` module.
-pub mod runecraft;
+pub(crate) mod runecraft;
 /// The `scavenger` module.
-pub mod scavenger;
+pub(crate) mod scavenger;
 /// The `scholar` module.
-pub mod scholar;
+pub(crate) mod scholar;
 /// The `sequencer` module.
-pub mod sequencer;
+pub(crate) mod sequencer;
 /// The `siren` module.
 pub mod siren;
 /// The `splicer` module.
-pub mod splicer;
+pub(crate) mod splicer;
 /// The `symbiosis` module.
-pub mod symbiosis;
+pub(crate) mod symbiosis;
 /// The `teleport` module.
-pub mod teleport;
+pub(crate) mod teleport;
 /// The `topology` module.
-pub mod topology;
+pub(crate) mod topology;
 /// The `virology` module.
-pub mod virology;
+pub(crate) mod virology;
 /// The `void` module.
-pub mod void;
+pub(crate) mod void;
 /// The `weave` module.
-pub mod weave;
+pub(crate) mod weave;
 /// The `weave_reality` module.
 pub mod weave_reality;
 /// The `weaver` module.
-pub mod weaver;
+pub(crate) mod weaver;
 /// The `wizard` module.
-pub mod wizard;
+pub(crate) mod wizard;
 /// The `zeta` module.
-pub mod zeta;
+pub(crate) mod zeta;
 
 // Golem Materials (Public for shared use)
 /// Constant `MAT_HEART`.
@@ -211,7 +211,7 @@ pub const MAT_WALL: &str = "#";
 pub const MAT_SHIELD: &str = "🛡️";
 
 /// The `state` module.
-pub mod state;
+pub(crate) mod state;
 pub use state::*;
 
 /// Performs the `exec_prologue_tick` operation.

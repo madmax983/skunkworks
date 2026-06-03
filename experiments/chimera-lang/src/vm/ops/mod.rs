@@ -12,22 +12,22 @@
 //! * [`stack`] - Stack manipulation operations (e.g., push, pop, dup, swap).
 
 /// The `bio` module.
-pub mod bio;
+pub(crate) mod bio;
 /// The `core_dispatch` module.
-pub mod core_dispatch;
+pub(crate) mod core_dispatch;
 /// The `flow` module.
-pub mod flow;
+pub(crate) mod flow;
 /// The `grid` module.
-pub mod grid;
+pub(crate) mod grid;
 /// The `io` module.
-pub mod io;
+pub(crate) mod io;
 /// The `math` module.
-pub mod math;
+pub(crate) mod math;
 /// The `misc` module.
-pub mod misc;
+pub(crate) mod misc;
 /// The `stack` module.
-pub mod stack;
+pub(crate) mod stack;
 
 #[cfg(feature = "nova")]
 /// The `nova_dispatch` module.
-pub mod nova_dispatch;
+pub(crate) mod nova_dispatch;
