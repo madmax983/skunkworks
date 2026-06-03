@@ -207,7 +207,7 @@ impl Grid {
 
     /// Retrieves the particle at the specified coordinates.
     ///
-    /// Returns `Particle::Empty` if coordinates are out of bounds.
+    /// Yields `Particle::Empty` if coordinates are out of bounds.
     ///
     /// # Examples
     ///
@@ -251,7 +251,7 @@ impl Grid {
     /// 2.  **Asks (Down)**: Moves `Ask` particles down (y+1). If they hit a `Bid`, a trade occurs.
     /// 3.  **Stats**: Calculates market statistics and decays `Trade` particles.
     ///
-    /// Returns a list of `TradeEvent`s that occurred during this step.
+    /// Yields a list of `TradeEvent`s that occurred during this step.
     ///
     /// # Stochastic Movement
     ///

@@ -359,7 +359,7 @@ impl PhysicsGrid {
 
     /// Samples the acoustic wave pressure at a specific point on the grid, yielding 0.0 if queried out of bounds.
     ///
-    /// Returns 0.0 if coordinates are out of bounds.
+    /// Yields 0.0 if coordinates are out of bounds.
     ///
     /// # Examples
     /// ```

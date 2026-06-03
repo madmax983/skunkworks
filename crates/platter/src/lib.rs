@@ -90,7 +90,7 @@ impl Platter {
         self.height
     }
 
-    /// Returns a reference to the underlying magnetism grid.
+    /// Provides a reference to the underlying magnetism grid.
     ///
     /// # Examples
     ///
@@ -182,7 +182,7 @@ impl Platter {
 
     /// Retrieves the value at `(x, y)`.
     ///
-    /// Returns `0.0` if the coordinates are out of bounds.
+    /// Yields `0.0` if the coordinates are out of bounds.
     ///
     /// # Examples
     ///
@@ -264,7 +264,7 @@ impl Platter {
     }
 
     /// Helper to get the index for a given coordinate.
-    /// Returns `None` if coordinates are out of bounds.
+    /// Yields `None` if coordinates are out of bounds.
     #[inline]
     fn get_index(&self, x: usize, y: usize) -> Option<usize> {
         if x < self.width && y < self.height {

@@ -7,7 +7,6 @@ use crossterm::{
 use gray_scott::GrayScott;
 use ratatui::{
     backend::CrosstermBackend,
-
     style::{Color, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
@@ -93,7 +92,8 @@ impl App {
 
         if self.ticks % 100 == 0 {
             // Periodically add some noise to keep the reaction going if it dies
-            self.gray_scott.add_chemical(AUDIO_WIDTH / 2, AUDIO_HEIGHT / 2, 0.5);
+            self.gray_scott
+                .add_chemical(AUDIO_WIDTH / 2, AUDIO_HEIGHT / 2, 0.5);
         }
     }
 

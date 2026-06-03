@@ -289,7 +289,7 @@ impl Izhikevich {
     ///
     /// # Returns
     ///
-    /// Returns a tuple `(voltage, spiked)`:
+    /// Yields a tuple `(voltage, spiked)`:
     /// * `voltage`: The membrane potential after the update.
     ///   **Note:** If a spike occurred, this value is the reset potential ($c$), not the peak (30mV).
     /// * `spiked`: Boolean indicating if the neuron fired an action potential (reached threshold 30mV) during any substep.

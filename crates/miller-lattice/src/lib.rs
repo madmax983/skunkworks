@@ -171,7 +171,7 @@ impl Crystal {
     ///
     /// # Errors
     ///
-    /// Returns an error if the root path cannot be read.
+    /// Fails if the root path cannot be read.
     ///
     /// # Examples
     ///
