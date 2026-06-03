@@ -68,3 +68,10 @@
 **[Quipu Cord PartialEq Evaluation]**
 **Learning:** `cargo llvm-cov` accurately reports total lines missed versus branch statements. `cargo tarpaulin` might mistakenly flag multi-condition `if/else` checks or `while let` loop termination braces inside `PartialEq` as missing lines, even when 100% path coverage is verified via `lcov`. Using `.push()` on nested structs to directly evaluate tree boundaries (color, structure depth, children mismatches) completely evaluates `impl PartialEq`.
 **Action:** When `PartialEq` is implemented over recursively defined structures (e.g., ASTs or N-ary trees), inject tests that mismatch on every structural bound explicitly (`color`, `length`, `inner arrays`) to enforce correct short-circuit returns without modifying internal bounds checking logic.
+**[Validating Widget Renders]**
+**Learning:** When testing Ratatui UI widgets, simply calling `.render()` and dropping the buffer does not actually verify correctness (smoke testing only). The test will not fail if the widget logic breaks (e.g., wrong text, wrong color, out-of-bounds rendering).
+**Action:** Always render into a controlled `Buffer::empty(Rect::new(...))` and assert against the resulting buffer's cell properties (e.g., `assert_eq!(buf[(x, y)].bg, Color::Yellow)`) or symbols.
+
+**[Mocking Terminal Environments]**
+**Learning:** Testing terminal setup/teardown (like `crossterm` raw mode) in standard unit tests causes concurrency issues and mangles the test runner's terminal state.
+**Action:** Exclude terminal initialization/teardown functions from direct unit execution if they alter global terminal state, or use `assert!(std::mem::needs_drop::<Type>());` to verify that at least a `Drop` trait has been correctly attached for resource cleanup.
