@@ -1239,3 +1239,10 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/biomimetic-synth
 **Reaper ☠️**: "Fascinating. Specimen `biomimetic-synth` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/biomimetic-synth
+**Reaper ☠️**: "Specimen `biomimetic-synth` executed. Failed to adapt to headless environments. Biomass returned to the void."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/hive-synth
+**Reaper ☠️**: "Fascinating. Specimen `hive-synth` exhibits terminal characteristics indicating Ecosystem Maladaptation and Skeletal Implementation. Missing headless bypass and terminal genericism detected. Execution scheduled in 24h."
