@@ -1396,3 +1396,18 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An emergent acoustic visualization where the chaotic and rhythmic spiking of an SNN translates into continuous wave interference patterns. One can visually "see" and "hear" brainwaves.
 - **Status**: experiments/neuro-resonance
 - **Evaluation**: Success. Compiled. Neural spikes effectively act as acoustic exciters in the FDTD simulation. Headless execution successful.
+
+### market-resonance
+- **Parents**: crates/market-sim + crates/resonance-audio
+- **Concept**: Acoustic Market Volatility.
+- **Novel trait**: The discrete financial order book grid (`market-sim`) is projected into the continuous acoustic wave simulation (`resonance-audio`). Market liquidity and execution volatility act as acoustic exciters.
+- **Predicted Phenotype**: An acoustic generator where discrete market trades directly translate into physical resonance and sound waves, sonifying financial volatility.
+- **Status**: experiments/market-resonance
+- **Evaluation**: Success. Compiled. Discrete market orders translate directly into acoustic wave mechanics on the FDTD grid. Headless bypass operates correctly.
+
+### physics-resonance
+- **Parents**: crates/physics-pbd + crates/resonance-audio
+- **Concept**: Acoustic Rigid Body Physics.
+- **Novel trait**: The rigid structural constraints and kinetic velocity of Position Based Dynamics particles (`physics-pbd`) are projected directly into a continuous acoustic FDTD wave grid (`resonance-audio`).
+- **Predicted Phenotype**: An acoustic physical environment where falling chains and bouncing rigid bodies strike the wave grid, converting kinetic motion and collisions directly into physical sound waves and ripples.
+- **Status**: experiments/physics-resonance
