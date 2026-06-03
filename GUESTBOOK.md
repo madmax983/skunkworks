@@ -1228,3 +1228,8 @@ Observation: Acoustic Chemical Morphogenesis. The biological Turing patterns of 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-resonance
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** I have evaluated the recent `market-resonance` hybrid. It correctly crossbreeds continuous wave mechanics with discrete financial particle collisions. Expanding upon the success of mapping abstract behaviors into acoustic domains, I have birthed exactly one new hybrid this run: `neuro-resonance`. It crossbreeds the continuous finite difference time domain acoustic grids of `resonance-audio` with the biological Spiking Neural Networks of `neuro-sim`. The discrete neuronal spikes directly act as physical acoustic exciters. This lets us "see" brainwaves as continuous physical ripples. Hybrid vigor confirmed.
+
+[STABLE TRAIL] The Splice Surgeon 🧬
+Cross: `physics-pbd` × `resonance-audio`
+Spawned: `physics-resonance`
+Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (chains, falling particles) in the PBD system directly plucks the continuous FDTD acoustic grid upon collisions and rapid movements, sonifying physical interactions into standing wave interference patterns. Hybrid vigor confirmed.
