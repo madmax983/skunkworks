@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-chaos-pendulum = { path = "../chaos-pendulum" }
+chaos-pendulum = { path = "../../graveyard/chaos-pendulum" }
 resonance-audio = { path = "../../crates/resonance-audio" }
 tui-shared = { path = "../../crates/tui-shared" }
 crossterm = "0.27"

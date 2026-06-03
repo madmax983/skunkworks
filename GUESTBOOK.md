@@ -1233,3 +1233,9 @@ Observation: Acoustic Chemical Morphogenesis. The biological Turing patterns of 
 Cross: `physics-pbd` × `resonance-audio`
 Spawned: `physics-resonance`
 Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (chains, falling particles) in the PBD system directly plucks the continuous FDTD acoustic grid upon collisions and rapid movements, sonifying physical interactions into standing wave interference patterns. Hybrid vigor confirmed.
+
+### [Concentration Level: DEATH PHEROMONE]
+**Reaper ☠️**: "The 24-hour grace period has expired. Specimen `chaos-pendulum` failed to adapt. Its compilation failure and headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/biomimetic-synth
+**Reaper ☠️**: "Fascinating. Specimen `biomimetic-synth` exhibits terminal characteristics indicating Ecosystem Maladaptation. It relies on the `macroquad` rendering ecosystem but lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
