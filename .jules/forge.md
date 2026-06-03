@@ -47,3 +47,7 @@
 **[Extracting God Functions with Complex State]**
 **Learning:** When extracting logic from "God Functions" that mutate a large amount of state (like `crystal`, `occupied` set, and a `queue`), extracting the logic can result in helper functions with too many arguments. It's often acceptable to use `#[allow(clippy::too_many_arguments)]` on the extracted private helper to bypass clippy warnings when the alternative is creating unnecessary boilerplate config structs just for one function call, keeping the focus strictly on flattening the pyramid of doom.
 **Action:** Extract deeply nested loops into private helpers. If they require many mutable references from the parent scope, use `#[allow(clippy::too_many_arguments)]` to maintain velocity and readability, rather than over-engineering temporary structs.
+
+**[Replacing nested for loops and match with iterator mappings]**
+**Learning:** For loops that just push items to a vector inside a match expression arm like `SExpr::List` create unnecessary mutability and boilerplate.
+**Action:** Replace `for` loops inside list matching arms with an idiomatic iterator pipeline `.iter().map(|item| ...).collect::<Result<Vec<_>>>()?.into_iter().flatten().collect()` to map expressions recursively and collect them into a vector without intermediate allocations where possible.

@@ -2701,10 +2701,14 @@ pub fn compile(source: &str) -> Result<Dna> {
                             return Err(anyhow!("Invalid strand definition"));
                         }
                         // name is items[1]
-                        let mut genes = Vec::new();
-                        for item in items.iter().skip(2) {
-                            genes.extend(compile_expr(item, 0)?);
-                        }
+                        let genes: Vec<Gene> = items
+                            .iter()
+                            .skip(2)
+                            .map(|item| compile_expr(item, 0))
+                            .collect::<Result<Vec<_>>>()?
+                            .into_iter()
+                            .flatten()
+                            .collect();
                         strands.push(Strand { genes });
                     } else {
                         return Err(anyhow!("Top level must be (strand ...)"));
@@ -3528,10 +3532,13 @@ pub fn compile(source: &str) -> Result<Dna> {
 /// ```
 pub fn compile_fragment(source: &str) -> Result<Vec<Gene>> {
     let exprs = parse(source)?;
-    let mut genes = Vec::new();
-    for expr in exprs {
-        genes.extend(compile_expr(&expr, 0)?);
-    }
+    let genes: Vec<Gene> = exprs
+        .iter()
+        .map(|expr| compile_expr(expr, 0))
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
+        .flatten()
+        .collect();
     Ok(genes)
 }
 
@@ -3708,10 +3715,11 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         }
                         let head = compile_as_data(&items[1], depth + 1)?;
 
-                        let mut body_terms = Vec::new();
-                        for item in items.iter().skip(2) {
-                            body_terms.push(compile_as_data(item, depth + 1)?);
-                        }
+                        let body_terms: Vec<Nucleotide> = items
+                            .iter()
+                            .skip(2)
+                            .map(|item| compile_as_data(item, depth + 1))
+                            .collect::<Result<Vec<_>>>()?;
                         let body = Nucleotide::Junction(JunctionType::All, body_terms);
 
                         // Push head, then body (Rule op expects [..., head, body])
@@ -3773,10 +3781,11 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         let goal = if items.len() == 2 {
                             compile_as_data(&items[1], depth + 1)?
                         } else {
-                            let mut goals = Vec::new();
-                            for item in items.iter().skip(1) {
-                                goals.push(compile_as_data(item, depth + 1)?);
-                            }
+                            let goals: Vec<Nucleotide> = items
+                                .iter()
+                                .skip(1)
+                                .map(|item| compile_as_data(item, depth + 1))
+                                .collect::<Result<Vec<_>>>()?;
                             Nucleotide::Junction(JunctionType::All, goals)
                         };
                         return Ok(vec![
@@ -3792,14 +3801,18 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                     }
                     #[cfg(feature = "nova")]
                     "seq" => {
-                        let mut genes = Vec::new();
                         let count = items.len() - 1;
                         if count == 0 {
                             return Err(anyhow!("seq requires at least one argument"));
                         }
-                        for item in items.iter().skip(1) {
-                            genes.extend(compile_expr(item, depth + 1)?);
-                        }
+                        let mut genes: Vec<Gene> = items
+                            .iter()
+                            .skip(1)
+                            .map(|item| compile_expr(item, depth + 1))
+                            .collect::<Result<Vec<_>>>()?
+                            .into_iter()
+                            .flatten()
+                            .collect();
                         genes.push(Gene {
                             op: OpCode::Push,
                             args: vec![Nucleotide::Number(count as i64)],
@@ -3812,14 +3825,18 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                     }
                     #[cfg(feature = "nova")]
                     "alt" => {
-                        let mut genes = Vec::new();
                         let count = items.len() - 1;
                         if count == 0 {
                             return Err(anyhow!("alt requires at least one argument"));
                         }
-                        for item in items.iter().skip(1) {
-                            genes.extend(compile_expr(item, depth + 1)?);
-                        }
+                        let mut genes: Vec<Gene> = items
+                            .iter()
+                            .skip(1)
+                            .map(|item| compile_expr(item, depth + 1))
+                            .collect::<Result<Vec<_>>>()?
+                            .into_iter()
+                            .flatten()
+                            .collect();
                         genes.push(Gene {
                             op: OpCode::Push,
                             args: vec![Nucleotide::Number(count as i64)],
@@ -3935,20 +3952,27 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         return Ok(vec![Gene { op, args }]);
                     } else {
                         // Stack Op: (op arg1 arg2) -> arg1 arg2 op
-                        let mut genes = Vec::new();
-                        for arg in items.iter().skip(1) {
-                            genes.extend(compile_expr(arg, depth + 1)?);
-                        }
+                        let mut genes: Vec<Gene> = items
+                            .iter()
+                            .skip(1)
+                            .map(|arg| compile_expr(arg, depth + 1))
+                            .collect::<Result<Vec<_>>>()?
+                            .into_iter()
+                            .flatten()
+                            .collect();
                         genes.push(Gene { op, args: vec![] });
                         return Ok(genes);
                     }
                 }
             }
 
-            let mut genes = Vec::new();
-            for item in items {
-                genes.extend(compile_expr(item, depth + 1)?);
-            }
+            let genes: Vec<Gene> = items
+                .iter()
+                .map(|item| compile_expr(item, depth + 1))
+                .collect::<Result<Vec<_>>>()?
+                .into_iter()
+                .flatten()
+                .collect();
             Ok(genes)
         }
     }
