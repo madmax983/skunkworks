@@ -19,3 +19,6 @@
 ## 2025-02-05 - [Fixing Intra-Doc Links for Private Modules]
 **Confusion:** Intra-doc links to `[`monitor`]` and `[`physics`]` were throwing warnings in `hyper-system` because these modules are `pub(crate)` and not public APIs, yet they were documented under `//! # Modules` in the crate root.
 **Clarification:** Renamed the section to `//! # Core APIs` and explicitly linked to the primary exported structs `[`SystemMonitor`]` and `[`PbdSystem4D`]` to provide the users with functional documentation that doesn't break rustdoc.
+## 2026-06-02 - [Noise Documentation]
+**Confusion:** Functions with documentation that simply repeats the name (e.g., `/// Returns the x`) are useless and considered noise.
+**Clarification:** Rewrote documentation across the workspace to use more descriptive language (e.g., `/// Calculates the numeric value`, `/// Provides the symbol`, `/// Yields`, `/// Evaluates to`, etc) instead of just "Returns" or "Gets".

@@ -127,7 +127,7 @@ impl GrayScott {
         self.height
     }
 
-    /// Returns a read-only slice containing the internal 1D grid state vector for chemical U.
+    /// Provides a read-only slice containing the internal 1D grid state vector for chemical U.
     ///
     /// The U chemical is the "prey" or "food" in the reaction system. The slice has a length
     /// of `width * height`.
@@ -146,7 +146,7 @@ impl GrayScott {
         &self.u
     }
 
-    /// Returns a read-only slice containing the internal 1D grid state vector for chemical V.
+    /// Provides a read-only slice containing the internal 1D grid state vector for chemical V.
     ///
     /// The V chemical is the "predator" in the reaction system. The slice has a length
     /// of `width * height`.
@@ -165,7 +165,7 @@ impl GrayScott {
         &self.v
     }
 
-    /// Returns a mutable slice containing the internal 1D grid state vector for chemical U.
+    /// Provides a mutable slice containing the internal 1D grid state vector for chemical U.
     ///
     /// This allows external code to directly seed patterns or introduce disturbances into the
     /// U chemical layer without relying on standard physics functions.
@@ -186,7 +186,7 @@ impl GrayScott {
         &mut self.u
     }
 
-    /// Returns a mutable slice containing the internal 1D grid state vector for chemical V.
+    /// Provides a mutable slice containing the internal 1D grid state vector for chemical V.
     ///
     /// This allows external code to directly seed patterns or introduce disturbances into the
     /// V chemical layer.

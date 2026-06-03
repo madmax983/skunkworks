@@ -158,7 +158,7 @@ impl PbdSystem4D {
         }
     }
 
-    /// Adds a new particle to the simulation and returns its index.
+    /// Adds a new particle to the simulation and provides its index.
     ///
     /// # Mass Handling
     /// Passing a `mass` of `0.0` will result in an inverse mass of `0.0`, effectively
