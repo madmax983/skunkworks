@@ -24,6 +24,9 @@ fn test_forth_scribe_limit() {
 
     if si >= 0 && (si as usize) < vm.dna.helix.strands.len() {
         let strand = &mut vm.dna.helix.strands[si as usize];
+        #[allow(clippy::absurd_extreme_comparisons)]
+        #[allow(clippy::unnecessary_cast)]
+        #[allow(unused_comparisons)]
         if gi >= 0 && (gi as usize) < strand.genes.len() {
         } else if gi as usize >= strand.genes.len() {
             if gi as usize > chimera_lang::vm::MAX_GENES_PER_STRAND {

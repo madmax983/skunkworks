@@ -956,3 +956,21 @@ pub(crate) fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
     );
     f.render_widget(preview_list, loom_chunks[1]);
 }
+
+#[cfg(feature = "nova")]
+pub(crate) fn render_miller_lattice(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+    let block = Block::default()
+        .title(" Miller Lattice ")
+        .borders(Borders::ALL)
+        .style(Style::default().fg(Color::Cyan));
+
+    let text = vec![
+        Line::from(vec![Span::raw("Status: Active")]),
+        Line::from(vec![Span::styled(
+            "Crystalline structural growth simulation enabled.",
+            Style::default().fg(Color::Yellow),
+        )]),
+    ];
+    let paragraph = Paragraph::new(text).block(block);
+    f.render_widget(paragraph, app_state.get_render_area(f.area()));
+}

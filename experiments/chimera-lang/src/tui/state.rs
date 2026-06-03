@@ -1060,7 +1060,13 @@ impl ViewMode {
             ViewMode::Paradox => ViewMode::Codex,
             ViewMode::Codex => ViewMode::Verbum,
             #[cfg(feature = "nova")]
-            ViewMode::Verbum => ViewMode::Genome,
+            ViewMode::Verbum => ViewMode::MillerLattice,
+            #[cfg(feature = "nova")]
+            ViewMode::MillerLattice => ViewMode::HyperSystem,
+            #[cfg(feature = "nova")]
+            ViewMode::HyperSystem => ViewMode::PhysicsPbd,
+            #[cfg(feature = "nova")]
+            ViewMode::PhysicsPbd => ViewMode::Genome,
         }
     }
 
@@ -2209,6 +2215,12 @@ pub enum ViewMode {
     Paradox,
     Codex,
     Verbum,
+    #[cfg(feature = "nova")]
+    MillerLattice,
+    #[cfg(feature = "nova")]
+    HyperSystem,
+    #[cfg(feature = "nova")]
+    PhysicsPbd,
 }
 
 impl ViewMode {
@@ -3124,6 +3136,12 @@ impl ViewMode {
             ViewMode::Evolution => "EVOLUTION CHAMBER",
             #[cfg(feature = "nova")]
             ViewMode::Ecology => "GENETIC ECOLOGY",
+            #[cfg(feature = "nova")]
+            ViewMode::MillerLattice => "MILLER LATTICE",
+            #[cfg(feature = "nova")]
+            ViewMode::HyperSystem => "HYPER SYSTEM",
+            #[cfg(feature = "nova")]
+            ViewMode::PhysicsPbd => "PHYSICS PBD",
             _ => "UNKNOWN MODE",
         }
     }

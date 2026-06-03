@@ -276,6 +276,21 @@ pub(crate) fn route_view(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppS
             crate::tui::views::magic::render_prolouge(f, vm, app_state);
             true
         }
+        #[cfg(feature = "nova")]
+        ViewMode::MillerLattice => {
+            crate::tui::views::misc::render_miller_lattice(f, vm, app_state);
+            true
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::HyperSystem => {
+            crate::tui::views::physics::render_hyper_system(f, vm, app_state);
+            true
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::PhysicsPbd => {
+            crate::tui::views::physics::render_physics_pbd(f, vm, app_state);
+            true
+        }
 
         // These ones fell through in the original code
         ViewMode::Genome | ViewMode::Grid => {

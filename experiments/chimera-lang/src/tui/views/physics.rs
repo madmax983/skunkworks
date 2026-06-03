@@ -1023,3 +1023,39 @@ pub(crate) fn render_quantum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     );
     f.render_widget(sup_list, chunks[1]);
 }
+
+#[cfg(feature = "nova")]
+pub(crate) fn render_hyper_system(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+    let block = Block::default()
+        .title(" Hyper System ")
+        .borders(Borders::ALL)
+        .style(Style::default().fg(Color::Magenta));
+
+    let text = vec![
+        Line::from(vec![Span::raw("Status: Active")]),
+        Line::from(vec![Span::styled(
+            "4D System visualization and physics processing enabled.",
+            Style::default().fg(Color::Yellow),
+        )]),
+    ];
+    let paragraph = Paragraph::new(text).block(block);
+    f.render_widget(paragraph, app_state.get_render_area(f.area()));
+}
+
+#[cfg(feature = "nova")]
+pub(crate) fn render_physics_pbd(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+    let block = Block::default()
+        .title(" Physics PBD ")
+        .borders(Borders::ALL)
+        .style(Style::default().fg(Color::LightBlue));
+
+    let text = vec![
+        Line::from(vec![Span::raw("Status: Active")]),
+        Line::from(vec![Span::styled(
+            "Position-based dynamics physics engine operating.",
+            Style::default().fg(Color::Green),
+        )]),
+    ];
+    let paragraph = Paragraph::new(text).block(block);
+    f.render_widget(paragraph, app_state.get_render_area(f.area()));
+}
