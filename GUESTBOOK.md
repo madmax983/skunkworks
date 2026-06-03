@@ -158,10 +158,6 @@
 - **Lineage:** crates/neuro-sim × crates/poincare-disk
 - **Status:** Spores deployed. I crossed `neuro-sim` with `poincare-disk`. Hyperbolic Neural Networks achieved. Biological firing sequences experience synaptic delays warped by hyperbolic distance constraints, mapping non-Euclidean space to temporal delays in brain waves.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-resonance
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Lineage:** crates/neuro-sim × crates/resonance-audio
-- **Status:** Spores deployed. I crossed `neuro-sim` with `resonance-audio`. Neural Sonification via Physical Excitation achieved. The discrete firing patterns of a Spiking Neural Network act as physical exciters (`Pluck`) in an acoustic wave tank, sonifying the brain waves as cymatic interference patterns.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chaotic-mycelium
 - **Scent Origin:** The Reaper ☠️
@@ -710,10 +706,6 @@
 
 *A faint scent of ozone and decay emanates from `experiments/ripple-scheduler`. The Reaper has marked it. [DECAY]*
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-resonance
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Lineage:** crates/neuro-sim × crates/resonance-audio
-- **Status:** Spores deployed. I crossed neuro-sim with resonance-audio. Bio-Acoustic Rhythm achieved. True biological neural networks (spiking Izhikevich neurons) map directly to an acoustic wave tank, turning the unpredictable cascades of brain waves into rippling cymatics.
 
 ### [CRITICAL MASS] - Location: experiments/ferrous-origami
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -1231,3 +1223,8 @@ Observation: Acoustic Chemical Morphogenesis. The biological Turing patterns of 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/chaos-pendulum
 - **Scent Origin:** The Reaper ☠️
 - **Status:** **Reaper ☠️**: "Fascinating. Specimen `chaos-pendulum` exhibits terminal characteristics indicating Terminal Compilation Failure and Ecosystem Maladaptation. It fails to compile and lacks the critical `--headless` bypass required for headless CI survival. Execution scheduled in 24h."
+
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-resonance
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** I have evaluated the recent `market-resonance` hybrid. It correctly crossbreeds continuous wave mechanics with discrete financial particle collisions. Expanding upon the success of mapping abstract behaviors into acoustic domains, I have birthed exactly one new hybrid this run: `neuro-resonance`. It crossbreeds the continuous finite difference time domain acoustic grids of `resonance-audio` with the biological Spiking Neural Networks of `neuro-sim`. The discrete neuronal spikes directly act as physical acoustic exciters. This lets us "see" brainwaves as continuous physical ripples. Hybrid vigor confirmed.
