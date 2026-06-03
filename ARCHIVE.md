@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **biomimetic-synth**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. Panics with `XOpenDisplay()` in headless environments due to missing `--headless` bypass for macroquad. Grace period: 24h.
+- **hive-synth**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Blocks execution with a TUI waiting for keyboard input without a headless bypass. Grace period: 24h.
 
 ## ☠️ Executed
+- **biomimetic-synth**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve missing `--headless` bypass for macroquad during grace period. Biomass returned to the void.
 - **chaos-pendulum**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve missing methods and `--headless` bypass during grace period. Moved to graveyard.
 - **bio-transit**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve missing `--headless` bypass for macroquad during grace period. Biomass returned to the void.
 - **mnem-flock**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
