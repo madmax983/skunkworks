@@ -43,3 +43,6 @@
 **2025-05-18 - [Out-Of-Bounds Read/Write Panic in `neuro-sim`]
 **Threat:** The `Network` struct in `neuro-sim/src/lib.rs` exposed its `inputs` and `spikes` vectors publicly. If an attacker or user logic dynamically cleared or truncated these vectors, the `step()` and `update_neurons()` functions would index directly into them (`inputs[i]` and `spikes[i]`) causing an out-of-bounds slice indexing panic leading to Denial of Service (DoS).
 **Defense:** Added explicit boundary resizing checks at the beginning of `step()` to ensure `inputs` and `spikes` are appropriately sized relative to `neurons.len()`. Furthermore, replaced direct indexing in `update_neurons()` with safe slice boundary handlers (`inputs.get(i)` and `spikes.get_mut(i)`).
+**2026-10-07 - [LRU Unsoundness]**
+**Threat:** The `lru` crate version 0.12.5 used by `ratatui` version 0.26.3 violates Stacked Borrows by invalidating the internal pointer during `IterMut` iteration. This allows Undefined Behavior (UB) and memory corruption during iteration.
+**Defense:** Updated the `ratatui` crate dependency to version `0.30` across the codebase, which bumps the transitive dependency on `lru` to version `0.16.4`, resolving the memory safety bug (RUSTSEC-2026-0002).
