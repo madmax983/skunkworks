@@ -33,7 +33,7 @@ pub fn signal(vm: &mut ChimeraVM) {
             if fs::create_dir_all(&channel_dir).is_ok() {
                 let timestamp = SystemTime::now()
                     .duration_since(UNIX_EPOCH)
-                    .unwrap()
+                    .unwrap_or_default()
                     .as_micros();
                 let mut rng = rand::thread_rng();
                 let random_suffix: u32 = rng.gen();

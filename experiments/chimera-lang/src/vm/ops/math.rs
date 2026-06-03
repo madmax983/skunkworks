@@ -117,8 +117,10 @@ impl crate::vm::ChimeraVM {
                         (Value::Int(a), Value::Int(b)) => {
                             if b == 0 {
                                 self.output.push("Error: Division by zero".to_string());
+                                self.stack.push(Value::Int(0));
                             } else if a == i64::MIN && b == -1 {
                                 self.output.push("Error: Division overflow".to_string());
+                                self.stack.push(Value::Int(0));
                             } else {
                                 self.stack.push(Value::Int(a / b));
                             }
@@ -137,8 +139,10 @@ impl crate::vm::ChimeraVM {
                         (Value::Int(a), Value::Int(b)) => {
                             if b == 0 {
                                 self.output.push("Error: Division by zero".to_string());
+                                self.stack.push(Value::Int(0));
                             } else if a == i64::MIN && b == -1 {
                                 self.output.push("Error: Division overflow".to_string());
+                                self.stack.push(Value::Int(0));
                             } else {
                                 self.stack.push(Value::Int(a % b));
                             }

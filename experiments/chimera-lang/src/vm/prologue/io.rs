@@ -163,9 +163,7 @@ pub fn apply_io_runes(
         "Z" => {
             use std::time::{SystemTime, UNIX_EPOCH};
             let start = SystemTime::now();
-            let since_the_epoch = start
-                .duration_since(UNIX_EPOCH)
-                .expect("Time went backwards");
+            let since_the_epoch = start.duration_since(UNIX_EPOCH).unwrap_or_default();
             let val = Value::Int((since_the_epoch.as_secs() % 100) as i64);
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             for (dy, dx) in neighbors {
