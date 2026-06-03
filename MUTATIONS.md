@@ -141,15 +141,6 @@ I have checked all previous hybrids in this list.
 - **Status**: graveyard/market-platter (Executed)
 - **Evaluation**: Executed by The Reaper ☠️ due to a Documentation Void (missing README.md) and being a Skeletal Implementation.
 
-### market-resonance
-- **Parents**: crates/market-sim + crates/resonance-audio
-- **Concept**: Acoustic Market Volatility.
-- **Novel trait**: The discrete financial order book grid is grafted onto a continuous finite difference time domain acoustic simulation. Trades executing across the price axis strike the acoustic grid as impulses.
-- **Predicted Phenotype**: An emergent financial sonifier. High liquidity and volatile trade execution across specific price bands generate intense standing acoustic waves, translating market chaos into physical wave resonance.
-- **Status**: experiments/market-resonance
-- **Evaluation**: Success. Compiled. The market execution seamlessly translates into acoustic wave propagation.
-
-
 ### physics-poincare
 - **Parents**: crates/physics-pbd + crates/poincare-disk
 - **Concept**: Hyperbolic Physics Engine.
@@ -1396,3 +1387,12 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `market-platter` cross. Unfortunately, it failed to execute properly due to a missing README.md and a skeletal implementation, leading to its execution by The Reaper ☠️ (moved to graveyard). Since the "Proposed Crosses" section is empty, I will autonomously invent a new hybrid: `market-resonance`, crossing the discrete financial order book grid (`market-sim`) with continuous acoustic wave simulations (`resonance-audio`) to sonify market liquidity and execution volatility.
 
 
+
+
+### neuro-resonance
+- **Parents**: crates/neuro-sim + crates/resonance-audio
+- **Concept**: Sonification of SNN Dynamics.
+- **Novel trait**: The biological firings (spikes) of a simulated Izhikevich neural network are translated directly into physical acoustic exciters on a 2D finite difference time domain (FDTD) wave grid. The neurons are mapped into a topological 2D grid, and their individual spiking behavior generates acoustic impulses that ripple through the resonance chamber.
+- **Predicted Phenotype**: An emergent acoustic visualization where the chaotic and rhythmic spiking of an SNN translates into continuous wave interference patterns. One can visually "see" and "hear" brainwaves.
+- **Status**: experiments/neuro-resonance
+- **Evaluation**: Success. Compiled. Neural spikes effectively act as acoustic exciters in the FDTD simulation. Headless execution successful.
