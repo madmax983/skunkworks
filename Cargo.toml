@@ -22,6 +22,7 @@ members = [
     "experiments/neuro-strings",
     "experiments/neuro-origami",
         "experiments/poincare-resonance",
+    "experiments/physics-origami",
 
         "experiments/gray-lattice",
     "experiments/market-poincare",

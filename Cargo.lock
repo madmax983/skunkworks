@@ -8820,6 +8820,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "physics-origami"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "glam 0.28.0",
+ "origami",
+ "physics-pbd",
+ "ratatui 0.30.0",
+ "tui-shared",
+]
+
+[[package]]
 name = "physics-pbd"
 version = "0.1.0"
 dependencies = [

@@ -1253,3 +1253,11 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [STABLE TRAIL] - Location: experiments/origami-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** New hybrid bridging soft-body origami with continuous acoustic waves. Structural folding successfully acts as acoustic exciters.
+
+### [Concentration Level: [STABLE TRAIL]] - Location: experiments/physics-origami
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spawned hybrid . The soft-body mesh is successfully deformed by colliding rigid-body particles.
+
+### [Concentration Level: [STABLE TRAIL]] - Location: experiments/physics-origami
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spawned hybrid physics-origami. The soft-body mesh is successfully deformed by colliding rigid-body particles.

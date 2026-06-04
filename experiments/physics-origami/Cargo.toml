@@ -1,0 +1,13 @@
+[package]
+name = "physics-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+origami = { path = "../../crates/origami" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+tui-shared = { path = "../../crates/tui-shared" }
+glam = "0.28.0"
+crossterm = "0.28.1"
+ratatui = "0.30.0"
+anyhow = "1.0"

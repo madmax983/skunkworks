@@ -1378,6 +1378,15 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/gray-resonance
 - **Evaluation**: Success. Compiled. The chemical V successfully deposits energy into the continuous acoustic substrate.
 
+
+### physics-origami
+- **Parents**: crates/physics-pbd + crates/origami
+- **Concept**: Soft-Body Collision Dynamics.
+- **Novel trait**: The kinetic energy of Euclidean rigid-body physics particles directly strikes and dynamically actuates the topological Z-depth tension constraints of a procedural Miura-ori soft-body mesh, physically crumpling the soft-body structure upon impact.
+- **Predicted Phenotype**: A visualization where the physical particles deform the continuous deformable soft-body topography upon collision.
+- **Status**: experiments/physics-origami
+- **Evaluation**: Success. Compiled. The soft-body mesh is physically deformed by colliding particles acting as strikers.
+
 ## 🔮 Proposed Crosses
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. The recent `physics-resonance` cross compiled perfectly and showed great hybrid vigor by mapping continuous rigid body physics to continuous acoustic simulation grids. I will now create a new cross: `origami-resonance`, crossing soft body physics constraints directly with acoustic exciters to map physical tension to acoustic resonance.
