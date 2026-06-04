@@ -186,7 +186,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let host = cpal::default_host();
     let _stream = if let Some(device) = host.default_output_device() {
         if let Ok(config) = device.default_output_config() {
-            let model = AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx.clone(), snap_tx.clone(), None);
+            let model = AudioModel::new(
+                GRID_WIDTH,
+                GRID_HEIGHT,
+                cmd_rx.clone(),
+                snap_tx.clone(),
+                None,
+            );
             let model_lock = std::sync::Arc::new(std::sync::Mutex::new(model));
             let model_clone = model_lock.clone();
 

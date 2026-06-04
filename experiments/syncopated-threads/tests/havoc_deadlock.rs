@@ -1,11 +1,11 @@
+use crossbeam_channel::unbounded;
+use std::sync::atomic::AtomicBool;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use crossbeam_channel::unbounded;
 use syncopated_threads::audio::AudioCommand;
 use syncopated_threads::model::RhythmParams;
 use syncopated_threads::threads::spawn_rhythm_thread;
-use std::sync::atomic::AtomicBool;
 
 // 👺 Havoc: Prove that the `syncopated-threads` instruments can suffer starvation!
 // The thread logic loops infinitely. If we set parameters such that threads compete
