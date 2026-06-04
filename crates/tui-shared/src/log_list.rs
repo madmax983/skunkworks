@@ -115,9 +115,15 @@ fn get_log_style_and_prefix(s: &str) -> (Style, &'static str) {
         // Optimization: Uses LLVM-optimized vector instructions for zero-cost abstraction performance gains.
         // If it's a hot path, a simple ascii substring check is much faster than regex
         // or building a new String via `to_lowercase()`.
-        s.as_bytes()
-            .windows(keyword.len())
-            .any(|window| window.eq_ignore_ascii_case(keyword.as_bytes()))
+        if s.len() < keyword.len() {
+            return false;
+        }
+        let first_byte = keyword.as_bytes()[0]; // assumes keyword is lowercase ASCII
+        s.as_bytes().windows(keyword.len()).any(|window| {
+            // Fast-path: quickly check the first character before doing the full slice comparison
+            window[0].to_ascii_lowercase() == first_byte
+                && window.eq_ignore_ascii_case(keyword.as_bytes())
+        })
     };
 
     if contains_ignore_case("error") {

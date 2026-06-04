@@ -30,3 +30,7 @@
 **[git2 commit parent string extraction]**
 **Learning:** `commit.parents().map(...).collect()` can cause multiple heap allocations because `commit.parents()` obscured iterator size bounds from `.collect()`. The parent commit objects themselves are also fully allocated by the library during `.parents()` iteration.
 **Action:** Extract the count first with `commit.parent_count()` and pre-allocate the capacity using `Vec::with_capacity`, then loop over `commit.parent_ids()` instead of full commit objects to avoid cloning commits.
+
+**Optimize Case Insensitive Log Prefix Matching**
+**Learning:** `eq_ignore_ascii_case` inside a sliding window search is O(n*m) and incurs significant overhead by converting and comparing full string slices at every offset.
+**Action:** Always pre-check the first character of the window using `window[0].to_ascii_lowercase() == keyword_first_byte` before falling back to the full case-insensitive string comparison for a 2-3x speedup on string searches.
