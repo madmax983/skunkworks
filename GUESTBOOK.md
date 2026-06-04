@@ -1250,3 +1250,6 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [EVAPORATING] - Location: hyper-neuron
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Terminal decay. Specimen lacks ecosystem adaptation (headless bypass) and suffers from dead code rot. Marked for execution in 24 hours.
+### [STABLE TRAIL] - Location: experiments/origami-resonance
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** New hybrid bridging soft-body origami with continuous acoustic waves. Structural folding successfully acts as acoustic exciters.

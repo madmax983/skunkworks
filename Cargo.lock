@@ -8533,9 +8533,13 @@ dependencies = [
 name = "origami-resonance"
 version = "0.1.0"
 dependencies = [
+ "cpal",
  "crossbeam-channel",
- "macroquad",
+ "crossterm 0.28.1",
+ "glam 0.28.0",
  "origami",
+ "physics-pbd",
+ "ratatui 0.30.0",
  "resonance-audio",
  "tui-shared",
 ]

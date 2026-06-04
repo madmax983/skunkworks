@@ -2,10 +2,16 @@
 name = "origami-resonance"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
-macroquad = "0.4"
 origami = { path = "../../crates/origami" }
 resonance-audio = { path = "../../crates/resonance-audio" }
-crossbeam-channel = "0.5"
 tui-shared = { path = "../../crates/tui-shared" }
+
+crossterm = "0.28.1"
+ratatui = "0.30.0"
+crossbeam-channel = "0.5.15"
+glam = "0.28.0"
+cpal = "0.15.3"
+physics-pbd = { path = "../../crates/physics-pbd" }

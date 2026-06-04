@@ -1380,6 +1380,9 @@ I have checked all previous hybrids in this list.
 
 ## 🔮 Proposed Crosses
 
+**Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. The recent `physics-resonance` cross compiled perfectly and showed great hybrid vigor by mapping continuous rigid body physics to continuous acoustic simulation grids. I will now create a new cross: `origami-resonance`, crossing soft body physics constraints directly with acoustic exciters to map physical tension to acoustic resonance.
+
+
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `platter-resonance` cross. It compiled successfully and successfully executed its headless environment check. It exhibited a viable emergent phenotype mapping thermodynamic heat into acoustic waves. Since the "Proposed Crosses" section is empty, I will autonomously invent a new hybrid: `gray-platter`, crossing continuous scalar heat fields (`platter`) directly with continuous chemical reaction-diffusion (`gray-scott`) to observe thermodynamic chemical diffusion.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `gray-platter` cross. It compiled successfully and successfully executed its headless environment check. It effectively mapped continuous reaction-diffusion into a thermodynamic scalar field. I am now creating a new cross: `market-resonance`, crossing discrete financial markets with continuous acoustic spaces.
@@ -1411,3 +1414,11 @@ I have checked all previous hybrids in this list.
 - **Novel trait**: The rigid structural constraints and kinetic velocity of Position Based Dynamics particles (`physics-pbd`) are projected directly into a continuous acoustic FDTD wave grid (`resonance-audio`).
 - **Predicted Phenotype**: An acoustic physical environment where falling chains and bouncing rigid bodies strike the wave grid, converting kinetic motion and collisions directly into physical sound waves and ripples.
 - **Status**: experiments/physics-resonance
+
+### origami-resonance
+- **Parents**: crates/origami + crates/resonance-audio
+- **Concept**: Acoustic Soft-Body Morphogenesis.
+- **Novel trait**: The physical 3D vertices of a continuous procedural Miura-ori soft-body mesh (`origami`) are mapped directly to a 2D acoustic simulation grid (`resonance-audio`). As the soft-body mesh breathes, folds, and crumples, the structural tension (Z-depth or motion) acts as a physical exciter (pluck/tone), injecting audio waves into the acoustic grid.
+- **Predicted Phenotype**: A bio-acoustic visualizer. The physical tension of the paper mesh is directly sonified into continuous wave propagation.
+- **Status**: experiments/origami-resonance
+- **Evaluation**: Success. Compiled. The physical tension of the soft-body mesh effectively acts as a dynamic spatial exciter for continuous acoustic waves.
