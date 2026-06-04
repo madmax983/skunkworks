@@ -243,3 +243,30 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 *   🤦 **The Confusion:** "Tried to compile without default features to make the binary smaller. The compiler exploded with 30+ errors about missing variants and unknown fields."
 *   🕵️ **The Reality:** "Turns out the codebase is full of hardcoded references to `nova` features that aren't properly `#cfg` gated. The feature flags are broken."
 *   💡 **The Fix:** "Fix the feature gates throughout `chimera-lang` (e.g., `tui::state::ViewMode`, `vm::mod::exec_core_op`, etc.) so the project compiles cleanly with `--no-default-features`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/hyper-system/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to use the 4D math utilities."
+**Action:** Copy and pasted the 4D Rotation & Projection example from the README.md into a new binary project.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Private Module Access:** The example fails to compile with `error[E0603]: module 'math' is private`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* The `math` module has been made `pub(crate)` but the `README.md` still instructs users to `use hyper_system::math::Vec4;`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (hyper-system private module)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the basic 4D rotation example from `hyper-system`'s README. The compiler immediately slapped me with 'module `math` is private'."
+*   🕵️ **The Reality:** "Turns out the architectural changes locked the `math` module inside the crate, making the documentation completely incorrect and the example unrunnable."
+*   💡 **The Fix:** "Either update the README example to import `Vec4` correctly from the public API facade (e.g., `use hyper_system::Vec4;` if re-exported), or make the module public again if users are supposed to access it directly."
