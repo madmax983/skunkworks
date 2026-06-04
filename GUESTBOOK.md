@@ -56,6 +56,27 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The root Quick Start command is broken and lacks details on the `nova` feature requirement.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (`genesis.chs` is missing), the dependency requirements are overwhelming for new users, and `mad_scientist.prl` crashes visually.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The quickstart lacks crucial installation instructions and `Cargo.toml` snippets for external use.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The quickstart lacks crucial installation instructions and `Cargo.toml` snippets for external use.
+
+### [Concentration Level: CRITICAL MASS] - Location: chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Massive compilation failures occur when running `--no-default-features` due to incorrectly gated `nova` references.
+
+
 ### [Concentration Level: CRITICAL MASS] - Location: crates/locus
 - **Scent Origin:** Havoc 👹
 - **Status:** Integer overflow panic ('attempt to subtract with overflow') in `Topology::Mobius.normalize` when boundary edge cases like `i64::MIN` are provided. Needs boundary logic hardening.
