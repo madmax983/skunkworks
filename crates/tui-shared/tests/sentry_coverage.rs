@@ -1,4 +1,7 @@
-use tui_shared::{ratatui::{buffer::Buffer, layout::Rect, widgets::Widget}, Button};
+use tui_shared::{
+    ratatui::{buffer::Buffer, layout::Rect, widgets::Widget},
+    Button,
+};
 
 #[test]
 fn test_button_active_coverage() {
@@ -21,28 +24,41 @@ fn test_button_clicked_hovered() {
 #[test]
 fn test_button_clicked_hovered_coverage2() {
     let mut buf = Buffer::empty(Rect::new(0, 0, 10, 10));
-    let btn = Button::new("Click").clicked(true).hovered(true).active(true);
+    let btn = Button::new("Click")
+        .clicked(true)
+        .hovered(true)
+        .active(true);
     btn.render(Rect::new(0, 0, 10, 10), &mut buf);
 }
 
 #[test]
 fn test_button_clicked_hovered_coverage3() {
     let mut buf = Buffer::empty(Rect::new(0, 0, 10, 10));
-    let btn = Button::new("Click").clicked(true).hovered(true).loading(true);
+    let btn = Button::new("Click")
+        .clicked(true)
+        .hovered(true)
+        .loading(true);
     btn.render(Rect::new(0, 0, 10, 10), &mut buf);
 }
 
 #[test]
 fn test_button_clicked_hovered_coverage4() {
     let mut buf = Buffer::empty(Rect::new(0, 0, 10, 10));
-    let btn = Button::new("Click").clicked(true).hovered(true).success(true);
+    let btn = Button::new("Click")
+        .clicked(true)
+        .hovered(true)
+        .success(true);
     btn.render(Rect::new(0, 0, 10, 10), &mut buf);
 }
 
 #[test]
 fn test_button_clicked_hovered_coverage5() {
     let mut buf = Buffer::empty(Rect::new(0, 0, 10, 10));
-    let btn = Button::new("Click").clicked(false).hovered(true).loading(false).success(false);
+    let btn = Button::new("Click")
+        .clicked(false)
+        .hovered(true)
+        .loading(false)
+        .success(false);
     btn.render(Rect::new(0, 0, 10, 10), &mut buf);
 }
 
@@ -56,7 +72,12 @@ fn test_button_clicked_hovered_coverage6() {
 #[test]
 fn test_button_active_combinations() {
     let mut buf = Buffer::empty(Rect::new(0, 0, 10, 10));
-    let btn = Button::new("Click").success(false).loading(false).clicked(false).hovered(false).active(true);
+    let btn = Button::new("Click")
+        .success(false)
+        .loading(false)
+        .clicked(false)
+        .hovered(false)
+        .active(true);
     btn.render(Rect::new(0, 0, 10, 10), &mut buf);
 }
 
@@ -76,7 +97,11 @@ fn test_action_coverage2() {
 
 #[test]
 fn test_entity_coverage2() {
-    let entity = tui_shared::Entity::new("test").at(0.0, 0.0).moving(1.0, 1.0).with_id("id").display("X");
+    let entity = tui_shared::Entity::new("test")
+        .at(0.0, 0.0)
+        .moving(1.0, 1.0)
+        .with_id("id")
+        .display("X");
     let cloned = entity.clone();
     assert_eq!(cloned.kind, "test");
 }
@@ -127,7 +152,6 @@ fn test_log_list_coverage6() {
     list.render(Rect::new(0, 0, 10, 10), &mut buf);
 }
 
-
 #[test]
 fn test_log_list_coverage7() {
     let mut buf = Buffer::empty(Rect::new(0, 0, 10, 10));
@@ -143,7 +167,6 @@ fn test_log_list_coverage8() {
     let list = tui_shared::LogList::new(vec!["warning"]);
     list.render(Rect::new(0, 0, 10, 10), &mut buf);
 }
-
 
 #[test]
 fn test_log_list_coverage9() {

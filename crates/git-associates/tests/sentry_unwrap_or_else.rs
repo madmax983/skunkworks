@@ -23,8 +23,15 @@ fn test_history_invalid_timestamp_fallback() {
     let time = Time::new(seconds_far_future, 0);
     let sig = Signature::new("Test", "test@example.com", &time).unwrap();
 
-    repo.commit(Some("HEAD"), &sig, &sig, "Initial with bad time", &tree, &[])
-        .unwrap();
+    repo.commit(
+        Some("HEAD"),
+        &sig,
+        &sig,
+        "Initial with bad time",
+        &tree,
+        &[],
+    )
+    .unwrap();
 
     let model = GitModel::open(&temp_dir).unwrap();
     let history = model.history(10).unwrap();
@@ -45,7 +52,9 @@ fn test_history_with_diff_unknown_path() {
     let time = Time::new(1700000000, 0);
     let sig = Signature::new("Test", "test@example.com", &time).unwrap();
 
-    let commit1_oid = repo.commit(Some("HEAD"), &sig, &sig, "Initial", &tree, &[]).unwrap();
+    let commit1_oid = repo
+        .commit(Some("HEAD"), &sig, &sig, "Initial", &tree, &[])
+        .unwrap();
 
     // Add a file
     let file_path = temp_dir.join("normal.txt");
@@ -55,7 +64,8 @@ fn test_history_with_diff_unknown_path() {
     let tree2 = repo.find_tree(oid2).unwrap();
 
     let commit1 = repo.find_commit(commit1_oid).unwrap();
-    repo.commit(Some("HEAD"), &sig, &sig, "Second", &tree2, &[&commit1]).unwrap();
+    repo.commit(Some("HEAD"), &sig, &sig, "Second", &tree2, &[&commit1])
+        .unwrap();
 
     let model = GitModel::open(&temp_dir).unwrap();
     let history = model.history_with_diffs(10).unwrap();
