@@ -877,6 +877,42 @@ classDiagram
     NovaDispatchOps ..> ChimeraVM : Extends (impl)
 ```
 
+### ChimeraVM Encapsulation (ADR 108)
+
+The internal module structure of the ChimeraVM and the `chimera-lang` crate is encapsulated using the Facade pattern. Deeply nested execution modules are hidden behind `pub(crate) mod`, with only the required APIs publicly exported.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace CrateFacade {
+        class LibRS {
+            <<Facade>>
+            +prelude::*
+            +ChimeraVM
+        }
+    }
+    namespace InternalModules {
+        class VmMod {
+            <<pub(crate)>>
+            +organelles
+            +systems
+        }
+        class OtherInternal {
+            <<pub(crate)>>
+            +acoustic_compiler
+            +matrix_rain
+        }
+    }
+    class Consumer {
+        <<External>>
+    }
+
+    LibRS ..> VmMod : pub use ChimeraVM
+    Consumer --> LibRS : Uses
+
+    note for InternalModules "Internal logic is hidden from Consumer"
+```
+
 ### ChimeraVM System Sub-processors (ADR 095)
 
 The `ChimeraVM` operational loops are decoupled into domain-specific subsystem processors within the `vm::systems` module.
