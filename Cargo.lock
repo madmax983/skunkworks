@@ -5417,18 +5417,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hive-synth"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "rand 0.8.6",
- "ratatui 0.30.0",
- "rodio 0.17.3",
- "tui-shared",
-]
-
-[[package]]
 name = "hohmann-delivery"
 version = "0.1.0"
 dependencies = [
@@ -5597,16 +5585,6 @@ dependencies = [
  "macroquad",
  "rand 0.8.6",
  "rayon",
- "sysinfo",
-]
-
-[[package]]
-name = "hyper-neuron"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "neuro-sim",
- "rand 0.8.6",
  "sysinfo",
 ]
 
