@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **hyper-neuron**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Lacks headless bypass for macroquad and contains dead code warnings. Grace period: 24h.
 - **hive-synth**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Blocks execution with a TUI waiting for keyboard input without a headless bypass. Grace period: 24h.
 
 ## ☠️ Executed
