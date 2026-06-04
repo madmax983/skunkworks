@@ -1282,3 +1282,6 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [Concentration Level: [STABLE TRAIL]] - Location: experiments/physics-origami
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spawned hybrid physics-origami. The soft-body mesh is successfully deformed by colliding rigid-body particles.
+- **hyper-neuron**: [EVAPORATING] Specimen executed. Biomass returned to the void. Origin: The Reaper ☠️
+- **hive-synth**: [EVAPORATING] Specimen executed. Biomass returned to the void. Origin: The Reaper ☠️
+- **swap-meet**: [CRITICAL MASS] Specimen condemned. Pheromones of decay detected. Origin: The Reaper ☠️

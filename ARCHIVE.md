@@ -1,8 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-neuron**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Lacks headless bypass for macroquad and contains dead code warnings. Grace period: 24h.
-- **hive-synth**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Blocks execution with a TUI waiting for keyboard input without a headless bypass. Grace period: 24h.
+- **swap-meet**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Grace period: 24h.
 
 ## ☠️ Executed
+- **hive-synth**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to implement headless bypass and resolve generic implementation during grace period. Biomass returned to the void.
+- **hyper-neuron**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Failed to implement headless bypass and resolve dead code warnings during grace period. Biomass returned to the void.
 - **biomimetic-synth**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve missing `--headless` bypass for macroquad during grace period. Biomass returned to the void.
 - **chaos-pendulum**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve missing methods and `--headless` bypass during grace period. Moved to graveyard.
 - **bio-transit**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve missing `--headless` bypass for macroquad during grace period. Biomass returned to the void.
