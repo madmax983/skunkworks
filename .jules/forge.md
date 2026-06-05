@@ -51,3 +51,11 @@
 **[Replacing nested for loops and match with iterator mappings]**
 **Learning:** For loops that just push items to a vector inside a match expression arm like `SExpr::List` create unnecessary mutability and boilerplate.
 **Action:** Replace `for` loops inside list matching arms with an idiomatic iterator pipeline `.iter().map(|item| ...).collect::<Result<Vec<_>>>()?.into_iter().flatten().collect()` to map expressions recursively and collect them into a vector without intermediate allocations where possible.
+
+**[Flattening Manual Mesh Iteration]**
+**Learning:** Manual nested `for` loops that compute vertices/indices for grids (like in `origami`) can be simplified dramatically without mutability by using `extend` with nested `flat_map().collect()` or `flat_map()` iterators.
+**Action:** Replace `for` loops inside mesh building logic with idiomatic iterator pipelines when generating grids or indices from structured loops.
+
+**[Flattening Manual Mesh Iteration]**
+**Learning:** Manual nested `for` loops that compute vertices/indices for grids (like in `origami`) can be simplified dramatically without mutability by using `extend` with nested `flat_map().collect()` or `flat_map()` iterators.
+**Action:** Replace `for` loops inside mesh building logic with idiomatic iterator pipelines when generating grids or indices from structured loops.
