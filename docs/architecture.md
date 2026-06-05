@@ -2688,3 +2688,49 @@ classDiagram
     LibRS ..> Math : pub use math::*
     Consumer --> LibRS : Uses
 ```
+
+## Chimera Lang VM Encapsulation (ADR 108)
+
+Enforcing the Facade pattern in `chimera-lang` prevents the leakage of its internal VM structure, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace ChimeraLangFacade {
+        class LibRS {
+            <<Facade>>
+            +prelude::*
+        }
+    }
+    namespace InternalModules {
+        class VM {
+            <<pub(crate)>>
+            +organelles
+            +systems
+            +alchemy
+            +babel_chaos
+        }
+        class AcousticCompiler {
+            <<pub(crate)>>
+        }
+        class AudioSource {
+            <<pub(crate)>>
+        }
+        class MatrixRain {
+            <<pub(crate)>>
+        }
+        class Constants {
+            <<pub(crate)>>
+        }
+    }
+    class Consumer {
+        <<External>>
+    }
+
+    LibRS ..> VM : pub use prelude::*
+    LibRS ..> AcousticCompiler : encapsulates
+    LibRS ..> AudioSource : encapsulates
+    LibRS ..> MatrixRain : encapsulates
+    LibRS ..> Constants : encapsulates
+    Consumer --> LibRS : Uses
+```
