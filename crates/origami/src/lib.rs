@@ -194,7 +194,11 @@ pub fn generate_miura_mesh(
     }
 
     // Check for overflow before attempting to build indices
-    if rows.checked_mul(cols).and_then(|x| x.checked_mul(6)).is_none() {
+    if rows
+        .checked_mul(cols)
+        .and_then(|x| x.checked_mul(6))
+        .is_none()
+    {
         return OrigamiMesh {
             vertices: Vec::new(),
             indices: Vec::new(),
