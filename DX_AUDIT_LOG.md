@@ -270,3 +270,32 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 *   🤦 **The Confusion:** "Tried to run the basic 4D rotation example from `hyper-system`'s README. The compiler immediately slapped me with 'module `math` is private'."
 *   🕵️ **The Reality:** "Turns out the architectural changes locked the `math` module inside the crate, making the documentation completely incorrect and the example unrunnable."
 *   💡 **The Fix:** "Either update the README example to import `Vec4` correctly from the public API facade (e.g., `use hyper_system::Vec4;` if re-exported), or make the module public again if users are supposed to access it directly."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/quipu/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the 'Hero's Journey' example from the README.md."
+**Action:** Run `cargo run -p quipu --example hero_journey`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Example Target:** The command fails immediately with:
+    ```
+    error: no example target named `hero_journey` in `quipu` package
+    ```
+    When checking the examples directory, there is only `quipu_test.rs`. The code from the README doesn't exist as a runnable example.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (Missing hero_journey)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `hero_journey` example as documented in the README. Cargo told me there is no example target named `hero_journey`."
+*   🕵️ **The Reality:** "Turns out the example code is only in the README and wasn't actually saved as a `.rs` file in the `examples/` directory."
+*   💡 **The Fix:** "Add the `hero_journey.rs` file inside the `examples/` directory of the `quipu` crate, matching the code in the README so users can actually run it."
