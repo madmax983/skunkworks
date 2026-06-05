@@ -28,6 +28,7 @@ members = [
     "experiments/market-poincare",
     "graveyard/market-platter",
     "experiments/quipu-poincare",
+    "experiments/quipu-locus",
     "experiments/myco-resonance",
 
 ]

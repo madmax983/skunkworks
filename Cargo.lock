@@ -9334,6 +9334,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "quipu-locus"
+version = "0.1.0"
+dependencies = [
+ "crossterm 0.28.1",
+ "locus",
+ "quipu",
+ "rand 0.8.6",
+ "ratatui 0.30.0",
+ "tui-shared",
+]
+
+[[package]]
 name = "quipu-origami"
 version = "0.1.0"
 dependencies = [
