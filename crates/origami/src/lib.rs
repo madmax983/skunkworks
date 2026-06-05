@@ -193,36 +193,27 @@ pub fn generate_miura_mesh(
         });
     }
 
-    // Optimization: Pre-allocate vector capacity to avoid reallocations.
-    // Each grid cell consists of a quad split into 2 triangles (6 indices).
-    let capacity = match rows.checked_mul(cols).and_then(|x| x.checked_mul(6)) {
-        Some(c) if c <= (isize::MAX as usize) / std::mem::size_of::<u16>() => c,
-        _ => {
-            return OrigamiMesh {
-                vertices: Vec::new(),
-                indices: Vec::new(),
-            };
-        }
-    };
-    let mut indices = Vec::with_capacity(capacity);
-    for j in 0..rows {
-        for i in 0..cols {
-            let v_cols = cols + 1;
-            let p00 = (j * v_cols + i) as u16;
-            let p10 = (j * v_cols + (i + 1)) as u16;
-            let p01 = ((j + 1) * v_cols + i) as u16;
-            let p11 = ((j + 1) * v_cols + (i + 1)) as u16;
-
-            // Two triangles
-            indices.push(p00);
-            indices.push(p10);
-            indices.push(p01);
-
-            indices.push(p10);
-            indices.push(p11);
-            indices.push(p01);
-        }
+    // Check for overflow before attempting to build indices
+    if rows.checked_mul(cols).and_then(|x| x.checked_mul(6)).is_none() {
+        return OrigamiMesh {
+            vertices: Vec::new(),
+            indices: Vec::new(),
+        };
     }
+    let v_cols = cols + 1;
+    let indices: Vec<u16> = (0..rows)
+        .flat_map(|j| {
+            (0..cols).flat_map(move |i| {
+                let p00 = (j * v_cols + i) as u16;
+                let p10 = (j * v_cols + (i + 1)) as u16;
+                let p01 = ((j + 1) * v_cols + i) as u16;
+                let p11 = ((j + 1) * v_cols + (i + 1)) as u16;
+
+                // Two triangles
+                [p00, p10, p01, p10, p11, p01]
+            })
+        })
+        .collect();
 
     OrigamiMesh { vertices, indices }
 }
@@ -290,35 +281,30 @@ fn calculate_horizontal(
     let sy_sq = b * b - x_off * x_off;
     let sy = if sy_sq > 0.0 { sy_sq.sqrt() } else { 0.0 };
 
-    let capacity = match rows
+    if rows
         .checked_add(1)
         .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
+        .map(|c| c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() && c < usize::MAX / 2)
+        != Some(true)
     {
-        Some(c)
-            if c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() && c < usize::MAX / 2 =>
-        {
-            c
-        }
-        _ => return Vec::new(),
-    };
-    let mut positions = Vec::with_capacity(capacity);
+        return Vec::new();
+    }
 
     let total_w = (cols as f32) * sx + x_off;
     let total_h = (rows as f32) * sy;
     let cx = total_w / 2.0;
     let cy = total_h / 2.0;
 
-    for j in 0..=rows {
-        for i in 0..=cols {
-            let x = (i as f32) * sx + ((j % 2) as f32) * x_off;
-            let y = (j as f32) * sy;
-            let z = ((i % 2) as f32) * h_amp;
-
-            positions.push(vec3(x - cx, y - cy, z));
-        }
-    }
-
-    positions
+    (0..=rows)
+        .flat_map(|j| {
+            (0..=cols).map(move |i| {
+                let x = (i as f32) * sx + ((j % 2) as f32) * x_off;
+                let y = (j as f32) * sy;
+                let z = ((i % 2) as f32) * h_amp;
+                vec3(x - cx, y - cy, z)
+            })
+        })
+        .collect()
 }
 
 fn calculate_vertical(
@@ -361,18 +347,14 @@ fn calculate_vertical(
         }
     };
 
-    let capacity = match rows
+    if rows
         .checked_add(1)
         .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
+        .map(|c| c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() && c < usize::MAX / 2)
+        != Some(true)
     {
-        Some(c)
-            if c <= (isize::MAX as usize) / std::mem::size_of::<Vec3>() && c < usize::MAX / 2 =>
-        {
-            c
-        }
-        _ => return Vec::new(),
-    };
-    let mut positions = Vec::with_capacity(capacity);
+        return Vec::new();
+    }
 
     let total_w = (cols as f32) * l_x;
     // Approximation for centering, ignoring the zig-zag offset s_y
@@ -380,16 +362,16 @@ fn calculate_vertical(
     let cx = total_w / 2.0;
     let cy = total_h / 2.0;
 
-    for j in 0..=rows {
-        for i in 0..=cols {
-            let x = i as f32 * l_x;
-            let y = j as f32 * l_y + (i % 2) as f32 * s_y;
-            let z = if (i + j) % 2 == 0 { h } else { -h };
-            positions.push(vec3(x - cx, y - cy, z));
-        }
-    }
-
-    positions
+    (0..=rows)
+        .flat_map(|j| {
+            (0..=cols).map(move |i| {
+                let x = i as f32 * l_x;
+                let y = j as f32 * l_y + (i % 2) as f32 * s_y;
+                let z = if (i + j) % 2 == 0 { h } else { -h };
+                vec3(x - cx, y - cy, z)
+            })
+        })
+        .collect()
 }
 
 #[cfg(test)]
