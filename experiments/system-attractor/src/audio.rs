@@ -1,5 +1,5 @@
 #[cfg(feature = "audio")]
-pub mod audio_impl {
+pub(crate) mod audio_impl {
     use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
     use ringbuf::{HeapRb, Producer, SharedRb};
     use std::sync::Arc;
@@ -79,7 +79,7 @@ pub mod audio_impl {
 }
 
 #[cfg(not(feature = "audio"))]
-pub mod audio_impl {
+pub(crate) mod audio_impl {
     pub struct Synth;
     impl Synth {
         pub fn new() -> Result<Self, anyhow::Error> {

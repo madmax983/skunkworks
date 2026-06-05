@@ -20,3 +20,6 @@
 **[Title] Enforce Module Boundaries via Facade in hyper-system
 **Tangle:** The `crates/hyper-system/src/lib.rs` leaked the internal `math` module via `pub mod`, breaking the Facade pattern.
 **Blueprint:** Replaced `pub mod math` with `pub(crate) mod math` combined with `pub use math::*;` to enforce a strict boundary while preserving the external API.
+**[Title] Enforce Module Boundaries via Facade in system-attractor**
+**Tangle:** The `experiments/system-attractor/src/audio.rs` leaked its internal `audio_impl` module directly via `pub mod`, breaking the Facade pattern and exposing implementation details.
+**Blueprint:** Replaced `pub mod audio_impl` with `pub(crate) mod audio_impl` to enforce a strict structural boundary while preserving the intended external API via `pub use`.
