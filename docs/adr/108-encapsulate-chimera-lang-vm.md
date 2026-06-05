@@ -3,7 +3,7 @@
 Date: 2026-06-04
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The internal modules within `experiments/chimera-lang/src/lib.rs` (such as `acoustic_compiler`, `audio_source`, `constants`, `matrix_rain`) and the internal submodules of the `vm` (such as `organelles`, `systems`, `alchemy`, `babel_chaos`) were exposed as `pub mod`. This breaks the intended Facade pattern by leaking internal implementation details to downstream consumers. This creates tight coupling, where consumers might rely on deep structural elements rather than the carefully curated external API.
