@@ -110,8 +110,9 @@ fn main() -> Result<(), io::Error> {
                 .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
                 .split(f.area());
 
-            let instructions = Paragraph::new("Topological Data Knots: Press Space to Add Data, Esc to quit.")
-                .block(Block::default().borders(Borders::ALL).title("Quipu-Locus"));
+            let instructions =
+                Paragraph::new("Topological Data Knots: Press Space to Add Data, Esc to quit.")
+                    .block(Block::default().borders(Borders::ALL).title("Quipu-Locus"));
             f.render_widget(instructions, chunks[0]);
 
             let grid = hybrid.render_grid();
