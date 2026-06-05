@@ -59,3 +59,15 @@
 **[Flattening Manual Mesh Iteration]**
 **Learning:** Manual nested `for` loops that compute vertices/indices for grids (like in `origami`) can be simplified dramatically without mutability by using `extend` with nested `flat_map().collect()` or `flat_map()` iterators.
 **Action:** Replace `for` loops inside mesh building logic with idiomatic iterator pipelines when generating grids or indices from structured loops.
+
+**[Preserving Vec::with_capacity Optimization]**
+**Learning:** Replacing `Vec::with_capacity` + manual push loops with `.filter_map().collect()` can introduce performance regressions. `filter_map` yields a size hint of 0, which drops the original pre-allocation constraint and causes multiple heap reallocations.
+**Action:** Always preserve explicit pre-allocation optimization comments. If flattening the loop, prefer retaining `Vec::with_capacity` and `extend()` or `.push()` over blindly using `.collect()`.
+
+**[Flattening Manual Mesh Iteration]**
+**Learning:** Manual nested `for` loops that compute vertices/indices for grids (like in `origami`) can be simplified dramatically without mutability by using `extend` with nested `flat_map().collect()` or `flat_map()` iterators.
+**Action:** Replace `for` loops inside mesh building logic with idiomatic iterator pipelines when generating grids or indices from structured loops.
+
+**[Guard Clauses for Nested Match statements]**
+**Learning:** Simulation event handlers (like processing bids or asks in market-sim) often develop a "Pyramid of Doom" combining boundary conditions (`if y > 0`) with entity collision checks (`match target_cell`). This increases cognitive load and indentation depth.
+**Action:** Invert boundary checks into guard clauses that return early (e.g., `if y == 0 { return None; }`). Flatten trailing catch-all match arms (`Particle::Wall` and `_`) into a single default arm (`_ =>`) if they share identical fallback behavior like lateral movement. Or use `if matches!` and `if let` blocks with early returns.
