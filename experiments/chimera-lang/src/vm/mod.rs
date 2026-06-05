@@ -37,7 +37,11 @@ pub use locus::Topology;
 use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
 use rand::Rng;
+/// Organelles module.
+/// Biological components representing specialized cellular structures that grant specific abilities or stat modifiers to a Chimera entity.
 pub mod organelles;
+/// Systems module.
+/// Sub-systems that manage complex internal logic, such as the `VerbumForge` for magical linguistics or sensory processing modules.
 pub mod systems;
 #[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
@@ -15367,131 +15371,25 @@ use self::nova_chronos::Spore;
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, PartialEq)]
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
-/// Enum for `MidiEvent`.
 pub enum MidiEvent {
+    /// A note on event.
     NoteOn {
+        /// The MIDI channel.
         channel: u8,
+        /// The MIDI note number.
         note: u8,
+        /// The note velocity.
         velocity: u8,
+        /// The note duration.
         duration: u8,
     },
+    /// A control change event.
     ControlChange {
+        /// The MIDI channel.
         channel: u8,
+        /// The controller number.
         controller: u8,
+        /// The controller value.
         value: u8,
     },
 }
@@ -15850,124 +15748,13 @@ pub struct ChromaCell {
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
-/// Enum for `Chirality`.
 pub enum Chirality {
     #[default]
+    /// Left-handed chirality (Levo, Normal).
+    /// Left-handed rotation, the standard biological chirality for Earth-like amino acids.
     Left, // Levo (Normal)
+    /// Right-handed chirality (Dextro, Inverted).
+    /// Right-handed rotation, representing inverted or xenobiological structures.
     Right, // Dextro (Inverted)
 }
 
@@ -16324,251 +16111,30 @@ pub struct EvoState {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
-/// Enum for `VisualEffect`.
 pub enum VisualEffect {
+    /// A lightning effect.
     Lightning {
+        /// The starting coordinates.
         from: (usize, usize),
+        /// The ending coordinates.
         to: (usize, usize),
+        /// The RGB color.
         color: (u8, u8, u8),
+        /// Time to live.
         ttl: usize,
     },
+    /// A spark effect.
     Spark {
+        /// The location of the spark.
         loc: (usize, usize),
+        /// The RGB color.
         color: (u8, u8, u8),
+        /// Time to live.
         ttl: usize,
     },
 }
 
 #[derive(Debug, Clone, PartialEq)]
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
-/// Enum for `TuiEvent`.
 pub enum TuiEvent {
     /// Glitch
     /// Glitch
@@ -16629,128 +16195,21 @@ pub enum TuiEvent {
     /// Glitch
     /// Glitch
     Glitch(f32),
+    /// Screen shake effect with the given intensity.
+    /// Induces a screen-shake effect of the specified intensity, simulating seismic events or heavy impacts.
     Shake(f32),
+    /// A message event.
+    /// Broadcasts a text message to the simulation log or HUD, allowing entities to communicate with the observer.
     Message(String),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
-/// Enum for `PatchTarget`.
 pub enum PatchTarget {
+    /// Energy regeneration rate target.
+    /// Modifies the rate at which an entity passively recovers energy points per cycle.
     EnergyRegen,
+    /// Mutation rate target.
+    /// Alters the probability of random genetic alterations occurring during cell division or replication.
     MutationRate,
 }
 

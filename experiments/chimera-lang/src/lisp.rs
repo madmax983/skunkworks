@@ -128,7 +128,9 @@ const MAX_LISP_DEPTH: usize = 256;
 /// Enum for `SExpr`.
 /// Enum for `SExpr`.
 pub enum SExpr {
+    /// An atom.
     Atom(String),
+    /// A list.
     List(Vec<SExpr>),
 }
 

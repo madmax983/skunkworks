@@ -2473,6 +2473,7 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., tissue_id ]`
     Tissue,
 
+    /// Simulates basic Navier-Stokes fluid dynamics over the surrounding cells.
     Fluid,
     // Weaving Features (The Loom)
     /// **`Nova`** Weaves two strands together based on a pattern.
@@ -2719,6 +2720,7 @@ pub enum OpCode {
     ///
     /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
     ZipWith,
+    /// Applies Boids-like flocking forces (cohesion, alignment, separation) to the entity.
     Flock,
     /// **`Nova`** Executes hyperbolic geometry operations.
     Poincare,

@@ -5,7 +5,7 @@
 //! here corresponds to a group of thematic views inside the simulation.
 //!
 //! * [`audio`] - Renderers for audio and sonic properties (e.g., waveforms, acoustics).
-//! * [`bio`] - Renderers for biological processes (e.g., DNA inspection, genetics, taxonomy).
+//! * [`crate::tui::views::bio`] - Renderers for biological processes (e.g., DNA inspection, genetics, taxonomy).
 //! * [`core`] - The essential system renderers (e.g., grid views, execution stack, system metrics).
 //! * [`magic`] - Renderers tracking esolang interactions and narrative elements (e.g., alchemy, necromancy).
 //! * [`misc`] - Assorted renderers that don't fit perfectly into other domains.

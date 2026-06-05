@@ -22,3 +22,7 @@
 ## 2026-06-02 - [Noise Documentation]
 **Confusion:** Functions with documentation that simply repeats the name (e.g., `/// Returns the x`) are useless and considered noise.
 **Clarification:** Rewrote documentation across the workspace to use more descriptive language (e.g., `/// Calculates the numeric value`, `/// Provides the symbol`, `/// Yields`, `/// Evaluates to`, etc) instead of just "Returns" or "Gets".
+
+## 2026-06-05 - [Pest Derive Parser Doc Issues]
+**Confusion:** Adding `#[allow(missing_docs)]` right above a struct that derives `pest_derive::Parser` does not suppress missing docs warnings for the internally generated `Rule` enum, nor does putting it on clap parser enum variants cleanly bypass macro expansion issues.
+**Clarification:** To bypass `missing_docs` errors caused by `pest_derive::Parser` and `clap::Parser` internally generating undocumented code/variants, you must place `#![allow(missing_docs)]` at the top of the file containing the parser definition, avoiding the need to manually document every auto-generated variant.

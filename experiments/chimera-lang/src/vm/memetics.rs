@@ -707,9 +707,12 @@ pub struct Meme {
 /// Enum for `VirusMode`.
 /// Enum for `VirusMode`.
 pub enum VirusMode {
-    Overwrite,   // Current behavior: Replace cell with new content
-    RewriteGrid, // Parse cell content -> Mutate -> Write back
-    RewriteDNA,  // Parse Organelle DNA -> Mutate -> Compile -> Replace
+    /// Current behavior: Replace cell with new content.
+    Overwrite, // Current behavior: Replace cell with new content
+    /// Parse cell content -> Mutate -> Write back.
+    RewriteGrid,
+    /// Parse Organelle DNA -> Mutate -> Compile -> Replace.
+    RewriteDNA, // Parse Organelle DNA -> Mutate -> Compile -> Replace
 }
 
 #[derive(Debug, Clone, PartialEq)]

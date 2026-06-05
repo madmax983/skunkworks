@@ -1,3 +1,4 @@
+#![allow(missing_docs)]
 //! # The Ribosome Compiler 🧬
 //!
 //! The `compiler` module acts as the cellular machinery that translates high-level
@@ -22,7 +23,7 @@
 //! }
 //! ```
 //!
-//! See [`compile`] for usage details.
+//! See `compile` for usage details.
 
 use crate::ast::{Dna, EvolutionConfig, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
@@ -40,6 +41,7 @@ use strum::IntoEnumIterator;
 ///
 /// Derived from `script_grammar.pest`. This handles the lexical analysis and parsing
 /// of the source text into a CST (Concrete Syntax Tree).
+#[allow(missing_docs)]
 #[derive(Parser)]
 #[grammar = "script_grammar.pest"]
 /// Represents a `ScriptParser`.

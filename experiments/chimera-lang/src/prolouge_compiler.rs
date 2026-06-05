@@ -1,3 +1,4 @@
+#![allow(missing_docs)]
 //! Compilation pipeline for the Prolouge esoteric language.
 //!
 //! Exposes parsers that translate multi-paradigm script blocks (e.g., Forth, Lisp, Orca)
@@ -15,124 +16,9 @@ use crate::opcode::OpCode;
 ///
 /// Handles the syntax mapping for multiple esoteric blocks (like Forth, Orca, Lisp)
 /// into the unified AST based on rules within `prolouge_grammar.pest`.
-#[derive(Parser)]
 #[allow(missing_docs)]
+#[derive(Parser)]
 #[grammar = "prolouge_grammar.pest"]
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
 pub struct ProlougeParser;
 
 /// Evaluates an esoteric Prolouge script and synthesizes a biological [`Dna`] structure.
