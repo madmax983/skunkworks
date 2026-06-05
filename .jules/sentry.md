@@ -75,3 +75,7 @@
 **[Mocking Terminal Environments]**
 **Learning:** Testing terminal setup/teardown (like `crossterm` raw mode) in standard unit tests causes concurrency issues and mangles the test runner's terminal state.
 **Action:** Exclude terminal initialization/teardown functions from direct unit execution if they alter global terminal state, or use `assert!(std::mem::needs_drop::<Type>());` to verify that at least a `Drop` trait has been correctly attached for resource cleanup.
+
+**Grid Underflow Panic**
+**Learning:** Grid-based structures in Rust (e.g., `PhysicsGrid` in `resonance-audio`) that subtract from `width` or `height` for bounds checking are highly susceptible to integer underflow panics in debug mode if initialized with extremely small dimensions (like 0 or 1).
+**Action:** Always guard logic involving `width - 1` with explicit minimum dimension checks.
