@@ -116,6 +116,15 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### quipu-locus
+- **Parents**: crates/quipu + crates/locus
+- **Concept**: Topological Data Knots.
+- **Novel trait**: Knots on a quipu cord are mapped onto a 2D topological boundary (Torus, Klein Bottle, etc.). As you add data to the cord, the knots spatially distribute and wrap seamlessly across the chosen geometry.
+- **Predicted Phenotype**: An emergent topological visualization of discrete encoded integer states, demonstrating non-Euclidean data distribution.
+- **Status**: experiments/quipu-locus
+- **Evaluation**: Success. Compiled. Successfully headless capable.
+
+
 ### gray-platter
 - **Parents**: crates/gray-scott + crates/platter
 - **Concept**: Thermodynamic Chemical Diffusion.

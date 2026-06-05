@@ -1,0 +1,12 @@
+[package]
+name = "quipu-locus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quipu = { path = "../../crates/quipu" }
+locus = { path = "../../crates/locus" }
+tui-shared = { path = "../../crates/tui-shared" }
+rand.workspace = true
+crossterm.workspace = true
+ratatui.workspace = true
