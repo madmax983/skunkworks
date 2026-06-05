@@ -2,6 +2,7 @@
 - **git-cantata**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to private module exposure (`error[E0603]`). Grace period: 24h.
 - **swap-meet**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Grace period: 24h.
 
+- **hyperbolic-ants**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Fails to run due to immediate `RefCell already borrowed` panics. Grace period: 24h.
 ## ☠️ Executed
 - **hive-synth**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to implement headless bypass and resolve generic implementation during grace period. Biomass returned to the void.
 - **hyper-neuron**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Failed to implement headless bypass and resolve dead code warnings during grace period. Biomass returned to the void.
