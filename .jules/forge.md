@@ -71,3 +71,11 @@
 **[Guard Clauses for Nested Match statements]**
 **Learning:** Simulation event handlers (like processing bids or asks in market-sim) often develop a "Pyramid of Doom" combining boundary conditions (`if y > 0`) with entity collision checks (`match target_cell`). This increases cognitive load and indentation depth.
 **Action:** Invert boundary checks into guard clauses that return early (e.g., `if y == 0 { return None; }`). Flatten trailing catch-all match arms (`Particle::Wall` and `_`) into a single default arm (`_ =>`) if they share identical fallback behavior like lateral movement. Or use `if matches!` and `if let` blocks with early returns.
+
+**[Extracting Audio Process Commands]**
+**Learning:** The `process` method in `AudioModel` (in `resonance-audio`) acted as a "God Function" with deep "Pyramids of Doom" inside the `AudioCommand` processing loop.
+**Action:** Extract the complex logic inside the match arms into smaller, named private helper functions (e.g., `handle_oscillate_command`, `handle_tone_command`) and the inner array operations into `apply_oscillators` and `apply_active_tones`. This flattens the structure and dramatically improves readability without changing runtime behavior.
+
+**[Avoiding unwrap in Default Implementations]**
+**Learning:** Do not implement the `Default` trait for structs where the `new()` constructor returns a `Result` or `Option` by simply calling `.unwrap()`. This is an unidiomatic anti-pattern that risks runtime panics if initialization fails.
+**Action:** Always check the return type of `new()` before adding `impl Default`. If it can fail, it should not have a `Default` implementation.

@@ -252,50 +252,14 @@ impl AudioModel {
                     y,
                     frequency,
                     strength,
-                } => {
-                    // Check if oscillator exists
-                    if let Some(pos) = self.oscillators.iter().position(|o| o.x == x && o.y == y) {
-                        if strength.abs() < 0.001 {
-                            // Remove
-                            self.oscillators.swap_remove(pos);
-                        } else {
-                            // Update
-                            let osc = &mut self.oscillators[pos];
-                            osc.frequency = frequency;
-                            osc.strength = strength;
-                        }
-                    } else if strength.abs() >= 0.001 {
-                        // Add new if valid bounds
-                        if x < self.grid.width && y < self.grid.height {
-                            let idx = y * self.grid.width + x;
-                            self.oscillators.push(Oscillator {
-                                x,
-                                y,
-                                idx,
-                                phase: 0.0,
-                                frequency,
-                                strength,
-                            });
-                        }
-                    }
-                }
+                } => self.handle_oscillate_command(x, y, frequency, strength),
                 AudioCommand::Tone {
                     x,
                     y,
                     frequency,
                     strength,
                     duration_ms,
-                } => {
-                    let duration_samples = (duration_ms as f64 * 44100.0 / 1000.0) as usize;
-                    self.active_tones.push((
-                        x,
-                        y,
-                        frequency,
-                        strength,
-                        duration_samples,
-                        0.0, // Initial phase
-                    ));
-                }
+                } => self.handle_tone_command(x, y, frequency, strength, duration_ms),
                 AudioCommand::AddWall { x, y } => self.grid.add_wall(x, y),
                 AudioCommand::RemoveWall { x, y } => self.grid.remove_wall(x, y),
                 AudioCommand::PaintMaterial { x, y, material } => {
@@ -337,52 +301,88 @@ impl AudioModel {
     /// let mut buffer = vec![0.0; 10];
     /// model.process(&mut buffer);
     /// ```
+    fn handle_oscillate_command(&mut self, x: usize, y: usize, frequency: f32, strength: f32) {
+        if let Some(pos) = self.oscillators.iter().position(|o| o.x == x && o.y == y) {
+            if strength.abs() < 0.001 {
+                self.oscillators.swap_remove(pos);
+            } else {
+                let osc = &mut self.oscillators[pos];
+                osc.frequency = frequency;
+                osc.strength = strength;
+            }
+        } else if strength.abs() >= 0.001 && x < self.grid.width && y < self.grid.height {
+            let idx = y * self.grid.width + x;
+            self.oscillators.push(Oscillator {
+                x,
+                y,
+                idx,
+                phase: 0.0,
+                frequency,
+                strength,
+            });
+        }
+    }
+
+    fn handle_tone_command(
+        &mut self,
+        x: usize,
+        y: usize,
+        frequency: f32,
+        strength: f32,
+        duration_ms: u64,
+    ) {
+        let duration_samples = (duration_ms as f64 * 44100.0 / 1000.0) as usize;
+        self.active_tones
+            .push((x, y, frequency, strength, duration_samples, 0.0));
+    }
+
+    fn apply_oscillators(&mut self) {
+        for osc in self.oscillators.iter_mut() {
+            osc.phase += osc.frequency * 2.0 * PI / 44100.0;
+            if osc.phase > 2.0 * PI {
+                osc.phase -= 2.0 * PI;
+            }
+            let val = osc.phase.sin() * osc.strength;
+
+            if self.grid.materials[osc.idx] != Material::Wall {
+                self.grid.u[osc.idx] += val;
+            }
+        }
+    }
+
+    fn apply_active_tones(&mut self) {
+        self.active_tones
+            .retain_mut(|(x, y, freq, strength, remaining, phase)| {
+                if *remaining == 0 {
+                    return false;
+                }
+                *remaining -= 1;
+
+                *phase += *freq * 2.0 * PI / 44100.0;
+                if *phase > 2.0 * PI {
+                    *phase -= 2.0 * PI;
+                }
+                let val = phase.sin() * *strength;
+
+                if *x >= self.grid.width || *y >= self.grid.height {
+                    return true;
+                }
+
+                let idx = *y * self.grid.width + *x;
+                if self.grid.materials[idx] != Material::Wall {
+                    self.grid.u[idx] += val;
+                }
+
+                true
+            });
+    }
     pub fn process(&mut self, output: &mut [f32]) {
         self.process_commands();
 
         for sample in output.iter_mut() {
-            // Apply oscillators
-            for osc in self.oscillators.iter_mut() {
-                // frequency is Hz. Sample rate assumed 44100.
-                osc.phase += osc.frequency * 2.0 * PI / 44100.0;
-                if osc.phase > 2.0 * PI {
-                    osc.phase -= 2.0 * PI;
-                }
-                let val = osc.phase.sin() * osc.strength;
+            self.apply_oscillators();
 
-                // Inject into grid using precomputed idx
-                // We checked bounds on insertion, so idx is valid.
-                // We must check if the cell is a wall.
-                if self.grid.materials[osc.idx] != Material::Wall {
-                    self.grid.u[osc.idx] += val;
-                }
-            }
-
-            // Apply active tones
-            self.active_tones
-                .retain_mut(|(x, y, freq, strength, remaining, phase)| {
-                    if *remaining == 0 {
-                        return false;
-                    }
-                    *remaining -= 1;
-
-                    *phase += *freq * 2.0 * PI / 44100.0;
-                    if *phase > 2.0 * PI {
-                        *phase -= 2.0 * PI;
-                    }
-                    let val = phase.sin() * *strength;
-
-                    if *x >= self.grid.width || *y >= self.grid.height {
-                        return true;
-                    }
-
-                    let idx = *y * self.grid.width + *x;
-                    if self.grid.materials[idx] != Material::Wall {
-                        self.grid.u[idx] += val;
-                    }
-
-                    true
-                });
+            self.apply_active_tones();
 
             self.grid.step();
 
