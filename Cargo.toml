@@ -30,6 +30,7 @@ members = [
     "experiments/quipu-poincare",
     "experiments/quipu-locus",
     "experiments/myco-resonance",
+    "experiments/quipu-flock",
 
 ]
 exclude = [

@@ -9332,6 +9332,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "quipu-flock"
+version = "0.1.0"
+dependencies = [
+ "crossterm 0.28.1",
+ "flocking",
+ "glam 0.28.0",
+ "locus",
+ "quipu",
+ "ratatui 0.30.0",
+ "tui-shared",
+]
+
+[[package]]
 name = "quipu-lattice"
 version = "0.1.0"
 dependencies = [
