@@ -10,3 +10,6 @@ rayon = { version = "1.8", optional = true }
 [features]
 default = []
 parallel = ["dep:rayon"]
+
+[dev-dependencies]
+proptest = "1.11.0"

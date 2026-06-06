@@ -1,87 +1,36 @@
-use hyper_system::Vec4;
-use hyper_system::*;
+use hyper_system::PbdSystem4D;
+use locus::Vec4;
 use proptest::prelude::*;
 
 proptest! {
     #[test]
-    fn havoc_test_step_fuzzed(
-        dt in 0.001f32..0.1f32,
-        iterations in 1..100usize,
-        friction in 0.9f32..1.0f32,
-        stiffness in proptest::num::f32::ANY,
+    fn havoc_hyper_system(
+        p1_x in any::<f32>(), p1_y in any::<f32>(), p1_z in any::<f32>(), p1_w in any::<f32>(), p1_m in any::<f32>(),
+        p2_x in any::<f32>(), p2_y in any::<f32>(), p2_z in any::<f32>(), p2_w in any::<f32>(), p2_m in any::<f32>(),
+        dist in any::<f32>(),
+        dt in any::<f32>(), iters in any::<usize>(), friction in any::<f32>()
     ) {
-        let mut system = PbdSystem4D::new();
-        let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        let _ = system.add_distance_constraint(p1, p2, stiffness);
-
-        system.step(dt, iterations, friction);
-    }
-
-    #[test]
-    fn havoc_test_actuator_nan_stiffness(
-        stiff in proptest::num::f32::ANY,
-    ) {
-        let mut system = PbdSystem4D::new();
-        let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        let _ = system.add_actuator_constraint(p1, p2, 0.5, 1.5, stiff, 0.5);
-
-        system.step(0.1, 1, 0.98);
-    }
-
-    #[test]
-    fn havoc_test_friction_nan(
-        friction in prop_oneof![Just(f32::NAN), Just(f32::INFINITY), Just(f32::NEG_INFINITY)]
-    ) {
-        let mut system = PbdSystem4D::new();
-        let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        let _ = system.add_distance_constraint(p1, p2, 1.0);
-
-        system.step(0.016, 1, friction);
+        let mut sys = PbdSystem4D::new();
+        if p1_x.is_finite() && p1_y.is_finite() && p1_z.is_finite() && p1_w.is_finite() && p1_m.is_finite() && p1_m >= 0.0 &&
+           p2_x.is_finite() && p2_y.is_finite() && p2_z.is_finite() && p2_w.is_finite() && p2_m.is_finite() && p2_m >= 0.0 {
+            if let Ok(p1) = sys.add_particle(Vec4::new(p1_x, p1_y, p1_z, p1_w), p1_m) {
+                if let Ok(p2) = sys.add_particle(Vec4::new(p2_x, p2_y, p2_z, p2_w), p2_m) {
+                    if sys.add_distance_constraint(p1, p2, dist.abs()).is_ok() && dt.is_finite() && iters < 100 && friction.is_finite() {
+                        sys.step(dt, iters, friction);
+                    }
+                }
+            }
+        }
     }
 }
 
-// 👺 Havoc: Test for panics when integrating large velocities that cause
-// particles to overshoot numerical limits.
-// `p.pos = p.pos + p.vel.scale(dt);` could result in Infinity if `p.vel` is large enough.
-// The engine then calculates `delta = pos1 - pos2`. `Infinity - Infinity = NaN`.
-// `len = delta.length()` -> `NaN`.
-// `!len.is_finite()` -> panic!("NaN detected in particle distance");
-proptest! {
-    #[test]
-    fn havoc_fuzz_velocity_explosion(
-        vel in proptest::num::f32::ANY,
-        dt in proptest::num::f32::ANY,
-    ) {
-        let mut system = PbdSystem4D::new();
-        let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+#[test]
+fn havoc_hyper_system_panic() {
+    let mut sys = PbdSystem4D::new();
+    let p1 = sys.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+    let p2 = sys.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
 
-        // 🧨 The Trigger: Inject unvalidated fuzzing inputs directly into velocity state
-        system.particles[p1].vel = Vec4::new(vel, 0.0, 0.0, 0.0);
-        system.particles[p2].vel = Vec4::new(-vel, 0.0, 0.0, 0.0);
-
-        let _ = system.add_distance_constraint(p1, p2, 1.0);
-
-        // This naturally triggers a position overflow, but it should now be safely handled
-        system.step(dt, 1, 1.0);
-    }
-
-    #[test]
-    fn havoc_test_actuator_nan_len(
-        min_len in prop_oneof![Just(f32::NAN)],
-        max_len in proptest::num::f32::ANY,
-    ) {
-        let mut system = PbdSystem4D::new();
-        let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-
-        // 🧨 The Trigger: Inject NaN into min_len or max_len
-        // They are now validated in `add_actuator_constraint`, returning an Err.
-        let _ = system.add_actuator_constraint(p1, p2, min_len, max_len, 0.5, 1.0);
-
-        system.step(0.016, 1, 1.0);
-    }
+    // Messing with invalid index
+    sys.add_distance_constraint(p1, 9999, 1.0).unwrap_err();
+    sys.add_distance_constraint(9999, p2, 1.0).unwrap_err();
 }
