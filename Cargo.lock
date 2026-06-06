@@ -5191,6 +5191,7 @@ dependencies = [
 name = "gray-scott"
 version = "0.1.0"
 dependencies = [
+ "proptest",
  "rayon",
 ]
 
@@ -6977,6 +6978,7 @@ dependencies = [
 name = "market-sim"
 version = "0.1.0"
 dependencies = [
+ "proptest",
  "rand 0.8.6",
 ]
 
