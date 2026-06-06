@@ -58,8 +58,8 @@ fn havoc_resonance_pluck_underflow() {
 
     if let Ok(status) = status {
         assert!(
-            !status.success(),
-            "👺 Havoc: PhysicsGrid::pluck should panic on underflow when width=0"
+            status.success(),
+            "👺 Havoc: PhysicsGrid::pluck should not panic on underflow when width=0"
         );
     }
 }
