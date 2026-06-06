@@ -59,6 +59,7 @@
 //! println!("{}", total);
 //! ```
 
+use std::borrow::Cow;
 use std::fmt;
 
 #[cfg(feature = "audio")]
@@ -134,10 +135,33 @@ impl Knot {
     /// assert_eq!(Knot::FigureEight.symbol(), "∞");
     /// ```
     pub fn symbol(&self) -> String {
+        self.symbol_cow().into_owned()
+    }
+
+    /// Provides the character representation of this knot's form as a `Cow`.
+    ///
+    /// This is a performance optimization over `symbol()` as it avoids allocating
+    /// memory for static string representations.
+    ///
+    /// - `●`: Simple Knot
+    /// - `≡N`: Long Knot (where N is the value)
+    /// - `∞`: Figure-Eight Knot
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Knot;
+    /// use std::borrow::Cow;
+    ///
+    /// assert_eq!(Knot::Simple.symbol_cow(), Cow::Borrowed("●"));
+    /// assert_eq!(Knot::Long(5).symbol_cow(), Cow::Borrowed("≡5"));
+    /// assert_eq!(Knot::FigureEight.symbol_cow(), Cow::Borrowed("∞"));
+    /// ```
+    pub fn symbol_cow(&self) -> Cow<'static, str> {
         match self {
-            Knot::Simple => "●".to_string(),
-            Knot::Long(v) => format!("≡{}", v),
-            Knot::FigureEight => "∞".to_string(),
+            Knot::Simple => Cow::Borrowed("●"),
+            Knot::Long(v) => Cow::Owned(format!("≡{}", v)),
+            Knot::FigureEight => Cow::Borrowed("∞"),
         }
     }
 }
