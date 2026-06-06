@@ -1,7 +1,7 @@
 //! Terminal User Interface (TUI) frontend for the Chimera Engine.
 //!
 //! Provides the primary visualization and interactive environment for running
-//! Biological scripts, esoteric Prolouge circuits, and observing cellular automata.
+//! Biological scripts, esoteric PrologueEsolang circuits, and observing cellular automata.
 
 use crate::vm::ChimeraVM;
 use anyhow::Result;
@@ -166,7 +166,7 @@ pub(crate) fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
     {
         views.push((ViewMode::Grimoire, "Grimoire", "Tab"));
         views.push((ViewMode::Laboratory, "Laboratory", "Tab"));
-        views.push((ViewMode::Prolouge, "Prolouge", "Tab"));
+        views.push((ViewMode::PrologueEsolang, "PrologueEsolang", "Tab"));
         views.push((ViewMode::Topology, "Topology", "Tab"));
         views.push((ViewMode::Graveyard, "Graveyard", "Tab"));
         views.push((ViewMode::PianoRoll, "Piano Roll", "p"));

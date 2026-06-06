@@ -62,8 +62,8 @@ fn handle_down_key(vm: &mut ChimeraVM, app_state: &mut AppState) {
         #[cfg(feature = "nova")]
         ViewMode::Alchemy => handle_alchemy_down(vm, app_state),
         #[cfg(feature = "nova")]
-        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Prolouge => {
-            handle_weaver_lab_prolouge_down(app_state)
+        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::PrologueEsolang => {
+            handle_weaver_lab_prologue_esolang_down(app_state)
         }
         #[cfg(feature = "nova")]
         ViewMode::Grimoire => handle_grimoire_down(vm, app_state),
@@ -138,7 +138,7 @@ fn handle_alchemy_down(vm: &mut ChimeraVM, app_state: &mut AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn handle_weaver_lab_prolouge_down(app_state: &mut AppState) {
+fn handle_weaver_lab_prologue_esolang_down(app_state: &mut AppState) {
     match app_state.selected_strand {
         // 0=A, 1=B, 2=Method/Pattern
         0 => {
@@ -200,8 +200,8 @@ fn handle_up_key(vm: &mut ChimeraVM, app_state: &mut AppState) {
         #[cfg(feature = "nova")]
         ViewMode::Grimoire => handle_grimoire_up(app_state),
         #[cfg(feature = "nova")]
-        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Prolouge => {
-            handle_weaver_lab_prolouge_up(vm, app_state)
+        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::PrologueEsolang => {
+            handle_weaver_lab_prologue_esolang_up(vm, app_state)
         }
         #[cfg(feature = "biophysics")]
         ViewMode::Cortex => handle_cortex_up(vm, app_state),
@@ -247,7 +247,7 @@ fn handle_grimoire_up(app_state: &mut AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn handle_weaver_lab_prolouge_up(vm: &mut ChimeraVM, app_state: &mut AppState) {
+fn handle_weaver_lab_prologue_esolang_up(vm: &mut ChimeraVM, app_state: &mut AppState) {
     let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
     match app_state.selected_strand {
         // 0=A, 1=B, 2=Method
@@ -340,8 +340,8 @@ fn handle_right_key(vm: &mut ChimeraVM, app_state: &mut AppState) {
         #[cfg(feature = "nova")]
         ViewMode::Pandemonium => handle_pandemonium_right(app_state),
         #[cfg(feature = "nova")]
-        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Prolouge => {
-            handle_weaver_lab_prolouge_right(app_state)
+        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::PrologueEsolang => {
+            handle_weaver_lab_prologue_esolang_right(app_state)
         }
         #[cfg(feature = "nova")]
         ViewMode::Alchemy => handle_alchemy_right(app_state),
@@ -357,7 +357,7 @@ fn handle_pandemonium_right(app_state: &mut AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn handle_weaver_lab_prolouge_right(app_state: &mut AppState) {
+fn handle_weaver_lab_prologue_esolang_right(app_state: &mut AppState) {
     if app_state.selected_strand < 2 {
         app_state.selected_strand += 1;
     } else {
@@ -382,8 +382,8 @@ fn handle_left_key(vm: &mut ChimeraVM, app_state: &mut AppState) {
         #[cfg(feature = "nova")]
         ViewMode::Pandemonium => handle_pandemonium_left(app_state),
         #[cfg(feature = "nova")]
-        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Prolouge => {
-            handle_weaver_lab_prolouge_left(app_state)
+        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::PrologueEsolang => {
+            handle_weaver_lab_prologue_esolang_left(app_state)
         }
         #[cfg(feature = "nova")]
         ViewMode::Alchemy => handle_alchemy_left(app_state),
@@ -399,7 +399,7 @@ fn handle_pandemonium_left(app_state: &mut AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn handle_weaver_lab_prolouge_left(app_state: &mut AppState) {
+fn handle_weaver_lab_prologue_esolang_left(app_state: &mut AppState) {
     if app_state.selected_strand > 0 {
         app_state.selected_strand -= 1;
     } else {

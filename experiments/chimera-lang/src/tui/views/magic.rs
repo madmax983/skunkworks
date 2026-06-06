@@ -10,7 +10,7 @@ use ratatui::{
 
 #[cfg(feature = "nova")]
 #[allow(dead_code)]
-pub(crate) fn render_prolouge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+pub(crate) fn render_prologue_esolang(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
@@ -68,7 +68,7 @@ pub(crate) fn render_prolouge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
     let left_panel = Paragraph::new(notes).block(
         Block::default()
             .borders(Borders::ALL)
-            .title("Prolouge Status"),
+            .title("PrologueEsolang Status"),
     );
 
     f.render_widget(left_panel, chunks[0]);

@@ -392,7 +392,7 @@ strand strand_0 {
     print
     brew
     escape
-    prolouge
+    prologue_esolang
     censor
     egregore_summon
     project_geometry
@@ -1638,7 +1638,7 @@ strand strand_0 {
     egregore_dictate
     transposon
     print
-    prolouge
+    prologue_esolang
     dampen
     observe
     operator
@@ -1810,7 +1810,7 @@ strand strand_0 {
     bond
     drop
     holo_speak
-    prolouge
+    prologue_esolang
     vaccinate
     evo_score
     soundex
@@ -1924,7 +1924,7 @@ strand strand_0 {
     sense_wind
     eval
     sing
-    prolouge
+    prologue_esolang
     egregore_channel
     hyper_mul
     metamorphosis
@@ -2332,7 +2332,7 @@ strand strand_0 {
     bit_not
     holo_sonify
     egregore_query
-    prolouge
+    prologue_esolang
     radiate
     refract
     attractor_step
@@ -3061,7 +3061,7 @@ strand strand_0 {
     bit_not
     rune
     bit_and
-    prolouge
+    prologue_esolang
     ligase
     listen_freq
     attractor_init
@@ -3160,7 +3160,7 @@ strand strand_0 {
     print
     consume
     helix_len
-    prolouge
+    prologue_esolang
     synthesize
     mesh_send
     sonic_claim
@@ -3171,7 +3171,7 @@ strand strand_0 {
     chronos_splice
     symbolize
     harvest
-    prolouge
+    prologue_esolang
     fold
     eval
     d_merge
@@ -3663,7 +3663,7 @@ strand strand_0 {
     remap
     chart
     osmosis
-    prolouge
+    prologue_esolang
     string_new
     assert
     poly
@@ -3872,7 +3872,7 @@ strand strand_0 {
     tongue
     hyper_sub
     knot
-    prolouge
+    prologue_esolang
     glitch
     quantum_jump
     reflex
@@ -4052,7 +4052,7 @@ strand strand_0 {
     augury
     logistics
     observe
-    prolouge
+    prologue_esolang
     disintegrate
     supernova
     pocket
@@ -4325,7 +4325,7 @@ strand strand_0 {
     receive
     glitch
     radiate
-    prolouge
+    prologue_esolang
     symbiosis
     draw
     mul
@@ -4540,7 +4540,7 @@ strand strand_0 {
     demethylate
     crucible
     balance
-    prolouge
+    prologue_esolang
     pocket
     bury
     supernova
@@ -4937,7 +4937,7 @@ strand strand_15 {
 }
 
 strand strand_16 {
-    prolouge
+    prologue_esolang
     akashic_save
     s_len
     terraform
@@ -6177,7 +6177,7 @@ strand strand_94 {
     broadcast
     crispr_scan
     bind
-    prolouge
+    prologue_esolang
     bit_or
     cross
     d_merge
@@ -6442,9 +6442,9 @@ strand strand_110 {
     dream
     add
     morphogen
-    prolouge
+    prologue_esolang
     secrete
-    prolouge
+    prologue_esolang
     adhere
 }
 

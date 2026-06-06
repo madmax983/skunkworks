@@ -1,4 +1,4 @@
-//! Compilation pipeline for the Prolouge esoteric language.
+//! Compilation pipeline for the PrologueEsolang esoteric language.
 //!
 //! Exposes parsers that translate multi-paradigm script blocks (e.g., Forth, Lisp, Orca)
 //! into a standard unified `Dna` construct.
@@ -11,133 +11,18 @@ use std::str::FromStr;
 use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 
-/// The parser for the Prolouge esoteric language.
+/// The parser for the PrologueEsolang esoteric language.
 ///
 /// Handles the syntax mapping for multiple esoteric blocks (like Forth, Orca, Lisp)
-/// into the unified AST based on rules within `prolouge_grammar.pest`.
+/// into the unified AST based on rules within `prologue_esolang_grammar.pest`.
 #[derive(Parser)]
 #[allow(missing_docs)]
-#[grammar = "prolouge_grammar.pest"]
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-/// Represents a `ProlougeParser`.
-pub struct ProlougeParser;
+#[grammar = "prologue_esolang_grammar.pest"]
+pub struct PrologueEsolangParser;
 
-/// Evaluates an esoteric Prolouge script and synthesizes a biological [`Dna`] structure.
+/// Evaluates an esoteric PrologueEsolang script and synthesizes a biological [`Dna`] structure.
 ///
-/// Prolouge acts as the "Mad Scientist" layer, allowing code mixing from completely different paradigms like Forth, Raku, and Orca in one file.
+/// PrologueEsolang acts as the "Mad Scientist" layer, allowing code mixing from completely different paradigms like Forth, Raku, and Orca in one file.
 /// This compiler translates those varied esoteric syntaxes into a unified sequence of standard Chimera [`Gene`] structures.
 ///
 /// Helper function to extract block content while preserving spatial whitespace.
@@ -160,7 +45,7 @@ fn extract_block_content_preserve_whitespace(block_str: &str, block_type: &str) 
 /// # Examples
 ///
 /// ```
-/// use chimera_lang::prolouge_compiler::compile;
+/// use chimera_lang::prologue_esolang_compiler::compile;
 /// use chimera_lang::opcode::OpCode;
 ///
 /// // Crossing a Forth instruction block into our biological VM.
@@ -986,7 +871,7 @@ fn extract_block_content_preserve_whitespace(block_str: &str, block_type: &str) 
 /// // Example usage of compile
 /// ```
 pub fn compile(source: &str) -> Result<Dna> {
-    let mut pairs = ProlougeParser::parse(Rule::program, source)?;
+    let mut pairs = PrologueEsolangParser::parse(Rule::program, source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;
 
     let mut genes = Vec::new();
@@ -1106,14 +991,16 @@ pub fn compile(source: &str) -> Result<Dna> {
                 let content =
                     extract_block_content_preserve_whitespace(inner_block.as_str(), "madness");
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
-                genes.push(Gene::new(OpCode::Prolouge, vec![]));
+                genes.push(Gene::new(OpCode::PrologueEsolang, vec![]));
             }
-            Rule::prolouge_block => {
-                let content =
-                    extract_block_content_preserve_whitespace(inner_block.as_str(), "prolouge");
+            Rule::prologue_esolang_block => {
+                let content = extract_block_content_preserve_whitespace(
+                    inner_block.as_str(),
+                    "prologue_esolang",
+                );
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::TuiDraw, vec![]));
-                genes.push(Gene::new(OpCode::Prolouge, vec![]));
+                genes.push(Gene::new(OpCode::PrologueEsolang, vec![]));
             }
             Rule::miller_block => {
                 for instr in inner_block.into_inner() {
@@ -1920,7 +1807,7 @@ mod tests {
 
     #[cfg(feature = "nova")]
     #[test]
-    fn test_prolouge_compiler_esolang() {
+    fn test_prologue_esolang_compiler_esolang() {
         let source = r#"
         esolang {
             "Hello World" print

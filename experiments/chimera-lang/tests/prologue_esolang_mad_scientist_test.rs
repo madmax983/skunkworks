@@ -3,7 +3,7 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::prolouge_compiler::compile;
+    use chimera_lang::prologue_esolang_compiler::compile;
     use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
@@ -15,7 +15,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_mosaic() {
+    fn test_prologue_esolang_compiler_mosaic() {
         let source = r#"
         mosaic {
             "DRAW RECT"
@@ -33,7 +33,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_brainfuck_and_tui() {
+    fn test_prologue_esolang_compiler_brainfuck_and_tui() {
         let source = r#"
         brainfuck {
             +++[>+++<-]>
@@ -63,7 +63,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_forth() {
+    fn test_prologue_esolang_compiler_forth() {
         let source = r#"
         forth {
             5 3 add
@@ -85,7 +85,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_orca() {
+    fn test_prologue_esolang_compiler_orca() {
         let source = r#"
         orca {
             bang 8 8
@@ -107,7 +107,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_lisp() {
+    fn test_prologue_esolang_compiler_lisp() {
         let source = r#"
         lisp {
             (+ 5 3)
@@ -126,7 +126,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_piet() {
+    fn test_prologue_esolang_compiler_piet() {
         let source = r#"
         piet {
             rgb(255, 0, 0)
@@ -149,7 +149,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_elektra() {
+    fn test_prologue_esolang_compiler_elektra() {
         let source = r#"
         elektra {
             battery 8 8
@@ -175,7 +175,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_befunge() {
+    fn test_prologue_esolang_compiler_befunge() {
         let source = r#"
         befunge {
             >987v>.v
@@ -225,7 +225,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_execution_chaos() {
+    fn test_prologue_esolang_execution_chaos() {
         let mut vm = make_vm();
 
         // Ensure not active initially
@@ -233,8 +233,8 @@ mod tests {
 
         let initial_energy = vm.energy;
 
-        // Execute OpCode::Prolouge via dispatcher
-        let res = chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::Prolouge, &[]);
+        // Execute OpCode::PrologueEsolang via dispatcher
+        let res = chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::PrologueEsolang, &[]);
 
         assert!(res.is_none());
         assert!(vm.prologue_state.active);
@@ -244,7 +244,7 @@ mod tests {
 
         assert!(vm
             .output
-            .contains(&"PROLOUGE: Mad Scientist Mode ACTIVATED ⚛️".to_string()));
+            .contains(&"PROLOGUE_ESOLANG: Mad Scientist Mode ACTIVATED ⚛️".to_string()));
 
         // Test that runes or signals were added to the grid occasionally
         let mut has_signals = false;
@@ -275,7 +275,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_reactor() {
+    fn test_prologue_esolang_compiler_reactor() {
         let source = r#"
         reactor {
             toggle
@@ -293,7 +293,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_regex() {
+    fn test_prologue_esolang_compiler_regex() {
         let source = r#"
         regex {
             [a-z]+
@@ -310,7 +310,7 @@ mod tests {
         assert_eq!(genes[1].op, OpCode::ParserRegex);
     }
     #[test]
-    fn test_prolouge_compiler_origami() {
+    fn test_prologue_esolang_compiler_origami() {
         let source = r#"
         origami {
             50
@@ -355,25 +355,25 @@ mod tests {
     }
 
     #[test]
-    fn test_prolouge_compiler_prolog() {
+    fn test_prologue_esolang_compiler_prolog() {
         let source = r#"
         prolog {
             parent(john).
         }
         "#;
-        let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+        let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
         let genes = &dna.helix.strands[0].genes;
 
         assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
     }
     #[test]
-    fn test_prolouge_compiler_raku() {
+    fn test_prologue_esolang_compiler_raku() {
         let source = r#"
         raku {
             >>+<<
         }
         "#;
-        let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+        let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
         let genes = &dna.helix.strands[0].genes;
 
         assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::HyperAdd);
@@ -382,7 +382,7 @@ mod tests {
 
 #[cfg(feature = "nova")]
 #[test]
-fn test_prolouge_compiler_market() {
+fn test_prologue_esolang_compiler_market() {
     let source = r#"
     market {
         10
@@ -392,7 +392,7 @@ fn test_prolouge_compiler_market() {
         offer
     }
     "#;
-    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
     let genes = &dna.helix.strands[0].genes;
 
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
@@ -410,32 +410,32 @@ fn test_prolouge_compiler_market() {
 
 #[cfg(feature = "nova")]
 #[test]
-fn test_prolouge_compiler_flocking() {
+fn test_prologue_esolang_compiler_flocking() {
     let source = r#"
     flocking {
         simulate
     }
     "#;
-    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
     let genes = &dna.helix.strands[0].genes;
 
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Flock);
 }
 
 #[test]
-fn test_prolouge_compiler_madness() {
+fn test_prologue_esolang_compiler_madness() {
     let source = "madness { execute }";
-    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
     let genes = &dna.helix.strands[0].genes;
 
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
-    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Prolouge);
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::PrologueEsolang);
 }
 
 #[test]
-fn test_prolouge_compiler_miller() {
+fn test_prologue_esolang_compiler_miller() {
     let source = "miller { 42 simulate }";
-    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
     let genes = &dna.helix.strands[0].genes;
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
     assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(42));
@@ -443,9 +443,9 @@ fn test_prolouge_compiler_miller() {
 }
 
 #[test]
-fn test_prolouge_compiler_hyper() {
+fn test_prologue_esolang_compiler_hyper() {
     let source = "hyper { 10 simulate }";
-    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
     let genes = &dna.helix.strands[0].genes;
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
     assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(10));
@@ -453,9 +453,9 @@ fn test_prolouge_compiler_hyper() {
 }
 
 #[test]
-fn test_prolouge_compiler_physics() {
+fn test_prologue_esolang_compiler_physics() {
     let source = "physics { 5 simulate }";
-    let dna = chimera_lang::prolouge_compiler::compile(source).unwrap();
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
     let genes = &dna.helix.strands[0].genes;
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
     assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(5));
