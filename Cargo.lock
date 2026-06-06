@@ -8819,6 +8819,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "physics-platter"
+version = "0.1.0"
+dependencies = [
+ "glam 0.28.0",
+ "macroquad",
+ "physics-pbd",
+ "platter",
+]
+
+[[package]]
 name = "physics-poincare"
 version = "0.1.0"
 dependencies = [

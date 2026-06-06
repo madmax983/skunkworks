@@ -1,0 +1,10 @@
+[package]
+name = "physics-platter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+physics-pbd = { path = "../../crates/physics-pbd" }
+platter = { path = "../../crates/platter" }
+glam = "0.28"
