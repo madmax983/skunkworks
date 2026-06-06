@@ -87,6 +87,8 @@ I have checked all previous hybrids in this list.
 
 ## 🌸 Proposed Crosses
 
+
+
 - origami-flock
 - **Status**: Moved to Attempted Crosses
 
@@ -115,6 +117,14 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+
+### physics-platter
+- **Parents**: crates/physics-pbd + crates/platter
+- **Concept**: Thermodynamic Rigid Body Physics.
+- **Novel trait**: The kinetic energy and structural friction of Euclidean rigid-body physics particles (`physics-pbd`) are projected directly down onto a continuous 2D scalar heat field (`platter`). As bodies collide, they burst with intense thermal energy that dissipates into the environment.
+- **Predicted Phenotype**: An emergent thermodynamic visualization where physical friction and velocity dictate heat accumulation on a 2D scalar field.
+- **Status**: experiments/physics-platter
+- **Evaluation**: Success. Compiled. Euclidean friction maps beautifully to the scalar field, generating intense heat signatures upon collision.
 
 ### quipu-locus
 - **Parents**: crates/quipu + crates/locus
