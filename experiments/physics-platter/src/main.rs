@@ -1,6 +1,6 @@
+use ::glam::Vec3 as PbdVec3;
 use macroquad::prelude::*;
 use physics_pbd::PbdSystem;
-use ::glam::Vec3 as PbdVec3;
 use platter::Platter;
 
 const GRID_SIZE: (usize, usize) = (100, 100);
@@ -22,7 +22,7 @@ impl HybridState {
         }
 
         for i in 0..9 {
-            physics.particles[i+1].pos.y += 0.1; // slight offset to start motion
+            physics.particles[i + 1].pos.y += 0.1; // slight offset to start motion
         }
 
         Self { physics, heatmap }
@@ -49,7 +49,9 @@ impl HybridState {
 
         // Inject heat based on velocity
         for (i, p) in self.physics.particles.iter().enumerate() {
-            if p.inv_mass == 0.0 { continue; }
+            if p.inv_mass == 0.0 {
+                continue;
+            }
             let vel = (p.pos.distance(old_pos[i])) / dt;
 
             // Map pos to grid
