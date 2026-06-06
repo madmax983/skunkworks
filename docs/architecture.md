@@ -2734,3 +2734,30 @@ classDiagram
     LibRS ..> Constants : encapsulates
     Consumer --> LibRS : Uses
 ```
+
+## System Attractor Audio Encapsulation (ADR 109)
+
+Enforcing the Facade pattern in `system-attractor` prevents the leakage of its internal audio implementation, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace SystemAttractorFacade {
+        class LibRS {
+            <<Facade>>
+            +Synth
+        }
+    }
+    namespace InternalModules {
+        class AudioImpl {
+            <<pub(crate)>>
+            +Synth
+        }
+    }
+    class Consumer {
+        <<External>>
+    }
+
+    LibRS ..> AudioImpl : pub use Synth
+    Consumer --> LibRS : Uses
+```
