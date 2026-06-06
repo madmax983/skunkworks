@@ -4680,20 +4680,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-cantata"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "git-associates",
- "git2",
- "rand 0.8.6",
- "ratatui 0.30.0",
- "rodio 0.19.0",
- "tui-shared",
-]
-
-[[package]]
 name = "git-ddos"
 version = "0.1.0"
 dependencies = [
@@ -5629,19 +5615,6 @@ dependencies = [
  "hyper-system",
  "macroquad",
  "rand 0.8.6",
-]
-
-[[package]]
-name = "hyperbolic-ants"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "num-complex",
- "poincare-disk",
- "rand 0.8.6",
- "ratatui 0.30.0",
- "tui-shared",
 ]
 
 [[package]]
@@ -10602,17 +10575,6 @@ checksum = "d71499ff2d42f59d26edb21369a308ede691421f79ebc0f001e2b1fd3a7c9e52"
 dependencies = [
  "kurbo",
  "siphasher 0.3.11",
-]
-
-[[package]]
-name = "swap-meet"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "rand 0.8.6",
- "ratatui 0.30.0",
- "tui-shared",
 ]
 
 [[package]]

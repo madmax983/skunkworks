@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **hyper-flock**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation & Architectural Atrophy. Fails to compile due to missing `Vec4` methods from macroquad wrapper mismatch. Grace period: 24h.
 - **git-cantata**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to private module exposure (`error[E0603]`). Grace period: 24h.
 - **swap-meet**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Grace period: 24h.
 
