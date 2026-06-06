@@ -137,3 +137,19 @@ I verified that the project fails to compile when `nova` features are omitted:
 The codebase is highly entangled with the `nova` feature flag in `tui/state.rs` (`ViewMode` variants), `vm/mod.rs` (`exec_core_op`), and `vm/ops/misc.rs`. Instead of breaking the "Echo" boundaries by re-engineering these internal module configurations myself, I am reporting this friction directly.
 
 **Action Item:** A developer (or the Sentry/Atlas persona) needs to decouple the core language VM and TUI from unconditionally expecting `nova` features so that `--no-default-features` can cleanly compile the minimal core.
+
+## 🔄 Echo's Audit: `--no-default-features` Compilation Fallback
+
+**Status:** ⚠️ **FIX REQUIRED**
+
+I verified the issue remains: the project fails to compile when default features are omitted.
+- **Command:** `cargo check -p chimera-lang --no-default-features`
+- **Result:** ❌ **FAILED** with several compilation errors.
+
+**Friction details:**
+The codebase has `#[cfg(feature = "nova")]` scattered around, but the non-Nova branches often lack matching fallbacks or still refer to Nova-only items. Specific errors include:
+1.  **ViewMode Matches:** `match app_state.view_mode` in `src/tui/app/router.rs` and `match self` in `src/tui/state.rs` don't cover all enum variants or lack a `_ => ...` fallback when features are disabled.
+2.  **VM References:** References to `vm.arena` inside `src/tui/app/handlers/normal/chars.rs` and other areas happen even when the feature adding `arena` is disabled. Method calls like `self.pre_tick_updates()` in `src/vm/mod.rs` aren't properly gated.
+3.  **Type Mismatches:** Incomplete gating in `src/vm/paradox.rs` leaves an `if let` with mismatched types depending on features.
+
+**Impact:** Users cannot rely on `--no-default-features` for a minimal build. The features are too tightly coupled.
