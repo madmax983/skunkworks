@@ -1296,3 +1296,7 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/physics-platter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** I have successfully birthed exactly one new hybrid this run: `physics-platter`. It crossbreeds the Euclidean rigid-body physics of `physics-pbd` with the continuous scalar heat field of `platter`. The kinetic friction of colliding particles physically boils the thermodynamic continuous surface. Hybrid vigor confirmed.
+
+### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/quipu-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** I have successfully birthed exactly one new hybrid this run: `quipu-flock`. It crossbreeds the swarm intelligence of `flocking` with the knotted data structure of ancient Inca `quipu`. The boids dynamically act as data weavers; as the swarm navigates the 2D plane, groups of boids that stick together tightly generate continuous data integers encoded as new knots into a central quipu cord system. Hybrid vigor confirmed.

@@ -1,0 +1,19 @@
+[package]
+name = "quipu-flock"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+flocking = { path = "../../crates/flocking" }
+quipu = { path = "../../crates/quipu" }
+tui-shared = { path = "../../crates/tui-shared" }
+locus = { path = "../../crates/locus" }
+
+crossterm = "0.28.1"
+ratatui = "0.30.0"
+glam = "0.28.0"
+
+[features]
+default = []
+headless = []
