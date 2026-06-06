@@ -288,7 +288,13 @@ impl PhysicsGrid {
     /// assert_eq!(grid.get(5, 5), 1.0);
     /// ```
     pub fn pluck(&mut self, x: usize, y: usize, strength: f32) {
-        if x > 0 && x < self.width - 1 && y > 0 && y < self.height - 1 {
+        if self.width > 0
+            && self.height > 0
+            && x > 0
+            && x < self.width - 1
+            && y > 0
+            && y < self.height - 1
+        {
             let idx = y * self.width + x;
             if self.materials[idx] != Material::Wall {
                 self.u[idx] += strength;
@@ -530,5 +536,23 @@ mod tests {
         grid3.add_wall(1, 1);
         grid3.step();
         assert_eq!(grid3.get(1, 1), 0.0);
+    }
+    #[test]
+    fn should_not_panic_when_plucking_small_grid() {
+        let mut grid0 = PhysicsGrid::new(0, 0);
+        grid0.pluck(0, 0, 1.0);
+        grid0.pluck(1, 1, 1.0);
+
+        let mut grid1 = PhysicsGrid::new(1, 1);
+        grid1.pluck(0, 0, 1.0);
+        grid1.pluck(1, 1, 1.0);
+
+        let mut grid2 = PhysicsGrid::new(2, 2);
+        grid2.pluck(0, 0, 1.0);
+        grid2.pluck(1, 1, 1.0);
+
+        assert_eq!(grid0.width(), 0);
+        assert_eq!(grid1.width(), 1);
+        assert_eq!(grid2.width(), 2);
     }
 }
