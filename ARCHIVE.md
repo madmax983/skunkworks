@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **thermo-termites**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Grace period: 24h.
 - **git-cantata**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to private module exposure (`error[E0603]`). Grace period: 24h.
 - **swap-meet**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Grace period: 24h.
 
