@@ -6,7 +6,7 @@ use std::fs;
 
 use chimera_lang::{
     ast::{Dna, Helix, JunctionType},
-    compiler, prologue_compiler, prolouge_compiler,
+    compiler, prologue_compiler, prologue_esolang_compiler,
     tui::{run_tui, ViewMode},
     vm::{ChimeraVM, Value},
     ChimeraParser, Rule,
@@ -146,7 +146,7 @@ fn main() -> Result<()> {
             )
         } else if extension == "plg" {
             (
-                prolouge_compiler::compile(&unparsed_file)?,
+                prologue_esolang_compiler::compile(&unparsed_file)?,
                 None,
                 None,
                 HashMap::new(),

@@ -28,4 +28,4 @@ pub(crate) use misc::*;
 pub(crate) use physics::*;
 pub(crate) use tech::*;
 
-// Note: render_prolouge is defined in magic.rs and exported via wildcard.
+// Note: render_prologue_esolang is defined in magic.rs and exported via wildcard.

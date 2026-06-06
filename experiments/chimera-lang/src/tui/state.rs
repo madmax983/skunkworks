@@ -984,9 +984,9 @@ impl ViewMode {
                 }
             }
             #[cfg(feature = "nova")]
-            ViewMode::Laboratory => ViewMode::Prolouge,
+            ViewMode::Laboratory => ViewMode::PrologueEsolang,
             #[cfg(feature = "nova")]
-            ViewMode::Prolouge => ViewMode::Genome,
+            ViewMode::PrologueEsolang => ViewMode::Genome,
             #[cfg(feature = "nova")]
             ViewMode::Hyperspace => ViewMode::Genome,
             #[cfg(feature = "nova")]
@@ -2032,7 +2032,7 @@ pub enum ViewMode {
     #[cfg(feature = "nova")]
     Graveyard,
     #[cfg(feature = "nova")]
-    Prolouge,
+    PrologueEsolang,
     #[cfg(feature = "nova")]
     PianoRoll,
     #[cfg(feature = "nova")]
@@ -3031,7 +3031,7 @@ impl ViewMode {
             #[cfg(feature = "nova")]
             ViewMode::Laboratory => "LABORATORY",
             #[cfg(feature = "nova")]
-            ViewMode::Prolouge => "PROLOUGE ⚛️",
+            ViewMode::PrologueEsolang => "PROLOGUE_ESOLANG ⚛️",
             #[cfg(feature = "nova")]
             ViewMode::Topology => "TOPOLOGY",
             #[cfg(feature = "nova")]

@@ -1,5 +1,5 @@
 forth {
-    "INITIATING PROLOUGE MAD SCIENCE..."
+    "INITIATING PROLOGUE_ESOLANG MAD SCIENCE..."
     print
     10 20 add
     "Adding 10 and 20... result should be on stack"

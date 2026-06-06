@@ -272,8 +272,8 @@ pub(crate) fn route_view(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppS
             true
         }
         #[cfg(feature = "nova")]
-        ViewMode::Prolouge => {
-            crate::tui::views::magic::render_prolouge(f, vm, app_state);
+        ViewMode::PrologueEsolang => {
+            crate::tui::views::magic::render_prologue_esolang(f, vm, app_state);
             true
         }
 

@@ -625,7 +625,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Horcrux => super::nova_quantum::exec_horcrux(vm),
         OpCode::Rebirth => super::nova_quantum::exec_rebirth(vm),
         OpCode::Prologue => exec_prologue(vm),
-        OpCode::Prolouge => exec_prolouge(vm),
+        OpCode::PrologueEsolang => exec_prologue_esolang(vm),
         OpCode::Rune => exec_rune(vm),
         _ => None,
     }
@@ -652,13 +652,13 @@ fn exec_quipu(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-fn exec_prolouge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+fn exec_prologue_esolang(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.prologue_state.active = true;
     vm.prologue_state.orca_mode = true;
     vm.glitch_level = 100.0;
     vm.energy += 1000;
     vm.output
-        .push("PROLOUGE: Mad Scientist Mode ACTIVATED ⚛️".to_string());
+        .push("PROLOGUE_ESOLANG: Mad Scientist Mode ACTIVATED ⚛️".to_string());
 
     // Perform a chaotic mutation on the grid
     let mut rng = rand::thread_rng();
@@ -699,7 +699,7 @@ fn exec_prolouge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 OpCode::Chaos,
                 OpCode::BioHack,
                 OpCode::Supernova,
-                OpCode::Prolouge,
+                OpCode::PrologueEsolang,
             ];
             let new_op = ops[rng.gen_range(0..ops.len())].clone();
             let genes_len = vm.dna.helix.strands[s_idx].genes.len();
