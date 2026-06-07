@@ -27,8 +27,12 @@ proptest! {
 #[test]
 fn havoc_hyper_system_panic() {
     let mut sys = PbdSystem4D::new();
-    let p1 = sys.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
-    let p2 = sys.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+    let p1 = sys
+        .add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0)
+        .unwrap();
+    let p2 = sys
+        .add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0)
+        .unwrap();
 
     // Messing with invalid index
     sys.add_distance_constraint(p1, 9999, 1.0).unwrap_err();

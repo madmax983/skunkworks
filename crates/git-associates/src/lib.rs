@@ -346,24 +346,28 @@ impl GitModel {
     /// through all hunks and their lines, classifying them as Added, Removed, or Context.
     fn extract_hunks(patch: &git2::Patch) -> Vec<Hunk> {
         let num_hunks = patch.num_hunks();
+        let mut hunks = Vec::with_capacity(num_hunks);
 
-        (0..num_hunks)
-            .filter_map(|h_idx| {
-                let (hunk_info, lines_count) = patch.hunk(h_idx).ok()?;
+        for h_idx in 0..num_hunks {
+            if let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) {
+                let mut lines = Vec::with_capacity(lines_count);
 
-                let lines: Vec<LineChange> = (0..lines_count)
-                    .filter_map(|l_idx| {
-                        let line = patch.line_in_hunk(h_idx, l_idx).ok()?;
-                        Self::parse_line_change(&line)
-                    })
-                    .collect();
+                for l_idx in 0..lines_count {
+                    if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
+                        if let Some(parsed) = Self::parse_line_change(&line) {
+                            lines.push(parsed);
+                        }
+                    }
+                }
 
-                Some(Hunk {
+                hunks.push(Hunk {
                     header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
                     lines,
-                })
-            })
-            .collect()
+                });
+            }
+        }
+
+        hunks
     }
 
     /// Helper to convert a git2::DiffLine into a LineChange based on origin.
