@@ -300,9 +300,18 @@ impl Crystal {
             // Search for next free spot
             while let Some((du, dv)) = coords.pop_front() {
                 let pos = LatticePoint::new(
-                    parent_pos.x + du * u.x + dv * v.x,
-                    parent_pos.y + du * u.y + dv * v.y,
-                    parent_pos.z + du * u.z + dv * v.z,
+                    parent_pos
+                        .x
+                        .saturating_add(du.saturating_mul(u.x))
+                        .saturating_add(dv.saturating_mul(v.x)),
+                    parent_pos
+                        .y
+                        .saturating_add(du.saturating_mul(u.y))
+                        .saturating_add(dv.saturating_mul(v.y)),
+                    parent_pos
+                        .z
+                        .saturating_add(du.saturating_mul(u.z))
+                        .saturating_add(dv.saturating_mul(v.z)),
                 );
 
                 if !occupied.contains(&pos) {

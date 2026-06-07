@@ -46,3 +46,6 @@
 **2026-10-07 - [LRU Unsoundness]**
 **Threat:** The `lru` crate version 0.12.5 used by `ratatui` version 0.26.3 violates Stacked Borrows by invalidating the internal pointer during `IterMut` iteration. This allows Undefined Behavior (UB) and memory corruption during iteration.
 **Defense:** Updated the `ratatui` crate dependency to version `0.30` across the codebase, which bumps the transitive dependency on `lru` to version `0.16.4`, resolving the memory safety bug (RUSTSEC-2026-0002).
+**2025-06-07 - Integer Overflow DoS in Miller Lattice**
+**Threat:** The `place_children` coordinate calculations in `crates/miller-lattice/src/lib.rs` were vulnerable to integer overflows (Denial of Service). If an adversary or extensive tree triggered coordinate bounds to exceed `i32::MAX`, it caused an unhandled panic in debug mode and potentially unexpected wrapping behavior in release, leading to system crash or data corruption.
+**Defense:** Replaced raw addition and multiplication operators (`+` and `*`) with explicit bounded mathematical operations (`saturating_add` and `saturating_mul`). This safely clamps coordinates at maximum/minimum boundaries, preventing crashes.
