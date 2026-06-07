@@ -349,22 +349,24 @@ impl GitModel {
         let mut hunks = Vec::with_capacity(num_hunks);
 
         for h_idx in 0..num_hunks {
-            if let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) {
-                let mut lines = Vec::with_capacity(lines_count);
+            let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) else {
+                continue;
+            };
+            let mut lines = Vec::with_capacity(lines_count);
 
-                for l_idx in 0..lines_count {
-                    if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                        if let Some(parsed) = Self::parse_line_change(&line) {
-                            lines.push(parsed);
-                        }
-                    }
+            for l_idx in 0..lines_count {
+                let Ok(line) = patch.line_in_hunk(h_idx, l_idx) else {
+                    continue;
+                };
+                if let Some(parsed) = Self::parse_line_change(&line) {
+                    lines.push(parsed);
                 }
-
-                hunks.push(Hunk {
-                    header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
-                    lines,
-                });
             }
+
+            hunks.push(Hunk {
+                header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
+                lines,
+            });
         }
 
         hunks

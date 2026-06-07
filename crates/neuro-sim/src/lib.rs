@@ -100,6 +100,7 @@ pub struct Synapse {
 /// use neuro_sim::Network;
 /// let network = Network::new();
 /// ```
+#[derive(Default)]
 pub struct Network {
     /// The collection of neurons in the network.
     pub neurons: Vec<Izhikevich>,
@@ -365,12 +366,6 @@ impl Network {
     /// ```
     pub fn get_synapse_activity(&self, index: usize) -> bool {
         self.synapses.get(index).map(|s| s.active).unwrap_or(false)
-    }
-}
-
-impl Default for Network {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

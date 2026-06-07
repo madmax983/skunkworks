@@ -139,7 +139,7 @@ pub enum Constraint {
 /// // Since p1 is pinned (mass 0) and the distance is perfectly met,
 /// // they should barely move unless forces act upon them.
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct PbdSystem {
     /// The collection of point masses managed by the system.
     ///
@@ -151,12 +151,6 @@ pub struct PbdSystem {
     /// You can add constraints manually to this vector or use helper methods like
     /// [`PbdSystem::add_distance_constraint`].
     pub constraints: Vec<Constraint>,
-}
-
-impl Default for PbdSystem {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl PbdSystem {
