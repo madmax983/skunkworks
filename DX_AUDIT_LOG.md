@@ -299,3 +299,53 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 *   🤦 **The Confusion:** "Tried to run the `hero_journey` example as documented in the README. Cargo told me there is no example target named `hero_journey`."
 *   🕵️ **The Reality:** "Turns out the example code is only in the README and wasn't actually saved as a `.rs` file in the `examples/` directory."
 *   💡 **The Fix:** "Add the `hero_journey.rs` file inside the `examples/` directory of the `quipu` crate, matching the code in the README so users can actually run it."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `chimera-lang` Getting Started (Story Demo)
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to add `Nova`'s story feature."
+**Action:** Try to use the API based *only* on the public docs/examples.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Requirement:** Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found."
+*   🕵️ **The Reality:** "Turns out I needed to enable feature `nova`."
+*   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES FEATURE NOVA'."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/tui-shared/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to use `tui-shared` in a standalone project."
+**Action:** Followed "Option B: Standalone Project" in `tui-shared/README.md`. Created a new crate and added `ratatui = "0.30"` and `crossterm = "0.28"` as instructed. Copied the minimal example code.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Dependency Version Mismatch:** The README tells me to use `ratatui = "0.30"`, but the `tui-shared` crate in the workspace currently seems to depend on an older version of `ratatui` (or `unicode-width` conflicts arise) when resolving dependencies, causing a compilation failure: "all possible versions conflict with previously selected packages."
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (Standalone Project)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the minimal example for `tui-shared` as a standalone project. Cargo immediately threw a dependency resolution error about `unicode-width` conflicting versions."
+*   🕵️ **The Reality:** "Turns out the README tells external users to use `ratatui = "0.30"`, but the internal `tui-shared` crate relies on workspace dependencies that are pinned to older versions, causing an unresolvable conflict for new users."
+*   💡 **The Fix:** "Update the README to specify the exact, compatible version of `ratatui` (e.g., `0.29`) that matches the workspace, or update the workspace to use `0.30`."
