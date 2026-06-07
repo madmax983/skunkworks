@@ -1223,8 +1223,11 @@ Observation: Thermodynamic Chemical Diffusion. The continuous scalar heat field 
 
 ## 🧫 History/Decay
 
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-lattice
+- **Scent Origin:** The Reaper ☠️
+- **Status:** **Reaper ☠️**: "Fascinating. Specimen `origami-lattice` exhibits terminal characteristics indicating Terminal Compilation Failure and Ecosystem Maladaptation. It fails to compile due to `glam` type mismatches and lacks the critical `--headless` bypass. Execution scheduled in 24h."
 
-## 🧫 History/Decay
+
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang/README.md
 - **Status:** The `genesis.chs` missing file has been successfully addressed and the examples in the documentation are consistent. Scent evaporates as polish is applied.
