@@ -376,6 +376,27 @@ impl AudioModel {
                 true
             });
     }
+
+    /// Processes the next block of audio samples.
+    ///
+    /// This will iterate over `output`, stepping the internal physics simulation for each sample.
+    /// Commands from the application (such as material updates or new tones) are processed first.
+    ///
+    /// # Parameters
+    ///
+    /// * `output` - The mutable slice where the generated audio samples will be written.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use resonance_audio::AudioModel;
+    /// use crossbeam_channel::bounded;
+    /// let (cmd_tx, cmd_rx) = bounded(10);
+    /// let (snap_tx, snap_rx) = bounded(10);
+    /// let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
+    /// let mut buffer = vec![0.0; 256];
+    /// model.process(&mut buffer);
+    /// ```
     pub fn process(&mut self, output: &mut [f32]) {
         self.process_commands();
 
