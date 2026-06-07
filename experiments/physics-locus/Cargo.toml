@@ -1,0 +1,12 @@
+[package]
+name = "physics-locus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+locus = { path = "../../crates/locus" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = "0.26"
+crossterm = "0.27"
+glam = "0.28"
