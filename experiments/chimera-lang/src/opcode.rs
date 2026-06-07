@@ -2737,6 +2737,8 @@ pub enum OpCode {
     HyperSystem,
     /// Triggers the Physics PBD esolang logic
     PhysicsPbd,
+    /// Triggers the Ferrous Core esolang logic
+    FerrousCore,
 }
 
 impl fmt::Display for OpCode {

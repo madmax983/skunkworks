@@ -525,6 +525,11 @@ impl crate::vm::ChimeraVM {
                     .push("Physics PBD position-based dynamics triggered.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
+            OpCode::FerrousCore => {
+                self.output
+                    .push("Ferrous Core magnetic field triggered.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
             #[cfg(feature = "oracle")]
             OpCode::Divergence => Some(nova::exec_nova_op(self, op, args)),
             _ => None,
