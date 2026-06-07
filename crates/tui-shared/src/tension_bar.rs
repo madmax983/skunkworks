@@ -165,6 +165,7 @@ impl<'a> Widget for TensionBar<'a> {
                 let cell = &mut buf[(x, draw_y)];
                 cell.set_symbol(block::FULL);
                 cell.set_fg(color);
+                cell.set_bg(Color::Black);
             }
         }
 
@@ -184,6 +185,7 @@ impl<'a> Widget for TensionBar<'a> {
                 let cell = &mut buf[(x, draw_y)];
                 cell.set_symbol(symbol);
                 cell.set_fg(color);
+                cell.set_bg(Color::Black);
             }
         }
     }
