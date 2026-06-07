@@ -356,6 +356,7 @@ impl Izhikevich {
     }
 }
 
+
 impl Default for Izhikevich {
     fn default() -> Self {
         Self::new()

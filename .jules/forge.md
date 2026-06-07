@@ -79,3 +79,11 @@
 **[Avoiding unwrap in Default Implementations]**
 **Learning:** Do not implement the `Default` trait for structs where the `new()` constructor returns a `Result` or `Option` by simply calling `.unwrap()`. This is an unidiomatic anti-pattern that risks runtime panics if initialization fails.
 **Action:** Always check the return type of `new()` before adding `impl Default`. If it can fail, it should not have a `Default` implementation.
+
+**[Flattening Pyramids of Doom with Guard Clauses]**
+**Learning:** Loops that process complex data structures, such as git diff hunks in `git-associates`, can quickly become "Pyramids of Doom" if they use nested `if let Ok(...)` statements.
+**Action:** Replace nested `if let Ok` bindings inside loops with `let Ok(...) = ... else { continue; };` guard clauses. This flattens the execution flow by multiple indentation levels without altering functionality or losing important loop optimizations (like `Vec::with_capacity`).
+
+**[Idiomatic Default Implementations]**
+**Learning:** Many structs with a parameterless `pub fn new() -> Self` constructor manually implement the `Default` trait using `impl Default for X { fn default() -> Self { Self::new() } }`.
+**Action:** If `new()` simply initializes default values (e.g., empty `Vec`s or zeroes), replace the manual `Default` implementation with `#[derive(Default)]` on the struct to reduce boilerplate and conform to idiomatic Rust standards.

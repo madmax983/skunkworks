@@ -136,6 +136,7 @@ pub enum Constraint4D {
 /// // Step the simulation forward by 0.1s using 10 iterations per step with 2% friction.
 /// system.step(0.1, 10, 0.98);
 /// ```
+#[derive(Default)]
 pub struct PbdSystem4D {
     /// The collection of all simulated point masses.
     pub particles: Vec<Particle4D>,
@@ -496,19 +497,6 @@ impl PbdSystem4D {
                 particles[p2].pos = particles[p2].pos + correction.scale(w2);
             }
         }
-    }
-}
-
-impl Default for PbdSystem4D {
-    /// Identical to [`PbdSystem4D::new`].
-    ///
-    /// # Examples
-    /// ```
-    /// use hyper_system::PbdSystem4D;
-    /// let system = PbdSystem4D::default();
-    /// ```
-    fn default() -> Self {
-        Self::new()
     }
 }
 

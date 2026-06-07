@@ -123,7 +123,7 @@ pub struct Atom {
 /// let crystal = Crystal::build_from_path(Path::new("./src")).unwrap();
 /// println!("Generated {} atoms with {} bonds.", crystal.atoms.len(), crystal.bonds.len());
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Crystal {
     /// The flattened list of all atoms in the crystal.
     pub atoms: Vec<Atom>,
@@ -133,12 +133,6 @@ pub struct Crystal {
     pub bonds: Vec<(usize, usize)>,
     /// Fast spatial lookup mapping a discrete coordinate to an index in the `atoms` vector.
     pub lookup: FxHashMap<LatticePoint, usize>,
-}
-
-impl Default for Crystal {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl Crystal {
