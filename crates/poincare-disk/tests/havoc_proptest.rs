@@ -1,4 +1,4 @@
-use poincare_disk::{Point, mobius_add, mobius_sub};
+use poincare_disk::{mobius_add, mobius_sub, Point};
 use proptest::prelude::*;
 
 proptest! {

@@ -5,7 +5,7 @@ use crossterm::{
 };
 use flocking::{compute_force, FlockingParams};
 use locus::Vec2;
-use quipu::{Quipu, Cord, Knot};
+use quipu::{Cord, Knot, Quipu};
 use ratatui::{
     backend::CrosstermBackend,
     style::{Color, Style},
@@ -14,8 +14,7 @@ use ratatui::{
     Terminal,
 };
 use std::{
-    env,
-    io,
+    env, io,
     time::{Duration, Instant},
 };
 
@@ -170,7 +169,10 @@ impl App {
             }
 
             lines.push(Line::from(""));
-            lines.push(Line::from(Span::styled("Quipu Data Structure:", Style::default().fg(Color::Yellow))));
+            lines.push(Line::from(Span::styled(
+                "Quipu Data Structure:",
+                Style::default().fg(Color::Yellow),
+            )));
 
             for (i, cord) in self.quipu.cords.iter().enumerate() {
                 let mut cord_str = format!("Cord {}: ", i);

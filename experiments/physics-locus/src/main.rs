@@ -1,17 +1,17 @@
+use crossterm::{
+    event::{self, Event, KeyCode},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+};
+use glam::Vec3;
 use locus::Topology;
 use physics_pbd::PbdSystem;
-use glam::Vec3;
 use ratatui::{
     backend::CrosstermBackend,
     style::{Color, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
     Terminal,
-};
-use crossterm::{
-    event::{self, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use std::env;
 use std::io::{self, stdout};
@@ -41,7 +41,14 @@ impl App {
 
         // Add a few particles
         for i in 0..10 {
-            system.add_particle(Vec3::new(width as f32 / 2.0, height as f32 / 4.0 + (i as f32 * 2.0), 0.0), 1.0);
+            system.add_particle(
+                Vec3::new(
+                    width as f32 / 2.0,
+                    height as f32 / 4.0 + (i as f32 * 2.0),
+                    0.0,
+                ),
+                1.0,
+            );
 
             // push them down-right to trigger continuous wrapping
             system.particles[i].vel = Vec3::new(20.0, 5.0, 0.0);
@@ -49,7 +56,7 @@ impl App {
 
         // Connect them as a chain
         for i in 0..9 {
-            let _ = system.add_distance_constraint(i, i+1, 2.0);
+            let _ = system.add_distance_constraint(i, i + 1, 2.0);
         }
 
         Self {
@@ -67,7 +74,7 @@ impl App {
         }
 
         // Step physics (PbdSystem::step doesn't have config struct in lib.rs, it takes dt and iterations)
-        self.system.step(1.0/60.0, 10);
+        self.system.step(1.0 / 60.0, 10);
 
         // Enforce topological wrap on particles *after* solver
         for p in self.system.particles.iter_mut() {
