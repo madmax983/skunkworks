@@ -6926,6 +6926,7 @@ dependencies = [
 name = "market-origami"
 version = "0.1.0"
 dependencies = [
+ "glam 0.28.0",
  "macroquad",
  "market-sim",
  "origami",

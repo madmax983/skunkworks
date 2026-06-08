@@ -1426,7 +1426,18 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/quipu-flock
 - **Evaluation**: Success. Compiled. Swarm cohesion effectively drives dynamic Quipu data encoding, acting as a biological storage device.
 
+
+### market-origami
+- **Parents**: crates/market-sim + crates/physics-pbd
+- **Concept**: Financial Pressure Morphogenesis.
+- **Novel trait**: The discrete financial order book grid (`market-sim`) is overlaid onto the physical constraint mapping of a Miura-ori soft-body mesh (`origami` + `physics-pbd`). Market liquidity (heat, trades, orders) directly translates into actuator pressure on the structural mesh.
+- **Predicted Phenotype**: An emergent 3D bio-structural visualization. High trading activity literally stretches the constraints of the paper mesh, creating bulges and physical tension in the soft body, while low activity allows it to tightly compress. You can "see" financial volatility as structural deformation.
+- **Status**: experiments/market-origami
+- **Evaluation**: Success. Compiled. Cross-boundary primitive conversion successfully mitigated glam version mismatch. Headless bypass operates correctly.
+
 ## 🔮 Proposed Crosses
+**Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated the recent crosses. Because my attempt to mutate `neuro-lattice` resulted in a failed clone, I purged it from the gene pool and reverted the workspace. I am now proceeding with a brand new crossbreed: `market-origami`. This maps the financial market simulation directly into the Euclidean soft-body physics of position based dynamics. Market liquidity will dictate physical mesh tension.
+
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have successfully birthed the new hybrid `physics-locus`. It crossbreeds the Euclidean rigid-body physics constraints of `physics-pbd` with the continuous non-Euclidean topological boundaries of `locus`. Rigid bodies now seamlessly wrap across a Klein bottle void without breaking structural integrity.
 
