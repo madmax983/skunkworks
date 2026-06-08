@@ -1,24 +1,9 @@
-# 🍄 market-origami
+# 🧬 Splice: market-origami
 
-Market Liquidity Morphogenesis.
+**Lineage:** `crates/market-sim` × `crates/physics-pbd`
 
-This experiment crosses the continuous double auction logic of `market-sim` with the procedural soft-body meshes of `origami`.
+**Concept:** Financial Pressure Morphogenesis.
 
-## 🧬 Lineage
+**Novel trait:** The discrete financial order book grid (`market-sim`) is overlaid onto the physical constraint mapping of a Miura-ori soft-body mesh (`origami` + `physics-pbd`). Market liquidity (heat, trades, orders) directly translates into actuator pressure on the structural mesh.
 
-- **Parent A**: `crates/market-sim` (Continuous Double Auction Particle System logic)
-- **Parent B**: `crates/origami` (Procedural Miura-ori mesh generation)
-
-## 🔬 Phenotype
-
-Instead of viewing market order flow purely abstractly, the physical presence of Bids and Asks acts as a structural force on a continuous Miura-ori paper mesh.
-
-As trades occur (Bids and Asks collide) and liquidity pools form, the intense market activity physically elongates the constraints of the paper in that region. Where the market is illiquid or quiet, the paper contracts.
-
-This creates an emergent, living sheet of paper that folds, crumples, and breathes dynamically based on the algorithmic trading volume occurring across its surface.
-
-## 🚀 Running
-
-```bash
-cargo run -p market-origami
-```
+**Predicted Phenotype:** An emergent 3D bio-structural visualization. High trading activity literally stretches the constraints of the paper mesh, creating bulges and physical tension in the soft body, while low activity allows it to tightly compress. You can "see" financial volatility as structural deformation.

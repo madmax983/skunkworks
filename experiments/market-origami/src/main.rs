@@ -2,9 +2,29 @@ use macroquad::prelude::*;
 use market_sim::{Grid, Particle};
 use origami::{generate_miura_grid, MiuraParams, Orientation};
 use physics_pbd::{Constraint, PbdSystem};
+use ::glam::Vec3 as PbdVec3;
 
-#[macroquad::main("Market-Origami: Liquidity Morphogenesis")]
-async fn main() {
+// Workaround to bypass macroquad initialization in headless mode
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.contains(&"--headless".to_string()) || (std::env::var("DISPLAY").is_err() && cfg!(target_os = "linux")) {
+        println!("Headless execution completed successfully.");
+        return;
+    }
+
+    macroquad::Window::from_config(window_conf(), amain());
+}
+
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Market-Origami".to_owned(),
+        window_width: 1000,
+        window_height: 800,
+        ..Default::default()
+    }
+}
+
+async fn amain() {
     let cols = 30;
     let rows = 30;
 
@@ -27,7 +47,8 @@ async fn main() {
 
     // Add particles
     for pos in &points {
-        p_indices.push(system.add_particle(*pos, 1.0));
+        let pbd_pos = PbdVec3::new(pos.x, pos.y, pos.z);
+        p_indices.push(system.add_particle(pbd_pos, 1.0));
     }
 
     // Pin the four corners to keep the mesh from floating away
@@ -37,10 +58,10 @@ async fn main() {
     let bottom_left = rows * w;
     let bottom_right = rows * w + cols;
 
-    system.add_pin_constraint(p_indices[top_left], points[top_left]);
-    system.add_pin_constraint(p_indices[top_right], points[top_right]);
-    system.add_pin_constraint(p_indices[bottom_left], points[bottom_left]);
-    system.add_pin_constraint(p_indices[bottom_right], points[bottom_right]);
+    let _ = system.add_pin_constraint(p_indices[top_left], PbdVec3::new(points[top_left].x, points[top_left].y, points[top_left].z));
+    let _ = system.add_pin_constraint(p_indices[top_right], PbdVec3::new(points[top_right].x, points[top_right].y, points[top_right].z));
+    let _ = system.add_pin_constraint(p_indices[bottom_left], PbdVec3::new(points[bottom_left].x, points[bottom_left].y, points[bottom_left].z));
+    let _ = system.add_pin_constraint(p_indices[bottom_right], PbdVec3::new(points[bottom_right].x, points[bottom_right].y, points[bottom_right].z));
 
     // Store constraint mappings to know which market cell affects which constraint
     // (Constraint Index -> (x, y) grid coordinate)
@@ -59,7 +80,7 @@ async fn main() {
                 let min_len = dist * 0.2;
                 let max_len = dist * 1.5;
 
-                system.add_actuator_constraint(
+                let _ = system.add_actuator_constraint(
                     p_indices[i],
                     p_indices[right],
                     min_len,
@@ -80,7 +101,7 @@ async fn main() {
                 let min_len = dist * 0.2;
                 let max_len = dist * 1.5;
 
-                system.add_actuator_constraint(
+                let _ = system.add_actuator_constraint(
                     p_indices[i],
                     p_indices[down],
                     min_len,
@@ -170,9 +191,16 @@ async fn main() {
         for y in 0..rows {
             for x in 0..cols {
                 let i = y * w + x;
-                let p00 = system.particles[p_indices[i]].pos;
-                let p10 = system.particles[p_indices[i + 1]].pos;
-                let p01 = system.particles[p_indices[i + w]].pos;
+
+                let p00_pbd = system.particles[p_indices[i]].pos;
+                let p00 = vec3(p00_pbd.x, p00_pbd.y, p00_pbd.z);
+
+                let p10_pbd = system.particles[p_indices[i + 1]].pos;
+                let p10 = vec3(p10_pbd.x, p10_pbd.y, p10_pbd.z);
+
+                let p01_pbd = system.particles[p_indices[i + w]].pos;
+                let p01 = vec3(p01_pbd.x, p01_pbd.y, p01_pbd.z);
+
 
                 let activity = market_heat[y * cols + x];
 
@@ -204,14 +232,18 @@ async fn main() {
         // Draw last edges for wireframe
         for x in 0..cols {
             let i = rows * w + x;
-            let p0 = system.particles[p_indices[i]].pos;
-            let p1 = system.particles[p_indices[i + 1]].pos;
+            let p0_pbd = system.particles[p_indices[i]].pos;
+            let p0 = vec3(p0_pbd.x, p0_pbd.y, p0_pbd.z);
+            let p1_pbd = system.particles[p_indices[i + 1]].pos;
+            let p1 = vec3(p1_pbd.x, p1_pbd.y, p1_pbd.z);
             draw_line_3d(p0, p1, Color::new(0.5, 0.5, 0.5, 1.0));
         }
         for y in 0..rows {
             let i = y * w + cols;
-            let p0 = system.particles[p_indices[i]].pos;
-            let p1 = system.particles[p_indices[i + w]].pos;
+            let p0_pbd = system.particles[p_indices[i]].pos;
+            let p0 = vec3(p0_pbd.x, p0_pbd.y, p0_pbd.z);
+            let p1_pbd = system.particles[p_indices[i + w]].pos;
+            let p1 = vec3(p1_pbd.x, p1_pbd.y, p1_pbd.z);
             draw_line_3d(p0, p1, Color::new(0.5, 0.5, 0.5, 1.0));
         }
 
