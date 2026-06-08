@@ -37,6 +37,17 @@ use anyhow::{Context, Result};
 use chrono::{DateTime, TimeZone, Utc};
 use git2::{DiffFlags, Repository, Sort};
 use std::path::Path;
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DiffMode {
+    ComputeDiffs,
+    SkipDiffs,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HunkMode {
+    IncludeHunks,
+    SkipHunks,
+}
 
 /// A wrapper around a Git repository that provides high-level analysis methods.
 ///
@@ -110,7 +121,7 @@ impl GitModel {
     /// }
     /// ```
     pub fn history(&self, limit: usize) -> Result<Vec<Commit>> {
-        self.history_internal(limit, false)
+        self.history_internal(limit, DiffMode::SkipDiffs)
     }
 
     /// Retrieves the commit history including file diff statistics.
@@ -140,10 +151,10 @@ impl GitModel {
     /// }
     /// ```
     pub fn history_with_diffs(&self, limit: usize) -> Result<Vec<Commit>> {
-        self.history_internal(limit, true)
+        self.history_internal(limit, DiffMode::ComputeDiffs)
     }
 
-    fn history_internal(&self, limit: usize, compute_diffs: bool) -> Result<Vec<Commit>> {
+    fn history_internal(&self, limit: usize, compute_diffs: DiffMode) -> Result<Vec<Commit>> {
         let mut revwalk = self.repo.revwalk().context("Failed to create revwalker")?;
         revwalk.set_sorting(Sort::TIME)?;
         revwalk.push_head()?;
@@ -186,13 +197,14 @@ impl GitModel {
             }
 
             // Stats
-            let (stats, files) = if compute_diffs {
-                match self.get_commit_diff(&commit, true) {
-                    Ok((s, f)) => (Some(s), f),
-                    Err(_) => (None, Vec::new()),
+            let (stats, files) = match compute_diffs {
+                DiffMode::ComputeDiffs => {
+                    match self.get_commit_diff(&commit, HunkMode::IncludeHunks) {
+                        Ok((s, f)) => (Some(s), f),
+                        Err(_) => (None, Vec::new()),
+                    }
                 }
-            } else {
-                (None, Vec::new())
+                DiffMode::SkipDiffs => (None, Vec::new()),
             };
 
             commits.push(Commit {
@@ -213,7 +225,7 @@ impl GitModel {
     fn get_commit_diff(
         &self,
         commit: &git2::Commit,
-        include_hunks: bool,
+        include_hunks: HunkMode,
     ) -> Result<(CommitStats, Vec<FileChange>)> {
         let tree = commit.tree()?;
         let parent = commit.parent(0).ok();
@@ -266,7 +278,8 @@ impl GitModel {
             .diff_tree_to_workdir_with_index(tree.as_ref(), Some(&mut diff_opts))?;
 
         // Always include hunks for workdir diff
-        let (total_added, total_removed, files) = self.process_diff_internal(&diff, true)?;
+        let (total_added, total_removed, files) =
+            self.process_diff_internal(&diff, HunkMode::IncludeHunks)?;
 
         Ok(DiffStats {
             files,
@@ -284,7 +297,7 @@ impl GitModel {
     fn process_diff_internal(
         &self,
         diff: &git2::Diff,
-        include_hunks: bool,
+        include_hunks: HunkMode,
     ) -> Result<(usize, usize, Vec<FileChange>)> {
         // Optimization: Pre-allocate capacity based on the number of deltas in the diff
         // to prevent multiple heap reallocations during iterative population.
@@ -321,10 +334,9 @@ impl GitModel {
             total_insertions += insertions;
             total_deletions += deletions;
 
-            let hunks = if include_hunks {
-                Self::extract_hunks(&patch)
-            } else {
-                Vec::new()
+            let hunks = match include_hunks {
+                HunkMode::IncludeHunks => Self::extract_hunks(&patch),
+                HunkMode::SkipHunks => Vec::new(),
             };
 
             files.push(FileChange {
@@ -632,7 +644,9 @@ mod tests {
             .diff_tree_to_workdir_with_index(Some(&tree), None)
             .unwrap();
 
-        let (_, _, files) = model.process_diff_internal(&diff, false).unwrap();
+        let (_, _, files) = model
+            .process_diff_internal(&diff, HunkMode::SkipHunks)
+            .unwrap();
 
         assert_eq!(files.len(), 1);
         assert!(files[0].hunks.is_empty());
