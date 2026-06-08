@@ -349,3 +349,28 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 *   🤦 **The Confusion:** "Tried to run the minimal example for `tui-shared` as a standalone project. Cargo immediately threw a dependency resolution error about `unicode-width` conflicting versions."
 *   🕵️ **The Reality:** "Turns out the README tells external users to use `ratatui = "0.30"`, but the internal `tui-shared` crate relies on workspace dependencies that are pinned to older versions, causing an unresolvable conflict for new users."
 *   💡 **The Fix:** "Update the README to specify the exact, compatible version of `ratatui` (e.g., `0.29`) that matches the workspace, or update the workspace to use `0.30`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `chimera-lang` Library Usage (story_demo)
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `story_demo` in a standalone project."
+**Action:** Followed the "Library Usage" section in `chimera-lang/README.md`. Created a new crate, added the specified dependencies to `Cargo.toml`, copied `story_demo.rs` to `src/main.rs`, and tried to build.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Workspace Dependency:** Cargo immediately fails to build with an unresolvable path dependency for `miller-lattice` because it assumes it's within a workspace root and inherits properties. The `README.md` `Cargo.toml` snippet completely omits `miller-lattice`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (story_demo workspace dependencies)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `story_demo` example by copying it to a standalone project as instructed in the README. Cargo completely failed to resolve the `miller-lattice` path dependency because it assumes it's in a workspace."
+*   🕵️ **The Reality:** "Turns out the library usage guide omits the `miller-lattice` dependency which is strictly required by the `chimera-lang` crate if not built inside the workspace root."
+*   💡 **The Fix:** "Add the missing `miller-lattice` dependency to the 'Library Usage' `Cargo.toml` snippet in the README."
