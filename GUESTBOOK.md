@@ -62,6 +62,42 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup.
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The file `experiments/chimera-lang/examples/genesis.chs` does not exist in the codebase at all.
+
+### [Concentration Level: LOW] - Location: crates/locus/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out I need to figure out the path to the internal crate manually because it's not on crates.io and the README doesn't tell me.
+
+### [Concentration Level: LOW] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out I need to figure out the path to the internal crate manually.
+
+### [Concentration Level: HIGH] - Location: chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the codebase is full of hardcoded references to `nova` features that aren't properly `#cfg` gated. The feature flags are broken.
+
+### [Concentration Level: HIGH] - Location: crates/hyper-system/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the architectural changes locked the `math` module inside the crate, making the documentation completely incorrect and the example unrunnable.
+
+### [Concentration Level: HIGH] - Location: crates/quipu/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the example code is only in the README and wasn't actually saved as a `.rs` file in the `examples/` directory.
+
+### [Concentration Level: HIGH] - Location: chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out I needed to enable feature `nova`.
+
+### [Concentration Level: LOW] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the README tells external users to use `ratatui = "0.30"`, but the internal `tui-shared` crate relies on workspace dependencies that are pinned to older versions, causing an unresolvable conflict for new users.
+
 ### [Concentration Level: CRITICAL MASS] - Location: README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** The root Quick Start command is broken and lacks details on the `nova` feature requirement.
