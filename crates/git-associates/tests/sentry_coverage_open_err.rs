@@ -98,3 +98,27 @@ fn test_model_formatting() {
     let lc = LineChange::Added("".into());
     let _ = format!("{:?}", lc);
 }
+
+#[test]
+fn test_history_with_diffs_limit() {
+    let temp_dir = std::env::temp_dir().join("git-associates-history-limit2");
+    let _ = std::fs::remove_dir_all(&temp_dir);
+    std::fs::create_dir_all(&temp_dir).unwrap();
+    let repo = Repository::init(&temp_dir).unwrap();
+
+    let mut index = repo.index().unwrap();
+    let oid = index.write_tree().unwrap();
+    let tree = repo.find_tree(oid).unwrap();
+    let time = git2::Time::new(1700000000, 0);
+    let sig = Signature::new("Test", "test@example.com", &time).unwrap();
+
+    repo.commit(Some("HEAD"), &sig, &sig, "Initial", &tree, &[])
+        .unwrap();
+
+    let model = GitModel::open(&temp_dir).unwrap();
+
+    // Sentry: The `limit` inside `history` capped at 10_000 for allocation purposes,
+    // ensure large limits process without panicking or allocating `usize::MAX` immediately.
+    let history = model.history_with_diffs(20_000).unwrap();
+    assert_eq!(history.len(), 1);
+}

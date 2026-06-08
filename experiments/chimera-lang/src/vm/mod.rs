@@ -18446,7 +18446,8 @@ impl std::fmt::Display for ChimeraVM {
 
         // IP (Debug Info)
         let ip_label = comfy_table::Cell::new("Instruction Pointer").fg(Color::DarkGrey);
-        let ip_val = comfy_table::Cell::new(format!("Strand: {}, Gene: {}", self.ip.0, self.ip.1)).fg(Color::DarkGrey);
+        let ip_val = comfy_table::Cell::new(format!("Strand: {}, Gene: {}", self.ip.0, self.ip.1))
+            .fg(Color::DarkGrey);
         table.add_row(vec![ip_label, ip_val]);
 
         // Stack (Debug Info)

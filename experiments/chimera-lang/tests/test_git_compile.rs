@@ -1,6 +1,6 @@
 #![cfg(feature = "git")]
-use chimera_lang::prologue_esolang_compiler::compile;
 use chimera_lang::opcode::OpCode;
+use chimera_lang::prologue_esolang_compiler::compile;
 
 #[test]
 fn test_git_block_compilation() {

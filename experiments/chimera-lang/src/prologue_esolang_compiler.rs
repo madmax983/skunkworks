@@ -887,7 +887,7 @@ pub fn compile(source: &str) -> Result<Dna> {
 
         let inner_block = section.into_inner().next().unwrap();
         match inner_block.as_rule() {
-                        #[cfg(feature = "git")]
+            #[cfg(feature = "git")]
             Rule::git_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_git_instr(instr)?);
@@ -1104,7 +1104,6 @@ pub fn compile(source: &str) -> Result<Dna> {
     })
 }
 
-
 #[cfg(feature = "git")]
 fn compile_git_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
@@ -1132,7 +1131,10 @@ fn compile_git_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
         Rule::string => {
             let s = inner.as_str();
             let s = &s[1..s.len() - 1]; // Strip quotes
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s.to_string())]));
+            genes.push(Gene::new(
+                OpCode::Push,
+                vec![Nucleotide::String(s.to_string())],
+            ));
         }
         _ => {}
     }
