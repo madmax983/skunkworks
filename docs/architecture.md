@@ -2245,6 +2245,41 @@ classDiagram
     World *-- Agent : Manages
 ```
 
+
+## Experiment: Miller-Platter (ADR 110)
+
+**Miller-Platter** is a hybrid experiment demonstrating "Codebase Thermodynamic Shadow", combining codebase hierarchy mapping with continuous scalar thermodynamics.
+
+### Hybrid Architecture
+
+The experiment projects the rigid 3D directory crystal (`miller-lattice`) directly onto a 2D scalar field (`platter`). The discrete files and folders are flattened on the Z-axis, with their original Z-depth dictating the intensity of the heat they deposit into the environment.
+
+```mermaid
+classDiagram
+    direction TB
+    class MillerPlatter {
+        +Crystal crystal
+        +Platter heat_field
+        +run()
+    }
+
+    class Crystal {
+        <<Library: miller-lattice>>
+        +Vec~Atom~ atoms
+        +Vec~LatticePoint~ points
+    }
+
+    class Platter {
+        <<Library: platter>>
+        +Vec~f64~ grid
+        +accumulate(pos, intensity)
+        +decay()
+    }
+
+    MillerPlatter *-- Crystal : Parses hierarchy
+    MillerPlatter *-- Platter : Simulates heat
+    Crystal --> Platter : Z-Depth maps to Heat Intensity
+```
 ## Experiment: Chimera Circuit (ADR 039)
 
 **Chimera Circuit** is a hybrid experiment that combines procedurally generated circuit boards with genetic algorithms.
