@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **mandala-cipher**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`) and Terminal Genericism. Grace period: 24h.
 - **neuro-origami**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec3::Vec3, found Vec3`). Grace period: 24h.
 - **origami-lattice**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `Vec3` mismatch and panics headlessly. Grace period: 24h.
 - **thermo-termites**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Grace period: 24h.
