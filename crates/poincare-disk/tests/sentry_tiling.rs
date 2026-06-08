@@ -24,3 +24,18 @@ fn test_neighbor_transform_a() {
     assert!(down_neighbor.re.abs() < 1e-9);
     assert!((down_neighbor.im + consts.neighbor_offset).abs() < 1e-9);
 }
+
+#[test]
+fn test_tiling_consts_4_5_sanity() {
+    let consts = TilingConsts::new_4_5();
+
+    // Verify properties of {4, 5} hyperbolic tiling constants
+    assert!(consts.vertex_offset > 0.0);
+    assert!(consts.vertex_offset < 1.0); // Must be strictly within the Poincare disk
+
+    assert!(consts.neighbor_offset > 0.0);
+    assert!(consts.neighbor_offset < 1.0); // Must be strictly within the disk
+
+    assert!(consts.vertex_offset.is_finite());
+    assert!(consts.neighbor_offset.is_finite());
+}

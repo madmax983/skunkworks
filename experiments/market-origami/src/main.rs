@@ -1,13 +1,15 @@
+use ::glam::Vec3 as PbdVec3;
 use macroquad::prelude::*;
 use market_sim::{Grid, Particle};
 use origami::{generate_miura_grid, MiuraParams, Orientation};
 use physics_pbd::{Constraint, PbdSystem};
-use ::glam::Vec3 as PbdVec3;
 
 // Workaround to bypass macroquad initialization in headless mode
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    if args.contains(&"--headless".to_string()) || (std::env::var("DISPLAY").is_err() && cfg!(target_os = "linux")) {
+    if args.contains(&"--headless".to_string())
+        || (std::env::var("DISPLAY").is_err() && cfg!(target_os = "linux"))
+    {
         println!("Headless execution completed successfully.");
         return;
     }
@@ -58,10 +60,34 @@ async fn amain() {
     let bottom_left = rows * w;
     let bottom_right = rows * w + cols;
 
-    let _ = system.add_pin_constraint(p_indices[top_left], PbdVec3::new(points[top_left].x, points[top_left].y, points[top_left].z));
-    let _ = system.add_pin_constraint(p_indices[top_right], PbdVec3::new(points[top_right].x, points[top_right].y, points[top_right].z));
-    let _ = system.add_pin_constraint(p_indices[bottom_left], PbdVec3::new(points[bottom_left].x, points[bottom_left].y, points[bottom_left].z));
-    let _ = system.add_pin_constraint(p_indices[bottom_right], PbdVec3::new(points[bottom_right].x, points[bottom_right].y, points[bottom_right].z));
+    let _ = system.add_pin_constraint(
+        p_indices[top_left],
+        PbdVec3::new(points[top_left].x, points[top_left].y, points[top_left].z),
+    );
+    let _ = system.add_pin_constraint(
+        p_indices[top_right],
+        PbdVec3::new(
+            points[top_right].x,
+            points[top_right].y,
+            points[top_right].z,
+        ),
+    );
+    let _ = system.add_pin_constraint(
+        p_indices[bottom_left],
+        PbdVec3::new(
+            points[bottom_left].x,
+            points[bottom_left].y,
+            points[bottom_left].z,
+        ),
+    );
+    let _ = system.add_pin_constraint(
+        p_indices[bottom_right],
+        PbdVec3::new(
+            points[bottom_right].x,
+            points[bottom_right].y,
+            points[bottom_right].z,
+        ),
+    );
 
     // Store constraint mappings to know which market cell affects which constraint
     // (Constraint Index -> (x, y) grid coordinate)
@@ -200,7 +226,6 @@ async fn amain() {
 
                 let p01_pbd = system.particles[p_indices[i + w]].pos;
                 let p01 = vec3(p01_pbd.x, p01_pbd.y, p01_pbd.z);
-
 
                 let activity = market_heat[y * cols + x];
 
