@@ -128,7 +128,10 @@ fn get_log_style_and_prefix(s: &str) -> (Style, &'static str) {
 
     if contains_ignore_case("error") {
         (
-            Style::default().fg(Color::Red).bg(Color::Black).add_modifier(Modifier::BOLD),
+            Style::default()
+                .fg(Color::Red)
+                .bg(Color::Black)
+                .add_modifier(Modifier::BOLD),
             "❌ ",
         )
     } else if contains_ignore_case("warning") {

@@ -87,3 +87,7 @@
 **[Idiomatic Default Implementations]**
 **Learning:** Many structs with a parameterless `pub fn new() -> Self` constructor manually implement the `Default` trait using `impl Default for X { fn default() -> Self { Self::new() } }`.
 **Action:** If `new()` simply initializes default values (e.g., empty `Vec`s or zeroes), replace the manual `Default` implementation with `#[derive(Default)]` on the struct to reduce boilerplate and conform to idiomatic Rust standards.
+
+**[Replacing Boolean Blindness with Enums]**
+**Learning:** Functions that accept `bool` parameters (like `compute_diffs` or `include_hunks`) create "Boolean Blindness", making it hard to understand what `true` or `false` means at the call site (e.g., `process_diff_internal(&diff, true)`).
+**Action:** Replace `bool` parameters with descriptive enums (e.g., `enum DiffMode { ComputeDiffs, SkipDiffs }`) to make the call site self-documenting and improve type safety.
