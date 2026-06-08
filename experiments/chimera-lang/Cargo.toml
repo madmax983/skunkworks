@@ -5,6 +5,7 @@ edition = "2021"
 default-run = "chimera-lang"
 
 [features]
+git = []
 default = ["nova", "oracle", "elektra"]
 nova = ["oracle"]
 cortex = []
@@ -12,7 +13,6 @@ biophysics = []
 oracle = []
 silicon = []
 elektra = []
-git = []
 phylogeny = []
 hive = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel", "dep:rodio"]
