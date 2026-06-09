@@ -205,19 +205,21 @@ pub fn generate_miura_mesh(
         };
     }
     let v_cols = cols + 1;
-    let indices: Vec<u16> = (0..rows)
-        .flat_map(|j| {
-            (0..cols).flat_map(move |i| {
-                let p00 = (j * v_cols + i) as u16;
-                let p10 = (j * v_cols + (i + 1)) as u16;
-                let p01 = ((j + 1) * v_cols + i) as u16;
-                let p11 = ((j + 1) * v_cols + (i + 1)) as u16;
 
-                // Two triangles
-                [p00, p10, p01, p10, p11, p01]
-            })
-        })
-        .collect();
+    // ⚡ Bolt Optimization: Pre-allocate the exact size for the index buffer.
+    // Nested `flat_map` obscured the size hint from `collect()`, leading to
+    // dynamic O(log N) heap reallocations.
+    let mut indices = Vec::with_capacity(rows * cols * 6);
+    for j in 0..rows {
+        for i in 0..cols {
+            let p00 = (j * v_cols + i) as u16;
+            let p10 = (j * v_cols + (i + 1)) as u16;
+            let p01 = ((j + 1) * v_cols + i) as u16;
+            let p11 = ((j + 1) * v_cols + (i + 1)) as u16;
+
+            indices.extend_from_slice(&[p00, p10, p01, p10, p11, p01]);
+        }
+    }
 
     OrigamiMesh { vertices, indices }
 }
@@ -299,16 +301,17 @@ fn calculate_horizontal(
     let cx = total_w / 2.0;
     let cy = total_h / 2.0;
 
-    (0..=rows)
-        .flat_map(|j| {
-            (0..=cols).map(move |i| {
-                let x = (i as f32) * sx + ((j % 2) as f32) * x_off;
-                let y = (j as f32) * sy;
-                let z = ((i % 2) as f32) * h_amp;
-                vec3(x - cx, y - cy, z)
-            })
-        })
-        .collect()
+    // ⚡ Bolt Optimization: Pre-allocate the exact grid size.
+    let mut grid = Vec::with_capacity((rows + 1) * (cols + 1));
+    for j in 0..=rows {
+        for i in 0..=cols {
+            let x = (i as f32) * sx + ((j % 2) as f32) * x_off;
+            let y = (j as f32) * sy;
+            let z = ((i % 2) as f32) * h_amp;
+            grid.push(vec3(x - cx, y - cy, z));
+        }
+    }
+    grid
 }
 
 fn calculate_vertical(
@@ -366,16 +369,17 @@ fn calculate_vertical(
     let cx = total_w / 2.0;
     let cy = total_h / 2.0;
 
-    (0..=rows)
-        .flat_map(|j| {
-            (0..=cols).map(move |i| {
-                let x = i as f32 * l_x;
-                let y = j as f32 * l_y + (i % 2) as f32 * s_y;
-                let z = if (i + j) % 2 == 0 { h } else { -h };
-                vec3(x - cx, y - cy, z)
-            })
-        })
-        .collect()
+    // ⚡ Bolt Optimization: Pre-allocate the exact grid size.
+    let mut grid = Vec::with_capacity((rows + 1) * (cols + 1));
+    for j in 0..=rows {
+        for i in 0..=cols {
+            let x = i as f32 * l_x;
+            let y = j as f32 * l_y + (i % 2) as f32 * s_y;
+            let z = if (i + j) % 2 == 0 { h } else { -h };
+            grid.push(vec3(x - cx, y - cy, z));
+        }
+    }
+    grid
 }
 
 #[cfg(test)]
