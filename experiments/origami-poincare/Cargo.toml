@@ -1,0 +1,12 @@
+[package]
+name = "origami-poincare"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+origami = { path = "../../crates/origami" }
+poincare-disk = { path = "../../crates/poincare-disk" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = "0.26"
+crossterm = "0.27"
+glam = "0.27"
