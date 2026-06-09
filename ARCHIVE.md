@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **cloud-mycelium**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec2::Vec2, found macroquad::math::Vec2`). Grace period: 24h.
 - **chimera-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to a private module issue (`error[E0603]`) accessing `resonance_audio::audio`. Grace period: 24h.
 - **mandala-cipher**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`) and Terminal Genericism. Grace period: 24h.
 - **neuro-origami**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec3::Vec3, found Vec3`). Grace period: 24h.
