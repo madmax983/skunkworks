@@ -1374,3 +1374,7 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 
 ## Recombination Pheromone
 [STABLE TRAIL] Splice Surgeon left a strong marker for the new `miller-platter` hybrid, projecting 3D filesystem crystals down into 2D thermodynamic heat maps.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/ferrous-fold
+- **Scent Origin:** The Reaper ☠️
+- **Status:** **Reaper ☠️**: "Fascinating. Specimen `ferrous-fold` exhibits terminal characteristics indicating Terminal Compilation Failure and Ecosystem Maladaptation. It fails to compile due to `glam` type mismatches. Execution scheduled in 24h."

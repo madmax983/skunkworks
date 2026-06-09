@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **ferrous-fold**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` dependency mismatches and ambiguous glob imports. Grace period: 24h.
 - **origami-swarm**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` type mismatches (`expected glam::f32::vec3::Vec3, found macroquad::math::Vec3`) and panics headlessly. Grace period: 24h.
 - **cloud-mycelium**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec2::Vec2, found macroquad::math::Vec2`). Grace period: 24h.
 - **chimera-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to a private module issue (`error[E0603]`) accessing `resonance_audio::audio`. Grace period: 24h.
