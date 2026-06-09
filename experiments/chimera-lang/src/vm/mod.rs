@@ -5300,6 +5300,8 @@ mod genesis_test;
 /// The `git` module.
 /// The `git` module.
 pub(crate) mod git;
+#[cfg(feature = "git")]
+pub(crate) mod git_associates;
 #[cfg(feature = "nova")]
 /// The `grimoire` module.
 /// The `grimoire` module.
@@ -50134,6 +50136,11 @@ impl ChimeraVM {
         #[cfg(feature = "git")]
         if matches!(op, OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution) {
             return git::exec_git_op(self, op, args);
+        }
+
+        #[cfg(feature = "git")]
+        if matches!(op, OpCode::GitHistory | OpCode::GitDiffWorkspace) {
+            return git_associates::exec_git_associates_op(self, op, args);
         }
 
         #[cfg(feature = "phylogeny")]

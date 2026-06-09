@@ -2047,6 +2047,10 @@ pub enum OpCode {
     ///
     /// **Stack:** `[ ..., count ] -> [ ..., n, hash_1, ..., hash_n ]`
     Ancestry,
+    /// **`Git`** Gets history via git_associates.
+    GitHistory,
+    /// **`Git`** Gets diff via git_associates.
+    GitDiffWorkspace,
     /// **`Git`** Reads the content of a file from a specific commit.
     ///
     /// **Stack:** `[ ..., hash_str, path_str ] -> [ ..., content_string ]`

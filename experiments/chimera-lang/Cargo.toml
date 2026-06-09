@@ -18,6 +18,7 @@ hive = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel", "dep:rodio"]
 
 [dependencies]
+git-associates = { version = "0.1.0", path = "../../crates/git-associates" }
 regex = "1.10"
 locus = { version = "0.1.0", path = "../../crates/locus", features = ["serde"] }
 pest = "2.7"
