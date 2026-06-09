@@ -8511,6 +8511,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "origami-poincare"
+version = "0.1.0"
+dependencies = [
+ "crossterm 0.27.0",
+ "glam 0.27.0",
+ "origami",
+ "poincare-disk",
+ "ratatui 0.26.3",
+ "tui-shared",
+]
+
+[[package]]
 name = "origami-resonance"
 version = "0.1.0"
 dependencies = [
