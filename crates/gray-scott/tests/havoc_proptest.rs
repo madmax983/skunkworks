@@ -1,3 +1,4 @@
+#![allow(missing_docs)]
 use gray_scott::GrayScott;
 use proptest::prelude::*;
 

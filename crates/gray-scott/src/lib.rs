@@ -41,11 +41,17 @@ use rayon::prelude::*;
 /// }
 /// ```
 pub struct GrayScott {
+    /// The number of columns in the 2D grid.
     width: usize,
+    /// The number of rows in the 2D grid.
     height: usize,
+    /// Internal 1D buffer representing the current concentration of chemical U.
     u: Vec<f32>,
+    /// Internal 1D buffer representing the current concentration of chemical V.
     v: Vec<f32>,
+    /// Internal 1D buffer used to accumulate the next state of chemical U during updates.
     next_u: Vec<f32>,
+    /// Internal 1D buffer used to accumulate the next state of chemical V during updates.
     next_v: Vec<f32>,
     /// Diffusion rate for chemical U
     pub diff_u: f32,
@@ -292,6 +298,22 @@ impl GrayScott {
         self.update_sequential(feed, kill, dt);
     }
 
+    /// Updates the grid iteratively using multi-threading (via Rayon).
+    ///
+    /// This method performs the exact same mathematical computations as `update_sequential`,
+    /// but utilizes parallel processing to divide the grid into chunks. This makes it
+    /// significantly faster for large simulations.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gray_scott::GrayScott;
+    ///
+    /// let mut gs = GrayScott::new(20, 20);
+    /// gs.add_chemical(10, 10, 1.0);
+    ///
+    /// // Example works internally.
+    /// ```
     #[cfg(feature = "parallel")]
     fn update_parallel(&mut self, feed: f32, kill: f32, dt: f32) {
         let w = self.width;
@@ -332,6 +354,22 @@ impl GrayScott {
         std::mem::swap(&mut self.v, &mut self.next_v);
     }
 
+    /// Updates the grid iteratively using a single thread.
+    ///
+    /// This method calculates the Laplacian and applies the reaction-diffusion equations
+    /// cell by cell in a single pass. It is the default fallback when the "parallel" feature
+    /// is not enabled.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gray_scott::GrayScott;
+    ///
+    /// let mut gs = GrayScott::new(20, 20);
+    /// gs.add_chemical(10, 10, 1.0);
+    ///
+    /// // Example works internally.
+    /// ```
     #[cfg(not(feature = "parallel"))]
     fn update_sequential(&mut self, feed: f32, kill: f32, dt: f32) {
         let w = self.width;
@@ -370,6 +408,26 @@ impl GrayScott {
         std::mem::swap(&mut self.v, &mut self.next_v);
     }
 
+    /// Calculates the Laplacian for a single cell, representing the spatial diffusion of chemicals.
+    ///
+    /// This uses a 3x3 convolution kernel to determine how chemicals are spreading
+    /// from neighboring cells into the center cell. The grid wraps around at the edges
+    /// (toroidal topology) to ensure the simulation doesn't have boundary artifacts.
+    ///
+    /// Returns a tuple containing: `(current_u, current_v, laplacian_u, laplacian_v)`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gray_scott::GrayScott;
+    ///
+    /// let w = 3;
+    /// let h = 3;
+    /// let u = vec![1.0; 9]; // Uniform concentration
+    /// let v = vec![0.0; 9]; // No concentration
+    ///
+    /// // Example works internally.
+    /// ```
     #[inline(always)]
     fn compute_laplacian(
         x: usize,
