@@ -67,8 +67,20 @@ impl GrayScott {
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
         let size = width.checked_mul(height);
-        if size.is_none() {
-            return Self {
+        if let Some(size) = size {
+            Self {
+                width,
+                height,
+                u: vec![1.0; size],
+                v: vec![0.0; size],
+                next_u: vec![1.0; size],
+                next_v: vec![0.0; size],
+                // Default parameters (tuned for Myco-Diffusion / Standard GS)
+                diff_u: 0.16,
+                diff_v: 0.08,
+            }
+        } else {
+            Self {
                 width: 0,
                 height: 0,
                 u: vec![],
@@ -77,19 +89,7 @@ impl GrayScott {
                 next_v: vec![],
                 diff_u: 0.0,
                 diff_v: 0.0,
-            };
-        }
-        let size = size.unwrap();
-        Self {
-            width,
-            height,
-            u: vec![1.0; size],
-            v: vec![0.0; size],
-            next_u: vec![1.0; size],
-            next_v: vec![0.0; size],
-            // Default parameters (tuned for Myco-Diffusion / Standard GS)
-            diff_u: 0.16,
-            diff_v: 0.08,
+            }
         }
     }
 
