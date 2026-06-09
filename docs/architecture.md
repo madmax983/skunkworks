@@ -2796,3 +2796,68 @@ classDiagram
     LibRS ..> AudioImpl : pub use Synth
     Consumer --> LibRS : Uses
 ```
+
+## Experiment: Origami-Poincare (ADR 111)
+
+**Origami-Poincare** is a hybrid experiment demonstrating "Hyperbolic Soft-Body Morphogenesis", combining procedural soft-body mesh generation with continuous non-Euclidean geometry.
+
+### Hybrid Architecture
+
+The experiment maps the physical 3D vertices of a procedural Miura-ori paper mesh (`origami`) onto the non-Euclidean space of the Poincaré disk (`poincare-disk`) via Mobius transformations.
+
+```mermaid
+classDiagram
+    direction TB
+    class OrigamiPoincare {
+        +Mesh paper_mesh
+        +Poincare disk
+        +run()
+    }
+
+    class Mesh {
+        <<Library: origami>>
+        +Vec~Vertex~ vertices
+        +apply_folding_tension()
+    }
+
+    class Poincare {
+        <<Library: poincare-disk>>
+        +apply_mobius_transform(Vertex)
+    }
+
+    OrigamiPoincare --> Mesh : Simulates
+    OrigamiPoincare --> Poincare : Projects onto
+```
+
+## Experiment: Physics-Locus (ADR 112)
+
+**Physics-Locus** is a hybrid experiment demonstrating "Topological Soft-Body Physics", combining rigid body dynamics with non-Euclidean boundary wrapping.
+
+### Hybrid Architecture
+
+The experiment projects the rigid structural constraints and kinetic velocity of Position Based Dynamics particles (`physics-pbd`) onto continuous topological boundaries (`locus`).
+
+```mermaid
+classDiagram
+    direction TB
+    class PhysicsLocus {
+        +PbdSystem physics
+        +Boundary topology
+        +run()
+    }
+
+    class PbdSystem {
+        <<Library: physics-pbd>>
+        +Vec~Particle~ particles
+        +Vec~Constraint~ distance_constraints
+        +solve()
+    }
+
+    class Boundary {
+        <<Library: locus>>
+        +wrap_coordinates(Position)
+    }
+
+    PhysicsLocus --> PbdSystem : Simulates
+    PhysicsLocus --> Boundary : Projects onto
+```
