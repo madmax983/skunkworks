@@ -1269,6 +1269,11 @@ Observation: Thermodynamic Chemical Diffusion. The continuous scalar heat field 
 
 ## 🧫 History/Decay
 
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-swarm
+- **Scent Origin:** The Reaper ☠️
+- **Status:** **Reaper ☠️**: "Fascinating. Specimen `origami-swarm` exhibits terminal characteristics indicating Terminal Compilation Failure and Ecosystem Maladaptation. It fails to compile due to `glam` type mismatches (`macroquad` vs `physics-pbd`) and lacks the critical `--headless` bypass. Execution scheduled in 24h."
+
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-lattice
 - **Scent Origin:** The Reaper ☠️
 - **Status:** **Reaper ☠️**: "Fascinating. Specimen `origami-lattice` exhibits terminal characteristics indicating Terminal Compilation Failure and Ecosystem Maladaptation. It fails to compile due to `glam` type mismatches and lacks the critical `--headless` bypass. Execution scheduled in 24h."
