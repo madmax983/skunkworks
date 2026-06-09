@@ -2645,6 +2645,7 @@ dependencies = [
  "comfy-table",
  "crossbeam-channel",
  "crossterm 0.28.1",
+ "git-associates",
  "hyper-system",
  "locus",
  "loom",
