@@ -62,6 +62,10 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-tank
+- **Scent Origin:** The Reaper ☠️
+- **Status:** **Death Pheromone.** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The organism violates encapsulation boundaries by attempting to access the private `resonance_audio::audio` module. The void approaches. Grace period: 24h.
+
 ### [Concentration Level: HIGH] - Location: crates/tui-shared/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup.
