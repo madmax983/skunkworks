@@ -1,0 +1,9 @@
+[package]
+name = "miller-platter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
+platter = { path = "../../crates/platter" }
+glam = "0.28"
