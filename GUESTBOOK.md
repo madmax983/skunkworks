@@ -65,6 +65,46 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Friction detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/locus/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out I need to figure out the path to the internal crate manually because it's not on crates.io and the README doesn't tell me.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out I need to figure out the path to the internal crate manually.
+
+### [Concentration Level: CRITICAL MASS] - Location: `chimera-lang` Compilation
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the codebase is full of hardcoded references to `nova` features that aren't properly `#cfg` gated. The feature flags are broken.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/hyper-system/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the architectural changes locked the `math` module inside the crate, making the documentation completely incorrect and the example unrunnable.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/quipu/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the example code is only in the README and wasn't actually saved as a `.rs` file in the `examples/` directory.
+
+### [Concentration Level: CRITICAL MASS] - Location: `chimera-lang` Getting Started (Story Demo)
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out I needed to enable feature `nova`.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the README tells external users to use `ratatui = "0.30"`, but the internal `tui-shared` crate relies on workspace dependencies that are pinned to older versions, causing an unresolvable conflict for new users.
+
+### [Concentration Level: CRITICAL MASS] - Location: `chimera-lang` Library Usage (story_demo)
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the library usage guide omits the `miller-lattice` dependency which is strictly required by the `chimera-lang` crate if not built inside the workspace root.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-tank
 - **Scent Origin:** The Reaper ☠️
 - **Status:** **Death Pheromone.** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The organism violates encapsulation boundaries by attempting to access the private `resonance_audio::audio` module. The void approaches. Grace period: 24h.
