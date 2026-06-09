@@ -7144,6 +7144,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "miller-platter"
+version = "0.1.0"
+dependencies = [
+ "glam 0.28.0",
+ "miller-lattice",
+ "platter",
+]
+
+[[package]]
 name = "miller-reaction"
 version = "0.1.0"
 dependencies = [

@@ -118,6 +118,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### miller-platter
+- **Parents**: crates/miller-lattice + crates/platter
+- **Concept**: Codebase Thermodynamic Shadow.
+- **Novel trait**: The discrete 3D crystalline lattice of a filesystem structure (`miller-lattice`) is projected down onto a continuous 2D scalar heat field (`platter`). The structure acts as a thermodynamic heatsink or emitter. High-density directory clusters cast a hot shadow, while sparse files barely register.
+- **Predicted Phenotype**: An emergent 2D thermodynamic visualization of 3D hierarchical codebase complexity.
+- **Status**: experiments/miller-platter
+- **Evaluation**: Success. Compiled. The 3D filesystem hierarchy accurately maps down into the 2D thermodynamic space, emitting scalar heat from directory clusters.
+
 ### physics-locus
 - **Parents**: crates/physics-pbd + crates/locus
 - **Concept**: Topological Soft-Body Physics.
@@ -1477,4 +1485,4 @@ I have checked all previous hybrids in this list.
 
 ## 🔮 Proposed Crosses
 
-**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all prior crosses. They have all successfully compiled and demonstrated hybrid vigor. The `origami-poincare` hybrid correctly maps soft-body physics to the hyperbolic disk. Since the "Proposed Crosses" section is empty, I will await the next mutation cycle to propose a new cross.
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all prior crosses. They have all successfully compiled and demonstrated hybrid vigor. The `origami-poincare` hybrid correctly maps soft-body physics to the hyperbolic disk. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to map filesystem structures onto scalar fields: `miller-platter`, projecting the rigid 3D crystalline lattice down into a continuous 2D heat field.
