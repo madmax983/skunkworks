@@ -2743,6 +2743,8 @@ pub enum OpCode {
     PhysicsPbd,
     /// Triggers the Ferrous Core esolang logic
     FerrousCore,
+    /// Triggers the Tardis logic
+    Tardis,
 }
 
 impl fmt::Display for OpCode {
