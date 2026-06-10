@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { version = "0.14", default-features = false, features = [
+bevy = { version = "0.13", default-features = false, features = [
     "animation",
     "bevy_asset",
     "bevy_core_pipeline",
@@ -16,17 +16,16 @@ bevy = { version = "0.14", default-features = false, features = [
     "bevy_ui",
     "bevy_winit",
     # "bevy_audio", # Disabled by default to avoid alsa-sys
-    "multi_threaded",
+    "multi-threaded",
     "png",
     "hdr",
     "x11",
     "tonemapping_luts",
-    "smaa_luts",
     "default_font",
     # "vorbis",
 ] }
-bevy_rapier2d = "0.27"
-bevy_prototype_lyon = "0.12"
+bevy_rapier2d = "0.25"
+bevy_prototype_lyon = "0.11"
 
 [features]
 default = []

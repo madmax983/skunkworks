@@ -76,10 +76,10 @@ fn setup(
         positions.push(Vec2::new(x, y));
 
         let color = match token.kind {
-            parser::TokenType::Keyword => Color::srgb(1.0, 0.4, 0.4),
-            parser::TokenType::Ident => Color::srgb(0.4, 0.8, 1.0),
-            parser::TokenType::String => Color::srgb(0.4, 1.0, 0.4),
-            parser::TokenType::Comment => Color::srgb(0.5, 0.5, 0.5),
+            parser::TokenType::Keyword => Color::rgb(1.0, 0.4, 0.4),
+            parser::TokenType::Ident => Color::rgb(0.4, 0.8, 1.0),
+            parser::TokenType::String => Color::rgb(0.4, 1.0, 0.4),
+            parser::TokenType::Comment => Color::rgb(0.5, 0.5, 0.5),
             parser::TokenType::Punct => Color::WHITE,
             _ => Color::WHITE,
         };
@@ -131,7 +131,7 @@ fn spawn_creature(commands: &mut Commands, start_pos: Vec2) {
                 )),
                 ..default()
             },
-            Fill::color(Color::srgb(0.8, 0.2, 0.8)),
+            Fill::color(Color::rgb(0.8, 0.2, 0.8)),
         ))
         .id();
 
@@ -172,7 +172,7 @@ fn spawn_creature(commands: &mut Commands, start_pos: Vec2) {
             spatial: SpatialBundle::from_transform(Transform::from_xyz(0.0, 0.0, 6.0)),
             ..default()
         },
-        Stroke::new(Color::srgb(1.0, 0.0, 1.0), 3.0),
+        Stroke::new(Color::rgb(1.0, 0.0, 1.0), 3.0),
         LimbVisuals { root, joints },
     ));
 }

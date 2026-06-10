@@ -6,4 +6,4 @@ edition = "2021"
 [dependencies]
 miller-lattice = { path = "../../crates/miller-lattice" }
 platter = { path = "../../crates/platter" }
-glam = "0.28"
+glam = "0.27"

@@ -48,7 +48,7 @@ pub fn spawn_climber(mut commands: Commands) {
                 )),
                 ..default()
             },
-            Fill::color(Color::srgba(0.2, 0.8, 0.2, 1.0)),
+            Fill::color(Color::rgba(0.2, 0.8, 0.2, 1.0)),
             Stroke::new(Color::BLACK, 2.0),
             RigidBody::Dynamic,
             Collider::ball(torso_radius),
@@ -110,9 +110,9 @@ pub fn spawn_climber(mut commands: Commands) {
                         ..default()
                     },
                     Fill::color(if is_hand {
-                        Color::srgba(1.0, 0.5, 0.0, 1.0)
+                        Color::rgba(1.0, 0.5, 0.0, 1.0)
                     } else {
-                        Color::srgba(0.2, 0.6, 0.2, 1.0)
+                        Color::rgba(0.2, 0.6, 0.2, 1.0)
                     }),
                     RigidBody::Dynamic,
                     Collider::cuboid(limb_width / 2.0, segment_len / 2.0),

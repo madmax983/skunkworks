@@ -34,7 +34,7 @@ fn setup(mut commands: Commands) {
         .spawn(SpriteBundle {
             transform: Transform::from_xyz(0.0, -300.0, 0.0),
             sprite: Sprite {
-                color: Color::srgb(0.2, 0.2, 0.2),
+                color: Color::rgb(0.2, 0.2, 0.2),
                 custom_size: Some(Vec2::new(1000.0, 50.0)),
                 ..default()
             },

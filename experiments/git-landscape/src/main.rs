@@ -2,7 +2,7 @@ mod audio;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use git_associates::{model::Commit, GitModel};
+use git_associates::{Commit, GitModel};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::Color,

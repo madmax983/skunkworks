@@ -1,4 +1,4 @@
-pub(crate) mod model;
+pub mod model;
 pub use model::*;
 
 #[cfg(test)]

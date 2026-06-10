@@ -55,7 +55,7 @@ fn setup_scene(mut commands: Commands) {
         driver_teeth,
         module,
         pressure_angle,
-        Color::srgb(0.5, 0.5, 0.5),
+        Color::rgb(0.5, 0.5, 0.5),
         "Driver",
     );
     commands
@@ -88,7 +88,7 @@ fn setup_scene(mut commands: Commands) {
             *teeth,
             module,
             pressure_angle,
-            Color::srgb(1.0, 0.84, 0.0),
+            Color::rgb(1.0, 0.84, 0.0),
             &format!("KeyGear_{}", i),
         );
 
@@ -121,7 +121,7 @@ fn setup_scene(mut commands: Commands) {
                     ))),
                     ..default()
                 },
-                Fill::color(Color::srgb(0.8, 0.2, 0.2)),
+                Fill::color(Color::rgb(0.8, 0.2, 0.2)),
             ));
         });
 
@@ -135,7 +135,7 @@ fn setup_scene(mut commands: Commands) {
             "Cipher: INITIALIZING",
             TextStyle {
                 font_size: 30.0,
-                color: Color::srgb(1.0, 1.0, 1.0),
+                color: Color::rgb(1.0, 1.0, 1.0),
                 ..default()
             },
         )
@@ -181,7 +181,7 @@ fn spawn_feeler(
                     }),
                     ..default()
                 },
-                Fill::color(Color::srgb(0.3, 0.3, 1.0)),
+                Fill::color(Color::rgb(0.3, 0.3, 1.0)),
             ));
 
             // Collider at tip (Child)

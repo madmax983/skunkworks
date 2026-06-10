@@ -7,7 +7,7 @@ edition = "2021"
 physics-pbd = { path = "../../crates/physics-pbd" }
 resonance-audio = { path = "../../crates/resonance-audio" }
 tui-shared = { path = "../../crates/tui-shared" }
-glam = "0.28.0"
+glam = "0.27"
 crossterm = "0.27.0"
 ratatui = "0.26.3"
 cpal = "0.15.3"

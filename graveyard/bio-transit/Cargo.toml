@@ -15,4 +15,4 @@ path = "src/main.rs"
 macroquad = "0.4"
 rayon = "1.8"
 rand = { workspace = true }
-glam = "0.28"
+glam = "0.27"

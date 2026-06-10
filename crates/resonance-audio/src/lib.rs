@@ -40,8 +40,8 @@
 //! model.process(&mut buffer);
 //! ```
 
-pub(crate) mod audio;
-pub(crate) mod physics;
+pub mod audio;
+pub mod physics;
 
 pub use audio::{AudioCommand, AudioModel, AudioSnapshot, Oscillator};
 pub use physics::{Material, PhysicsGrid};

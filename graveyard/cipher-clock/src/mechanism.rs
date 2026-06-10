@@ -36,7 +36,7 @@ pub fn spawn_rotor(commands: &mut Commands, position: Vec2, radius: f32, teeth: 
                 }),
                 ..default()
             },
-            Fill::color(Color::srgb(0.8, 0.6, 0.2)),
+            Fill::color(Color::rgb(0.8, 0.6, 0.2)),
             Stroke::new(Color::BLACK, 2.0),
         ))
         .id();
@@ -81,7 +81,7 @@ pub fn spawn_rotor(commands: &mut Commands, position: Vec2, radius: f32, teeth: 
                     ))),
                     ..default()
                 },
-                Fill::color(Color::srgb(0.7, 0.5, 0.1)),
+                Fill::color(Color::rgb(0.7, 0.5, 0.1)),
                 Stroke::new(Color::BLACK, 1.0),
             ))
             .set_parent(rotor);
@@ -128,7 +128,7 @@ pub fn spawn_pawl(commands: &mut Commands, pivot_pos: Vec2, length: f32) -> Enti
                 }),
                 ..default()
             },
-            Fill::color(Color::srgb(0.5, 0.5, 0.5)),
+            Fill::color(Color::rgb(0.5, 0.5, 0.5)),
             Stroke::new(Color::BLACK, 1.0),
         ))
         .id();

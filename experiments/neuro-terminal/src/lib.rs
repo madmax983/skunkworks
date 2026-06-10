@@ -14,7 +14,7 @@
 //! * **[`evo`]**: An evolutionary algorithm (Genetic Algorithm) implementation for
 //!   training networks without backpropagation.
 
-pub(crate) mod evo;
+pub mod evo;
 pub use evo::*;
-pub(crate) mod nn;
+pub mod nn;
 pub use nn::*;

@@ -258,9 +258,15 @@ async fn main() {
         std::mem::swap(&mut trails_a, &mut trails_b);
 
         draw_text("System Attractor", 10.0, 30.0, 30.0, WHITE);
-        draw_text(format!("FPS: {}", get_fps()), 10.0, 50.0, 20.0, LIGHTGRAY);
         draw_text(
-            format!("Particles: {}", PARTICLE_COUNT),
+            format!("FPS: {}", get_fps()).as_str(),
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            format!("Particles: {}", PARTICLE_COUNT).as_str(),
             10.0,
             70.0,
             20.0,
@@ -269,23 +275,35 @@ async fn main() {
 
         let p = &sim.monitor.params;
         draw_text(
-            format!("Sigma (CPU): {:.2}", p.sigma),
+            format!("Sigma (CPU): {:.2}", p.sigma).as_str(),
             10.0,
             100.0,
             20.0,
             RED,
         );
-        draw_text(format!("Rho (RAM): {:.2}", p.rho), 10.0, 120.0, 20.0, BLUE);
-        draw_text(format!("Beta: {:.2}", p.beta), 10.0, 140.0, 20.0, GREEN);
         draw_text(
-            format!("Jitter (Swap): {:.3}", p.jitter),
+            format!("Rho (RAM): {:.2}", p.rho).as_str(),
+            10.0,
+            120.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            format!("Beta: {:.2}", p.beta).as_str(),
+            10.0,
+            140.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            format!("Jitter (Swap): {:.3}", p.jitter).as_str(),
             10.0,
             160.0,
             20.0,
             MAGENTA,
         );
         draw_text(
-            format!("Shift (Load): {:.2}", p.color_shift),
+            format!("Shift (Load): {:.2}", p.color_shift).as_str(),
             10.0,
             180.0,
             20.0,
@@ -293,7 +311,7 @@ async fn main() {
         );
 
         draw_text(
-            format!("Lyapunov Exp: {:.4}", lyapunov.get_exponent()),
+            format!("Lyapunov Exp: {:.4}", lyapunov.get_exponent()).as_str(),
             10.0,
             210.0,
             20.0,

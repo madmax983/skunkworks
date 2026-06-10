@@ -86,3 +86,21 @@ impl PendulumSystem {
         }
     }
 }
+
+impl PendulumSystem {
+    pub fn add_node(&mut self, pos: Vec2, mass: f32, fixed: bool, name: String) -> usize {
+        let node = Node {
+            name,
+            pos,
+            prev_pos: pos,
+            mass,
+            fixed,
+        };
+        self.nodes.push(node);
+        self.nodes.len() - 1
+    }
+
+    pub fn add_link(&mut self, a: usize, b: usize, length: f32) {
+        self.links.push(Link { a, b, length });
+    }
+}

@@ -1,4 +1,4 @@
-pub(crate) mod lexicon;
+pub mod lexicon;
 pub use lexicon::*;
-pub(crate) mod phonology;
+pub mod phonology;
 pub use phonology::*;

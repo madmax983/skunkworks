@@ -27,7 +27,7 @@ fn spawn_gear_visuals(
 ) {
     for (entity, wheel) in &query {
         let radius = wheel.radius;
-        let color = Color::srgba(0.8, 0.6, 0.2, 1.0); // Brass
+        let color = Color::rgba(0.8, 0.6, 0.2, 1.0); // Brass
 
         // Rim
         let rim = shapes::Circle {
@@ -80,7 +80,7 @@ fn spawn_gear_visuals(
 
 fn spawn_anchor_visuals(mut commands: Commands, query: Query<Entity, Added<Anchor>>) {
     for entity in &query {
-        let color = Color::srgba(0.7, 0.7, 0.8, 1.0); // Steel
+        let color = Color::rgba(0.7, 0.7, 0.8, 1.0); // Steel
 
         commands.entity(entity).with_children(|parent| {
             // Left Pallet
@@ -182,20 +182,20 @@ fn draw_cylinder_system(mut gizmos: Gizmos, cpu_query: Query<&CpuState>, program
             let pin_pos = pos + Vec2::new(angle.cos() * radius, angle.sin() * radius);
 
             let color = match instr {
-                crate::cpu::Instruction::Note(_) => Color::srgb(0.0, 1.0, 0.0), // Green for Note
-                crate::cpu::Instruction::Jmp(_) => Color::srgb(1.0, 0.0, 0.0),  // Red for Jump
-                _ => Color::srgb(0.5, 0.5, 0.5),                                // Gray
+                crate::cpu::Instruction::Note(_) => Color::rgb(0.0, 1.0, 0.0), // Green for Note
+                crate::cpu::Instruction::Jmp(_) => Color::rgb(1.0, 0.0, 0.0),  // Red for Jump
+                _ => Color::rgb(0.5, 0.5, 0.5),                                // Gray
             };
 
             gizmos.circle_2d(pin_pos, 0.5, color);
-            gizmos.line_2d(pos, pin_pos, color.with_alpha(0.3));
+            gizmos.line_2d(pos, pin_pos, color.with_a(0.3));
         }
 
         // Draw "Play Head" (Comb)
         gizmos.line_2d(
             pos + Vec2::new(radius, -2.0),
             pos + Vec2::new(radius + 2.0, 0.0),
-            Color::srgb(1.0, 0.84, 0.0),
+            Color::rgb(1.0, 0.84, 0.0),
         );
     }
 }

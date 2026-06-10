@@ -91,7 +91,7 @@ fn spawn_mechanism(mut commands: Commands) {
                 spatial: SpatialBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
                 ..default()
             },
-            Fill::color(Color::srgb(0.8, 0.6, 0.2)), // Brass
+            Fill::color(Color::rgb(0.8, 0.6, 0.2)), // Brass
             Stroke::new(Color::BLACK, 2.0),
         ))
         .insert(RigidBody::Dynamic)
@@ -144,7 +144,7 @@ fn spawn_mechanism(mut commands: Commands) {
                     )),
                     ..default()
                 },
-                Fill::color(Color::srgb(0.9, 0.9, 0.9)), // Silver
+                Fill::color(Color::rgb(0.9, 0.9, 0.9)), // Silver
                 Stroke::new(Color::BLACK, 1.0),
             ))
             .insert(RigidBody::Fixed) // Relative to parent? No, Bevy Rapier doesn't support hierarchy well for rigid bodies unless using Multibody (not in 2D yet?) or welding.
@@ -186,7 +186,7 @@ fn spawn_mechanism(mut commands: Commands) {
                 spatial: SpatialBundle::from_transform(Transform::from_xyz(0.0, lever_y, 0.0)),
                 ..default()
             },
-            Fill::color(Color::srgb(0.5, 0.2, 0.2)),
+            Fill::color(Color::rgb(0.5, 0.2, 0.2)),
             Stroke::new(Color::BLACK, 2.0),
         ))
         .insert(RigidBody::Fixed) // Static reader

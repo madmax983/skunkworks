@@ -12,7 +12,7 @@ fn test_spawn_gear_exists() {
 
     app.update();
 
-    let mut query = app.world_mut().query::<&EscapeWheel>();
-    let count = query.iter(app.world()).len();
+    let mut query = app.world.query::<&EscapeWheel>();
+    let count = query.iter(&app.world).len();
     assert_eq!(count, 1);
 }

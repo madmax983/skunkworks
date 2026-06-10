@@ -19,12 +19,12 @@ pub struct PlanetArm;
 
 // Gear Ratios (Driver Teeth, Driven Teeth, Visual Distance, Color)
 pub const RATIOS: &[(&str, usize, usize, f32, Color)] = &[
-    ("Mercury", 83, 20, 50.0, Color::srgb(0.5, 0.5, 0.5)),
-    ("Venus", 13, 8, 80.0, Color::srgb(0.9, 0.9, 0.5)),
-    ("Earth", 40, 40, 110.0, Color::srgb(0.0, 0.0, 1.0)),
-    ("Mars", 32, 60, 150.0, Color::srgb(1.0, 0.0, 0.0)),
-    ("Jupiter", 7, 83, 220.0, Color::srgb(0.8, 0.5, 0.2)),
-    ("Saturn", 3, 88, 300.0, Color::srgb(0.8, 0.7, 0.4)),
+    ("Mercury", 83, 20, 50.0, Color::rgb(0.5, 0.5, 0.5)),
+    ("Venus", 13, 8, 80.0, Color::rgb(0.9, 0.9, 0.5)),
+    ("Earth", 40, 40, 110.0, Color::rgb(0.0, 0.0, 1.0)),
+    ("Mars", 32, 60, 150.0, Color::rgb(1.0, 0.0, 0.0)),
+    ("Jupiter", 7, 83, 220.0, Color::rgb(0.8, 0.5, 0.2)),
+    ("Saturn", 3, 88, 300.0, Color::rgb(0.8, 0.7, 0.4)),
 ];
 
 pub fn spawn_orrery(mut commands: Commands) {
@@ -54,8 +54,8 @@ pub fn spawn_orrery(mut commands: Commands) {
                     }),
                     ..default()
                 },
-                Fill::color(Color::srgb(1.0, 1.0, 0.0)),
-                Stroke::new(Color::srgb(1.0, 0.5, 0.0), 2.0),
+                Fill::color(Color::rgb(1.0, 1.0, 0.0)),
+                Stroke::new(Color::rgb(1.0, 0.5, 0.0), 2.0),
             ));
         })
         .id();
@@ -176,7 +176,7 @@ pub fn spawn_orrery(mut commands: Commands) {
                     }),
                     ..default()
                 },
-                Fill::color(Color::srgb(0.2, 0.2, 0.2)),
+                Fill::color(Color::rgb(0.2, 0.2, 0.2)),
             ));
         });
 

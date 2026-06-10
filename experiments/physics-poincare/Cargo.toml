@@ -10,4 +10,4 @@ tui-shared = { path = "../../crates/tui-shared" }
 ratatui = "0.30"
 crossterm = "0.28"
 anyhow = "1.0"
-glam = "0.28"
+glam = "0.27"

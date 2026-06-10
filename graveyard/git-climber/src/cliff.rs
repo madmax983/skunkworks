@@ -54,7 +54,7 @@ pub fn generate_cliff(mut commands: Commands) {
                 spatial: SpatialBundle::from_transform(Transform::from_xyz(x_offset, y_pos, 0.0)),
                 ..default()
             },
-            Fill::color(Color::srgba(0.3, 0.3, 0.35, 1.0)),
+            Fill::color(Color::rgba(0.3, 0.3, 0.35, 1.0)),
             Stroke::new(Color::BLACK, 2.0),
             Collider::cuboid(width / 2.0, height / 2.0),
             CommitLedge { hash, message },
@@ -77,7 +77,7 @@ pub fn generate_cliff(mut commands: Commands) {
             spatial: SpatialBundle::from_transform(Transform::from_xyz(0.0, -250.0, 0.0)),
             ..default()
         },
-        Fill::color(Color::srgba(0.1, 0.1, 0.1, 1.0)),
+        Fill::color(Color::rgba(0.1, 0.1, 0.1, 1.0)),
         Collider::cuboid(ground_width / 2.0, ground_height / 2.0),
     ));
 }

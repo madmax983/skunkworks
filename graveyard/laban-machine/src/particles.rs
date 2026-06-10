@@ -60,7 +60,7 @@ pub fn particle_emitter_system(
                 commands.spawn((
                     SpriteBundle {
                         sprite: Sprite {
-                            color: Color::srgba(1.0, 1.0, 1.0, 0.5),
+                            color: Color::rgba(1.0, 1.0, 1.0, 0.5),
                             custom_size: Some(Vec2::new(4.0, 4.0)),
                             ..default()
                         },
@@ -125,7 +125,7 @@ pub fn particle_update_system(
         let b = effort.weight;
         let g = effort.time;
 
-        sprite.color = Color::srgba(r, g, b, alpha);
+        sprite.color = Color::rgba(r, g, b, alpha);
 
         // Scale down
         transform.scale = Vec3::splat(alpha);

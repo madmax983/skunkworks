@@ -12,6 +12,6 @@ tui-shared = { path = "../../crates/tui-shared" }
 crossterm = "0.28.1"
 ratatui = "0.30.0"
 crossbeam-channel = "0.5.15"
-glam = "0.28.0"
+glam = "0.27"
 cpal = "0.15.3"
 physics-pbd = { path = "../../crates/physics-pbd" }

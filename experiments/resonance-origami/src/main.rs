@@ -126,7 +126,7 @@ async fn main() {
             if let Constraint::Actuator { ref mut factor, .. } = system.constraints[c_idx] {
                 // Map pressure to a factor between 0.0 and 1.0
                 // Normalizing roughly against expected wave amplitude
-                let target_factor = (0.5 + pressure * 0.2).clamp(0.0, 1.0);
+                let target_factor = (0.5 + pressure * 0.2).clamp(0.0_f32, 1.0_f32);
                 // Smooth the factor to avoid popping geometry
                 *factor = *factor * 0.9 + target_factor * 0.1;
             }
@@ -148,7 +148,7 @@ async fn main() {
                 let p1 = system.particles[p_indices[i]].pos;
 
                 let mut pressure_color = grid.get(x, y).abs() * 2.0;
-                pressure_color = pressure_color.clamp(0.0, 1.0);
+                pressure_color = pressure_color.clamp(0.0_f32, 1.0_f32);
 
                 // Color maps pressure: high pressure is cyan, low is dark blue
                 let col = Color::new(

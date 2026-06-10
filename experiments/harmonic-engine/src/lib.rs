@@ -1,4 +1,4 @@
-pub(crate) mod audio;
+pub mod audio;
 pub use audio::*;
-pub(crate) mod physics;
+pub mod physics;
 pub use physics::*;

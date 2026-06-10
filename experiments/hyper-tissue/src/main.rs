@@ -194,7 +194,7 @@ impl Tissue4D {
             // 3. Act
             if let Some(val) = cell.vm.stack.pop() {
                 let factor = match val {
-                    Value::Int(n) => (n as f32 / 100.0).clamp(0.0, 1.0),
+                    Value::Int(n) => (n as f32 / 100.0).clamp(0.0_f32, 1.0_f32),
                     _ => 0.5,
                 };
 
@@ -212,7 +212,7 @@ impl Tissue4D {
                 cell.color.a = 0.2 + factor * 0.8;
                 // Shift hue based on W-position?
                 let w_pos = particles[cell.particle_idx].pos.w;
-                cell.color.g = (0.5 + w_pos * 0.1).clamp(0.0, 1.0);
+                cell.color.g = (0.5 + w_pos * 0.1).clamp(0.0_f32, 1.0_f32);
             }
 
             // Reset
@@ -257,7 +257,7 @@ impl Tissue4D {
 
             // Size depends on W distance (perspective is handled by project_to_3d coordinates,
             // but we can also scale the sprite size)
-            let size = 0.2 * (2.0 / (camera_w - pos_4d.w).max(0.1));
+            let size = 0.2 * (2.0 / (camera_w - pos_4d.w).max(0.1_f32));
 
             draw_sphere(vec3(p_3d.x, p_3d.y, p_3d.z), size, None, cell.color);
         }

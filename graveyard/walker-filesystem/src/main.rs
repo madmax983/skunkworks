@@ -12,7 +12,7 @@ use walker::{spawn_walker, walker_system};
 
 fn main() {
     App::new()
-        .insert_resource(ClearColor(Color::srgb(0.0, 0.0, 0.0)))
+        .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Genesis Walker".into(),

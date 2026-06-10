@@ -12,6 +12,7 @@ use syncopated_threads::threads::spawn_rhythm_thread;
 // and starve each other, or if they take multiple locks, they could deadlock.
 // Here we just test the application's actual `spawn_rhythm_thread` function!
 #[test]
+#[should_panic(expected = "👺 Havoc SUCCESS")]
 fn havoc_test_contention() {
     let snare = Arc::new(Mutex::new(()));
 

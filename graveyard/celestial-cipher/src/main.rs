@@ -82,7 +82,7 @@ fn setup_ui(mut commands: Commands) {
                             "Key: ...",
                             TextStyle {
                                 font_size: 20.0,
-                                color: Color::srgb(1.0, 0.84, 0.0),
+                                color: Color::rgb(1.0, 0.84, 0.0),
                                 ..default()
                             },
                         ),
@@ -94,7 +94,7 @@ fn setup_ui(mut commands: Commands) {
                             "Decrypted: ...",
                             TextStyle {
                                 font_size: 20.0,
-                                color: Color::srgb(0.0, 1.0, 0.0),
+                                color: Color::rgb(0.0, 1.0, 0.0),
                                 ..default()
                             },
                         ),
@@ -107,7 +107,7 @@ fn setup_ui(mut commands: Commands) {
                 "Controls: Left/Right Arrow to Wind Time",
                 TextStyle {
                     font_size: 15.0,
-                    color: Color::srgb(0.5, 0.5, 0.5),
+                    color: Color::rgb(0.5, 0.5, 0.5),
                     ..default()
                 },
             ));
@@ -188,9 +188,9 @@ fn update_cipher_ui(
         text.sections[0].value = format!("Decrypted: {}", decrypted_string);
 
         if key == target_key {
-            text.sections[0].style.color = Color::srgb(0.0, 1.0, 0.0);
+            text.sections[0].style.color = Color::rgb(0.0, 1.0, 0.0);
         } else {
-            text.sections[0].style.color = Color::srgb(1.0, 0.0, 0.0);
+            text.sections[0].style.color = Color::rgb(1.0, 0.0, 0.0);
         }
     }
 }

@@ -9,4 +9,4 @@ rand = { workspace = true }
 origami = { path = "../../crates/origami" }
 physics-pbd = { path = "../../crates/physics-pbd" }
 market-sim = { path = "../../crates/market-sim" }
-glam = "0.28.0"
+glam = "0.27"

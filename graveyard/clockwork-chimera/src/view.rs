@@ -19,7 +19,7 @@ fn spawn_gear_visuals(
     for (entity, wheel) in &query {
         let radius = 3.0;
 
-        let color = Color::srgba(0.8, 0.6, 0.2, 1.0); // Brass
+        let color = Color::rgba(0.8, 0.6, 0.2, 1.0); // Brass
 
         // Rim
         let rim = shapes::Circle {
@@ -74,7 +74,7 @@ fn spawn_gear_visuals(
 
 fn spawn_anchor_visuals(mut commands: Commands, query: Query<Entity, Added<Anchor>>) {
     for entity in &query {
-        let color = Color::srgba(0.7, 0.7, 0.8, 1.0); // Steel
+        let color = Color::rgba(0.7, 0.7, 0.8, 1.0); // Steel
 
         commands.entity(entity).with_children(|parent| {
             // Left Pallet

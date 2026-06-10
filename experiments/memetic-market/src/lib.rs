@@ -1,2 +1,2 @@
-pub(crate) mod sim;
+pub mod sim;
 pub use sim::*;

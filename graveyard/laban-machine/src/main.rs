@@ -57,7 +57,7 @@ fn setup(mut commands: Commands) {
             ..default()
         },
         Fill::color(Color::WHITE),
-        Stroke::new(Color::srgb(0.0, 1.0, 1.0), 2.0),
+        Stroke::new(Color::rgb(0.0, 1.0, 1.0), 2.0),
         Actor::default(),
         ParticleEmitter::default(),
     ));

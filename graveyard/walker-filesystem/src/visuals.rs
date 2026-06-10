@@ -58,9 +58,9 @@ pub fn draw_terrain(mut commands: Commands, terrain: Res<Terrain>, mut scanned: 
 }
 
 pub fn draw_walker(mut gizmos: Gizmos, query: Query<&Walker>) {
-    let red = Color::srgb(1.0, 0.0, 0.0);
-    let green = Color::srgb(0.0, 1.0, 0.0);
-    let blue = Color::srgb(0.0, 0.0, 1.0);
+    let red = Color::rgb(1.0, 0.0, 0.0);
+    let green = Color::rgb(0.0, 1.0, 0.0);
+    let blue = Color::rgb(0.0, 0.0, 1.0);
 
     for walker in &query {
         // Hip

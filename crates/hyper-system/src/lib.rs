@@ -14,12 +14,12 @@
 /// This module re-exports the 3D and 4D vector math primitives from the `locus` crate.
 /// It acts as the mathematical foundation for positioning and projecting
 /// structures in hyper-dimensional space.
-pub(crate) mod math {
+pub mod math {
     pub use locus::Vec3;
     pub use locus::Vec4;
 }
-pub(crate) mod monitor;
-pub(crate) mod physics;
+pub mod monitor;
+pub mod physics;
 
 pub use math::*;
 pub use monitor::*;

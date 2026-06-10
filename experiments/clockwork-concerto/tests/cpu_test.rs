@@ -19,7 +19,7 @@ fn test_cpu_note_event() {
     app.init_resource::<NoteCount>();
     app.add_systems(Update, count_notes.after(cpu_tick_system));
 
-    app.world_mut().spawn(CpuState {
+    app.world.spawn(CpuState {
         pc: 0,
         phase: CpuPhase::Fetch,
         instructions: 0,
@@ -30,17 +30,17 @@ fn test_cpu_note_event() {
     app.insert_resource(Program(vec![Instruction::Note(60)]));
 
     // Send TickEvent 1 (Fetch)
-    app.world_mut().send_event(TickEvent);
+    app.world.send_event(TickEvent);
     app.update();
 
     // Send TickEvent 2 (Decode)
-    app.world_mut().send_event(TickEvent);
+    app.world.send_event(TickEvent);
     app.update();
 
     // Send TickEvent 3 (Execute)
-    app.world_mut().send_event(TickEvent);
+    app.world.send_event(TickEvent);
     app.update();
 
-    let count = app.world().resource::<NoteCount>().0;
+    let count = app.world.resource::<NoteCount>().0;
     assert_eq!(count, 1, "Should emit one NoteEvent");
 }

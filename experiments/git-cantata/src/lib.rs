@@ -1,6 +1,6 @@
-pub(crate) mod audio;
+pub mod audio;
 pub use audio::*;
-pub(crate) mod git;
+pub mod git;
 pub use git::*;
-pub(crate) mod vis;
+pub mod vis;
 pub use vis::*;
