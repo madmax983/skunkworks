@@ -1,0 +1,11 @@
+[package]
+name = "gray-locus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+locus = { path = "../../crates/locus" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = "0.26"
+crossterm = "0.27"

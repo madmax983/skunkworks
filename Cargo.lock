@@ -5152,6 +5152,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "gray-locus"
+version = "0.1.0"
+dependencies = [
+ "crossterm 0.27.0",
+ "gray-scott",
+ "locus",
+ "ratatui 0.26.3",
+ "tui-shared",
+]
+
+[[package]]
 name = "gray-origami"
 version = "0.1.0"
 dependencies = [

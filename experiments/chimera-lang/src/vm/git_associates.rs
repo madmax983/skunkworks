@@ -4,7 +4,11 @@ use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
-pub fn exec_git_associates_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_git_associates_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     match op {
         OpCode::GitHistory => {
             // stack: count (top)
@@ -20,7 +24,8 @@ pub fn exec_git_associates_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotid
                                     vm.stack.push(Value::Str(commit.short_hash));
                                 }
                                 vm.energy = vm.energy.saturating_sub(5);
-                                vm.output.push(format!("GITHISTORY: Retrieved {} commits", len));
+                                vm.output
+                                    .push(format!("GITHISTORY: Retrieved {} commits", len));
                             }
                             Err(e) => {
                                 vm.output.push(format!("GITHISTORY ERROR: {}", e));
@@ -28,15 +33,18 @@ pub fn exec_git_associates_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotid
                             }
                         },
                         Err(e) => {
-                            vm.output.push(format!("GITHISTORY ERROR: Failed to open repo: {}", e));
+                            vm.output
+                                .push(format!("GITHISTORY ERROR: Failed to open repo: {}", e));
                             vm.stack.push(Value::Int(0));
                         }
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for githistory".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for githistory".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for githistory".to_string());
+                vm.output
+                    .push("Error: Stack underflow for githistory".to_string());
             }
             None
         }
@@ -49,7 +57,12 @@ pub fn exec_git_associates_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotid
                         vm.stack.push(Value::Int(stats.total_removed as i64));
                         vm.stack.push(Value::Int(stats.files.len() as i64));
                         vm.energy = vm.energy.saturating_sub(10);
-                        vm.output.push(format!("GITDIFFWORKSPACE: {} insertions, {} deletions in {} files", stats.total_added, stats.total_removed, stats.files.len()));
+                        vm.output.push(format!(
+                            "GITDIFFWORKSPACE: {} insertions, {} deletions in {} files",
+                            stats.total_added,
+                            stats.total_removed,
+                            stats.files.len()
+                        ));
                     }
                     Err(e) => {
                         vm.output.push(format!("GITDIFFWORKSPACE ERROR: {}", e));
@@ -57,7 +70,10 @@ pub fn exec_git_associates_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotid
                     }
                 },
                 Err(e) => {
-                    vm.output.push(format!("GITDIFFWORKSPACE ERROR: Failed to open repo: {}", e));
+                    vm.output.push(format!(
+                        "GITDIFFWORKSPACE ERROR: Failed to open repo: {}",
+                        e
+                    ));
                     vm.stack.push(Value::Int(0));
                 }
             }

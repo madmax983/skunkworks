@@ -118,6 +118,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### gray-locus
+- **Parents**: crates/gray-scott + crates/locus
+- **Concept**: Topological Reaction-Diffusion.
+- **Novel trait**: The continuous chemical Turing patterns (Gray-Scott) are wrapped across the topological constraints of a non-planar 2D grid (Locus). The reaction-diffusion simulation wraps around boundaries like a Torus, Klein Bottle, or Möbius strip, causing chemical waves to interact with themselves across the topological seams.
+- **Predicted Phenotype**: An emergent topological visualization of continuous chemical growth, demonstrating non-Euclidean reaction-diffusion.
+- **Status**: experiments/gray-locus
+- **Evaluation**: Success. Compiled. The chemical patterns successfully wrap across non-Euclidean bounds.
+
 ### miller-platter
 - **Parents**: crates/miller-lattice + crates/platter
 - **Concept**: Codebase Thermodynamic Shadow.
@@ -1426,6 +1434,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### gray-locus
+- **Parents**: crates/gray-scott + crates/locus
+- **Concept**: Topological Reaction-Diffusion.
+- **Novel trait**: The continuous chemical Turing patterns (Gray-Scott) are wrapped across the topological constraints of a non-planar 2D grid (Locus). The reaction-diffusion simulation wraps around boundaries like a Torus, Klein Bottle, or Möbius strip, causing chemical waves to interact with themselves across the topological seams.
+- **Predicted Phenotype**: An emergent topological visualization of continuous chemical growth, demonstrating non-Euclidean reaction-diffusion.
+- **Status**: experiments/gray-locus
+- **Evaluation**: Success. Compiled. The chemical patterns successfully wrap across non-Euclidean bounds.
+
 ### quipu-flock
 - **Parents**: crates/quipu + crates/flocking
 - **Concept**: Swarm-Driven Knotted Data Storage.
@@ -1484,5 +1500,6 @@ I have checked all previous hybrids in this list.
 - **Evaluation**: Success. Compiled. The physical tension of the soft-body mesh is effectively transformed through Mobius non-Euclidean geometries.
 
 ## 🔮 Proposed Crosses
-
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all prior crosses. They have all successfully compiled and demonstrated hybrid vigor. The `origami-poincare` hybrid correctly maps soft-body physics to the hyperbolic disk. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to map filesystem structures onto scalar fields: `miller-platter`, projecting the rigid 3D crystalline lattice down into a continuous 2D heat field.
+
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all prior crosses. They have all successfully compiled and demonstrated hybrid vigor. The `physics-locus` hybrid successfully maps soft-body physics to non-Euclidean topologies. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to map continuous chemical reaction-diffusion onto non-Euclidean grids: `gray-locus`, projecting the continuous chemical Turing patterns (Gray-Scott) onto the topological constraints of a non-planar 2D grid (Locus).

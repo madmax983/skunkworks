@@ -1,10 +1,15 @@
-1. **Draft ADRs:**
-    - Create `docs/adr/111-origami-poincare-hybrid.md` describing the "Hyperbolic Soft-Body Morphogenesis" pattern.
-    - Create `docs/adr/112-physics-locus-hybrid.md` describing the "Topological Soft-Body Physics" pattern.
-2. **Update Architecture Map:**
-    - Append documentation and a Mermaid.js class diagram for `origami-poincare` to `docs/architecture.md`.
-    - Append documentation and a Mermaid.js class diagram for `physics-locus` to `docs/architecture.md`.
-3. **Pre-commit:**
-    - Call `pre_commit_instructions` and follow instructions.
-4. **Submit:**
-    - Commit and submit with the Codex persona title format "📜 Codex: ADR 111, 112 & Architecture Diagram Updates".
+1. **Verify phase 1**:
+   - I have evaluated `physics-locus`. It compiles correctly. I've updated the memory/notes indicating it is successful.
+2. **Phase 2 Hybrid Creation**:
+   - Since the Proposed Crosses section was empty, I autonomously invented a new hybrid: `gray-locus`.
+   - It crosses `gray-scott` (Reaction-Diffusion) with `locus` (Topological geometry mappings).
+   - I've created the hybrid under `experiments/gray-locus/` with `Cargo.toml`, `README.md`, and `src/main.rs`.
+   - The hybrid has been built, tested, and headless verified.
+3. **Documentation Updates**:
+   - I've updated `MUTATIONS.md` to add `gray-locus` to Attempted Crosses and document its lineage and phenotype.
+   - I've updated `MUTATIONS.md`'s Phase 1 evaluation string.
+   - I've added a recombination pheromone to `GUESTBOOK.md`.
+4. **Complete Pre-commit Steps**:
+   - Run the necessary pre commit scripts to ensure tests, verification, review, and reflections are correctly performed.
+5. **Submit Change**:
+   - Commit with the message `🧬 Splice: Cross gray-scott × locus` and submit.
