@@ -1,7 +1,6 @@
 use chimera_lang::vm::ChimeraVM;
 use macroquad::prelude::*;
 use std::collections::HashMap;
-use std::io::Read;
 
 #[derive(Clone, Debug)]
 pub struct Portal {
@@ -12,7 +11,6 @@ pub struct Portal {
 
 #[derive(Clone, Debug)]
 pub struct Room {
-    pub id: usize,
     pub rect: Rect,
     pub color: Color,
     pub portals: Vec<Portal>,
@@ -22,7 +20,6 @@ pub struct Room {
 
 pub struct World {
     pub rooms: HashMap<usize, Room>,
-    pub root_id: usize,
 }
 
 fn hsl_to_color(h: f32, s: f32, l: f32) -> Color {
@@ -51,7 +48,6 @@ impl World {
     pub fn new() -> Self {
         Self {
             rooms: HashMap::new(),
-            root_id: 0,
         }
     }
 
@@ -101,7 +97,7 @@ impl World {
 
             // Color based on Strand Index to show "thread" context
             // Use a golden ratio offset to separate strand colors nicely
-            let hue = (strand_idx as f32 * 0.61803398875) % 1.0;
+            let hue = (strand_idx as f32 * 0.618_034) % 1.0;
             let room_color = hsl_to_color(hue, 0.5, 0.2); // Darker background
 
             let mut portals = Vec::new();
@@ -109,7 +105,7 @@ impl World {
             // Link to next frame
             if i + 1 < frames_len {
                 let next_strand = frames[i + 1].0;
-                let next_hue = (next_strand as f32 * 0.61803398875) % 1.0;
+                let next_hue = (next_strand as f32 * 0.618_034) % 1.0;
                 let portal_color = hsl_to_color(next_hue, 0.8, 0.5); // Brighter portal
 
                 let portal_w = 150.0;
@@ -134,7 +130,6 @@ impl World {
             }
 
             let room = Room {
-                id: i,
                 rect: Rect::new(0.0, 0.0, room_w, room_h),
                 color: room_color,
                 portals,

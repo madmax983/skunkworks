@@ -143,10 +143,8 @@ async fn main() {
         if is_key_pressed(KeyCode::F) {
             speed_multiplier *= 2;
         }
-        if is_key_pressed(KeyCode::S) {
-            if speed_multiplier > 1 {
-                speed_multiplier /= 2;
-            }
+        if is_key_pressed(KeyCode::S) && speed_multiplier > 1 {
+            speed_multiplier /= 2;
         }
 
         // Check for Portal Crossing
@@ -208,7 +206,7 @@ async fn main() {
         );
 
         draw_text(
-            &format!("VM Steps: ? | Energy: {}", vm.energy),
+            format!("VM Steps: ? | Energy: {}", vm.energy).as_str(),
             20.0,
             80.0,
             20.0,
@@ -218,7 +216,7 @@ async fn main() {
         // Show current room info
         if let Some(room) = world.rooms.get(&current_room_id) {
             draw_text(
-                &format!("Current: {}", room.description),
+                format!("Current: {}", room.description).as_str(),
                 20.0,
                 110.0,
                 20.0,
