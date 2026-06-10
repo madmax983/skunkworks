@@ -374,3 +374,219 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 *   🤦 **The Confusion:** "Tried to run the `story_demo` example by copying it to a standalone project as instructed in the README. Cargo completely failed to resolve the `miller-lattice` path dependency because it assumes it's in a workspace."
 *   🕵️ **The Reality:** "Turns out the library usage guide omits the `miller-lattice` dependency which is strictly required by the `chimera-lang` crate if not built inside the workspace root."
 *   💡 **The Fix:** "Add the missing `miller-lattice` dependency to the 'Library Usage' `Cargo.toml` snippet in the README."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/flocking/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `flocking` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions:** The example code uses `flocking` and `locus`. However, when trying to use it, the `README.md` lacks installation instructions for both crates.
+    - *Impact:* Compilation error or confusion on how to add `flocking` and `locus` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions (e.g., `flocking = { path = "../crates/flocking" }` and `locus = { path = "../crates/locus" }`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `flocking` example. There are no instructions on how to install it or `locus` (which is required by the example) in my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the paths to the internal crates manually because they are not on crates.io."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet for both `flocking` and `locus`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/gray-scott/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `gray-scott` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions:** The example code uses `gray_scott`. However, the `README.md` lacks installation instructions.
+    - *Impact:* Compilation error or confusion on how to add `gray-scott` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions (e.g., `gray-scott = { path = "../crates/gray-scott" }`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `gray-scott` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/git-associates/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `git-associates` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions:** The example code uses `git_associates` and `anyhow::Result`. However, the `README.md` lacks installation instructions for `git-associates` and `anyhow`.
+    - *Impact:* Compilation error or confusion on how to add `git-associates` and `anyhow` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `git-associates` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually and add `anyhow` as a dependency."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/physics-pbd/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the 'Simulating a Pendulum' example for the `physics-pbd` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency and Unused Import:** The example uses `macroquad::prelude::Vec3` and imports `Constraint` but never uses it. Also, it fails to compile due to a `glam` version mismatch with `Vec3`.
+    - *Impact:* Compilation error!
+    - *Fix:* Remove the unused `Constraint` import. Fix the `Vec3` import to `use glam::Vec3;`. Also, add `glam` to `Cargo.toml` dependencies instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (mismatched Vec3 and unused imports)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `physics-pbd` pendulum example. Cargo threw mismatched types error for `Vec3` and an unused import warning for `Constraint`."
+*   🕵️ **The Reality:** "Turns out the example tries to use `macroquad::prelude::Vec3` instead of `glam::Vec3`, which causes a version conflict with the internal `physics-pbd` crate. `Constraint` is also imported but never used."
+*   💡 **The Fix:** "Update the example to `use glam::Vec3;` instead of `macroquad` and remove `Constraint` from the `use` statement. Add `glam` to the installation instructions."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/resonance-audio/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `resonance-audio` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions and Unused Variable:** The example uses `resonance-audio` and `crossbeam-channel`. The `README.md` lacks installation instructions. It also yields an unused variable warning for `snap_rx`.
+    - *Impact:* Compilation error or confusion on how to add dependencies. Unused variable warning during compilation.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions. Prefix `snap_rx` with an underscore (`_snap_rx`) to suppress the warning.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions and unused variable in example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `resonance-audio` example. There are no instructions on how to install it or `crossbeam-channel` in my `Cargo.toml`. Also got a warning about an unused variable `snap_rx`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the paths to the internal crates manually and suppress the unused variable warning."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet. Change `snap_rx` to `_snap_rx` in the example to fix the warning."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/market-sim/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `market-sim` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions:** The example code uses `market_sim`. However, the `README.md` lacks installation instructions.
+    - *Impact:* Compilation error or confusion on how to add `market-sim` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions (e.g., `market-sim = { path = "../crates/market-sim" }`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `market-sim` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/neuro-sim/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `neuro-sim` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions:** The example code uses `neuro_sim`. However, the `README.md` lacks installation instructions.
+    - *Impact:* Compilation error or confusion on how to add `neuro-sim` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions (e.g., `neuro-sim = { path = "../crates/neuro-sim" }`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `neuro-sim` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/origami/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `origami` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions:** The example code uses `origami`. However, the `README.md` lacks installation instructions.
+    - *Impact:* Compilation error or confusion on how to add `origami` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions (e.g., `origami = { path = "../crates/origami" }`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `origami` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
