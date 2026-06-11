@@ -40,7 +40,10 @@ impl App {
                 rng.gen_range(0.0..WIDTH as f64),
                 rng.gen_range(0.0..HEIGHT as f64),
             ));
-            velocities.push(Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)));
+            velocities.push(Vec2::new(
+                rng.gen_range(-1.0..1.0),
+                rng.gen_range(-1.0..1.0),
+            ));
         }
 
         Self {
@@ -110,11 +113,16 @@ fn run_app(
         if !headless {
             terminal.draw(|f| {
                 let size = f.area();
-                let b = Block::default().title("Swarm Thermal Deposition").borders(Borders::ALL);
+                let b = Block::default()
+                    .title("Swarm Thermal Deposition")
+                    .borders(Borders::ALL);
                 f.render_widget(b, size);
 
                 // Render the heat map from the platter
-                let inner = size.inner(Margin { horizontal: 1, vertical: 1 });
+                let inner = size.inner(Margin {
+                    horizontal: 1,
+                    vertical: 1,
+                });
                 // We'll just render it as characters directly for simplicity
                 for y in 0..inner.height {
                     for x in 0..inner.width {

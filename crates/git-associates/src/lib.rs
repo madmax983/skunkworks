@@ -37,15 +37,71 @@ use anyhow::{Context, Result};
 use chrono::{DateTime, TimeZone, Utc};
 use git2::{DiffFlags, Repository, Sort};
 use std::path::Path;
+/// The compass for navigating the sea of repository changes.
+///
+/// [`DiffMode`] specifies whether to perform computational difference operations when traversing repository history.
+/// Calculating diffs can be computationally expensive, particularly for large commits or deep histories.
+/// Use [`DiffMode::SkipDiffs`] when only metadata (like author, date, and commit message) is needed, drastically improving traversal performance.
+///
+/// ## Examples
+///
+/// The Hero's Journey: Choosing the right mode for your quest.
+///
+/// ```no_run
+/// use git_associates::{DiffMode, HunkMode, GitModel};
+///
+/// let model = GitModel::open(".").unwrap();
+///
+/// // We only want the commit history metadata, no file diffs.
+/// // DiffMode enum values are usually passed to internal methods, but you can
+/// // use them to configure your own Git abstractions!
+/// let mode = DiffMode::SkipDiffs;
+/// assert_eq!(mode, DiffMode::SkipDiffs);
+/// ```
+///
+/// ## Details
+///
+/// - **Performance**: [`DiffMode::ComputeDiffs`] performs full tree comparisons and is O(N) relative to the size of the commit's changes.
+/// - **Panics**: This enum does not induce panics directly.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DiffMode {
+    /// Instructs the analysis to perform a full tree comparison, yielding insertions, deletions, and modified file counts.
     ComputeDiffs,
+    /// Instructs the analysis to bypass tree comparisons, prioritizing speed. Diff statistics will be empty or `None`.
     SkipDiffs,
 }
 
+/// The magnifying glass for inspecting code alterations.
+///
+/// [`HunkMode`] determines the granularity of the file diffs requested when [`DiffMode`] is set to [`DiffMode::ComputeDiffs`].
+/// Including hunks captures the exact lines added and removed, essential for visualizing code evolution,
+/// but it consumes significantly more memory.
+///
+/// ## Examples
+///
+/// Inspecting the minute details of code changes:
+///
+/// ```no_run
+/// use git_associates::{DiffMode, HunkMode, GitModel};
+///
+/// let model = GitModel::open(".").unwrap();
+///
+/// // We want to see every line that was changed!
+/// // HunkMode enum values are typically passed to internal diff extraction methods,
+/// // but can be used as flags for detailed git parsing.
+/// let mode = HunkMode::IncludeHunks;
+/// assert_eq!(mode, HunkMode::IncludeHunks);
+/// ```
+///
+/// ## Details
+///
+/// - **Performance**: [`HunkMode::IncludeHunks`] allocates vectors for every changed line. Use [`HunkMode::SkipHunks`] to get only file-level summaries (e.g., total files changed) and save memory.
+/// - **Dependency**: This mode is entirely ignored if [`DiffMode::SkipDiffs`] is selected.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HunkMode {
+    /// Captures the detailed line changes (additions/removals) for every modified file.
     IncludeHunks,
+    /// Retrieves only file-level statistics (e.g., total files changed), skipping line-by-line details.
     SkipHunks,
 }
 

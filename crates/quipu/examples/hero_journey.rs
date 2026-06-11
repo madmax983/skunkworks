@@ -1,4 +1,4 @@
-use quipu::{Quipu, Cord};
+use quipu::{Cord, Quipu};
 
 fn main() {
     // 1. Create a new Quipu to record the harvest.
@@ -19,7 +19,9 @@ fn main() {
 
     // 4. Calculate the total harvest.
     //    The Incas performed arithmetic by moving knots or combining cords.
-    let total = harvest_record.cords[0].checked_add(&harvest_record.cords[1]).unwrap();
+    let total = harvest_record.cords[0]
+        .checked_add(&harvest_record.cords[1])
+        .unwrap();
 
     assert_eq!(total.value(), 168);
 

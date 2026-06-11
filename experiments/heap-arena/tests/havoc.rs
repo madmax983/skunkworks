@@ -12,7 +12,10 @@ fn havoc_test_unwrap() {
         .status();
 
     if let Ok(status) = status {
-        assert!(status.success(), "👺 Havoc: WRECKAGE! generate_level panics internally due to unwrap()!");
+        assert!(
+            status.success(),
+            "👺 Havoc: WRECKAGE! generate_level panics internally due to unwrap()!"
+        );
     }
 }
 
