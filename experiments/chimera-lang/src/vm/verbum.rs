@@ -79,18 +79,12 @@ pub struct Verbum {
 /// assert_eq!(word.name, "Answer");
 /// assert_eq!(word.cost, 10); // 2 genes * 5 base cost
 /// ```
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct VerbumForge {
     /// A mapping from word names to their actual [`Verbum`] structure.
     pub words: HashMap<String, Verbum>,
     /// The counter used to assign unique IDs to newly forged words.
     pub next_id: usize,
-}
-
-impl Default for VerbumForge {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl VerbumForge {

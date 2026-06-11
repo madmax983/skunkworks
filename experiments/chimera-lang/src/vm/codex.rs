@@ -14,17 +14,11 @@ pub struct Spell {
     pub description: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 /// Represents a `Codex`.
 pub struct Codex {
     /// The `spells` field.
     pub spells: Vec<Spell>,
-}
-
-impl Default for Codex {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl Codex {
