@@ -2,7 +2,7 @@
 use super::{ChimeraVM, Value};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 /// Represents a `QuipuState`.
 pub struct QuipuState {
     /// The `cords` field.
@@ -97,12 +97,6 @@ impl QuipuState {
             let val_b = self.cords[other_idx];
             self.cords[self.active_cord] = self.cords[self.active_cord].wrapping_add(val_b);
         }
-    }
-}
-
-impl Default for QuipuState {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

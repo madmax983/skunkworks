@@ -17,19 +17,13 @@ pub struct LeyNode {
     pub power: i64,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 /// Represents a `LeyNetwork`.
 pub struct LeyNetwork {
     /// The `nodes` field.
     pub nodes: Vec<LeyNode>,
     /// The `connections` field.
     pub connections: Vec<Vec<usize>>,
-}
-
-impl Default for LeyNetwork {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl LeyNetwork {

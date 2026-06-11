@@ -26,7 +26,7 @@ pub struct Gladiator {
 }
 
 #[cfg(feature = "nova")]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 /// Represents a `ArenaState`.
 pub struct ArenaState {
     /// The `combatants` field.
@@ -39,13 +39,6 @@ pub struct ArenaState {
     pub active: bool,
     /// The `winner` field.
     pub winner: Option<String>,
-}
-
-#[cfg(feature = "nova")]
-impl Default for ArenaState {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl ArenaState {
