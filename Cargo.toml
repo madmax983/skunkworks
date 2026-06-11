@@ -11,6 +11,7 @@ members = [
     "experiments/chaos-hologram",
     "experiments/myco-tank",
     "experiments/ferrous-tank",
+    "experiments/flock-platter",
 
     "experiments/myco-hologram",
     "experiments/git-diffusion",

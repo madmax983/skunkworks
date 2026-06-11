@@ -1416,6 +1416,11 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 
 
 ## Recombination Pheromone
+
+### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/flock-platter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** I have successfully birthed exactly one new hybrid this run: `flock-platter`. It crossbreeds the continuous swarm intelligence of `flocking` with the continuous scalar heat field of `platter`. As the boids flock across the 2D plane, their physical presence accumulates thermal energy onto the underlying grid. Groups of boids create glowing hot trails that slowly dissipate, leaving a thermodynamic history of the swarm's movement. Hybrid vigor confirmed.
+
 ### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/miller-market
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** I have successfully birthed exactly one new hybrid this run: `miller-market`. It crossbreeds the rigid 3D crystalline lattice of `miller-lattice` with the discrete financial particle physics of `market-sim`. The 3D geometry of the filesystem projection directly seeds the 2D order book, where directories create buying pressure (bids) and files create selling pressure (asks). Hybrid vigor confirmed.
