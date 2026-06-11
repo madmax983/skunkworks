@@ -1359,14 +1359,6 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An organic, pulsating sheet of paper that folds and crumples dynamically based on hyperbolic non-Euclidean mathematics, turning hyperbolic distance properties into topographical folding movements.
 - **Status**: experiments/poincare-origami
 - **Evaluation**: Success. Compiled. The soft body mesh is successfully warped by the mathematical properties of hyperbolic space geometry.
-### gray-poincare
-- **Parents**: crates/gray-scott + crates/poincare-disk
-- **Concept**: Hyperbolic Reaction-Diffusion.
-- **Novel trait**: The continuous chemical Turing patterns (Gray-Scott) are projected onto the non-Euclidean Poincaré disk.
-- **Predicted Phenotype**: An organic visualization where the uniform Euclidean chemical diffusion is visually squashed and compressed according to the non-Euclidean distance metric of the disk ($d = \text{atanh}(r)$). The visual density of the chemical patterns increases exponentially as they approach the boundary.
-- **Status**: experiments/gray-poincare
-- **Evaluation**: Success. Compiled. The Turing patterns map correctly to hyperbolic spatial compression.
-
 
 ### locus-platter
 - **Parents**: crates/locus + crates/platter
@@ -1501,6 +1493,32 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/miller-market
 - **Evaluation**: Success. Compiled. Crossbreeds 3D static structure with 2D discrete market mechanics. Headless bypass operates correctly.
 
+
+### quipu-locus
+- **Parents**: crates/quipu + crates/locus
+- **Concept**: Non-Euclidean Knotted Data Storage.
+- **Novel trait**: The discrete knotted data structures of ancient Inca accounting (Quipu) are wrapped seamlessly across non-Euclidean topological bounds (such as a Klein bottle or Torus) using the `locus` crate.
+- **Predicted Phenotype**: An emergent topological data structure where information wraps across complex geometry, achieving pure mathematical memory representation.
+- **Status**: experiments/quipu-locus
+- **Evaluation**: Success. Compiled. Pheromone routes seamlessly wrap across non-Euclidean bounds, bridging organic data structures with complex geometry.
+
+### gray-locus
+- **Parents**: crates/gray-scott + crates/locus
+- **Concept**: Topological Reaction-Diffusion.
+- **Novel trait**: Continuous chemical Turing patterns from the `gray-scott` crate are wrapped across non-planar 2D grids using the `locus` crate.
+- **Predicted Phenotype**: A visual chemical reaction simulator where biological patterns seamlessly wrap around topological shapes like toruses or projective planes.
+- **Status**: experiments/gray-locus
+- **Evaluation**: Success. Compiled. Continuous chemical Turing patterns successfully demonstrated across non-planar 2D grids.
+
+
+### gray-poincare
+- **Parents**: crates/gray-scott + crates/poincare-disk
+- **Concept**: Hyperbolic Reaction-Diffusion.
+- **Novel trait**: The continuous chemical Turing patterns of `gray-scott` are projected into the continuous non-Euclidean geometry of the Poincaré disk. The Euclidean planar reaction is warped into hyperbolic space, making patterns infinitely dense near the disk boundary.
+- **Predicted Phenotype**: An emergent bio-structural visualization where cellular division and chemical diffusion appear to grow normally at the center but compress infinitely at the edges.
+- **Status**: experiments/gray-poincare
+- **Evaluation**: Success. Compiled. The Turing patterns successfully warp across the non-Euclidean boundaries of the Poincaré disk.
+
 ## 🔮 Proposed Crosses
 
-**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all prior crosses. They have all successfully compiled and demonstrated hybrid vigor, including `miller-platter` and `miller-market` which successfully bridge 3D static structures with 2D dynamics. The "Proposed Crosses" section is currently empty. Awaiting new genetic material for future recombination.
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all prior crosses. They have all successfully compiled and demonstrated hybrid vigor, including `quipu-locus` and `gray-locus` which successfully adapt their respective traits onto non-Euclidean structures. The "Proposed Crosses" section is currently empty. Awaiting new genetic material for future recombination.
