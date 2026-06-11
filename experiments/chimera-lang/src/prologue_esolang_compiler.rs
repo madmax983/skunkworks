@@ -968,6 +968,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::TuiDraw, vec![]));
             }
+            Rule::tui_mod_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_tui_mod_instr(instr)?);
+                }
+            }
             Rule::mosaic_block => {
                 let content =
                     extract_block_content_preserve_whitespace(inner_block.as_str(), "mosaic");
@@ -1115,6 +1120,48 @@ pub fn compile(source: &str) -> Result<Dna> {
             strands: vec![Strand { genes }],
         },
     })
+}
+
+fn compile_tui_mod_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair.into_inner().next().unwrap();
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "glitch" {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(0)]));
+                genes.push(Gene::new(OpCode::TuiMod, vec![]));
+            } else if op == "shake" {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(1)]));
+                genes.push(Gene::new(OpCode::TuiMod, vec![]));
+            } else if op == "message" {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(2)]));
+                genes.push(Gene::new(OpCode::TuiMod, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str();
+            let content = if s.starts_with('"') && s.ends_with('"') {
+                &s[1..s.len() - 1]
+            } else {
+                s
+            };
+            genes.push(Gene::new(
+                OpCode::Push,
+                vec![Nucleotide::String(content.to_string())],
+            ));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
 }
 
 #[cfg(feature = "git")]
