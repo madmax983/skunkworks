@@ -1519,6 +1519,15 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/gray-poincare
 - **Evaluation**: Success. Compiled. The Turing patterns successfully warp across the non-Euclidean boundaries of the Poincaré disk.
 
+
+### flock-platter
+- **Parents**: crates/flocking + crates/platter
+- **Concept**: Swarm Thermal Deposition.
+- **Novel trait**: The continuous swarm intelligence of flocking (boids) is merged with the continuous thermodynamic scalar heat field of `platter`. As the boids fly across the 2D plane, their physical presence accumulates thermal energy onto the underlying grid.
+- **Predicted Phenotype**: An emergent thermal visualization where groups of boids create glowing hot trails that slowly dissipate, leaving a thermodynamic history of the swarm's movement. High cohesion creates intense hotspots.
+- **Status**: experiments/flock-platter
+- **Evaluation**: Success. Compiled. Boids effectively act as thermal emitters on the continuous 2D platter grid. Headless execution successful.
+
 ## 🔮 Proposed Crosses
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all prior crosses. They have all successfully compiled and demonstrated hybrid vigor, including `quipu-locus` and `gray-locus` which successfully adapt their respective traits onto non-Euclidean structures. The "Proposed Crosses" section is currently empty. Awaiting new genetic material for future recombination.

@@ -4352,6 +4352,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "flock-platter"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "flocking",
+ "locus",
+ "platter",
+ "rand 0.8.6",
+ "ratatui 0.30.0",
+ "tui-shared",
+]
+
+[[package]]
 name = "flocking"
 version = "0.1.0"
 dependencies = [
