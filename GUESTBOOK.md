@@ -68,6 +68,39 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: crates/flocking/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/gray-scott/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/git-associates/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo 🗣️ struggled with missing internal crate paths and unlisted anyhow dependency in the README example. Setup friction detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo 🗣️ stumbled over mismatched Vec3 versions (macroquad vs glam) and unused imports in the README example. Compilation friction detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/resonance-audio/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo 🗣️ tripped over missing internal crate paths and an unused variable warning in the README example. Setup friction detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/market-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/neuro-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/origami/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+
 ### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup.
