@@ -590,3 +590,157 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 *   🤦 **The Confusion:** "Tried to run the `origami` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
 *   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually."
 *   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/poincare-disk/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `{4, 5}` tiling example for the `poincare-disk` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused Variable in Example:** The `right_step` variable in the `Tiling` example is defined but never used, resulting in a compiler warning.
+    - *Impact:* Annoying warning.
+    - *Fix:* Prefix the variable with an underscore (`_right_step`) or use it in a print statement or assertion.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Unused variable in Tiling example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `poincare-disk` Tiling example. Cargo threw an unused variable warning for `right_step`."
+*   🕵️ **The Reality:** "Turns out the example creates the variable but does not consume it in any meaningful way."
+*   💡 **The Fix:** "Update the example to either prefix `right_step` with an underscore (`_right_step`) or do something with it."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/physics-pbd/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the 'Simulating a Pendulum' example for the `physics-pbd` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency and Unused Import:** The example uses `macroquad::prelude::Vec3` and imports `Constraint` but never uses it. Also, it fails to compile due to a `glam` version mismatch with `Vec3`.
+    - *Impact:* Compilation error!
+    - *Fix:* Remove the unused `Constraint` import. Fix the `Vec3` import to `use glam::Vec3;`. Also, add `glam` to `Cargo.toml` dependencies instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (mismatched Vec3 and unused imports)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `physics-pbd` pendulum example. Cargo threw mismatched types error for `Vec3` and an unused import warning for `Constraint`."
+*   🕵️ **The Reality:** "Turns out the example tries to use `macroquad::prelude::Vec3` instead of `glam::Vec3`, which causes a version conflict with the internal `physics-pbd` crate. `Constraint` is also imported but never used."
+*   💡 **The Fix:** "Update the example to `use glam::Vec3;` instead of `macroquad` and remove `Constraint` from the `use` statement. Add `glam` to the installation instructions."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/resonance-audio/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `resonance-audio` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused Variable in Example:** The `snap_rx` variable in the `resonance-audio` example is defined but never used, resulting in a compiler warning.
+    - *Impact:* Annoying warning.
+    - *Fix:* Prefix the variable with an underscore (`_snap_rx`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Unused variable in example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `resonance-audio` example. Got an unused variable warning for `snap_rx`."
+*   🕵️ **The Reality:** "Turns out the example creates a tuple `(snap_tx, snap_rx)` but never reads from `snap_rx`."
+*   💡 **The Fix:** "Update the example to either prefix `snap_rx` with an underscore (`_snap_rx`) or use it."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/poincare-disk/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `poincare-disk` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions:** The `README.md` says `poincare-disk = { path = "crates/poincare-disk" }` but this only works from the workspace root. When creating a fresh project, the path should be external. (Already logged previously, just testing execution and compilation paths).
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/quipu/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the 'Accounting for the Harvest' example for the `quipu` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency Instructions:** The example uses `quipu` but `README.md` lacks installation instructions.
+    - *Impact:* Compilation error or confusion on how to add `quipu` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions (e.g., `quipu = { path = "../crates/quipu" }`).
+2.  **Unused Import in Example:** The example imports `Knot` but never uses it.
+    - *Impact:* Annoying warning during compilation.
+    - *Fix:* Remove the `Knot` import from the `use quipu::{Quipu, Cord, Knot};` statement.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions and unused import in example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `quipu` example. There are no instructions on how to install it in my `Cargo.toml`. Also got an unused import warning for `Knot`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually, and `Knot` is not needed in the example code."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet. Remove the unused `Knot` import."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/hyper-system/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the examples for the `hyper-system` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Private Modules Export:** The examples import `Vec4` from `hyper_system::math::Vec4` and `SystemMonitor` from `hyper_system::monitor::SystemMonitor`. However, `math` and `monitor` are declared as `pub(crate)` in the library, making them private to external crates.
+    - *Impact:* Compilation error! `error[E0603]: module 'math' is private` and `error[E0603]: module 'monitor' is private`.
+    - *Fix:* Since the lib already has `pub use math::*;` and `pub use monitor::*;`, the examples in the README should just import them directly from `hyper_system::Vec4` and `hyper_system::SystemMonitor`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started examples are broken (private modules)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `hyper-system` examples. Cargo threw private module errors for `math` and `monitor`."
+*   🕵️ **The Reality:** "Turns out the examples in the README try to access modules (`math` and `monitor`) that are marked as `pub(crate)`. They are re-exported at the root level."
+*   💡 **The Fix:** "Update the examples to import from the root module: `use hyper_system::Vec4;` instead of `use hyper_system::math::Vec4;` and `use hyper_system::SystemMonitor;` instead of `use hyper_system::monitor::SystemMonitor;`."
