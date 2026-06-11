@@ -1,6 +1,6 @@
+use chimera_lang::ast::Nucleotide;
 use chimera_lang::opcode::OpCode;
 use chimera_lang::prologue_esolang_compiler::compile;
-use chimera_lang::ast::Nucleotide;
 
 #[test]
 fn test_tui_mod_grammar_compilation() {

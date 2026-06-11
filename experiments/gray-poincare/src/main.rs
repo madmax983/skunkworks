@@ -4,7 +4,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use gray_scott::GrayScott;
-use poincare_disk::{Point};
+use poincare_disk::Point;
 use ratatui::{
     backend::CrosstermBackend,
     style::{Color, Style},
@@ -96,7 +96,11 @@ impl App {
                     let mut ch = " ";
                     let mut color = Color::Reset;
 
-                    if gx >= 0 && gx < self.sim_width as i64 && gy >= 0 && gy < self.sim_height as i64 {
+                    if gx >= 0
+                        && gx < self.sim_width as i64
+                        && gy >= 0
+                        && gy < self.sim_height as i64
+                    {
                         let idx = (gy as usize) * self.sim_width + (gx as usize);
                         let v = self.sim.v()[idx];
                         if v > 0.3 {
