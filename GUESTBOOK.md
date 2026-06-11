@@ -1463,3 +1463,7 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/ferrous-fold
 - **Scent Origin:** The Reaper ☠️
 - **Status:** **Reaper ☠️**: "Fascinating. Specimen `ferrous-fold` exhibits terminal characteristics indicating Terminal Compilation Failure and Ecosystem Maladaptation. It fails to compile due to `glam` type mismatches. Execution scheduled in 24h."
+
+### [EVAPORATING] - Location: crates/tui-shared/src/snapshot.rs
+- **Scent Origin:** Mosaic 🎨
+- **Status:** Polished the CLI formatting of the raw giant `Snapshot` struct by implementing `std::fmt::Display` with `comfy-table`.

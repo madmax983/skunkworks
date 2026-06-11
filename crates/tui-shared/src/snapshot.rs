@@ -245,6 +245,106 @@ impl Snapshot {
         serde_json::to_string_pretty(self).unwrap_or_else(|_| "{}".to_string())
     }
 }
+
+impl std::fmt::Display for Snapshot {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use comfy_table::{Table, Cell, Color, presets::UTF8_FULL, modifiers::UTF8_ROUND_CORNERS};
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .apply_modifier(UTF8_ROUND_CORNERS)
+            .set_header(vec![
+                Cell::new("Snapshot:").fg(Color::Cyan),
+                Cell::new(&self.app).fg(Color::Yellow),
+            ]);
+
+        if let Some(frame) = self.frame {
+            table.add_row(vec![
+                Cell::new("Frame"),
+                Cell::new(frame.to_string()),
+            ]);
+        }
+
+        if let Some((w, h)) = self.viewport {
+            table.add_row(vec![
+                Cell::new("Viewport"),
+                Cell::new(format!("{}x{}", w, h)),
+            ]);
+        }
+
+        if let Some(state) = &self.state {
+            table.add_row(vec![
+                Cell::new("State"),
+                Cell::new(state).fg(Color::Green),
+            ]);
+        }
+
+        writeln!(f, "{}", table)?;
+
+        if !self.metrics.is_empty() {
+            let mut metrics_table = Table::new();
+            metrics_table
+                .load_preset(UTF8_FULL)
+                .set_header(vec![
+                    Cell::new("Metric").fg(Color::Cyan),
+                    Cell::new("Value").fg(Color::Cyan),
+                ]);
+            for (k, v) in &self.metrics {
+                let v_str = match v {
+                    PropValue::Int(i) => i.to_string(),
+                    PropValue::Float(fl) => fl.to_string(),
+                    PropValue::Bool(b) => b.to_string(),
+                    PropValue::Text(t) => t.clone(),
+                };
+                let mut v_cell = Cell::new(&v_str);
+                if v_str == "true" {
+                    v_cell = v_cell.fg(Color::Green);
+                } else if v_str == "false" {
+                    v_cell = v_cell.fg(Color::Yellow);
+                } else if matches!(v, PropValue::Text(_)) {
+                    v_cell = v_cell.fg(Color::Magenta);
+                } else {
+                    v_cell = v_cell.fg(Color::Blue);
+                }
+
+                metrics_table.add_row(vec![
+                    Cell::new(k).fg(Color::Yellow),
+                    v_cell,
+                ]);
+            }
+            writeln!(f, "\n{}", metrics_table)?;
+        }
+
+        if !self.entities.is_empty() {
+            let mut entities_table = Table::new();
+            entities_table
+                .load_preset(UTF8_FULL)
+                .set_header(vec![
+                    Cell::new("Entity").fg(Color::Cyan),
+                    Cell::new("Kind").fg(Color::Cyan),
+                    Cell::new("Position").fg(Color::Cyan),
+                    Cell::new("Display").fg(Color::Cyan),
+                ]);
+            for (i, entity) in self.entities.iter().enumerate() {
+                let pos = if let Some(p) = &entity.position {
+                    format!("{:.1}, {:.1}", p.x, p.y)
+                } else {
+                    "None".to_string()
+                };
+                entities_table.add_row(vec![
+                    Cell::new(entity.id.as_deref().unwrap_or(&i.to_string())).fg(Color::Yellow),
+                    Cell::new(&entity.kind).fg(Color::Magenta),
+                    Cell::new(pos),
+                    Cell::new(entity.display.as_deref().unwrap_or("")),
+                ]);
+            }
+            writeln!(f, "\n{}", entities_table)?;
+        }
+
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
