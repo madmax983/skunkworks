@@ -2861,3 +2861,40 @@ classDiagram
     PhysicsLocus --> PbdSystem : Simulates
     PhysicsLocus --> Boundary : Projects onto
 ```
+
+## Syncopated Threads Facade (ADR 113)
+
+Enforcing the Facade pattern in `syncopated-threads` prevents the leakage of its internal structure, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace SyncopatedThreadsFacade {
+        class LibRS {
+            <<Facade>>
+        }
+    }
+    namespace InternalModules {
+        class Audio {
+            <<pub(crate)>>
+        }
+        class Model {
+            <<pub(crate)>>
+        }
+        class Threads {
+            <<pub(crate)>>
+        }
+        class Tui {
+            <<pub(crate)>>
+        }
+    }
+    class Consumer {
+        <<External>>
+    }
+
+    LibRS ..> Audio : encapsulates
+    LibRS ..> Model : encapsulates
+    LibRS ..> Threads : encapsulates
+    LibRS ..> Tui : encapsulates
+    Consumer --> LibRS : Uses
+```
