@@ -27,6 +27,8 @@ members = [
 
         "experiments/gray-lattice",
     "experiments/market-poincare",
+    "experiments/neuro-physics",
+    "experiments/neuro-physics",
     "graveyard/market-platter",
     "experiments/quipu-poincare",
     "experiments/quipu-locus",
@@ -86,4 +88,4 @@ codegen-units = 1
 panic = "abort"
 
 [patch.crates-io]
-glam = { git = "https://github.com/bitshifter/glam-rs", tag = "0.27.0" }
+bevy_reflect = { git = "https://github.com/bevyengine/bevy", tag = "v0.14.2" }
