@@ -222,3 +222,14 @@ impl From<String> for PropValue {
         PropValue::Text(v)
     }
 }
+
+impl std::fmt::Display for PropValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PropValue::Int(i) => write!(f, "{}", i),
+            PropValue::Float(fl) => write!(f, "{}", fl),
+            PropValue::Bool(b) => write!(f, "{}", b),
+            PropValue::Text(t) => write!(f, "{}", t),
+        }
+    }
+}
