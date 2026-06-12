@@ -3,9 +3,9 @@ use std::sync::atomic::AtomicBool;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use syncopated_threads::audio::AudioCommand;
-use syncopated_threads::model::RhythmParams;
-use syncopated_threads::threads::spawn_rhythm_thread;
+use syncopated_threads::spawn_rhythm_thread;
+use syncopated_threads::AudioCommand;
+use syncopated_threads::RhythmParams;
 
 // 👺 Havoc: Prove that the `syncopated-threads` instruments can suffer starvation!
 // The thread logic loops infinitely. If we set parameters such that threads compete

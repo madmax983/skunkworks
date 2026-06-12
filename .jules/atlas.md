@@ -26,3 +26,7 @@
 **[Title] Encapsulate VM Modules via Facade in chimera-lang**
 **Tangle:** The `experiments/chimera-lang/src/vm/mod.rs` leaked over 100 internal modules directly via `pub mod`, breaking the Facade pattern and exposing all implementation details.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` across internal VM modules to enforce strict boundaries. Re-exposed specific modules like `nova_diffusion`, `nova_signals`, `prologue`, `nova`, `nova_sigil`, `babel`, `paradox`, `nova_babel_live`, `oracle`, `nova_botany`, `nova_genetics`, `pandemonium`, `memetics`, `nova_biome`, `evolution`, `nova_fluid`, `ipc`, `nova_linguistics`, `akashic`, `nova_ballistics`, `nova_alchemy_prime`, `bard`, `retina`, `verbum`, `nova_attractor`, `nova_hologram`, `nova_metazoa`, `nova_optics`, `piet`, `nova_fractal`, `nova_functional`, `nova_quipu`, `nova_raku`, `nova_simulation`, `phylogeny`, `silicon`, `nova_void`, `nova_strings`, `nova_semiotics`, `nova_security`, `nova_physics`, and `nova_origami` as they were needed by integration tests.
+
+**[Title] Enforce Module Boundaries via Facade in syncopated-threads**
+**Tangle:** The `experiments/syncopated-threads/src/lib.rs` leaked internal modules `audio`, `model`, `threads`, and `tui` via `pub mod`, breaking the Facade pattern.
+**Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` to enforce strict boundaries while preserving the external API. Updated tests to match the facade API.
