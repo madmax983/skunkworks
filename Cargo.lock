@@ -9465,6 +9465,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "quipu-resonance"
+version = "0.1.0"
+dependencies = [
+ "cpal",
+ "crossbeam-channel",
+ "crossterm 0.28.1",
+ "locus",
+ "quipu",
+ "rand 0.8.6",
+ "ratatui 0.30.0",
+ "resonance-audio",
+ "tui-shared",
+]
+
+[[package]]
 name = "quipu-serializer"
 version = "0.1.0"
 dependencies = [
