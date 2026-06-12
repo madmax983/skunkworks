@@ -2745,6 +2745,8 @@ pub enum OpCode {
     FerrousCore,
     /// Triggers the Tardis logic
     Tardis,
+    /// Triggers the Pachinko logic
+    Pachinko,
 }
 
 impl fmt::Display for OpCode {

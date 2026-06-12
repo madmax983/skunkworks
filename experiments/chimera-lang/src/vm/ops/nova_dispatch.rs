@@ -529,6 +529,10 @@ impl crate::vm::ChimeraVM {
                 self.output.push("Tardis logic triggered.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
+            OpCode::Pachinko => {
+                self.output.push("Pachinko physics simulated.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
             OpCode::FerrousCore => {
                 self.output
                     .push("Ferrous Core magnetic field triggered.".to_string());
