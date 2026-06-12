@@ -248,7 +248,7 @@ impl Snapshot {
 
 impl std::fmt::Display for Snapshot {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        use comfy_table::{Table, Cell, Color, presets::UTF8_FULL, modifiers::UTF8_ROUND_CORNERS};
+        use comfy_table::{modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, Color, Table};
         let mut table = Table::new();
         table
             .load_preset(UTF8_FULL)
@@ -259,10 +259,7 @@ impl std::fmt::Display for Snapshot {
             ]);
 
         if let Some(frame) = self.frame {
-            table.add_row(vec![
-                Cell::new("Frame"),
-                Cell::new(frame.to_string()),
-            ]);
+            table.add_row(vec![Cell::new("Frame"), Cell::new(frame.to_string())]);
         }
 
         if let Some((w, h)) = self.viewport {
@@ -273,29 +270,19 @@ impl std::fmt::Display for Snapshot {
         }
 
         if let Some(state) = &self.state {
-            table.add_row(vec![
-                Cell::new("State"),
-                Cell::new(state).fg(Color::Green),
-            ]);
+            table.add_row(vec![Cell::new("State"), Cell::new(state).fg(Color::Green)]);
         }
 
         writeln!(f, "{}", table)?;
 
         if !self.metrics.is_empty() {
             let mut metrics_table = Table::new();
-            metrics_table
-                .load_preset(UTF8_FULL)
-                .set_header(vec![
-                    Cell::new("Metric").fg(Color::Cyan),
-                    Cell::new("Value").fg(Color::Cyan),
-                ]);
+            metrics_table.load_preset(UTF8_FULL).set_header(vec![
+                Cell::new("Metric").fg(Color::Cyan),
+                Cell::new("Value").fg(Color::Cyan),
+            ]);
             for (k, v) in &self.metrics {
-                let v_str = match v {
-                    PropValue::Int(i) => i.to_string(),
-                    PropValue::Float(fl) => fl.to_string(),
-                    PropValue::Bool(b) => b.to_string(),
-                    PropValue::Text(t) => t.clone(),
-                };
+                let v_str = v.to_string();
                 let mut v_cell = Cell::new(&v_str);
                 if v_str == "true" {
                     v_cell = v_cell.fg(Color::Green);
@@ -307,24 +294,19 @@ impl std::fmt::Display for Snapshot {
                     v_cell = v_cell.fg(Color::Blue);
                 }
 
-                metrics_table.add_row(vec![
-                    Cell::new(k).fg(Color::Yellow),
-                    v_cell,
-                ]);
+                metrics_table.add_row(vec![Cell::new(k).fg(Color::Yellow), v_cell]);
             }
             writeln!(f, "\n{}", metrics_table)?;
         }
 
         if !self.entities.is_empty() {
             let mut entities_table = Table::new();
-            entities_table
-                .load_preset(UTF8_FULL)
-                .set_header(vec![
-                    Cell::new("Entity").fg(Color::Cyan),
-                    Cell::new("Kind").fg(Color::Cyan),
-                    Cell::new("Position").fg(Color::Cyan),
-                    Cell::new("Display").fg(Color::Cyan),
-                ]);
+            entities_table.load_preset(UTF8_FULL).set_header(vec![
+                Cell::new("Entity").fg(Color::Cyan),
+                Cell::new("Kind").fg(Color::Cyan),
+                Cell::new("Position").fg(Color::Cyan),
+                Cell::new("Display").fg(Color::Cyan),
+            ]);
             for (i, entity) in self.entities.iter().enumerate() {
                 let pos = if let Some(p) = &entity.position {
                     format!("{:.1}, {:.1}", p.x, p.y)

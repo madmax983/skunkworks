@@ -91,3 +91,7 @@
 **[Replacing Boolean Blindness with Enums]**
 **Learning:** Functions that accept `bool` parameters (like `compute_diffs` or `include_hunks`) create "Boolean Blindness", making it hard to understand what `true` or `false` means at the call site (e.g., `process_diff_internal(&diff, true)`).
 **Action:** Replace `bool` parameters with descriptive enums (e.g., `enum DiffMode { ComputeDiffs, SkipDiffs }`) to make the call site self-documenting and improve type safety.
+
+**[Replacing Manual Enum String Conversion]**
+**Learning:** Re-implementing string conversion via manual `match` blocks for enum variants is an anti-pattern. Implement `std::fmt::Display` for the enum to enable idiomatic `.to_string()` usage and integrate seamlessly with Rust's standard formatting ecosystem.
+**Action:** When finding a custom `to_string()` equivalent or manual `match` mapping for an enum, implement the `Display` trait to improve cohesion.
