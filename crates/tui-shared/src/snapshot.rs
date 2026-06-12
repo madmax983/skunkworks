@@ -150,9 +150,8 @@ impl Snapshot {
         let count = upper.unwrap_or(lower).min(100_000);
         self.entities.reserve(count);
 
-        for entity in iter.take(100_000usize.saturating_sub(self.entities.len())) {
-            self.entities.push(entity);
-        }
+        self.entities
+            .extend(iter.take(100_000usize.saturating_sub(self.entities.len())));
         self
     }
 
@@ -284,15 +283,13 @@ impl std::fmt::Display for Snapshot {
             for (k, v) in &self.metrics {
                 let v_str = v.to_string();
                 let mut v_cell = Cell::new(&v_str);
-                if v_str == "true" {
-                    v_cell = v_cell.fg(Color::Green);
-                } else if v_str == "false" {
-                    v_cell = v_cell.fg(Color::Yellow);
-                } else if matches!(v, PropValue::Text(_)) {
-                    v_cell = v_cell.fg(Color::Magenta);
-                } else {
-                    v_cell = v_cell.fg(Color::Blue);
-                }
+
+                v_cell = match v {
+                    PropValue::Bool(true) => v_cell.fg(Color::Green),
+                    PropValue::Bool(false) => v_cell.fg(Color::Yellow),
+                    PropValue::Text(_) => v_cell.fg(Color::Magenta),
+                    _ => v_cell.fg(Color::Blue),
+                };
 
                 metrics_table.add_row(vec![Cell::new(k).fg(Color::Yellow), v_cell]);
             }
@@ -313,8 +310,10 @@ impl std::fmt::Display for Snapshot {
                 } else {
                     "None".to_string()
                 };
+                let fallback_id = i.to_string();
+                let entity_id = entity.id.as_deref().unwrap_or(&fallback_id);
                 entities_table.add_row(vec![
-                    Cell::new(entity.id.as_deref().unwrap_or(&i.to_string())).fg(Color::Yellow),
+                    Cell::new(entity_id).fg(Color::Yellow),
                     Cell::new(&entity.kind).fg(Color::Magenta),
                     Cell::new(pos),
                     Cell::new(entity.display.as_deref().unwrap_or("")),
