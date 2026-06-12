@@ -303,6 +303,7 @@ impl std::fmt::Display for Snapshot {
                 Cell::new("Kind").fg(Color::Cyan),
                 Cell::new("Position").fg(Color::Cyan),
                 Cell::new("Display").fg(Color::Cyan),
+                Cell::new("Props").fg(Color::Cyan),
             ]);
             for (i, entity) in self.entities.iter().enumerate() {
                 let pos = if let Some(p) = &entity.position {
@@ -312,11 +313,32 @@ impl std::fmt::Display for Snapshot {
                 };
                 let fallback_id = i.to_string();
                 let entity_id = entity.id.as_deref().unwrap_or(&fallback_id);
+
+                let props_str = if entity.props.is_empty() {
+                    "".to_string()
+                } else {
+                    let mut p_strs = Vec::new();
+                    for (k, v) in &entity.props {
+                        let v_str = match v {
+                            PropValue::Bool(true) => "True",
+                            PropValue::Bool(false) => "False",
+                            _ => "",
+                        };
+                        if !v_str.is_empty() {
+                            p_strs.push(format!("{}: {}", k, v_str));
+                        } else {
+                            p_strs.push(format!("{}: {}", k, v));
+                        }
+                    }
+                    p_strs.join(", ")
+                };
+
                 entities_table.add_row(vec![
                     Cell::new(entity_id).fg(Color::Yellow),
                     Cell::new(&entity.kind).fg(Color::Magenta),
                     Cell::new(pos),
                     Cell::new(entity.display.as_deref().unwrap_or("")),
+                    Cell::new(props_str),
                 ]);
             }
             writeln!(f, "\n{}", entities_table)?;
