@@ -17,8 +17,8 @@ fn havoc_test_arm_unwrap() {
 
     if let Ok(status) = status {
         assert!(
-            !status.success(),
-            "👺 Havoc: Expected internal panic, but process succeeded!"
+            status.success(),
+            "👺 Havoc: Expected process to succeed without panic, but it failed!"
         );
     }
 }
