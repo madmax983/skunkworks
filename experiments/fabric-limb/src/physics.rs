@@ -25,6 +25,10 @@ impl Arm {
 
     /// Solves Inverse Kinematics to reach the target using FABRIK
     pub fn solve(&mut self, target: (f64, f64)) {
+        if self.joints.is_empty() {
+            return;
+        }
+
         let total_length: f64 = self.lengths.iter().sum();
         let base = self.joints[0];
         let distance_to_target = dist(base, target);
@@ -42,7 +46,7 @@ impl Arm {
             }
         } else {
             // Target is reachable
-            let mut diff = dist(self.joints.last().cloned().unwrap(), target);
+            let mut diff = dist(self.joints.last().cloned().unwrap_or(base), target);
             let mut iterations = 0;
             let max_iterations = 10; // FABRIK converges fast
 
@@ -70,14 +74,14 @@ impl Arm {
                     );
                 }
 
-                diff = dist(self.joints.last().cloned().unwrap(), target);
+                diff = dist(self.joints.last().cloned().unwrap_or(base), target);
                 iterations += 1;
             }
         }
     }
 
     pub fn end_effector(&self) -> (f64, f64) {
-        *self.joints.last().unwrap()
+        self.joints.last().cloned().unwrap_or((0.0, 0.0))
     }
 }
 
