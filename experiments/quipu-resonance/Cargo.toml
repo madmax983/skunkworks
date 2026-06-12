@@ -1,0 +1,15 @@
+[package]
+name = "quipu-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quipu = { path = "../../crates/quipu" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+locus = { path = "../../crates/locus" }
+tui-shared = { path = "../../crates/tui-shared" }
+crossbeam-channel = "0.5"
+rand.workspace = true
+crossterm.workspace = true
+ratatui.workspace = true
+cpal = "0.15"
