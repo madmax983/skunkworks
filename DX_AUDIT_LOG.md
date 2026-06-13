@@ -769,8 +769,62 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 *   🤦 **The Confusion:** "Tried to run the example command but it failed with an error about not determining which binary to run."
 *   🕵️ **The Reality:** "The command `cargo run --release` resulted in an error:
 Command failed with code 101:
-```
-error: `cargo run` could not determine which binary to run. Use the `--bin` option to specify a binary, or the `default-run` manifest key.
+\`\`\`
+error: \`cargo run\` could not determine which binary to run. Use the \`--bin\` option to specify a binary, or the \`default-run\` manifest key.
 available binaries: bifurcation-crawler, bio-chain, biomorphic-lexicon, biomorphic-strings, bridge-specter... [truncated]
-```"
+\`\`\`"
 *   💡 **The Fix:** "Fix the example command so it works out of the box from the workspace root (e.g. by using `-p process-canopy`) or document the required directory change."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/miller-lattice/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `miller-lattice` crate."
+**Action:** Try to follow the README using a fresh crate. Looked for an example to run.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Example and Installation Instructions:** The `README.md` lacks both an example code block and installation instructions.
+    - *Impact:* Complete confusion on how to use or install the crate.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions and a runnable example.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions and example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to use the `miller-lattice` crate. There is no example to run and no instructions on how to install it."
+*   🕵️ **The Reality:** "Turns out the README only describes the core concepts but completely omits how to actually use or install the crate."
+*   💡 **The Fix:** "Add a clear `Installation` section and a simple `Quick Start` example."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/platter/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `platter` crate."
+**Action:** Try to follow the README using a fresh crate. Looked for an example to run.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Example and Installation Instructions:** The `README.md` lacks both an example code block and installation instructions.
+    - *Impact:* Complete confusion on how to use or install the crate.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions and a runnable example.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions and example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to use the `platter` crate. There is no example to run and no instructions on how to install it."
+*   🕵️ **The Reality:** "Turns out the README only describes the core concepts but completely omits how to actually use or install the crate."
+*   💡 **The Fix:** "Add a clear `Installation` section and a simple `Quick Start` example."
