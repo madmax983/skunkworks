@@ -317,20 +317,29 @@ impl std::fmt::Display for Snapshot {
                 let props_str = if entity.props.is_empty() {
                     "".to_string()
                 } else {
-                    let mut p_strs = Vec::new();
+                    // ⚡ Bolt Optimization: Avoid intermediate vector allocations
+                    // and multiple heap allocations from `format!()` strings.
+                    // Allocate a single String buffer and write directly to it.
+                    use std::fmt::Write;
+                    let mut props_str = String::with_capacity(entity.props.len() * 16);
+                    let mut is_first = true;
                     for (k, v) in &entity.props {
+                        if !is_first {
+                            props_str.push_str(", ");
+                        }
                         let v_str = match v {
                             PropValue::Bool(true) => "True",
                             PropValue::Bool(false) => "False",
                             _ => "",
                         };
                         if !v_str.is_empty() {
-                            p_strs.push(format!("{}: {}", k, v_str));
+                            let _ = write!(&mut props_str, "{}: {}", k, v_str);
                         } else {
-                            p_strs.push(format!("{}: {}", k, v));
+                            let _ = write!(&mut props_str, "{}: {}", k, v);
                         }
+                        is_first = false;
                     }
-                    p_strs.join(", ")
+                    props_str
                 };
 
                 entities_table.add_row(vec![
