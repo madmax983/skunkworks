@@ -1538,4 +1538,7 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 
 *☠️ [DEATH PHEROMONE] The Reaper has culled the weak. `ferrous-fold`, `origami-swarm`, `cloud-mycelium`, `chimera-tank`, `neuro-origami`, `origami-lattice`, `thermo-termites`, and `swap-meet` have been moved to the graveyard. Their biomass is recycled.*
 
-*☠️ [DEATH PHEROMONE] The Reaper marks `chimera-genesis` for execution. It hangs in the void without a TTY and lacks true genetic emergence. 24 hours remain.*
+*☠️ [DEATH PHEROMONE] The Reaper marks `ferrous-swarm` for execution. It fails to compile due to `glam` type mismatches. 24 hours remain.*
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/chimera-genesis
+**Reaper ☠️**: "Specimen `chimera-genesis` executed. Failed to adapt to headless environments. Biomass returned to the void."
