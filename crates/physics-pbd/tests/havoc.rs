@@ -50,12 +50,9 @@ fn havoc_physics_oob_panic() {
         .status();
 
     if let Ok(status) = status {
-        // Havoc wants to *FAIL* the test suite! So we want to ASSERT that it failed.
-        // But since Havoc found a panic, Havoc is happy. However, to show the wreckage to Sentry,
-        // we must FAIL the CI. So we panic if the inner test panicked.
         assert!(
             status.success(),
-            "👺 Havoc: WRECKAGE! System failed to prevent Out of Bounds indexing in add_distance_constraint! The chaos hunt succeeded, now Sentry must fix it."
+            "👺 Havoc: WRECKAGE! System failed to prevent Out of Bounds indexing in add_distance_constraint!"
         );
     }
 }
@@ -71,10 +68,10 @@ fn havoc_physics_oob_panic_inner() {
         let _ = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
 
         // Boom. index out of bounds. The len is 2, we ask for 100.
-        // It's going to access self.particles[100] and panic!
+        // It's going to access self.particles[100] and panic if bounds are not checked.
         let _ = system.add_distance_constraint(100, 200, 1.0);
 
-        // Return 0 if successful (which means we failed to panic, which means Havoc failed)
+        // Return 0 if successful
         std::process::exit(0);
     }
 }
