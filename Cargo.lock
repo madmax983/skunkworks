@@ -9408,6 +9408,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "quipu-gray"
+version = "0.1.0"
+dependencies = [
+ "crossterm 0.28.1",
+ "gray-scott",
+ "quipu",
+ "ratatui 0.30.0",
+]
+
+[[package]]
 name = "quipu-lattice"
 version = "0.1.0"
 dependencies = [
