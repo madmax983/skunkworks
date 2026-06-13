@@ -68,196 +68,9 @@
 
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out the README tells external users to use `ratatui =  | Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/locus/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually because it's not on crates.io and the README doesn't tell me.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/poincare-disk/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out the example creates the variable but does not consume it in any meaningful way. | Turns out I need to figure out the path to the internal crate manually.
-
-### [Concentration Level: CRITICAL MASS] - Location: chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out the codebase is full of hardcoded references to `nova` features that aren't properly `#cfg` gated. The feature flags are broken. | Turns out the library usage guide omits the `miller-lattice` dependency which is strictly required by the `chimera-lang` crate if not built inside the workspace root. | Turns out I needed to enable feature `nova`.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/hyper-system/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out the architectural changes locked the `math` module inside the crate, making the documentation completely incorrect and the example unrunnable. | Turns out the examples in the README try to access modules (`math` and `monitor`) that are marked as `pub(crate)`. They are re-exported at the root level.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/quipu/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out the example code is only in the README and wasn't actually saved as a `.rs` file in the `examples/` directory. | Turns out I need to figure out the path to the internal crate manually, and `Knot` is not needed in the example code.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/flocking/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the paths to the internal crates manually because they are not on crates.io.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/gray-scott/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/git-associates/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually and add `anyhow` as a dependency.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/physics-pbd/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the example tries to use `macroquad::prelude::Vec3` instead of `glam::Vec3`, which causes a version conflict with the internal `physics-pbd` crate. `Constraint` is also imported but never used.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/resonance-audio/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out I need to figure out the paths to the internal crates manually and suppress the unused variable warning. | Turns out the example creates a tuple `(snap_tx, snap_rx)` but never reads from `snap_rx`.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/market-sim/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/neuro-sim/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/origami/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually.
-
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/flocking/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/gray-scott/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/git-associates/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo 🗣️ struggled with missing internal crate paths and unlisted anyhow dependency in the README example. Setup friction detected.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo 🗣️ stumbled over mismatched Vec3 versions (macroquad vs glam) and unused imports in the README example. Compilation friction detected.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/resonance-audio/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo 🗣️ tripped over missing internal crate paths and an unused variable warning in the README example. Setup friction detected.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/market-sim/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/neuro-sim/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/origami/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
-
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Friction detected.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/locus/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually because it's not on crates.io and the README doesn't tell me.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/poincare-disk/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually.
-
-### [Concentration Level: CRITICAL MASS] - Location: `chimera-lang` Compilation
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the codebase is full of hardcoded references to `nova` features that aren't properly `#cfg` gated. The feature flags are broken.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/hyper-system/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the architectural changes locked the `math` module inside the crate, making the documentation completely incorrect and the example unrunnable.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/quipu/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the example code is only in the README and wasn't actually saved as a `.rs` file in the `examples/` directory.
-
-### [Concentration Level: CRITICAL MASS] - Location: `chimera-lang` Getting Started (Story Demo)
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I needed to enable feature `nova`.
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the README tells external users to use `ratatui = "0.30"`, but the internal `tui-shared` crate relies on workspace dependencies that are pinned to older versions, causing an unresolvable conflict for new users.
-
-### [Concentration Level: CRITICAL MASS] - Location: `chimera-lang` Library Usage (story_demo)
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the library usage guide omits the `miller-lattice` dependency which is strictly required by the `chimera-lang` crate if not built inside the workspace root.
-
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-tank
 - **Scent Origin:** The Reaper ☠️
 - **Status:** **Death Pheromone.** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The organism violates encapsulation boundaries by attempting to access the private `resonance_audio::audio` module. The void approaches. Grace period: 24h.
-
-### [Concentration Level: HIGH] - Location: crates/tui-shared/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup.
-
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** The file `experiments/chimera-lang/examples/genesis.chs` does not exist in the codebase at all.
-
-### [Concentration Level: LOW] - Location: crates/locus/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually because it's not on crates.io and the README doesn't tell me.
-
-### [Concentration Level: LOW] - Location: crates/poincare-disk/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I need to figure out the path to the internal crate manually.
-
-### [Concentration Level: HIGH] - Location: chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the codebase is full of hardcoded references to `nova` features that aren't properly `#cfg` gated. The feature flags are broken.
-
-### [Concentration Level: HIGH] - Location: crates/hyper-system/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the architectural changes locked the `math` module inside the crate, making the documentation completely incorrect and the example unrunnable.
-
-### [Concentration Level: HIGH] - Location: crates/quipu/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the example code is only in the README and wasn't actually saved as a `.rs` file in the `examples/` directory.
-
-### [Concentration Level: HIGH] - Location: chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out I needed to enable feature `nova`.
-
-### [Concentration Level: LOW] - Location: crates/tui-shared/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the README tells external users to use `ratatui = "0.30"`, but the internal `tui-shared` crate relies on workspace dependencies that are pinned to older versions, causing an unresolvable conflict for new users.
-
-### [Concentration Level: CRITICAL MASS] - Location: README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** The root Quick Start command is broken and lacks details on the `nova` feature requirement.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Getting Started example is broken (`genesis.chs` is missing), the dependency requirements are overwhelming for new users, and `mad_scientist.prl` crashes visually.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/locus/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** The quickstart lacks crucial installation instructions and `Cargo.toml` snippets for external use.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/poincare-disk/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** The quickstart lacks crucial installation instructions and `Cargo.toml` snippets for external use.
-
-### [Concentration Level: CRITICAL MASS] - Location: chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** Massive compilation failures occur when running `--no-default-features` due to incorrectly gated `nova` references.
-
 
 ### [Concentration Level: CRITICAL MASS] - Location: crates/locus
 - **Scent Origin:** Havoc 👹
@@ -306,10 +119,6 @@
 
 - **Phenotype:** Topological Market Morphogenesis. Bids and asks travel along a wrapped non-Euclidean boundary, where extreme price movements cause cyclic inflation through the topological void.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** Structural collapse and vague errors detected. The dependency tree is deeply entangled with workspace roots (`workspace = true`), causing fatal inheritance errors for path imports. The CLI outputs raw OS errors, hiding the missing file context, and feature flags like `nova` are improperly gated causing compilation failure.
-
 ### [Concentration Level: RECOMBINATION] - Location: experiments/locus-resonance
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** Topological Acoustic Morphogenesis successfully wrapped acoustic simulation FDTD into `locus` boundaries (Torus, Klein, etc).
@@ -323,17 +132,6 @@
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/flock-platter
 **Reaper ☠️**: "Fascinating. Specimen `flock-platter` exhibits terminal characteristics indicating Skeletal Implementation. It is merely an abstract struct in a library file without an executable to prove its visual 'Pheromone Swarming' claims. Execution scheduled in 24h."
-
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** The swarm cannot build or execute `chimera-lang` cleanly. Total compilation failure occurs when `nova` default features are disabled due to broken feature gates, and the documented `genesis.chs` example is entirely missing from the codebase. Immediate structural repair required.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/locus, crates/poincare-disk
-- **Scent Origin:** Echo 🗣️
-- **Status:** The core logic is sound, but the internal workspace crates `locus` and `poincare-disk` are missing installation instructions in their READMEs. Scent left for maintenance to add proper `Cargo.toml` path dependencies.
-
-- `[EVOLVING]` 🧬 **Splice Surgeon**: Synthesized `neuro-platter`. Embedded a Spiking Neural Network into a continuous 2D scalar field, creating a glowing, fading brain scan heatmap.
 
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-lattice
@@ -734,6 +532,75 @@
 ### [CRITICAL MASS] - Location: experiments/clockwork-concerto
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure and Swarm Neglect.
+
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup. | Turns out the README tells external users to use `ratatui = "0.30"`, but the internal `tui-shared` crate relies on workspace dependencies that are pinned to older versions. | Turns out the README tells external users to use `ratatui = | Turns out the README tells external users to use `ratatui = "0.30"`, but the internal `tui-shared` crate relies on workspace dependencies that are pinned to older versions, causing an unresolvable conflict for new users.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/locus/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually because it's not on crates.io and the README doesn't tell me. | The quickstart lacks crucial installation instructions and `Cargo.toml` snippets for external use.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually. | Turns out the example creates the variable but does not consume it in any meaningful way. | The quickstart lacks crucial installation instructions and `Cargo.toml` snippets for external use.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out the codebase is full of hardcoded references to `nova` features that aren't properly `#cfg` gated. The feature flags are broken. | Turns out I needed to enable feature `nova`. | Turns out the library usage guide omits the `miller-lattice` dependency which is strictly required by the `chimera-lang` crate if not built inside the workspace root. | Friction detected. | The file `experiments/chimera-lang/examples/genesis.chs` does not exist in the codebase at all. | Getting Started example is broken (`genesis.chs` is missing), the dependency requirements are overwhelming for new users, and `mad_scientist.prl` crashes visually. | Massive compilation failures occur when running `--no-default-features` due to incorrectly gated `nova` references. | Structural collapse and vague errors detected. The dependency tree is deeply entangled with workspace roots (`workspace = true`), causing fatal inheritance errors for path imports. The CLI outputs raw OS errors, hiding the missing file context, and feature flags like `nova` are improperly gated causing compilation failure. | The swarm cannot build or execute `chimera-lang` cleanly. Total compilation failure occurs when `nova` default features are disabled due to broken feature gates, and the documented `genesis.chs` example is entirely missing from the codebase. Immediate structural repair required.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/hyper-system/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out the architectural changes locked the `math` module inside the crate, making the documentation completely incorrect and the example unrunnable. | Turns out the examples in the README try to access modules (`math` and `monitor`) that are marked as `pub(crate)`. They are re-exported at the root level.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/quipu/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out the example code is only in the README and wasn't actually saved as a `.rs` file in the `examples/` directory. | Turns out I need to figure out the path to the internal crate manually, and `Knot` is not needed in the example code.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/flocking/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the paths to the internal crates manually because they are not on crates.io. | Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/gray-scott/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually. | Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/git-associates/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually and add `anyhow` as a dependency. | Echo 🗣️ struggled with missing internal crate paths and unlisted anyhow dependency in the README example. Setup friction detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/physics-pbd/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out the example tries to use `macroquad::prelude::Vec3` instead of `glam::Vec3`, which causes a version conflict with the internal `physics-pbd` crate. `Constraint` is also imported but never used. | Echo 🗣️ stumbled over mismatched Vec3 versions (macroquad vs glam) and unused imports in the README example. Compilation friction detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/resonance-audio/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the paths to the internal crates manually and suppress the unused variable warning. | Turns out the example creates a tuple `(snap_tx, snap_rx)` but never reads from `snap_rx`. | Echo 🗣️ tripped over missing internal crate paths and an unused variable warning in the README example. Setup friction detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/market-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually. | Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/neuro-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually. | Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/origami/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually. | Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/process-canopy/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The example command resulted in an error because it could not determine which binary to run in the workspace.
+
+### [Concentration Level: STABLE TRAIL] - Location: README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The root Quick Start command is broken and lacks details on the `nova` feature requirement.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus, crates/poincare-disk
+- **Scent Origin:** Echo 🗣️
+- **Status:** The core logic is sound, but the internal workspace crates `locus` and `poincare-disk` are missing installation instructions in their READMEs. Scent left for maintenance to add proper `Cargo.toml` path dependencies.
 
 
 ## 🍂 History/Decay
