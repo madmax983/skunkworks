@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **origami-flock**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a runnable executable to demonstrate emergence. Grace period: 24h.
+- **quipu-tissue**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to a `glam` dependency mismatch between `macroquad` and `physics-pbd` (`expected glam::f32::vec3::Vec3, found Vec3`). Grace period: 24h.
 
 ## ☠️ Executed
+- **origami-flock**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a runnable executable to demonstrate emergence. Grace period expired. Moved to graveyard.
 - **miller-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to improve during grace period. Biomass returned to the void.
 - **chimera-genesis**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Failed to adapt to headless environments. Biomass returned to the void.
 - **mandala-cipher**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`) and Terminal Genericism. Resolved issues and demonstrated vigor.

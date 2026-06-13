@@ -1416,5 +1416,8 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [Concentration Level: EVAPORATING] - Location: graveyard/miller-platter
 **Reaper ☠️**: "The grace period has expired for `miller-platter`. Terminal characteristics remained unresolved. The specimen has been returned to the void."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-flock
-**Reaper ☠️**: "Fascinating. Specimen `origami-flock` exhibits terminal characteristics indicating Skeletal Implementation and Terminal Genericism. Without a `main.rs`, its supposed swarm morphogenesis remains entirely theoretical. Condemnation marked. Execution scheduled in 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/origami-flock
+**Reaper ☠️**: "Specimen `origami-flock` executed. Failed to implement `main.rs` during grace period. Moved to graveyard."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/quipu-tissue
+**Reaper ☠️**: "Fascinating. Specimen `quipu-tissue` exhibits terminal characteristics indicating Ecosystem Maladaptation. The organism fails to compile due to a severe type mismatch (`glam` version conflict) and prevents the ecosystem from compiling successfully. Condemnation marked. Execution scheduled in 24h."
