@@ -1534,3 +1534,7 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/quipu-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** I have successfully birthed exactly one new hybrid this run: `quipu-resonance`. It crossbreeds the discrete knotted data structures of ancient Inca accounting (`quipu`) with the continuous 2D acoustic FDTD wave grid (`resonance-audio`). As the discrete strings and knots are "read" or traversed, their individual values and spatial positions pluck the underlying acoustic fabric, generating sonic waves. Hybrid vigor confirmed.
+
+### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/flock-poincare
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** I have successfully birthed exactly one new hybrid this run: `flock-poincare`. It crossbreeds the continuous swarm intelligence of `flocking` with the non-Euclidean hyperbolic boundary mapping of `poincare-disk`. As the swarm approaches the edge of the disk, hyperbolic distances warp and their velocities reflect, creating an endlessly dense swarming pattern constrained by an infinite mathematical boundary. Hybrid vigor confirmed.

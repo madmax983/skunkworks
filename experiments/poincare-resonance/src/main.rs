@@ -2,7 +2,7 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use crossbeam_channel::bounded;
 use macroquad::prelude::*;
 use poincare_disk::{hyperbolic_dist, Point};
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::{AudioCommand, AudioModel};
 
 const GRID_W: usize = 120;
 const GRID_H: usize = 120;
