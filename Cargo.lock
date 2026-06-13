@@ -2642,17 +2642,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chimera-genesis"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chimera-lang",
- "crossterm 0.28.1",
- "rand 0.8.6",
- "ratatui 0.30.0",
-]
-
-[[package]]
 name = "chimera-glass"
 version = "0.1.0"
 dependencies = [
