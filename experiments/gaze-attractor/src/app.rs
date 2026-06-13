@@ -2,7 +2,6 @@ use crate::eye::Eye;
 use crate::physics::PendulumSystem;
 use glam::Vec2;
 use rand::Rng;
-use std::io::Read;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum Mode {

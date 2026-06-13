@@ -1,8 +1,8 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use git_cantata::audio::AudioEngine;
-use git_cantata::git::{get_repo_history, Commit};
-use git_cantata::vis::VisualState;
+use git_cantata::AudioEngine;
+use git_cantata::VisualState;
+use git_cantata::{get_repo_history, Commit};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
