@@ -6,7 +6,10 @@ use physics_pbd::{Constraint, PbdSystem};
 use ratatui::{
     layout::{Constraint as LayoutConstraint, Direction, Layout},
     style::{Color, Style},
-    widgets::{canvas::{Canvas, Line}, Block, Borders, Paragraph},
+    widgets::{
+        canvas::{Canvas, Line},
+        Block, Borders, Paragraph,
+    },
 };
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
@@ -108,7 +111,9 @@ impl NeuroPhysicsApp {
             let spiking = self.network.is_spiking(motor_idx);
             let constraint_idx = self.muscle_constraints[i];
 
-            if let Constraint::Actuator { factor, .. } = &mut self.physics.constraints[constraint_idx] {
+            if let Constraint::Actuator { factor, .. } =
+                &mut self.physics.constraints[constraint_idx]
+            {
                 if spiking {
                     // Contract muscle
                     *factor = (*factor - 0.2).max(0.0);
@@ -163,7 +168,11 @@ impl NeuroPhysicsApp {
                             let pos2 = self.physics.particles[*p2].pos;
 
                             // Color red when contracted, white when relaxed
-                            let color = if *factor < 0.5 { Color::Red } else { Color::White };
+                            let color = if *factor < 0.5 {
+                                Color::Red
+                            } else {
+                                Color::White
+                            };
 
                             ctx.draw(&Line {
                                 x1: pos1.x as f64,

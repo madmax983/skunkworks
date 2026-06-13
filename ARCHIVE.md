@@ -1,17 +1,22 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-fold**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` dependency mismatches and ambiguous glob imports. Grace period: 24h.
-- **origami-swarm**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` type mismatches (`expected glam::f32::vec3::Vec3, found macroquad::math::Vec3`) and panics headlessly. Grace period: 24h.
-- **cloud-mycelium**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec2::Vec2, found macroquad::math::Vec2`). Grace period: 24h.
-- **chimera-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to a private module issue (`error[E0603]`) accessing `resonance_audio::audio`. Grace period: 24h.
-- **mandala-cipher**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`) and Terminal Genericism. Grace period: 24h.
-- **neuro-origami**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec3::Vec3, found Vec3`). Grace period: 24h.
-- **origami-lattice**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `Vec3` mismatch and panics headlessly. Grace period: 24h.
-- **thermo-termites**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Grace period: 24h.
-- **git-cantata**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to private module exposure (`error[E0603]`). Grace period: 24h.
-- **swap-meet**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Grace period: 24h.
+- **chimera-genesis**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Fails to run headlessly or show deep emergence. Grace period: 24h.
 
-- **hyperbolic-ants**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Fails to run due to immediate `RefCell already borrowed` panics. Grace period: 24h.
 ## ☠️ Executed
+- **mandala-cipher**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`) and Terminal Genericism. Resolved issues and demonstrated vigor.
+
+- **hyperbolic-ants**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Fails to run due to immediate `RefCell already borrowed` panics. Resolved issues and demonstrated vigor.
+
+- **git-cantata**: Specimen pardoned. Diagnosis: Terminal Compilation Failure. Fails to compile due to private module exposure (`error[E0603]`). Resolved issues and demonstrated vigor.
+
+- **swap-meet**: Specimen executed. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Moved to graveyard.
+
+- **thermo-termites**: Specimen executed. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Moved to graveyard.
+- **origami-lattice**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `Vec3` mismatch and panics headlessly. Moved to graveyard.
+- **neuro-origami**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec3::Vec3, found Vec3`). Moved to graveyard.
+- **chimera-tank**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to a private module issue (`error[E0603]`) accessing `resonance_audio::audio`. Moved to graveyard.
+- **cloud-mycelium**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec2::Vec2, found macroquad::math::Vec2`). Moved to graveyard.
+- **origami-swarm**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` type mismatches (`expected glam::f32::vec3::Vec3, found macroquad::math::Vec3`) and panics headlessly. Moved to graveyard.
+- **ferrous-fold**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` dependency mismatches and ambiguous glob imports. Moved to graveyard.
 - **hive-synth**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Failed to implement headless bypass and resolve generic implementation during grace period. Biomass returned to the void.
 - **hyper-neuron**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Failed to implement headless bypass and resolve dead code warnings during grace period. Biomass returned to the void.
 - **biomimetic-synth**: Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve missing `--headless` bypass for macroquad during grace period. Biomass returned to the void.

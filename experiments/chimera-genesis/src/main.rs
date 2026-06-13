@@ -224,6 +224,12 @@ fn create_conway_dna() -> Dna {
 }
 
 fn main() -> Result<()> {
+    let args: Vec<String> = std::env::args().collect();
+    if args.contains(&"--headless".to_string()) {
+        println!("Running in headless mode. Exiting.");
+        return Ok(());
+    }
+
     // Setup Terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();

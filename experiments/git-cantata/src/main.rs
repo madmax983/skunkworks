@@ -88,7 +88,15 @@ impl App {
 
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
-    let path = if args.len() > 1 { &args[1] } else { "." };
+    if args.contains(&"--headless".to_string()) {
+        println!("Running in headless mode. Exiting immediately.");
+        return Ok(());
+    }
+    let path = if args.len() > 1 && args[1] != "--headless" {
+        &args[1]
+    } else {
+        "."
+    };
 
     let mut tui = Tui::init()?;
     let mut app = App::new(path)?;
