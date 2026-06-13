@@ -4077,6 +4077,252 @@ impl MemePool {
 /// ```text
 /// // Example usage of exec_memetics_op
 /// ```
+#[allow(clippy::too_many_arguments)]
+fn handle_outbreak_spread(
+    vm: &mut ChimeraVM,
+    virus: &Virus,
+    state: &ViralState,
+    y: usize,
+    x: usize,
+    next_viral_grid: &mut [Vec<Option<ViralState>>],
+    spread_count: &mut usize,
+    mutation_count: &mut usize,
+) {
+    if state.infection_level <= 20 {
+        return;
+    }
+    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    for (dy, dx) in neighbors {
+        let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) else {
+            continue;
+        };
+
+        let content = match &vm.grid[ny][nx] {
+            Value::Str(s) => s.clone(),
+            Value::Int(n) => n.to_string(),
+            _ => String::new(),
+        };
+
+        if content.contains(&virus.pattern) && next_viral_grid[ny][nx].is_none() {
+            next_viral_grid[ny][nx] = Some(ViralState {
+                infection_level: 50,
+                virus_id: state.virus_id,
+            });
+            *spread_count += 1;
+        }
+    }
+
+    let Some(payload_idx) = virus.payload else {
+        return;
+    };
+
+    let target_org_indices: Vec<usize> = vm
+        .organelles
+        .iter()
+        .enumerate()
+        .filter(|(_, o)| o.context_loc == (y, x))
+        .map(|(i, _)| i)
+        .collect();
+
+    if target_org_indices.is_empty() || payload_idx >= vm.dna.helix.strands.len() {
+        return;
+    }
+
+    let payload_genes = vm.dna.helix.strands[payload_idx].genes.clone();
+
+    for idx in target_org_indices {
+        let org = &vm.organelles[idx];
+        let g_id = org.genome_id as usize;
+        if g_id >= vm.dna.helix.strands.len() {
+            continue;
+        }
+        let current_len = vm.dna.helix.strands[g_id].genes.len();
+        if current_len + payload_genes.len() <= crate::vm::MAX_GENES_PER_STRAND {
+            vm.dna.helix.strands[g_id]
+                .genes
+                .extend(payload_genes.clone());
+            *mutation_count += 1;
+            vm.output.push(format!(
+                "TRANSDUCTION: Virus {} injected Strand {} into Organelle {} (Genome {})",
+                state.virus_id, payload_idx, org.name, g_id
+            ));
+        } else {
+            vm.output.push(format!(
+                "TRANSDUCTION: Virus {} failed (Gene Limit Exceeded) for Genome {}",
+                state.virus_id, g_id
+            ));
+        }
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn handle_outbreak_mutate(
+    vm: &mut ChimeraVM,
+    virus: &Virus,
+    state: &ViralState,
+    y: usize,
+    x: usize,
+    mutation_count: &mut usize,
+) {
+    if state.infection_level <= 80 {
+        return;
+    }
+    let mut rng = rand::thread_rng();
+    use rand::Rng;
+    if rng.gen_range(0..100) >= virus.mutation_rate {
+        return;
+    }
+
+    match virus.mode {
+        VirusMode::RewriteGrid => {
+            let Some(grammar) = &virus.grammar else {
+                return;
+            };
+            let content = match &vm.grid[y][x] {
+                Value::Str(s) => s.clone(),
+                _ => String::new(),
+            };
+            if content.is_empty() {
+                return;
+            }
+            if let Ok((cst, _)) =
+                crate::vm::babel::run_parser(grammar, &content, &vm.prologue_state.logos_engine, 0)
+            {
+                let mutated_cst =
+                    crate::vm::babel::mutate_cst(&cst, virus.mutation_rate as f64 / 100.0);
+                let new_content = crate::vm::babel::flatten_cst(&mutated_cst);
+                vm.grid[y][x] = Value::Str(new_content);
+                *mutation_count += 1;
+            }
+        }
+        VirusMode::RewriteDNA => {
+            let Some(grammar) = &virus.grammar else {
+                return;
+            };
+            let target_org_indices: Vec<usize> = vm
+                .organelles
+                .iter()
+                .enumerate()
+                .filter(|(_, o)| o.context_loc == (y, x))
+                .map(|(i, _)| i)
+                .collect();
+
+            for idx in target_org_indices {
+                let strand_idx = vm.organelles[idx].ip.0;
+                if strand_idx >= vm.dna.helix.strands.len() {
+                    continue;
+                }
+                let source =
+                    crate::vm::nova_genetics::strand_to_string(&vm.dna.helix.strands[strand_idx]);
+                if let Ok((cst, _)) = crate::vm::babel::run_parser(
+                    grammar,
+                    &source,
+                    &vm.prologue_state.logos_engine,
+                    0,
+                ) {
+                    let mutated_cst =
+                        crate::vm::babel::mutate_cst(&cst, virus.mutation_rate as f64 / 100.0);
+                    if let Some(new_idx) =
+                        crate::vm::babel::compile_cst(vm, mutated_cst, strand_idx)
+                    {
+                        if idx < vm.organelles.len() {
+                            vm.organelles[idx].ip = (new_idx, 0);
+                            vm.output.push(format!(
+                                "REWRITE: Virus {} rewrote Organelle {} DNA to Strand {}",
+                                state.virus_id, vm.organelles[idx].name, new_idx
+                            ));
+                            *mutation_count += 1;
+                        }
+                    } else {
+                        vm.output
+                            .push("REWRITE: Compilation failed (Recursion limit)".to_string());
+                    }
+                }
+            }
+        }
+        VirusMode::Overwrite => {
+            if let Some(grammar) = &virus.grammar {
+                let new_content = crate::vm::babel::generate_string(grammar);
+                vm.grid[y][x] = Value::Str(new_content);
+                *mutation_count += 1;
+            } else if let Value::Str(s) = &mut vm.grid[y][x] {
+                if !s.is_empty() {
+                    let _idx = rng.gen_range(0..s.len());
+                    *s = format!("GLITCH_{}", rng.gen_range(0..999));
+                    *mutation_count += 1;
+                }
+            }
+        }
+    }
+}
+
+fn handle_outbreak_quorum(
+    vm: &mut ChimeraVM,
+    virus: &Virus,
+    state: &ViralState,
+    y: usize,
+    x: usize,
+) {
+    if virus.quorum_threshold == 0 {
+        return;
+    }
+    let Some(action_idx) = virus.quorum_action else {
+        return;
+    };
+
+    let neighbors = [
+        (-1, 0),
+        (1, 0),
+        (0, -1),
+        (0, 1),
+        (-1, -1),
+        (-1, 1),
+        (1, -1),
+        (1, 1),
+    ];
+    let mut count = 0;
+    for (dy, dx) in neighbors {
+        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+            if let Some(n_state) = &vm.viral_grid[ny][nx] {
+                if n_state.virus_id == state.virus_id {
+                    count += 1;
+                }
+            }
+        }
+    }
+
+    if count >= virus.quorum_threshold
+        && vm.organelles.len() < crate::vm::MAX_ORGANELLES
+        && vm.organelles.iter().all(|o| o.context_loc != (y, x))
+    {
+        vm.organelle_id_counter += 1;
+        let organelle = crate::vm::nova::Organelle {
+            stack: Vec::new(),
+            ip: (action_idx, 0),
+            context_loc: (y, x),
+            call_stack: Vec::new(),
+            recursion_depth: 0,
+            halted: false,
+            kind: crate::vm::nova::OrganelleType::Worker,
+            direction: (0, 0),
+            ttl: Some(1),
+            name: format!("Virus {} Agent", state.virus_id),
+            traits: vec!["Viral".to_string()],
+            id: vm.organelle_id_counter,
+            tissue_id: None,
+            genome_id: 0,
+            energy: 20,
+            experience: 0,
+            stage: 0,
+        };
+        vm.organelles.push(organelle);
+        vm.output.push(format!(
+            "QUORUM: Virus {} triggered action {} at {},{}",
+            state.virus_id, action_idx, x, y
+        ));
+    }
+}
+
 pub fn exec_memetics_op(
     vm: &mut ChimeraVM,
     op: OpCode,
@@ -4444,243 +4690,20 @@ pub fn exec_memetics_op(
                         }
                         let virus = vm.virus_library[state.virus_id].clone();
 
-                        // 1. Spread to neighbors
-                        // Only spread if infection level is high enough (>20)
-                        if state.infection_level > 20 {
-                            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                            for (dy, dx) in neighbors {
-                                if let Some((ny, nx)) =
-                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                                {
-                                    // Check if neighbor matches pattern
-                                    let content = match &vm.grid[ny][nx] {
-                                        Value::Str(s) => s.clone(),
-                                        Value::Int(n) => n.to_string(),
-                                        _ => String::new(),
-                                    };
+                        handle_outbreak_spread(
+                            vm,
+                            &virus,
+                            &state,
+                            y,
+                            x,
+                            &mut next_viral_grid,
+                            &mut spread_count,
+                            &mut mutation_count,
+                        );
 
-                                    if content.contains(&virus.pattern) {
-                                        // Spread!
-                                        if next_viral_grid[ny][nx].is_none() {
-                                            next_viral_grid[ny][nx] = Some(ViralState {
-                                                infection_level: 50, // Initial load
-                                                virus_id: state.virus_id,
-                                            });
-                                            spread_count += 1;
-                                        }
-                                    }
-                                }
-                            }
+                        handle_outbreak_mutate(vm, &virus, &state, y, x, &mut mutation_count);
 
-                            // Transduction (Payload Injection)
-                            if let Some(payload_idx) = virus.payload {
-                                // Check if an organelle is here
-                                let target_org_indices: Vec<usize> = vm
-                                    .organelles
-                                    .iter()
-                                    .enumerate()
-                                    .filter(|(_, o)| o.context_loc == (y, x))
-                                    .map(|(i, _)| i)
-                                    .collect();
-
-                                if !target_org_indices.is_empty()
-                                    && payload_idx < vm.dna.helix.strands.len()
-                                {
-                                    let payload_genes =
-                                        vm.dna.helix.strands[payload_idx].genes.clone();
-
-                                    for idx in target_org_indices {
-                                        let org = &vm.organelles[idx];
-                                        // Inject into the genome referenced by the organelle
-                                        // Note: multiple organelles might share a genome. This affects all of them.
-                                        let g_id = org.genome_id as usize;
-                                        if g_id < vm.dna.helix.strands.len() {
-                                            let current_len =
-                                                vm.dna.helix.strands[g_id].genes.len();
-                                            if current_len + payload_genes.len()
-                                                <= crate::vm::MAX_GENES_PER_STRAND
-                                            {
-                                                vm.dna.helix.strands[g_id]
-                                                    .genes
-                                                    .extend(payload_genes.clone());
-                                                mutation_count += 1;
-                                                vm.output.push(format!("TRANSDUCTION: Virus {} injected Strand {} into Organelle {} (Genome {})", state.virus_id, payload_idx, org.name, g_id));
-                                            } else {
-                                                vm.output.push(format!("TRANSDUCTION: Virus {} failed (Gene Limit Exceeded) for Genome {}", state.virus_id, g_id));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // 2. Mutate host cell
-                        // Only if infection level is high (>80)
-                        if state.infection_level > 80 {
-                            let mut rng = rand::thread_rng();
-                            if rng.gen_range(0..100) < virus.mutation_rate {
-                                match virus.mode {
-                                    VirusMode::RewriteGrid => {
-                                        if let Some(grammar) = &virus.grammar {
-                                            let content = match &vm.grid[y][x] {
-                                                Value::Str(s) => s.clone(),
-                                                _ => String::new(),
-                                            };
-                                            if !content.is_empty() {
-                                                if let Ok((cst, _)) = crate::vm::babel::run_parser(
-                                                    grammar,
-                                                    &content,
-                                                    &vm.prologue_state.logos_engine,
-                                                    0,
-                                                ) {
-                                                    let mutated_cst = crate::vm::babel::mutate_cst(
-                                                        &cst,
-                                                        virus.mutation_rate as f64 / 100.0,
-                                                    );
-                                                    let new_content =
-                                                        crate::vm::babel::flatten_cst(&mutated_cst);
-                                                    vm.grid[y][x] = Value::Str(new_content);
-                                                    mutation_count += 1;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    VirusMode::RewriteDNA => {
-                                        if let Some(grammar) = &virus.grammar {
-                                            // Find organelle at this location
-                                            let target_org_indices: Vec<usize> = vm
-                                                .organelles
-                                                .iter()
-                                                .enumerate()
-                                                .filter(|(_, o)| o.context_loc == (y, x))
-                                                .map(|(i, _)| i)
-                                                .collect();
-
-                                            for idx in target_org_indices {
-                                                let strand_idx = vm.organelles[idx].ip.0;
-                                                if strand_idx < vm.dna.helix.strands.len() {
-                                                    let source =
-                                                        crate::vm::nova_genetics::strand_to_string(
-                                                            &vm.dna.helix.strands[strand_idx],
-                                                        );
-                                                    if let Ok((cst, _)) =
-                                                        crate::vm::babel::run_parser(
-                                                            grammar,
-                                                            &source,
-                                                            &vm.prologue_state.logos_engine,
-                                                            0,
-                                                        )
-                                                    {
-                                                        let mutated_cst =
-                                                            crate::vm::babel::mutate_cst(
-                                                                &cst,
-                                                                virus.mutation_rate as f64 / 100.0,
-                                                            );
-                                                        // This pushes a new strand
-                                                        if let Some(new_idx) =
-                                                            crate::vm::babel::compile_cst(
-                                                                vm,
-                                                                mutated_cst,
-                                                                strand_idx,
-                                                            )
-                                                        {
-                                                            // Update Organelle
-                                                            if idx < vm.organelles.len() {
-                                                                vm.organelles[idx].ip =
-                                                                    (new_idx, 0);
-                                                                vm.output.push(format!("REWRITE: Virus {} rewrote Organelle {} DNA to Strand {}", state.virus_id, vm.organelles[idx].name, new_idx));
-                                                                mutation_count += 1;
-                                                            }
-                                                        } else {
-                                                            vm.output.push("REWRITE: Compilation failed (Recursion limit)".to_string());
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    VirusMode::Overwrite => {
-                                        // Grammar Rewrite or Scramble
-                                        if let Some(grammar) = &virus.grammar {
-                                            let new_content =
-                                                crate::vm::babel::generate_string(grammar);
-                                            vm.grid[y][x] = Value::Str(new_content);
-                                            mutation_count += 1;
-                                        } else if let Value::Str(s) = &mut vm.grid[y][x] {
-                                            if !s.is_empty() {
-                                                // Simple mutation: bitflip a char
-                                                let _idx = rng.gen_range(0..s.len());
-                                                *s = format!("GLITCH_{}", rng.gen_range(0..999));
-                                                mutation_count += 1;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // Quorum Sensing
-                        if virus.quorum_threshold > 0 && virus.quorum_action.is_some() {
-                            let neighbors = [
-                                (-1, 0),
-                                (1, 0),
-                                (0, -1),
-                                (0, 1),
-                                (-1, -1),
-                                (-1, 1),
-                                (1, -1),
-                                (1, 1),
-                            ];
-                            let mut count = 0;
-                            for (dy, dx) in neighbors {
-                                if let Some((ny, nx)) =
-                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                                {
-                                    if let Some(n_state) = &vm.viral_grid[ny][nx] {
-                                        if n_state.virus_id == state.virus_id {
-                                            count += 1;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if count >= virus.quorum_threshold {
-                                if let Some(action_idx) = virus.quorum_action {
-                                    // Check if we should trigger (to avoid spamming, maybe check entropy or energy?)
-                                    // Spawn a temporary Worker organelle to run the payload
-                                    if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
-                                        // Don't spawn if already occupied by an organelle?
-                                        if vm.organelles.iter().all(|o| o.context_loc != (y, x)) {
-                                            vm.organelle_id_counter += 1;
-                                            let organelle = crate::vm::nova::Organelle {
-                                                stack: Vec::new(),
-                                                ip: (action_idx, 0),
-                                                context_loc: (y, x),
-                                                call_stack: Vec::new(),
-                                                recursion_depth: 0,
-                                                halted: false,
-                                                kind: crate::vm::nova::OrganelleType::Worker,
-                                                direction: (0, 0),
-                                                ttl: Some(1), // Ephemeral
-                                                name: format!("Virus {} Agent", state.virus_id),
-                                                traits: vec!["Viral".to_string()],
-                                                id: vm.organelle_id_counter,
-                                                tissue_id: None,
-                                                genome_id: 0,
-                                                energy: 20,
-                                                experience: 0,
-                                                stage: 0,
-                                            };
-                                            vm.organelles.push(organelle);
-                                            vm.output.push(format!(
-                                                "QUORUM: Virus {} triggered action {} at {},{}",
-                                                state.virus_id, action_idx, x, y
-                                            ));
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        handle_outbreak_quorum(vm, &virus, &state, y, x);
 
                         // 3. Decay/Growth
                         // If cell matches pattern, infection grows. Else decays.

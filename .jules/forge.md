@@ -95,3 +95,7 @@
 **[Replacing Manual Enum String Conversion]**
 **Learning:** Re-implementing string conversion via manual `match` blocks for enum variants is an anti-pattern. Implement `std::fmt::Display` for the enum to enable idiomatic `.to_string()` usage and integrate seamlessly with Rust's standard formatting ecosystem.
 **Action:** When finding a custom `to_string()` equivalent or manual `match` mapping for an enum, implement the `Display` trait to improve cohesion.
+
+**[Flattening VM Pyramids of Doom]**
+**Learning:** Massive VM dispatchers easily become "God Functions" with deeply nested Pyramids of Doom. For example, `OpCode::Outbreak` in `memetics.rs` had up to 68 levels of indentation.
+**Action:** Extract logical phases (like Spread, Mutate, Quorum) into standalone helper functions. Use guard clauses (early returns) within those helpers. Accept slices (`&mut [T]`) instead of references to vectors (`&mut Vec<T>`) to appease Clippy (`ptr_arg`) and improve readability.
