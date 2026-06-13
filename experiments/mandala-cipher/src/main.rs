@@ -1,8 +1,23 @@
 use macroquad::prelude::*;
 use mandala_cipher::{encode, Color as JewelColor, Mandala, MandalaConfig, Shape};
 
-#[macroquad::main("Mandala Cipher")]
-async fn main() {
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.contains(&"--headless".to_string()) {
+        println!("Running in headless mode, exiting immediately to avoid XOpenDisplay panic.");
+        return;
+    }
+    // Block on async main to run macroquad
+    macroquad::Window::from_config(
+        macroquad::window::Conf {
+            window_title: "Mandala Cipher".to_string(),
+            ..Default::default()
+        },
+        async_main(),
+    );
+}
+
+async fn async_main() {
     let mut payload = String::from("Genesis");
     let config = MandalaConfig {
         rings: 20,

@@ -2825,18 +2825,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chimera-tank"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chimera-lang",
- "cpal",
- "crossbeam-channel",
- "macroquad",
- "resonance-audio",
-]
-
-[[package]]
 name = "chimera-tardis"
 version = "0.1.0"
 dependencies = [
@@ -3014,15 +3002,6 @@ dependencies = [
  "bevy 0.14.2",
  "bevy_prototype_lyon",
  "bevy_rapier2d",
-]
-
-[[package]]
-name = "cloud-mycelium"
-version = "0.1.0"
-dependencies = [
- "glam 0.28.0",
- "macroquad",
- "rand 0.8.6",
 ]
 
 [[package]]
@@ -4182,18 +4161,6 @@ dependencies = [
  "rand 0.8.6",
  "ratatui 0.30.0",
  "tui-shared",
-]
-
-[[package]]
-name = "ferrous-fold"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "glam 0.28.0",
- "macroquad",
- "origami",
- "physics-pbd",
- "rand 0.8.6",
 ]
 
 [[package]]
@@ -7831,17 +7798,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "neuro-origami"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "neuro-sim",
- "origami",
- "physics-pbd",
- "rand 0.8.6",
-]
-
-[[package]]
 name = "neuro-physics"
 version = "0.1.0"
 dependencies = [
@@ -8572,16 +8528,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "origami-lattice"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "miller-lattice",
- "origami",
- "physics-pbd",
-]
-
-[[package]]
 name = "origami-lexicon"
 version = "0.1.0"
 dependencies = [
@@ -8636,17 +8582,6 @@ dependencies = [
  "ratatui 0.30.0",
  "resonance-audio",
  "tui-shared",
-]
-
-[[package]]
-name = "origami-swarm"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "neuro-sim",
- "physics-pbd",
- "rand 0.8.6",
- "rayon",
 ]
 
 [[package]]
@@ -10771,17 +10706,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "swap-meet"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "rand 0.8.6",
- "ratatui 0.30.0",
- "tui-shared",
-]
-
-[[package]]
 name = "symphonia"
 version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -11089,18 +11013,6 @@ dependencies = [
  "image 0.24.9",
  "macroquad",
  "market-sim",
- "rand 0.8.6",
- "rayon",
-]
-
-[[package]]
-name = "thermo-termites"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "image 0.24.9",
- "macroquad",
  "rand 0.8.6",
  "rayon",
 ]

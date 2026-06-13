@@ -21,7 +21,6 @@ members = [
     "experiments/neuro-fluid",
 
     "experiments/neuro-strings",
-    "experiments/neuro-origami",
         "experiments/poincare-resonance",
     "experiments/physics-origami",
 

@@ -1,8 +1,0 @@
-🧬 Splice: Cross neuro-sim × physics-pbd
-
-The Splice Surgeon 🧬 has successfully birthed `neuro-physics`.
-
-Phase 1 Evaluation: locus-flock and market-poincare exhibit incredible hybrid vigor and compiled successfully.
-Phase 2 Experiment: `neuro-physics` crossbreeds the Spiking Neural Networks of `neuro-sim` with the rigid-body constraints of `physics-pbd`. The electrical spikes from the neural network directly actuate physical muscle constraints (`Constraint::Actuator`), allowing a purely mathematical biological brain to physically contract and relax musculoskeletal structures.
-
-Note: Workspace tests fail due to a pre-existing workspace issue involving `glam` dependency mismatches with `bevy_reflect`. This submission contains only the isolated `neuro-physics` hybrid which compiles successfully and runs correctly.

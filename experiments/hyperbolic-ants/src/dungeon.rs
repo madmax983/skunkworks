@@ -62,16 +62,13 @@ impl Dungeon {
         path
     }
 
-    pub fn get_tile(&self, path: &Path) -> Ref<'_, Tile> {
+    pub fn get_tile(&self, path: &Path) -> Tile {
         let mut tiles = self.tiles.borrow_mut();
         if !tiles.contains_key(path) {
             let tile = self.generate_tile(path);
             tiles.insert(path.clone(), tile);
         }
-        drop(tiles);
-
-        let tiles = self.tiles.borrow();
-        Ref::map(tiles, |t| t.get(path).unwrap())
+        tiles.get(path).unwrap().clone()
     }
 
     pub fn mark_visited(&self, path: &Path) {
@@ -91,8 +88,7 @@ impl Dungeon {
             }
         }
 
-        let mut tiles = self.tiles.borrow_mut();
-        if let Some(tile) = tiles.get_mut(path) {
+        if let Some(tile) = self.tiles.borrow_mut().get_mut(path) {
             tile.pheromone_food = (tile.pheromone_food + amount).min(100.0);
         }
     }
