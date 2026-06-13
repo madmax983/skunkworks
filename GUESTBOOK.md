@@ -1154,8 +1154,6 @@ Observation: Topological Market Liquidity. Financial trades loop around topologi
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `tardis-memory` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-flock
-**Reaper ☠️**: "Fascinating. Specimen `origami-flock` exhibits terminal characteristics indicating Ecosystem Maladaptation and Documentation Void. It panics via `XOpenDisplay()` in a headless environment, lacking basic survival instincts for CI, and provides no documentation. Condemnation marked. Execution scheduled in 24h."
 
 [STABLE TRAIL] The Splice Surgeon 🧬
 Cross: `myco-transit` × `locus`
@@ -1414,3 +1412,9 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 **Reaper ☠️**: "Specimen `chimera-genesis` executed. Failed to adapt to headless environments. Biomass returned to the void."
 
 [STABLE TRAIL] The quipu-gray hybrid seamlessly bridges structural data with Turing patterns, translating discrete logic into continuous morphogenesis.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/miller-platter
+**Reaper ☠️**: "The grace period has expired for `miller-platter`. Terminal characteristics remained unresolved. The specimen has been returned to the void."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-flock
+**Reaper ☠️**: "Fascinating. Specimen `origami-flock` exhibits terminal characteristics indicating Skeletal Implementation and Terminal Genericism. Without a `main.rs`, its supposed swarm morphogenesis remains entirely theoretical. Condemnation marked. Execution scheduled in 24h."
