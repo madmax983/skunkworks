@@ -2898,3 +2898,69 @@ classDiagram
     LibRS ..> Tui : encapsulates
     Consumer --> LibRS : Uses
 ```
+
+## Git Cantata Facade (ADR 114)
+
+Enforcing the Facade pattern in `git-cantata` prevents the leakage of its internal structure, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace GitCantataFacade {
+        class LibRS {
+            <<Facade>>
+        }
+    }
+    namespace InternalModules {
+        class Audio {
+            <<pub(crate)>>
+        }
+        class Git {
+            <<pub(crate)>>
+        }
+        class Vis {
+            <<pub(crate)>>
+        }
+    }
+    class Consumer {
+        <<External>>
+    }
+
+    LibRS ..> Audio : encapsulates
+    LibRS ..> Git : encapsulates
+    LibRS ..> Vis : encapsulates
+    Consumer --> LibRS : Uses
+```
+
+## Gaze Attractor Facade (ADR 114)
+
+Enforcing the Facade pattern in `gaze-attractor` prevents the leakage of its internal structure, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace GazeAttractorFacade {
+        class LibRS {
+            <<Facade>>
+        }
+    }
+    namespace InternalModules {
+        class App {
+            <<pub(crate)>>
+        }
+        class Eye {
+            <<pub(crate)>>
+        }
+        class Physics {
+            <<pub(crate)>>
+        }
+    }
+    class Consumer {
+        <<External>>
+    }
+
+    LibRS ..> App : encapsulates
+    LibRS ..> Eye : encapsulates
+    LibRS ..> Physics : encapsulates
+    Consumer --> LibRS : Uses
+```
