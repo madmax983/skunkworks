@@ -2747,6 +2747,8 @@ pub enum OpCode {
     Tardis,
     /// Triggers the Pachinko logic
     Pachinko,
+    /// Triggers the Automaton logic
+    Automaton,
 }
 
 impl fmt::Display for OpCode {

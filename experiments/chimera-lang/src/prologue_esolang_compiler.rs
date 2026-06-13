@@ -1053,6 +1053,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_pachinko_instr(instr)?);
                 }
             }
+            Rule::automaton_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_automaton_instr(instr)?);
+                }
+            }
             Rule::quipu_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_quipu_instr(instr)?);
@@ -1269,6 +1274,35 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
                     vec![Nucleotide::String(id.to_string())],
                 ));
             }
+        }
+        _ => {}
+    }
+    Ok(genes)
+}
+
+fn compile_automaton_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair.into_inner().next().unwrap();
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "simulate" {
+                genes.push(Gene::new(OpCode::Automaton, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str();
+            let content = s[1..s.len() - 1].to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
         }
         _ => {}
     }
