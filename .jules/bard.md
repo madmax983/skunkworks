@@ -22,3 +22,6 @@
 ## 2026-06-02 - [Noise Documentation]
 **Confusion:** Functions with documentation that simply repeats the name (e.g., `/// Returns the x`) are useless and considered noise.
 **Clarification:** Rewrote documentation across the workspace to use more descriptive language (e.g., `/// Calculates the numeric value`, `/// Provides the symbol`, `/// Yields`, `/// Evaluates to`, etc) instead of just "Returns" or "Gets".
+## 2024-05-24 - [Doctest `#[test]` attribute]
+**Confusion:** Including a `#[test]` attribute directly in a `///` or `//!` rust block causes `cargo clippy` or `cargo test` to complain about a nested test attribute inside a doctest (`clippy::test-attr-in-doctest`).
+**Clarification:** Examples of unit tests in documentation should omit the `#[test]` attribute at the top of the function to compile and run properly as a doc-test without triggering nested test warnings.

@@ -1,54 +1,99 @@
-//! # TUI Shared
+//! # tui-shared 🎨
 //!
-//! A shared library for initializing and managing Terminal User Interface (TUI) environments
-//! using `ratatui` and `crossterm`.
+//! A robust shared library for initializing and managing Terminal User Interface (TUI) environments using `ratatui` and `crossterm`.
 //!
-//! This crate provides a RAII (Resource Acquisition Is Initialization) wrapper around the terminal
-//! setup, ensuring that the terminal is correctly restored (raw mode disabled, cursor shown, etc.)
-//! when the application exits or panics.
+//! This crate provides a **RAII (Resource Acquisition Is Initialization)** wrapper around the terminal setup. It ensures that the terminal is correctly restored (raw mode disabled, cursor shown, alternate screen left) when the application exits or panics.
 //!
-//! ## Example
+//! ## Installation
 //!
-//! ```no_run
+//! ### Option A: Internal Workspace Experiment (Recommended)
+//!
+//! If you are adding a new experiment within this repository (e.g., in `experiments/my-cool-tui`), `tui-shared` is already available as a workspace dependency.
+//!
+//! 1.  Create your experiment crate:
+//!     ```bash
+//!     cargo new experiments/my-cool-tui
+//!     ```
+//!     *Note: The `experiments/` directory is already part of the workspace members in the root `Cargo.toml`.*
+//!
+//! 2.  Add dependencies to your experiment's `Cargo.toml`:
+//!     ```toml
+//!     [dependencies]
+//!     tui-shared = { workspace = true }
+//!
+//!     # Access ratatui and crossterm via tui-shared re-exports:
+//!     # use tui_shared::ratatui;
+//!     # use tui_shared::crossterm;
+//!     ```
+//!
+//! ### Option B: Standalone Project
+//!
+//! If you are using this crate in a project *outside* of this workspace, you must point to the local path.
+//!
+//! 1.  Add to your `Cargo.toml`:
+//!     ```toml
+//!     [dependencies]
+//!     # Replace path with the relative path from your project root to crates/tui-shared
+//!     # For example, if you are in experiments/my-cool-tui, the path is "../../crates/tui-shared"
+//!     tui-shared = { path = "../../crates/tui-shared" }
+//!
+//!     # You must explicitly add ratatui and crossterm to your dependencies if you use their types directly
+//!     ratatui = "0.30"
+//!     crossterm = "0.28"
+//!     ```
+//!
+//! ## Usage
+//!
+//! Here is a minimal example:
+//!
+//! ```rust
+//! use std::{io, thread, time::Duration};
 //! use tui_shared::Tui;
-//! // Use re-exported ratatui for version consistency
-//! use tui_shared::ratatui::widgets::{Block, Borders};
-//! use std::io;
+//! use tui_shared::ratatui::{
+//!     layout::Alignment,
+//!     widgets::{Block, Borders, Paragraph},
+//! };
 //!
 //! fn main() -> io::Result<()> {
-//!     // Initialize the terminal
+//!     // 1. Initialize the terminal
+//!     // This enables raw mode, enters alternate screen, and captures mouse.
 //!     let mut tui = Tui::init()?;
 //!
-//!     // Draw something to the terminal
+//!     // 2. Draw something to the terminal
 //!     tui.terminal.draw(|f| {
-//!         let block = Block::default().title("Block").borders(Borders::ALL);
-//!         f.render_widget(block, f.area());
+//!         let size = f.area();
+//!         let block = Block::default()
+//!             .title(" My TUI App ")
+//!             .borders(Borders::ALL);
+//!         let p = Paragraph::new("Hello, World!")
+//!             .block(block)
+//!             .alignment(Alignment::Center);
+//!         f.render_widget(p, size);
 //!     })?;
 //!
-//!     // The terminal is automatically restored when `tui` goes out of scope
+//!     // 3. Application logic here...
+//!     // In a real app, you would run an event loop here.
+//!     thread::sleep(Duration::from_secs(3));
+//!
+//!     // 4. Cleanup is automatic!
+//!     // When `tui` goes out of scope, it automatically:
+//!     // - Disables raw mode
+//!     // - Leaves alternate screen
+//!     // - Shows cursor
 //!     Ok(())
 //! }
 //! ```
 //!
-//! ## Re-exports
-//!
-//! This crate re-exports `ratatui` and `crossterm` so you can use the same versions.
-//!
-//! ```rust
-//! use tui_shared::ratatui::widgets::Block;
-//! use tui_shared::crossterm::event::KeyCode;
-//!
-//! let block = Block::default();
-//! let key = KeyCode::Enter;
-//! ```
-//!
 //! ## Testing
 //!
-//! Because `Tui::init` modifies the global terminal state, it is not suitable for unit tests.
-//! Instead, use `ratatui::backend::TestBackend` to test your drawing logic without a real terminal:
+//! Because `Tui::init` modifies the global terminal state, it is not suitable for unit tests. Instead, use `ratatui::backend::TestBackend` to test your drawing logic without a real terminal.
 //!
 //! ```rust
-//! use ratatui::{backend::TestBackend, Terminal, widgets::{Paragraph, Block, Borders}};
+//! use tui_shared::ratatui::{
+//!     backend::TestBackend,
+//!     Terminal,
+//!     widgets::{Paragraph, Block, Borders}
+//! };
 //!
 //! fn test_ui() {
 //!     let backend = TestBackend::new(20, 10);

@@ -21,10 +21,9 @@ If you are adding a new experiment within this repository (e.g., in `experiments
     [dependencies]
     tui-shared = { workspace = true }
 
-    # You can access ratatui/crossterm via tui-shared re-exports,
-    # or depend on them directly if you prefer:
-    ratatui = { workspace = true }
-    crossterm = { workspace = true }
+    # Access ratatui and crossterm via tui-shared re-exports:
+    # use tui_shared::ratatui;
+    # use tui_shared::crossterm;
     ```
 
 ### Option B: Standalone Project
@@ -50,7 +49,7 @@ Here is a minimal example:
 ```rust
 use std::{io, thread, time::Duration};
 use tui_shared::Tui;
-use ratatui::{
+use tui_shared::ratatui::{
     layout::Alignment,
     widgets::{Block, Borders, Paragraph},
 };
@@ -96,7 +95,6 @@ use tui_shared::ratatui::{
     widgets::{Paragraph, Block, Borders}
 };
 
-#[test]
 fn test_ui() {
     let backend = TestBackend::new(20, 10);
     let mut terminal = Terminal::new(backend).unwrap();
