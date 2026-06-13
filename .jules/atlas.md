@@ -30,3 +30,6 @@
 **[Title] Enforce Module Boundaries via Facade in syncopated-threads**
 **Tangle:** The `experiments/syncopated-threads/src/lib.rs` leaked internal modules `audio`, `model`, `threads`, and `tui` via `pub mod`, breaking the Facade pattern.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` to enforce strict boundaries while preserving the external API. Updated tests to match the facade API.
+**[Title] Enforce Module Boundaries in git-cantata and gaze-attractor
+**Tangle:** The `experiments/git-cantata/src/lib.rs` and `experiments/gaze-attractor/src/main.rs` leaked their internal submodules directly via `pub mod`, breaking the Facade pattern and exposing implementation details.
+**Blueprint:** Replaced `pub mod` with `pub(crate) mod` and explicitly exported contents using `pub use` in `lib.rs` (or just used demoted modules internally in `main.rs`), ensuring strict encapsulation. Updated binary imports to match the new Facade API, resolving subsequent build errors and unused import warnings.

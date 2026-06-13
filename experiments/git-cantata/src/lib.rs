@@ -1,3 +1,7 @@
-pub mod audio;
-pub mod git;
-pub mod vis;
+pub(crate) mod audio;
+pub(crate) mod git;
+pub(crate) mod vis;
+
+pub use audio::*;
+pub use git::*;
+pub use vis::*;
