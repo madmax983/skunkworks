@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-genesis**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Fails to run headlessly or show deep emergence. Grace period: 24h.
+- **miller-platter**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Lacks `README.md` and runnable executable to demonstrate emergence. Grace period: 24h.
 
 ## ☠️ Executed
+- **chimera-genesis**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Failed to adapt to headless environments. Biomass returned to the void.
 - **mandala-cipher**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`) and Terminal Genericism. Resolved issues and demonstrated vigor.
 
 - **hyperbolic-ants**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Fails to run due to immediate `RefCell already borrowed` panics. Resolved issues and demonstrated vigor.

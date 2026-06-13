@@ -45,7 +45,8 @@ exclude = [
     "experiments/system-turbulence",
 
     "experiments/verge-computer",
-    "graveyard/*"
+    "graveyard/*",
+    "graveyard/chimera-genesis"
 ]
 
 [workspace.dependencies]
