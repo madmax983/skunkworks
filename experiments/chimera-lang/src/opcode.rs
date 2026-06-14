@@ -2749,6 +2749,8 @@ pub enum OpCode {
     Pachinko,
     /// Triggers the Automaton logic
     Automaton,
+    /// Triggers the Syncopation logic
+    Syncopation,
 }
 
 impl fmt::Display for OpCode {
