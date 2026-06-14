@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **bifurcation-crawler**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to a `glam` dependency mismatch between `macroquad` and `physics-pbd` (`expected glam::f32::vec3::Vec3, found Vec3`). Grace period: 24h.
+- **miller-market**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism. Lacks a `README.md` and remains a skeletal implementation mapping generic 3D structures to 2D grids without complex emergence. Grace period: 24h.
 
 ## ☠️ Executed
+- **bifurcation-crawler**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to a `glam` version mismatch. Grace period expired. Moved to graveyard.
 - **quipu-tissue**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to a `glam` dependency mismatch. Grace period expired. Moved to graveyard.
 - **origami-flock**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a runnable executable to demonstrate emergence. Grace period expired. Moved to graveyard.
 - **miller-platter**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to improve during grace period. Biomass returned to the void.
