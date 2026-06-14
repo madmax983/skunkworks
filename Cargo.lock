@@ -2270,7 +2270,7 @@ dependencies = [
  "anyhow",
  "cpal",
  "crossbeam-channel",
- "env_logger 0.11.10",
+ "env_logger",
  "log",
  "macroquad",
  "rand 0.8.6",
@@ -3488,7 +3488,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "image 0.24.9",
  "log",
  "pollster",
@@ -3515,7 +3515,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "image 0.24.9",
  "log",
  "pollster",
@@ -3531,7 +3531,7 @@ version = "0.1.0"
 dependencies = [
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "log",
  "pollster",
  "rand 0.8.6",
@@ -3564,7 +3564,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cpal",
- "env_logger 0.11.10",
+ "env_logger",
  "glam 0.28.0",
  "log",
  "pollster",
@@ -3902,19 +3902,6 @@ dependencies = [
 
 [[package]]
 name = "env_logger"
-version = "0.10.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cd405aab171cb85d6735e5c8d9db038c17d3ca007a4d2c25f337935c3d90580"
-dependencies = [
- "humantime",
- "is-terminal",
- "log",
- "regex",
- "termcolor",
-]
-
-[[package]]
-name = "env_logger"
 version = "0.11.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0621c04f2196ac3f488dd583365b9c09be011a4ab8b9f37248ffcc8f6198b56a"
@@ -4097,7 +4084,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "log",
  "miller-lattice",
  "pollster",
@@ -5503,12 +5490,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62adaabb884c94955b19907d60019f4e145d091c75345379e70d1ee696f7854f"
 
 [[package]]
-name = "humantime"
-version = "2.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "135b12329e5e3ce057a9f972339ea52bc954fe1e9358ef27f95e89716fbc5424"
-
-[[package]]
 name = "hydro-brain"
 version = "0.1.0"
 dependencies = [
@@ -6079,17 +6060,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "is-terminal"
-version = "0.4.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
-dependencies = [
- "hermit-abi",
- "libc",
- "windows-sys 0.61.2",
-]
-
-[[package]]
 name = "is_terminal_polyfill"
 version = "1.70.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6301,7 +6271,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "log",
  "pollster",
  "rand 0.8.6",
@@ -7144,7 +7114,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "image 0.24.9",
  "log",
  "miller-lattice",
@@ -7184,7 +7154,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "image 0.24.9",
  "log",
  "miller-lattice",
@@ -8742,7 +8712,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "image 0.24.9",
  "log",
  "pollster",
@@ -9320,7 +9290,7 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "cgmath",
- "env_logger 0.11.10",
+ "env_logger",
  "image 0.24.9",
  "log",
  "pollster",
@@ -9456,19 +9426,6 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 1.0.69",
-]
-
-[[package]]
-name = "quipu-tissue"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "env_logger 0.10.2",
- "log",
- "macroquad",
- "physics-pbd",
- "quipu",
- "rand 0.8.6",
 ]
 
 [[package]]
