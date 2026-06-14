@@ -2,7 +2,7 @@ WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("#" ~ (!"\n" ~ ANY)*) }
 
 program = { SOI ~ section* ~ EOI }
-section = { git_associates_block | git_block | gray_scott_block | locus_block | neuro_block | platter_block | forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block | brainfuck_block | tui_block | tui_mod_block | mosaic_block | piet_block | chaos_block | regex_block | acoustic_block | befunge_block | reactor_block | quipu_block | origami_block | esolang_block | flocking_block | market_block | poincare_block | weave_block | fluid_block | madness_block | prologue_esolang_block | miller_block | hyper_block | physics_block | ferrous_block | tardis_block | pachinko_block | automaton_block }
+section = { git_associates_block | git_block | gray_scott_block | locus_block | neuro_block | platter_block | forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block | brainfuck_block | tui_block | tui_mod_block | mosaic_block | piet_block | chaos_block | regex_block | acoustic_block | befunge_block | reactor_block | quipu_block | origami_block | esolang_block | flocking_block | market_block | poincare_block | weave_block | fluid_block | madness_block | prologue_esolang_block | miller_block | hyper_block | physics_block | ferrous_block | tardis_block | pachinko_block | automaton_block | syncopation_block }
 
 tui_mod_block = { "tui_mod" ~ "{" ~ instruction* ~ "}" }
 git_associates_block = { "git_associates" ~ "{" ~ instruction* ~ "}" }
@@ -61,3 +61,4 @@ ferrous_block = { "ferrous" ~ "{" ~ instruction* ~ "}" }
 tardis_block = { "tardis" ~ "{" ~ instruction* ~ "}" }
 pachinko_block = { "pachinko" ~ "{" ~ instruction* ~ "}" }
 automaton_block = { "automaton" ~ "{" ~ instruction* ~ "}" }
+syncopation_block = { "syncopation" ~ "{" ~ instruction* ~ "}" }
