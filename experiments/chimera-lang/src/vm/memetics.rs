@@ -5,8 +5,6 @@ use crate::ast::{Gene, Nucleotide};
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
-use rand::Rng;
-
 #[derive(Debug, Clone, PartialEq)]
 /// Represents a `Meme`.
 /// Represents a `Meme`.
@@ -4329,445 +4327,453 @@ pub fn exec_memetics_op(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     match op {
-        OpCode::BioHack => {
-            // Stack: [ ..., name_str, grammar_junction, meme_id ]
-            if vm.stack.len() >= 3 {
-                let meme_val = vm.stack.pop().unwrap();
-                let grammar_val = vm.stack.pop().unwrap();
-                let name_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(m_id), Value::Str(name)) = (meme_val, name_val) {
-                    let meme_idx = m_id as usize;
-                    if meme_idx < vm.meme_pool.memes.len() {
-                        if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
-                            vm.output.push("BIOHACK: Strand limit exceeded".to_string());
-                            return None;
-                        }
-                        if vm.virus_library.len() >= crate::vm::MAX_VIRUSES {
-                            vm.output.push("BIOHACK: Virus library full".to_string());
-                            return None;
-                        }
-
-                        let meme = &vm.meme_pool.memes[meme_idx];
-
-                        // Create a temporary strand for the payload
-                        // In Nova, we can just push it to the helix.
-                        let payload_strand = crate::ast::Strand {
-                            genes: meme.genes.clone(),
-                        };
-                        vm.dna.helix.strands.push(payload_strand);
-                        let payload_idx = vm.dna.helix.strands.len() - 1;
-                        vm.telomeres.push(50); // Default telomere for new strand
-                        #[cfg(feature = "cortex")]
-                        {
-                            vm.activation_levels.push(0);
-                            vm.synapse_map.push(Vec::with_capacity(4));
-                        }
-
-                        let mut rng = rand::thread_rng();
-                        let color = (
-                            rng.gen_range(50..255),
-                            rng.gen_range(50..255),
-                            rng.gen_range(50..255),
-                        );
-
-                        let virus = Virus {
-                            name: name.clone(),
-                            color,
-                            pattern: ".*".to_string(), // Default pattern matches everything? Or maybe derive from name?
-                            mutation_rate: meme.virulence, // Use virulence as mutation rate
-                            payload: Some(payload_idx),
-                            grammar: Some(grammar_val),
-                            quorum_threshold: 0,
-                            quorum_action: None,
-                            mode: VirusMode::Overwrite,
-                        };
-
-                        let virus_id = vm.virus_library.len();
-                        vm.virus_library.push(virus);
-
-                        let (cy, cx) = vm.context_loc;
-                        vm.viral_grid[cy][cx] = Some(ViralState {
-                            infection_level: 100,
-                            virus_id,
-                        });
-
-                        vm.output.push(format!(
-                            "BIOHACK: Synthesized Virus '{}' (ID {}) from Meme {}",
-                            name, virus_id, meme_idx
-                        ));
-                    } else {
-                        vm.output.push("BIOHACK: Invalid Meme ID".to_string());
-                    }
-                } else {
-                    vm.output.push(
-                        "BIOHACK: Type mismatch [name:Str, grammar:Junction, meme:Int]".to_string(),
-                    );
-                }
-            } else {
-                vm.output.push("BIOHACK: Stack underflow".to_string());
-            }
-            None
-        }
-        OpCode::Conceive => {
-            // Stack: [ ..., len, virulence, fidelity ]
-            if vm.stack.len() >= 3 {
-                let fid_val = vm.stack.pop().unwrap();
-                let vir_val = vm.stack.pop().unwrap();
-                let len_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(l), Value::Int(v), Value::Int(f)) = (len_val, vir_val, fid_val) {
-                    let len = l.max(1) as usize;
-                    let virulence = v.clamp(0, 100) as u8;
-                    let fidelity = f.clamp(0, 100) as u8;
-
-                    let s_idx = vm.ip.0;
-                    if s_idx < vm.dna.helix.strands.len() {
-                        if vm.meme_pool.memes.len() >= crate::vm::MAX_MEMES {
-                            vm.output.push("CONCEIVE: Meme pool full".to_string());
-                            vm.stack.push(Value::Int(-1));
-                            return None;
-                        }
-
-                        let strand = &vm.dna.helix.strands[s_idx];
-                        let start_gene = vm.ip.1;
-                        // Copy genes from current IP onwards
-                        let end_gene = (start_gene + len).min(strand.genes.len());
-                        if start_gene < end_gene {
-                            let genes = strand.genes[start_gene..end_gene].to_vec();
-                            let meme = Meme {
-                                genes,
-                                virulence,
-                                fidelity,
-                                description: format!("Meme from Strand {}", s_idx),
-                            };
-                            let id = vm.meme_pool.memes.len();
-                            vm.meme_pool.memes.push(meme);
-                            vm.stack.push(Value::Int(id as i64));
-                            vm.output.push(format!(
-                                "CONCEIVE: Created Meme {} (V:{} F:{})",
-                                id, virulence, fidelity
-                            ));
-                        } else {
-                            vm.stack.push(Value::Int(-1));
-                            vm.output
-                                .push("CONCEIVE: No genes to conceptualize".to_string());
-                        }
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for conceive".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for conceive".to_string());
-            }
-            None
-        }
-        OpCode::Propagate => {
-            // Stack: [ ..., meme_id, target_strand ]
-            if vm.stack.len() >= 2 {
-                let target_val = vm.stack.pop().unwrap();
-                let meme_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(m_id), Value::Int(t_idx)) = (meme_val, target_val) {
-                    let meme_idx = m_id as usize;
-                    let target_idx = t_idx as usize;
-
-                    if meme_idx < vm.meme_pool.memes.len()
-                        && target_idx < vm.dna.helix.strands.len()
-                    {
-                        let meme = &vm.meme_pool.memes[meme_idx];
-                        let mut rng = rand::thread_rng();
-
-                        // Virulence check
-                        if rng.gen_range(0..100) < meme.virulence {
-                            let mut new_genes = meme.genes.clone();
-
-                            // Fidelity check (Mutation)
-                            if rng.gen_range(0..100) > meme.fidelity {
-                                // Apply simple mutation to one gene
-                                if !new_genes.is_empty() {
-                                    let g_idx = rng.gen_range(0..new_genes.len());
-                                    // Mutate arg if possible
-                                    if !new_genes[g_idx].args.is_empty() {
-                                        new_genes[g_idx].args[0] =
-                                            Nucleotide::Number(rng.gen_range(0..100));
-                                    }
-                                }
-                            }
-
-                            // Append to target strand
-                            let current_len = vm.dna.helix.strands[target_idx].genes.len();
-                            if current_len + new_genes.len() <= crate::vm::MAX_GENES_PER_STRAND {
-                                vm.dna.helix.strands[target_idx].genes.extend(new_genes);
-                                vm.output.push(format!(
-                                    "PROPAGATE: Infected Strand {} with Meme {}",
-                                    target_idx, meme_idx
-                                ));
-                            } else {
-                                vm.output.push(
-                                    "PROPAGATE: Infection failed (Gene Limit Exceeded)".to_string(),
-                                );
-                            }
-                        } else {
-                            vm.output
-                                .push("PROPAGATE: Infection failed (Resisted)".to_string());
-                        }
-                    } else {
-                        vm.output
-                            .push("Error: Invalid IDs for propagate".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for propagate".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for propagate".to_string());
-            }
-            None
-        }
-        OpCode::Forget => {
-            if let Some(Value::Int(id)) = vm.stack.pop() {
-                let idx = id as usize;
-                if idx < vm.meme_pool.memes.len() {
-                    vm.meme_pool.memes.remove(idx);
-                    vm.output.push(format!("FORGET: Removed Meme {}", idx));
-                }
-            }
-            None
-        }
-        OpCode::Shibboleth => {
-            // Stack: [ ..., from_op_str, to_op_str ]
-            if vm.stack.len() >= 2 {
-                let to_val = vm.stack.pop().unwrap();
-                let from_val = vm.stack.pop().unwrap();
-
-                if let (Value::Str(from), Value::Str(to)) = (from_val, to_val) {
-                    if let (Ok(from_op), Ok(to_op)) = (from.parse::<OpCode>(), to.parse::<OpCode>())
-                    {
-                        let s_idx = vm.ip.0;
-                        let strand_dialect = vm.dialects.entry(s_idx).or_default();
-                        strand_dialect.insert(from_op.clone(), to_op.clone());
-                        vm.output.push(format!(
-                            "SHIBBOLETH: Strand {} maps {} -> {}",
-                            s_idx, from_op, to_op
-                        ));
-                    } else {
-                        vm.output
-                            .push("Error: Invalid OpCodes for shibboleth".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for shibboleth".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for shibboleth".to_string());
-            }
-            None
-        }
-        OpCode::Infect => {
-            // Stack: [ ..., (grammar), (quorum_action, quorum_threshold), payload_idx, mutation_rate, pattern_str, name_str, mode ]
-            if vm.stack.len() >= 5 {
-                let mode_val = vm.stack.pop().unwrap();
-                let name_val = vm.stack.pop().unwrap();
-                let pattern_val = vm.stack.pop().unwrap();
-                let rate_val = vm.stack.pop().unwrap();
-                let payload_val = vm.stack.pop().unwrap();
-
-                // Optional Args
-                let mut grammar = None;
-                let mut quorum_threshold = 0;
-                let mut quorum_action = None;
-
-                // Check for Quorum args
-                if vm.stack.len() >= 2 {
-                    if let (Value::Int(_), Value::Int(_)) =
-                        (&vm.stack[vm.stack.len() - 1], &vm.stack[vm.stack.len() - 2])
-                    {
-                        if let Value::Int(thresh) = vm.stack.pop().unwrap() {
-                            quorum_threshold = thresh.clamp(0, 8) as u8;
-                        }
-                        if let Value::Int(action) = vm.stack.pop().unwrap() {
-                            quorum_action = if action >= 0 {
-                                Some(action as usize)
-                            } else {
-                                None
-                            };
-                        }
-                    }
-                }
-
-                // Check for Grammar arg
-                if !vm.stack.is_empty() {
-                    // Check if top is Junction
-                    if let Value::Junction(_, _) = &vm.stack[vm.stack.len() - 1] {
-                        grammar = Some(vm.stack.pop().unwrap());
-                    }
-                }
-
-                if let (
-                    Value::Str(name),
-                    Value::Str(pattern),
-                    Value::Int(rate),
-                    Value::Int(p_idx),
-                    Value::Int(mode_int),
-                ) = (name_val, pattern_val, rate_val, payload_val, mode_val)
-                {
-                    let mutation_rate = rate.clamp(0, 100) as u8;
-                    let payload = if p_idx >= 0 && (p_idx as usize) < vm.dna.helix.strands.len() {
-                        Some(p_idx as usize)
-                    } else {
-                        None
-                    };
-
-                    let mode = match mode_int {
-                        1 => VirusMode::RewriteGrid,
-                        2 => VirusMode::RewriteDNA,
-                        _ => VirusMode::Overwrite,
-                    };
-
-                    if vm.virus_library.len() >= crate::vm::MAX_VIRUSES {
-                        vm.output.push("INFECT: Virus library full".to_string());
-                        return None;
-                    }
-
-                    let mut rng = rand::thread_rng();
-                    let color = (
-                        rng.gen_range(50..255),
-                        rng.gen_range(50..255),
-                        rng.gen_range(50..255),
-                    );
-
-                    let virus = Virus {
-                        name: name.clone(),
-                        color,
-                        pattern: pattern.clone(),
-                        mutation_rate,
-                        payload,
-                        grammar,
-                        quorum_threshold,
-                        quorum_action,
-                        mode,
-                    };
-
-                    let virus_id = vm.virus_library.len();
-                    vm.virus_library.push(virus);
-
-                    let (cy, cx) = vm.context_loc;
-                    vm.viral_grid[cy][cx] = Some(ViralState {
-                        infection_level: 100,
-                        virus_id,
-                    });
-
-                    vm.output.push(format!(
-                        "INFECT: Released '{}' (ID {}) at {},{}",
-                        name, virus_id, cx, cy
-                    ));
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for infect".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for infect".to_string());
-            }
-            None
-        }
-        OpCode::Outbreak => {
-            let size = crate::vm::GRID_SIZE;
-            let mut next_viral_grid = vm.viral_grid.clone();
-            let mut spread_count = 0;
-            let mut mutation_count = 0;
-
-            for y in 0..size {
-                for x in 0..size {
-                    if let Some(state) = vm.viral_grid[y][x] {
-                        if state.virus_id >= vm.virus_library.len() {
-                            continue;
-                        }
-                        let virus = vm.virus_library[state.virus_id].clone();
-
-                        handle_outbreak_spread(
-                            vm,
-                            &virus,
-                            &state,
-                            y,
-                            x,
-                            &mut next_viral_grid,
-                            &mut spread_count,
-                            &mut mutation_count,
-                        );
-
-                        handle_outbreak_mutate(vm, &virus, &state, y, x, &mut mutation_count);
-
-                        handle_outbreak_quorum(vm, &virus, &state, y, x);
-
-                        // 3. Decay/Growth
-                        // If cell matches pattern, infection grows. Else decays.
-                        let content = match &vm.grid[y][x] {
-                            Value::Str(s) => s.clone(),
-                            Value::Int(n) => n.to_string(),
-                            _ => String::new(),
-                        };
-
-                        if let Some(new_state) = &mut next_viral_grid[y][x] {
-                            if content.contains(&virus.pattern) {
-                                new_state.infection_level =
-                                    new_state.infection_level.saturating_add(10);
-                            } else {
-                                new_state.infection_level =
-                                    new_state.infection_level.saturating_sub(5);
-                            }
-
-                            if new_state.infection_level == 0 {
-                                next_viral_grid[y][x] = None;
-                            }
-                        }
-                    }
-                }
-            }
-
-            vm.viral_grid = next_viral_grid;
-            if spread_count > 0 || mutation_count > 0 {
-                vm.output.push(format!(
-                    "OUTBREAK: Spread to {} cells, mutated {} items",
-                    spread_count, mutation_count
-                ));
-            }
-            None
-        }
-        OpCode::Sanitize => {
-            // Stack: [ ..., radius ]
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(r) = val {
-                    let (cy, cx) = vm.context_loc;
-                    let mut count = 0;
-                    crate::vm::iterate_circle(
-                        #[cfg(feature = "nova")]
-                        vm.topology,
-                        cx as i64,
-                        cy as i64,
-                        r,
-                        |tx, ty| {
-                            vm.viral_grid[ty][tx] = None;
-                            count += 1;
-                        },
-                    );
-                    vm.energy = vm.energy.saturating_sub(count as i64);
-                    vm.output.push(format!("SANITIZE: Cleared {} cells", count));
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for sanitize".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for sanitize".to_string());
-            }
-            None
-        }
+        OpCode::BioHack => handle_bio_hack(vm),
+        OpCode::Conceive => handle_conceive(vm),
+        OpCode::Propagate => handle_propagate(vm),
+        OpCode::Forget => handle_forget(vm),
+        OpCode::Shibboleth => handle_shibboleth(vm),
+        OpCode::Infect => handle_infect(vm),
+        OpCode::Outbreak => handle_outbreak(vm),
+        OpCode::Sanitize => handle_sanitize(vm),
         _ => None,
     }
+}
+
+fn handle_bio_hack(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() < 3 {
+        vm.output.push("BIOHACK: Stack underflow".to_string());
+        return None;
+    }
+    let meme_val = vm.stack.pop().unwrap();
+    let grammar_val = vm.stack.pop().unwrap();
+    let name_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(m_id), Value::Str(name)) = (meme_val, name_val) else {
+        vm.output
+            .push("BIOHACK: Type mismatch [name:Str, grammar:Junction, meme:Int]".to_string());
+        return None;
+    };
+
+    let meme_idx = m_id as usize;
+    if meme_idx >= vm.meme_pool.memes.len() {
+        vm.output.push("BIOHACK: Invalid Meme ID".to_string());
+        return None;
+    }
+    if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
+        vm.output.push("BIOHACK: Strand limit exceeded".to_string());
+        return None;
+    }
+    if vm.virus_library.len() >= crate::vm::MAX_VIRUSES {
+        vm.output.push("BIOHACK: Virus library full".to_string());
+        return None;
+    }
+
+    let meme = &vm.meme_pool.memes[meme_idx];
+    let payload_strand = crate::ast::Strand {
+        genes: meme.genes.clone(),
+    };
+    vm.dna.helix.strands.push(payload_strand);
+    let payload_idx = vm.dna.helix.strands.len() - 1;
+    vm.telomeres.push(50);
+    #[cfg(feature = "cortex")]
+    {
+        vm.activation_levels.push(0);
+        vm.synapse_map.push(Vec::with_capacity(4));
+    }
+
+    let mut rng = rand::thread_rng();
+    use rand::Rng;
+    let color = (
+        rng.gen_range(50..255),
+        rng.gen_range(50..255),
+        rng.gen_range(50..255),
+    );
+
+    let virus = Virus {
+        name: name.clone(),
+        color,
+        pattern: ".*".to_string(),
+        mutation_rate: meme.virulence,
+        payload: Some(payload_idx),
+        grammar: Some(grammar_val),
+        quorum_threshold: 0,
+        quorum_action: None,
+        mode: VirusMode::Overwrite,
+    };
+
+    let virus_id = vm.virus_library.len();
+    vm.virus_library.push(virus);
+
+    let (cy, cx) = vm.context_loc;
+    vm.viral_grid[cy][cx] = Some(ViralState {
+        infection_level: 100,
+        virus_id,
+    });
+
+    vm.output.push(format!(
+        "BIOHACK: Synthesized Virus '{}' (ID {}) from Meme {}",
+        name, virus_id, meme_idx
+    ));
+    None
+}
+
+fn handle_conceive(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() < 3 {
+        vm.output
+            .push("Error: Stack underflow for conceive".to_string());
+        return None;
+    }
+    let fid_val = vm.stack.pop().unwrap();
+    let vir_val = vm.stack.pop().unwrap();
+    let len_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(l), Value::Int(v), Value::Int(f)) = (len_val, vir_val, fid_val) else {
+        vm.output
+            .push("Error: Type mismatch for conceive".to_string());
+        return None;
+    };
+
+    let len = l.max(1) as usize;
+    let virulence = v.clamp(0, 100) as u8;
+    let fidelity = f.clamp(0, 100) as u8;
+
+    let s_idx = vm.ip.0;
+    if s_idx >= vm.dna.helix.strands.len() {
+        return None;
+    }
+
+    if vm.meme_pool.memes.len() >= crate::vm::MAX_MEMES {
+        vm.output.push("CONCEIVE: Meme pool full".to_string());
+        vm.stack.push(Value::Int(-1));
+        return None;
+    }
+
+    let strand = &vm.dna.helix.strands[s_idx];
+    let start_gene = vm.ip.1;
+    let end_gene = (start_gene + len).min(strand.genes.len());
+
+    if start_gene >= end_gene {
+        vm.stack.push(Value::Int(-1));
+        vm.output
+            .push("CONCEIVE: No genes to conceptualize".to_string());
+        return None;
+    }
+
+    let genes = strand.genes[start_gene..end_gene].to_vec();
+    let meme = Meme {
+        genes,
+        virulence,
+        fidelity,
+        description: format!("Meme from Strand {}", s_idx),
+    };
+    let id = vm.meme_pool.memes.len();
+    vm.meme_pool.memes.push(meme);
+    vm.stack.push(Value::Int(id as i64));
+    vm.output.push(format!(
+        "CONCEIVE: Created Meme {} (V:{} F:{})",
+        id, virulence, fidelity
+    ));
+
+    None
+}
+
+fn handle_propagate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() < 2 {
+        vm.output
+            .push("Error: Stack underflow for propagate".to_string());
+        return None;
+    }
+
+    let target_val = vm.stack.pop().unwrap();
+    let meme_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(m_id), Value::Int(t_idx)) = (meme_val, target_val) else {
+        vm.output
+            .push("Error: Type mismatch for propagate".to_string());
+        return None;
+    };
+
+    let meme_idx = m_id as usize;
+    let target_idx = t_idx as usize;
+
+    if meme_idx >= vm.meme_pool.memes.len() || target_idx >= vm.dna.helix.strands.len() {
+        vm.output
+            .push("Error: Invalid IDs for propagate".to_string());
+        return None;
+    }
+
+    let meme = &vm.meme_pool.memes[meme_idx];
+    let mut rng = rand::thread_rng();
+    use rand::Rng;
+
+    if rng.gen_range(0..100) >= meme.virulence {
+        vm.output
+            .push("PROPAGATE: Infection failed (Resisted)".to_string());
+        return None;
+    }
+
+    let mut new_genes = meme.genes.clone();
+    if rng.gen_range(0..100) > meme.fidelity && !new_genes.is_empty() {
+        let g_idx = rng.gen_range(0..new_genes.len());
+        if !new_genes[g_idx].args.is_empty() {
+            new_genes[g_idx].args[0] = Nucleotide::Number(rng.gen_range(0..100));
+        }
+    }
+
+    let current_len = vm.dna.helix.strands[target_idx].genes.len();
+    if current_len + new_genes.len() <= crate::vm::MAX_GENES_PER_STRAND {
+        vm.dna.helix.strands[target_idx].genes.extend(new_genes);
+        vm.output.push(format!(
+            "PROPAGATE: Infected Strand {} with Meme {}",
+            target_idx, meme_idx
+        ));
+    } else {
+        vm.output
+            .push("PROPAGATE: Infection failed (Gene Limit Exceeded)".to_string());
+    }
+
+    None
+}
+
+fn handle_forget(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(Value::Int(id)) = vm.stack.pop() {
+        let idx = id as usize;
+        if idx < vm.meme_pool.memes.len() {
+            vm.meme_pool.memes.remove(idx);
+            vm.output.push(format!("FORGET: Removed Meme {}", idx));
+        }
+    }
+    None
+}
+
+fn handle_shibboleth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() < 2 {
+        vm.output
+            .push("Error: Stack underflow for shibboleth".to_string());
+        return None;
+    }
+    let to_val = vm.stack.pop().unwrap();
+    let from_val = vm.stack.pop().unwrap();
+
+    let (Value::Str(from), Value::Str(to)) = (from_val, to_val) else {
+        vm.output
+            .push("Error: Type mismatch for shibboleth".to_string());
+        return None;
+    };
+
+    let Ok(from_op) = from.parse::<OpCode>() else {
+        vm.output
+            .push("Error: Invalid OpCodes for shibboleth".to_string());
+        return None;
+    };
+    let Ok(to_op) = to.parse::<OpCode>() else {
+        vm.output
+            .push("Error: Invalid OpCodes for shibboleth".to_string());
+        return None;
+    };
+
+    let s_idx = vm.ip.0;
+    let strand_dialect = vm.dialects.entry(s_idx).or_default();
+    strand_dialect.insert(from_op.clone(), to_op.clone());
+    vm.output.push(format!(
+        "SHIBBOLETH: Strand {} maps {} -> {}",
+        s_idx, from_op, to_op
+    ));
+
+    None
+}
+
+fn handle_infect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() < 5 {
+        vm.output
+            .push("Error: Stack underflow for infect".to_string());
+        return None;
+    }
+
+    let mode_val = vm.stack.pop().unwrap();
+    let name_val = vm.stack.pop().unwrap();
+    let pattern_val = vm.stack.pop().unwrap();
+    let rate_val = vm.stack.pop().unwrap();
+    let payload_val = vm.stack.pop().unwrap();
+
+    let mut grammar = None;
+    let mut quorum_threshold = 0;
+    let mut quorum_action = None;
+
+    if vm.stack.len() >= 2 {
+        if let (Value::Int(_), Value::Int(_)) =
+            (&vm.stack[vm.stack.len() - 1], &vm.stack[vm.stack.len() - 2])
+        {
+            if let Value::Int(thresh) = vm.stack.pop().unwrap() {
+                quorum_threshold = thresh.clamp(0, 8) as u8;
+            }
+            if let Value::Int(action) = vm.stack.pop().unwrap() {
+                quorum_action = if action >= 0 {
+                    Some(action as usize)
+                } else {
+                    None
+                };
+            }
+        }
+    }
+
+    if !vm.stack.is_empty() {
+        if let Value::Junction(_, _) = &vm.stack[vm.stack.len() - 1] {
+            grammar = Some(vm.stack.pop().unwrap());
+        }
+    }
+
+    let (
+        Value::Str(name),
+        Value::Str(pattern),
+        Value::Int(rate),
+        Value::Int(p_idx),
+        Value::Int(mode_int),
+    ) = (name_val, pattern_val, rate_val, payload_val, mode_val)
+    else {
+        vm.output
+            .push("Error: Type mismatch for infect".to_string());
+        return None;
+    };
+
+    let mutation_rate = rate.clamp(0, 100) as u8;
+    let payload = if p_idx >= 0 && (p_idx as usize) < vm.dna.helix.strands.len() {
+        Some(p_idx as usize)
+    } else {
+        None
+    };
+
+    let mode = match mode_int {
+        1 => VirusMode::RewriteGrid,
+        2 => VirusMode::RewriteDNA,
+        _ => VirusMode::Overwrite,
+    };
+
+    if vm.virus_library.len() >= crate::vm::MAX_VIRUSES {
+        vm.output.push("INFECT: Virus library full".to_string());
+        return None;
+    }
+
+    let mut rng = rand::thread_rng();
+    use rand::Rng;
+    let color = (
+        rng.gen_range(50..255),
+        rng.gen_range(50..255),
+        rng.gen_range(50..255),
+    );
+
+    let virus = Virus {
+        name: name.clone(),
+        color,
+        pattern: pattern.clone(),
+        mutation_rate,
+        payload,
+        grammar,
+        quorum_threshold,
+        quorum_action,
+        mode,
+    };
+
+    let virus_id = vm.virus_library.len();
+    vm.virus_library.push(virus);
+
+    let (cy, cx) = vm.context_loc;
+    vm.viral_grid[cy][cx] = Some(ViralState {
+        infection_level: 100,
+        virus_id,
+    });
+
+    vm.output.push(format!(
+        "INFECT: Released '{}' (ID {}) at {},{}",
+        name, virus_id, cx, cy
+    ));
+
+    None
+}
+
+fn handle_outbreak(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let size = crate::vm::GRID_SIZE;
+    let mut next_viral_grid = vm.viral_grid.clone();
+    let mut spread_count = 0;
+    let mut mutation_count = 0;
+
+    for y in 0..size {
+        for x in 0..size {
+            let Some(state) = vm.viral_grid[y][x] else {
+                continue;
+            };
+            if state.virus_id >= vm.virus_library.len() {
+                continue;
+            }
+            let virus = vm.virus_library[state.virus_id].clone();
+
+            handle_outbreak_spread(
+                vm,
+                &virus,
+                &state,
+                y,
+                x,
+                &mut next_viral_grid,
+                &mut spread_count,
+                &mut mutation_count,
+            );
+
+            handle_outbreak_mutate(vm, &virus, &state, y, x, &mut mutation_count);
+
+            handle_outbreak_quorum(vm, &virus, &state, y, x);
+
+            let content = match &vm.grid[y][x] {
+                Value::Str(s) => s.clone(),
+                Value::Int(n) => n.to_string(),
+                _ => String::new(),
+            };
+
+            if let Some(new_state) = &mut next_viral_grid[y][x] {
+                if content.contains(&virus.pattern) {
+                    new_state.infection_level = new_state.infection_level.saturating_add(10);
+                } else {
+                    new_state.infection_level = new_state.infection_level.saturating_sub(5);
+                }
+
+                if new_state.infection_level == 0 {
+                    next_viral_grid[y][x] = None;
+                }
+            }
+        }
+    }
+
+    vm.viral_grid = next_viral_grid;
+    if spread_count > 0 || mutation_count > 0 {
+        vm.output.push(format!(
+            "OUTBREAK: Spread to {} cells, mutated {} items",
+            spread_count, mutation_count
+        ));
+    }
+    None
+}
+
+fn handle_sanitize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let Some(Value::Int(r)) = vm.stack.pop() else {
+        vm.output
+            .push("Error: Type mismatch for sanitize".to_string());
+        return None;
+    };
+
+    let (cy, cx) = vm.context_loc;
+    let mut count = 0;
+    crate::vm::iterate_circle(
+        #[cfg(feature = "nova")]
+        vm.topology,
+        cx as i64,
+        cy as i64,
+        r,
+        |tx, ty| {
+            vm.viral_grid[ty][tx] = None;
+            count += 1;
+        },
+    );
+    vm.energy = vm.energy.saturating_sub(count as i64);
+    vm.output.push(format!("SANITIZE: Cleared {} cells", count));
+
+    None
 }
