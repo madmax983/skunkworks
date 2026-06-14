@@ -15,7 +15,7 @@ fn main() -> Result<()> {
     // 1. Generate Level
     let current_dir = env::current_dir()?;
     let arg = env::args().nth(1);
-    let path_str = arg.unwrap_or_else(|| current_dir.to_string_lossy().to_string());
+    let path_str = arg.unwrap_or_else(|| current_dir.to_string_lossy().into_owned());
     let path = Path::new(&path_str);
 
     println!("Scanning {} for a worthy opponent...", path.display());

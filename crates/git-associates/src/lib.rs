@@ -373,7 +373,7 @@ impl GitModel {
                 .new_file()
                 .path()
                 .or(delta.old_file().path())
-                .map(|p| p.to_string_lossy().to_string())
+                .map(|p| p.to_string_lossy().into_owned())
                 .unwrap_or_else(|| "unknown".to_string());
 
             let extension = Path::new(&path)

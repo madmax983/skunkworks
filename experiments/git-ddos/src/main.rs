@@ -49,7 +49,7 @@ fn parse_git_history() -> Result<Vec<FileTarget>> {
                         {
                             let _ = diff.print(git2::DiffFormat::NameOnly, |delta, _, _| {
                                 if let Some(path) = delta.new_file().path() {
-                                    let path_str = path.to_string_lossy().to_string();
+                                    let path_str = path.to_string_lossy().into_owned();
                                     *file_counts.entry(path_str).or_insert(0) += 1;
                                 }
                                 true

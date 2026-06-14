@@ -96,7 +96,7 @@ pub fn generate_star_map(dir: &Path, width: u32, height: u32) -> StarMap {
             let path = entry.path();
             // Store relative path
             let relative_path = match path.strip_prefix(dir) {
-                Ok(p) => p.to_string_lossy().to_string(),
+                Ok(p) => p.to_string_lossy().into_owned(),
                 Err(_) => path
                     .file_name()
                     .unwrap_or_default()

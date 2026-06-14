@@ -54,7 +54,7 @@ pub fn scan_directory(path: &str) -> Vec<FileString> {
             let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
             let extension = path_buf
                 .extension()
-                .map(|s| s.to_string_lossy().to_string());
+                .map(|s| s.to_string_lossy().into_owned());
 
             files.push(FileString {
                 path: path_buf,
