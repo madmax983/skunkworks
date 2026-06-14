@@ -33,5 +33,5 @@ Each tree represents a running process.
 ## Running
 
 ```bash
-cargo run --release
+cargo run -p process-canopy --release
 ```

@@ -22,12 +22,21 @@ There are three types of knots used to represent numbers:
 2.  **Long Knot (≡L):** Represents `2` to `9` in the Units place. The number of turns indicates the value.
 3.  **Figure-Eight Knot (∞):** Represents `1` in the Units place.
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+quipu = { path = "../crates/quipu" }
+```
+
 ## Example: The Hero's Journey (Accounting for the Harvest)
 
 Imagine you are a *Quipucamayoc* (Keeper of the Quipu), recording the harvest of potatoes and maize.
 
 ```
-use quipu::{Quipu, Cord, Knot};
+use quipu::{Quipu, Cord};
 
 // 1. Create a new Quipu to record the harvest.
 let mut harvest_record = Quipu::new();

@@ -1,5 +1,5 @@
 use num_complex::Complex;
-use poincare_disk::{Geodesic, Mobius};
+use poincare_disk::Geodesic;
 use proptest::prelude::*;
 
 proptest! {

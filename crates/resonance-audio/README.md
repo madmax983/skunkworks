@@ -26,7 +26,7 @@ use crossbeam_channel::bounded;
 
 // 1. Create channels for communication
 let (cmd_tx, cmd_rx) = bounded(128);
-let (snap_tx, snap_rx) = bounded(1);
+let (snap_tx, _snap_rx) = bounded(1);
 
 // 2. Initialize the audio model
 // Width: 100, Height: 100

@@ -25,3 +25,7 @@
 ## 2024-05-24 - [Doctest `#[test]` attribute]
 **Confusion:** Including a `#[test]` attribute directly in a `///` or `//!` rust block causes `cargo clippy` or `cargo test` to complain about a nested test attribute inside a doctest (`clippy::test-attr-in-doctest`).
 **Clarification:** Examples of unit tests in documentation should omit the `#[test]` attribute at the top of the function to compile and run properly as a doc-test without triggering nested test warnings.
+
+## 2025-05-24 - [Fixing Workspace Dependency Version Conflicts in README]
+**Confusion:** In `crates/tui-shared/README.md`, it originally instructed users to depend on `ratatui = "0.30"` when the workspace explicitly was set to `ratatui = "0.29"` or another version, causing standalone examples to fail with `unicode-width` dependency resolution conflicts.
+**Clarification:** Always ensure that `README.md` standalone dependency examples reflect the exact version constraint of the workspace's root `Cargo.toml`.

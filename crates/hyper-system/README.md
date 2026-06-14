@@ -35,7 +35,7 @@ hyper-system = { path = "../hyper-system" }
 ### Example: 4D Rotation & Projection
 
 ```rust
-use hyper_system::math::Vec4;
+use hyper_system::Vec4;
 use std::f32::consts::PI;
 
 fn main() {
@@ -57,7 +57,7 @@ fn main() {
 ### Example: System Monitoring
 
 ```rust
-use hyper_system::monitor::SystemMonitor;
+use hyper_system::SystemMonitor;
 
 fn main() {
     let mut monitor = SystemMonitor::new();

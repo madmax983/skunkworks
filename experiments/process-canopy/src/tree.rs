@@ -149,7 +149,7 @@ impl Tree {
                 WHITE,
             );
             draw_text(
-                &format!("{:.1}% CPU", self.stats.cpu_usage),
+                format!("{:.1}% CPU", self.stats.cpu_usage),
                 self.position.x - 10.0,
                 self.position.y + 30.0,
                 12.0,

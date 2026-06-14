@@ -21,6 +21,7 @@ Add this to your `Cargo.toml`:
 ```toml
 [dependencies]
 physics-pbd = { path = "../physics-pbd" }
+glam = "0.28"
 ```
 
 ## Usage
@@ -30,8 +31,8 @@ physics-pbd = { path = "../physics-pbd" }
 Here is how to set up a simple pendulum.
 
 ```rust
-use physics_pbd::{PbdSystem, Constraint};
-use macroquad::prelude::Vec3;
+use physics_pbd::PbdSystem;
+use glam::Vec3;
 
 fn main() {
     let mut system = PbdSystem::new();

@@ -6,7 +6,7 @@ mod tree;
 use macroquad::prelude::*;
 use monitor::fetch_processes;
 use simulation::{ScheduleMode, Sun};
-use std::io::Read;
+
 use sysinfo::System;
 use tree::Tree;
 
@@ -117,7 +117,7 @@ fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>) {
     draw_rectangle_lines(10.0, 10.0, 260.0, 100.0, 2.0, WHITE);
 
     // FPS
-    draw_text(&format!("FPS: {}", get_fps()), 20.0, 35.0, 20.0, WHITE);
+    draw_text(format!("FPS: {}", get_fps()), 20.0, 35.0, 20.0, WHITE);
 
     // Global Stats
     let total_mem = sys.total_memory() as f64 / 1024.0 / 1024.0 / 1024.0;
@@ -125,14 +125,14 @@ fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>) {
     let global_cpu = sys.global_cpu_info().cpu_usage();
 
     draw_text(
-        &format!("Global CPU: {:.1}%", global_cpu),
+        format!("Global CPU: {:.1}%", global_cpu),
         20.0,
         60.0,
         20.0,
         if global_cpu > 50.0 { RED } else { GOLD },
     );
     draw_text(
-        &format!("RAM: {:.1}GB / {:.1}GB", used_mem, total_mem),
+        format!("RAM: {:.1}GB / {:.1}GB", used_mem, total_mem),
         20.0,
         85.0,
         20.0,
@@ -149,7 +149,7 @@ fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>) {
         ScheduleMode::Priority => "Priority",
     };
     draw_text(
-        &format!("Mode: {} (Space)", mode_str),
+        format!("Mode: {} (Space)", mode_str),
         20.0,
         130.0,
         20.0,
@@ -185,21 +185,21 @@ fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>) {
             WHITE,
         );
         draw_text(
-            &format!("PID: {}", tree.stats.pid),
+            format!("PID: {}", tree.stats.pid),
             tooltip_x + 10.0,
             tooltip_y + 40.0,
             16.0,
             LIGHTGRAY,
         );
         draw_text(
-            &format!("CPU: {:.1}%", tree.stats.cpu_usage),
+            format!("CPU: {:.1}%", tree.stats.cpu_usage),
             tooltip_x + 10.0,
             tooltip_y + 60.0,
             16.0,
             GOLD,
         );
         draw_text(
-            &format!("MEM: {} MB", tree.stats.memory / 1024 / 1024),
+            format!("MEM: {} MB", tree.stats.memory / 1024 / 1024),
             tooltip_x + 10.0,
             tooltip_y + 80.0,
             16.0,
