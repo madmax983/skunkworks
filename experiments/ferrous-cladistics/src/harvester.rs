@@ -34,7 +34,7 @@ pub fn harvest_functions(root: &str) -> Vec<FunctionSignature> {
 fn parse_file_content(content: &str, path: &Path) -> Vec<FunctionSignature> {
     let mut sigs = Vec::new();
     let re = Regex::new(r"fn\s+(\w+)(?:<[^>]+>)?\s*\(([^)]*)\)\s*(?:->\s*([^{]+))?\s*\{").unwrap();
-    let path_str = path.to_string_lossy().to_string();
+    let path_str = path.to_string_lossy().into_owned();
 
     for cap in re.captures_iter(content) {
         let name = cap[1].to_string();

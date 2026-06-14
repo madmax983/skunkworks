@@ -36,7 +36,7 @@ pub fn list_entries(data: &[u8]) -> Result<Vec<(String, u64)>> {
 
     for file in archive.entries()? {
         let file = file?;
-        let path = file.path()?.to_string_lossy().to_string();
+        let path = file.path()?.to_string_lossy().into_owned();
         let size = file.size();
         entries.push((path, size));
     }

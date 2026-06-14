@@ -63,7 +63,7 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
             }
 
             let line_count = content.lines().count() as f32;
-            let name = path.file_stem().unwrap().to_string_lossy().to_string();
+            let name = path.file_stem().unwrap().to_string_lossy().into_owned();
 
             let id = nodes.len();
             let node = Node {

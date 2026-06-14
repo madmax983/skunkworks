@@ -63,7 +63,7 @@ impl Graph {
         // Pass 1: Create nodes
         for entry in walker.filter_map(|e| e.ok()) {
             if entry.path().extension().map_or(false, |ext| ext == "rs") {
-                let name = entry.file_name().to_string_lossy().to_string();
+                let name = entry.file_name().to_string_lossy().into_owned();
                 if let Ok(file) = std::fs::File::open(entry.path()) {
                     let mut content = String::new();
                     let limit = 1024 * 1024; // 1MB limit

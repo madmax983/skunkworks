@@ -5,3 +5,7 @@
 **String Buffer Allocation over Intermediate Vectors**
 **Learning:** Chaining `.push(format!(...))` into a `Vec<String>` and calling `.join()` incurs multiple hidden heap allocations. Refactoring this to use a pre-allocated `String::with_capacity` buffer combined with direct `std::fmt::Write::write_fmt` via the `write!` macro safely and significantly reduces heap pressure and memory overhead.
 **Action:** Replace intermediate `Vec` collections and `format!` chains with a single mutable string buffer and `write!` statements for optimal string construction performance in hot code paths.
+
+**Replacing to_string_lossy().to_string()**
+**Learning:** `.to_string_lossy()` returns a `Cow<str>`. Calling `.to_string()` on a `Cow<str>` unconditionally allocates a new `String` on the heap, bypassing the zero-cost advantage of `Cow`. If the data was already a valid borrowed string, we end up copying it. If the data needed allocation (invalid UTF-8), we make *another* allocation.
+**Action:** Use `.into_owned()` on the returned `Cow<str>` instead. This safely converts the `Cow` into a `String` by either reusing the internal allocation (if it was `Owned`) or allocating only when necessary (if it was `Borrowed`).
