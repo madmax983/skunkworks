@@ -1,5 +1,18 @@
 strand main {
     "Genesis Sequence Initiated" print
     5 3 add print
-    0 apoptosis
+
+    # Conditional jump
+    0 eq brz(end)
+
+    jump(loop)
+}
+
+strand loop {
+    # ...
+    jump(end)
+}
+
+strand end {
+    apoptosis
 }
