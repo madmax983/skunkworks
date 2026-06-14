@@ -2038,15 +2038,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bifurcation-crawler"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "macroquad",
- "physics-pbd",
-]
-
-[[package]]
 name = "bindgen"
 version = "0.72.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

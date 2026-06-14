@@ -1425,5 +1425,8 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/quipu-tissue
 **Reaper ☠️**: "Specimen `quipu-tissue` executed. Failed to compile due to a `glam` dependency mismatch. Biomass returned to the void."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/bifurcation-crawler
-**Reaper ☠️**: "Fascinating. Specimen `bifurcation-crawler` exhibits terminal characteristics indicating Ecosystem Maladaptation. The organism fails to compile due to a severe type mismatch (`glam` version conflict) and prevents the ecosystem from compiling successfully. Condemnation marked. Execution scheduled in 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/bifurcation-crawler
+**Reaper ☠️**: "Specimen `bifurcation-crawler` executed. Failed to compile due to a `glam` dependency mismatch. Biomass returned to the void."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/miller-market
+**Reaper ☠️**: "Fascinating. Specimen `miller-market` exhibits terminal characteristics indicating Documentation Void and Terminal Genericism. It lacks a `README.md` and exists as a generic skeletal implementation with pseudo-random interactions. Execution scheduled in 24h."
