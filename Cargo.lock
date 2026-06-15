@@ -7126,19 +7126,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "miller-market"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "cgmath",
- "crossterm 0.28.1",
- "market-sim",
- "miller-lattice",
- "ratatui 0.30.0",
- "tui-shared",
-]
-
-[[package]]
 name = "miller-reaction"
 version = "0.1.0"
 dependencies = [

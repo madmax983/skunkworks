@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **miller-market**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism. Lacks a `README.md` and remains a skeletal implementation mapping generic 3D structures to 2D grids without complex emergence. Grace period: 24h.
+- **neuro-physics**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Genericism. Lacks a `README.md` and remains a basic hardcoded implementation of neural oscillators without clear emergent or evolutionary behavior. Grace period: 24h.
 
 ## ☠️ Executed
+- **miller-market**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a `README.md` and remains a skeletal implementation mapping generic 3D structures to 2D grids without complex emergence. Grace period expired. Moved to graveyard.
 - **bifurcation-crawler**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to a `glam` version mismatch. Grace period expired. Moved to graveyard.
 - **quipu-tissue**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to a `glam` dependency mismatch. Grace period expired. Moved to graveyard.
 - **origami-flock**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Lacks a runnable executable to demonstrate emergence. Grace period expired. Moved to graveyard.
