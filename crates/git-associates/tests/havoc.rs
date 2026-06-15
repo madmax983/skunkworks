@@ -42,3 +42,4 @@ fn havoc_test_alloc_inner() {
         std::process::exit(0);
     }
 }
+//
