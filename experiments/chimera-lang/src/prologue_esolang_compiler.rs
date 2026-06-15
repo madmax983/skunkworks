@@ -1063,6 +1063,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_syncopation_instr(instr)?);
                 }
             }
+            Rule::choreography_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_choreography_instr(instr)?);
+                }
+            }
             Rule::quipu_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_quipu_instr(instr)?);
@@ -1172,6 +1177,35 @@ fn compile_tui_mod_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
                 OpCode::Push,
                 vec![Nucleotide::String(content.to_string())],
             ));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
+}
+
+fn compile_choreography_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair.into_inner().next().unwrap();
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "simulate" {
+                genes.push(Gene::new(OpCode::Choreography, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let num = inner.as_str().parse::<i64>().unwrap();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(num)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
         }
         _ => {}
     }
