@@ -594,6 +594,14 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** The example command resulted in an error because it could not determine which binary to run in the workspace.
 
+### [Concentration Level: STABLE TRAIL] - Location: crates/miller-lattice/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the README only describes the core concepts but completely omits how to actually use or install the crate.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/platter/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the README only describes the core concepts but completely omits how to actually use or install the crate.
+
 ### [Concentration Level: STABLE TRAIL] - Location: README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** The root Quick Start command is broken and lacks details on the `nova` feature requirement.
