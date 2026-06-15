@@ -7746,20 +7746,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "neuro-physics"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "glam 0.28.0",
- "neuro-sim",
- "physics-pbd",
- "rand 0.8.6",
- "ratatui 0.30.0",
- "tui-shared",
-]
-
-[[package]]
 name = "neuro-platter"
 version = "0.1.0"
 dependencies = [

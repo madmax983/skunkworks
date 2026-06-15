@@ -26,8 +26,6 @@ members = [
 
         "experiments/gray-lattice",
     "experiments/market-poincare",
-    "experiments/neuro-physics",
-    "experiments/neuro-physics",
     "graveyard/market-platter",
     "experiments/quipu-poincare",
     "experiments/quipu-locus",
