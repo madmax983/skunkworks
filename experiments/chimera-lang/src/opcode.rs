@@ -2751,6 +2751,8 @@ pub enum OpCode {
     Automaton,
     /// Triggers the Syncopation logic
     Syncopation,
+    /// Triggers the Choreography logic
+    Choreography,
 }
 
 impl fmt::Display for OpCode {
