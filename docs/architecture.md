@@ -2659,7 +2659,7 @@ classDiagram
     BabelParser ..> ParseError : Returns
 ```
 
-## Enforce Module Boundaries via Facade (ADR 103 & 104)
+## Enforce Module Boundaries via Facade (ADR 103, 104, & 115)
 
 Enforcing the Facade pattern in crates and experiments prevents the leakage of internal module structures, ensuring consumers rely only on the exported API.
 
@@ -2695,9 +2695,9 @@ classDiagram
     note for InternalModules "Internal structure is hidden from Consumer"
 ```
 
-## Hyper System Facade (ADR 107)
+## Hyper System Facade (ADR 107 & ADR 115)
 
-Enforcing the Facade pattern in `hyper-system` prevents the leakage of its internal `math` module structure, ensuring consumers rely only on the exported API.
+Enforcing the Facade pattern in `hyper-system` prevents the leakage of its internal `math`, `monitor`, and `physics` modules, ensuring consumers rely only on the exported API.
 
 ```mermaid
 classDiagram
@@ -2707,6 +2707,8 @@ classDiagram
             <<Facade>>
             +Vec3
             +Vec4
+            +SystemMonitor
+            +PbdSystem4D
         }
     }
     namespace InternalModules {
@@ -2715,12 +2717,22 @@ classDiagram
             +Vec3
             +Vec4
         }
+        class Monitor {
+            <<pub(crate)>>
+            +SystemMonitor
+        }
+        class Physics {
+            <<pub(crate)>>
+            +PbdSystem4D
+        }
     }
     class Consumer {
         <<External>>
     }
 
     LibRS ..> Math : pub use math::*
+    LibRS ..> Monitor : pub use monitor::*
+    LibRS ..> Physics : pub use physics::*
     Consumer --> LibRS : Uses
 ```
 
