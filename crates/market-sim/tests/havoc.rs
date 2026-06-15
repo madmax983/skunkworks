@@ -30,3 +30,4 @@ fn havoc_market_sim_alloc_panic_inner() {
         std::process::exit(0);
     }
 }
+//

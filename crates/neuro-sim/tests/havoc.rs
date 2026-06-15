@@ -18,3 +18,4 @@ fn havoc_neuro_oob_panic() {
     // This will call update_neurons, which panics when accessing inputs[0]
     net.step(&[]);
 }
+//
