@@ -563,7 +563,6 @@ classDiagram
     Commit *-- FileChange : Contains
 ```
 
-
 ### Soroban Logic (crates/soroban)
 
 The `soroban` crate encapsulates the logic of the Japanese Abacus, modeling state as physical bead positions rather than just integer values (ADR 034).
@@ -780,7 +779,6 @@ classDiagram
 
     note for Synthesizer "Maps file hash -> Frequency\nMaps DiffType -> Color"
 ```
-
 
 ## Experiment: Chimera Lang (ADR 008)
 
@@ -1267,7 +1265,6 @@ sequenceDiagram
     OS-->>Phy: Output(stdout, stderr)
     Phy-->>VM: push(String(stdout))
 ```
-
 
 ### Chimera Feature: Sovereignty (ADR 018)
 
@@ -2245,7 +2242,6 @@ classDiagram
     World *-- Agent : Manages
 ```
 
-
 ## Experiment: Miller-Platter (ADR 110)
 
 **Miller-Platter** is a hybrid experiment demonstrating "Codebase Thermodynamic Shadow", combining codebase hierarchy mapping with continuous scalar thermodynamics.
@@ -2280,6 +2276,7 @@ classDiagram
     MillerPlatter *-- Platter : Simulates heat
     Crystal --> Platter : Z-Depth maps to Heat Intensity
 ```
+
 ## Experiment: Chimera Circuit (ADR 039)
 
 **Chimera Circuit** is a hybrid experiment that combines procedurally generated circuit boards with genetic algorithms.
@@ -2634,7 +2631,6 @@ classDiagram
     PenroseTiling ..> Value : Uses
 ```
 
-
 ### Parsing Error Normalization (ADR 105)
 
 The Babel module normalizes parsing operations by enforcing a strictly typed `ParseError` struct to gracefully handle malformed code syntax.
@@ -2975,4 +2971,104 @@ classDiagram
     LibRS ..> Eye : encapsulates
     LibRS ..> Physics : encapsulates
     Consumer --> LibRS : Uses
+```
+
+## Experiment: Quipu-Gray (ADR 116)
+
+**Quipu-Gray** is an experimental hybrid crossing the discrete hierarchical data structure of `quipu` with the continuous reaction-diffusion chemical physics of `gray-scott` to explore "Knotted Morphogenesis."
+
+### Hybrid Architecture
+
+The discrete structural knots on a Quipu cord act as continuous chemical catalysts within a 2D Gray-Scott reaction-diffusion grid, demonstrating a bidirectional interaction between abstract structures and cellular automata environments.
+
+```mermaid
+classDiagram
+    direction TB
+    class QuipuGray {
+        +QuipuCord cord
+        +GrayScott grid
+        +run()
+    }
+
+    class QuipuCord {
+        <<Library: quipu>>
+        +Vec~Knot~ knots
+        +evaluate_structure()
+    }
+
+    class GrayScott {
+        <<Library: gray-scott>>
+        +Vec~f32~ u_chem
+        +Vec~f32~ v_chem
+        +diffuse()
+    }
+
+    QuipuGray --> QuipuCord : Manages
+    QuipuGray --> GrayScott : Catalyzes
+```
+
+## Experiment: Miller-Locus (ADR 117)
+
+**Miller-Locus** merges the rigid filesystem-oriented hierarchical structures of `miller-lattice` with the continuous, wrapping non-Euclidean boundary mechanics of `locus`.
+
+### Hybrid Architecture
+
+The discrete, hierarchical nodes representing directory paths are projected onto a continuous Torus boundary. As entities traverse the Miller lattice tree, they are spatially wrapped along the Torus, blending infinite topological space with constrained, bounded data structures.
+
+```mermaid
+classDiagram
+    direction TB
+    class MillerLocus {
+        +MillerTree lattice
+        +Torus boundary
+        +run()
+    }
+
+    class MillerTree {
+        <<Library: miller-lattice>>
+        +Node root
+        +traverse()
+    }
+
+    class Torus {
+        <<Library: locus>>
+        +wrap_coordinates(Position)
+    }
+
+    MillerLocus --> MillerTree : Traverses
+    MillerLocus --> Torus : Projects onto
+```
+
+## Experiment: Flock-Physics (ADR 118)
+
+**Flock-Physics** merges emergent behavioral swarm intelligence from `flocking` with the rigid constraint-based structure of `physics-pbd` (Position Based Dynamics) to simulate a cohesive soft-body organism.
+
+### Hybrid Architecture
+
+Individual Boids in the flocking simulation map directly to particles in the PBD soft-body mesh. Swarm rules (cohesion, alignment, separation) drive particle velocity, while PBD constraints enforce structural distance rules, resulting in organic deformation.
+
+```mermaid
+classDiagram
+    direction TB
+    class FlockPhysics {
+        +Flock swarm
+        +PbdSystem soft_body
+        +run()
+    }
+
+    class Flock {
+        <<Library: flocking>>
+        +Vec~Boid~ boids
+        +apply_rules()
+    }
+
+    class PbdSystem {
+        <<Library: physics-pbd>>
+        +Vec~Particle~ particles
+        +Vec~Constraint~ distance_constraints
+        +solve()
+    }
+
+    FlockPhysics --> Flock : Intelligence
+    FlockPhysics --> PbdSystem : Structural Constraints
 ```
