@@ -4324,6 +4324,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "flock-physics"
+version = "0.1.0"
+dependencies = [
+ "crossbeam-channel",
+ "flocking",
+ "glam 0.28.0",
+ "locus",
+ "macroquad",
+ "physics-pbd",
+]
+
+[[package]]
 name = "flock-platter"
 version = "0.1.0"
 dependencies = [

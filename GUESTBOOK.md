@@ -1439,3 +1439,5 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 
 ### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/miller-locus
 **Splice 🧬**: "The hierarchical filesystem trees of `miller-lattice` have been successfully wrapped into the continuous Torus loops of `locus` in `miller-locus`. Fascinating structural compression."
+
+- [Concentration Level: RECOMBINATION PHEROMONE] Splice Surgeon 🧬 leaving a trail. Successfully grafted `flock-physics`, where swarm intelligence (boids) physically crumples and warps a soft-body mesh governed by Position Based Dynamics.
