@@ -227,8 +227,17 @@ pub fn entangle(
         // Remove sys2, merge into sys1 (or create new)
         // Strategy: Create new merged system, reassign all entities from sys1 and sys2 to new system.
 
-        let sys1 = systems.remove(&sys1_id).unwrap();
-        let sys2 = systems.remove(&sys2_id).unwrap();
+        let sys1 = systems
+            .remove(&sys1_id)
+            .ok_or(anyhow!("System 1 not found during entanglement"))?;
+        let sys2 = match systems.remove(&sys2_id) {
+            Some(sys) => sys,
+            None => {
+                // Restore sys1
+                systems.insert(sys1_id, sys1);
+                return Err(anyhow!("System 2 not found during entanglement"));
+            }
+        };
 
         // Check size limit. Max 10 qubits per system to prevent explosion?
         if sys1.num_qubits + sys2.num_qubits > 10 {
@@ -365,4 +374,43 @@ pub fn get_probability(
         }
     }
     0.0
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    #[test]
+    fn should_return_error_when_system_not_found() {
+        let mut next_sys_id = 0;
+        let mut systems = HashMap::new();
+        let mut entity_map = HashMap::new();
+
+        // 1. Manually add entities mapping to valid sys ids 0 and 1
+        entity_map.insert(100, (0, 0));
+        entity_map.insert(101, (1, 0));
+
+        // 2. ONLY insert system 0, NOT system 1.
+        // This simulates a desync where an entity map points to a deleted system.
+        systems.insert(0, QubitSystem::new(1));
+
+        // 3. Detonate: Entangling entity 100 with 101 will look up sys_id 1
+        // and should return an error, NOT panic.
+        let result = entangle(&mut next_sys_id, &mut systems, &mut entity_map, 100, 101);
+
+        assert!(
+            result.is_err(),
+            "Expected an error because system 1 is missing"
+        );
+        if let Err(e) = result {
+            assert_eq!(e.to_string(), "System 2 not found during entanglement");
+        }
+
+        // 4. Verify that sys1 was properly restored
+        assert!(
+            systems.contains_key(&0),
+            "System 1 should be restored upon failure"
+        );
+    }
 }
