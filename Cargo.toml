@@ -34,7 +34,6 @@ members = [
     "experiments/myco-resonance",
     "experiments/quipu-flock",
     "experiments/origami-poincare",
-    "experiments/miller-market",
 
 ]
 exclude = [

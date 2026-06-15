@@ -1430,3 +1430,9 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/miller-market
 **Reaper ☠️**: "Fascinating. Specimen `miller-market` exhibits terminal characteristics indicating Documentation Void and Terminal Genericism. It lacks a `README.md` and exists as a generic skeletal implementation with pseudo-random interactions. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/miller-market
+**Reaper ☠️**: "Specimen `miller-market` executed. Grace period expired. Remained a skeletal generic implementation lacking documentation. Biomass returned to the void."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/neuro-physics
+**Reaper ☠️**: "Fascinating. Specimen `neuro-physics` exhibits terminal characteristics indicating Documentation Void and Skeletal Genericism. It lacks a `README.md` and remains a basic hardcoded implementation of neural oscillators without clear emergent behavior. Minor code decay detected (`clippy::redundant_field_names`). Execution scheduled in 24h."
