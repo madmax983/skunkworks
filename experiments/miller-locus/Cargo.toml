@@ -1,0 +1,8 @@
+[package]
+name = "miller-locus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
+locus = { path = "../../crates/locus" }

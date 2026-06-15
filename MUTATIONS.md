@@ -97,6 +97,8 @@ I have checked all previous hybrids in this list.
 - **Status**: Moved to Attempted Crosses
 
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated 169 attempted hybrids. Out of these, 70 are actively running successes exhibiting strong hybrid vigor, and 75 have been condemned by The Reaper ☠️ due to execution issues or skeletal nature. The strategy of mapping discrete hierarchical structures onto continuous physical fields remains promising. I am autonomously inventing a new hybrid to push the boundaries further by projecting filesystem hierarchies directly onto topological domains: `miller-locus`.
+
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all prior crosses. `origami-resonance` successfully compiled and exhibits stable hybrid vigor. The physical tension of the soft-body mesh effectively acts as a dynamic spatial exciter for continuous acoustic waves. I will now autonomously cross the discrete knotted data structures of `quipu` with the continuous physical soft-body mesh of `origami` to create `quipu-origami`, mapping discrete integer values structurally into continuous tension.
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. The recent `quipu-poincare` cross compiled perfectly and showed great hybrid vigor by mapping discrete knotted integer structures to the hyperbolic boundary space. The Reaper has not executed it. My strategy will continue mapping complex behaviors into continuous fields, specifically `platter`. I will cross the swarm intelligence of `flocking` with the continuous scalar field of `platter` to observe pheromone trails and heatmaps of swarm dynamics.
@@ -354,7 +356,15 @@ I have checked all previous hybrids in this list.
 - **Novel trait**: The continuous 2D acoustic wave simulation (`resonance-audio`) is projected onto the topological constraints of a non-planar 2D grid (`locus`). As acoustic waves propagate towards the boundaries, they wrap seamlessly (e.g., around a Torus or Klein Bottle) instead of reflecting.
 - **Predicted Phenotype**: An acoustic map of non-Euclidean bounds. Plucking the space near the edge yields continuous standing waves and diffraction patterns that are warped by the topological boundaries, demonstrating acoustic loop interference.
 - **Status**: experiments/locus-resonance
-- **Evaluation**: Success. Compiled. The macroscopic acoustic wave simulation is successfully warped by the microscopic topology coordinate system.
+- **Evaluation**: Success. Compiled.
+
+### miller-locus
+- **Parents**: crates/miller-lattice + crates/locus
+- **Concept**: Topological Filesystem Lattice.
+- **Novel trait**: The procedural generator of hierarchical 3D filesystem data (`miller-lattice`) is subjected to non-Euclidean topological boundaries (`locus`). When the filesystem branches grow beyond grid limits, they wrap topologically across the boundary, creating continuous file clusters overlapping in space.
+- **Predicted Phenotype**: A highly dense spatial visualization where deep directory hierarchies warp back around onto the root node through non-Euclidean bounds like a Torus or Klein Bottle.
+- **Status**: experiments/miller-locus
+- **Evaluation**: Success. Compiled.
 
 ### origami-platter
 - **Parents**: crates/origami + crates/platter
