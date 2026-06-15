@@ -1,0 +1,12 @@
+[package]
+name = "flock-physics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+flocking = { path = "../../crates/flocking" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+locus = { path = "../../crates/locus" }
+glam = "0.28"
+macroquad = "0.4"
+crossbeam-channel = "0.5"

@@ -33,6 +33,7 @@ members = [
     "experiments/quipu-locus",
     "experiments/myco-resonance",
     "experiments/quipu-flock",
+    "experiments/flock-physics",
     "experiments/origami-poincare",
 
 ]
