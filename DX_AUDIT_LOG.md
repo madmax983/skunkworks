@@ -828,3 +828,30 @@ available binaries: bifurcation-crawler, bio-chain, biomorphic-lexicon, biomorph
 *   🤦 **The Confusion:** "Tried to use the `platter` crate. There is no example to run and no instructions on how to install it."
 *   🕵️ **The Reality:** "Turns out the README only describes the core concepts but completely omits how to actually use or install the crate."
 *   💡 **The Fix:** "Add a clear `Installation` section and a simple `Quick Start` example."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/ferrous-core/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `ferrous-core` crate."
+**Action:** Try to follow the README using a fresh crate. Looked for an example to run.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Example and Installation Instructions:** The `README.md` lacks both an example code block and installation instructions.
+    - *Impact:* Complete confusion on how to use or install the crate.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions and a runnable example.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions and example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to use the `ferrous-core` crate. There is no example to run and no instructions on how to install it."
+*   🕵️ **The Reality:** "Turns out the README only describes the core concepts but completely omits how to actually use or install the crate."
+*   💡 **The Fix:** "Add a clear `Installation` section and a simple `Quick Start` example."
