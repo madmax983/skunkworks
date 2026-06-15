@@ -547,7 +547,8 @@ impl crate::vm::ChimeraVM {
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             OpCode::Choreography => {
-                self.output.push("Choreography logic triggered.".to_string());
+                self.output
+                    .push("Choreography logic triggered.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             #[cfg(feature = "oracle")]
