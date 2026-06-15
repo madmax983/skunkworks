@@ -275,129 +275,133 @@ pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_frankenstein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: stitches, strand_b, strand_a (bottom)
-    if vm.stack.len() >= 3 {
-        let stitches_val = vm.stack.pop().unwrap();
-        let strand_b_val = vm.stack.pop().unwrap();
-        let strand_a_val = vm.stack.pop().unwrap();
-
-        if let (Value::Int(s_a), Value::Int(s_b), Value::Int(stitches)) =
-            (strand_a_val, strand_b_val, stitches_val)
-        {
-            let idx_a = s_a as usize;
-            let idx_b = s_b as usize;
-            let helix_len = vm.dna.helix.strands.len();
-
-            if s_a >= 0 && s_b >= 0 && idx_a < helix_len && idx_b < helix_len {
-                let genes_a = &vm.dna.helix.strands[idx_a].genes;
-                let genes_b = &vm.dna.helix.strands[idx_b].genes;
-                let len_a = genes_a.len();
-                let len_b = genes_b.len();
-
-                let n_stitches = stitches.max(1) as usize;
-                let chunk_size_a = (len_a / (n_stitches + 1)).max(1);
-                let chunk_size_b = (len_b / (n_stitches + 1)).max(1);
-
-                let mut new_genes = Vec::new();
-                let mut ptr_a = 0;
-                let mut ptr_b = 0;
-
-                for i in 0..=n_stitches {
-                    // Alternate chunks
-                    if i % 2 == 0 {
-                        // Take from A
-                        let end = (ptr_a + chunk_size_a).min(len_a);
-                        if ptr_a < len_a {
-                            new_genes.extend_from_slice(&genes_a[ptr_a..end]);
-                            ptr_a = end;
-                        }
-                    } else {
-                        // Take from B
-                        let end = (ptr_b + chunk_size_b).min(len_b);
-                        if ptr_b < len_b {
-                            new_genes.extend_from_slice(&genes_b[ptr_b..end]);
-                            ptr_b = end;
-                        }
-                    }
-
-                    // Insert Spark at seam (if not last chunk)
-                    if i < n_stitches {
-                        #[cfg(feature = "elektra")]
-                        let spark = crate::ast::Gene {
-                            op: OpCode::Lightning,
-                            args: vec![], // Lightning args handled by VM or usually grid based, but here acts as a "Spark"
-                        };
-                        #[cfg(not(feature = "elektra"))]
-                        let spark = crate::ast::Gene {
-                            op: OpCode::Glitch,
-                            args: vec![Nucleotide::Number(1)], // Minor glitch
-                        };
-                        new_genes.push(spark);
-                    }
-                }
-
-                // Append remainders if any (Frankenstein is messy)
-                if ptr_a < len_a {
-                    new_genes.extend_from_slice(&genes_a[ptr_a..]);
-                }
-                if ptr_b < len_b {
-                    new_genes.extend_from_slice(&genes_b[ptr_b..]);
-                }
-
-                // 🔒 WARDEN: Enforce MAX_GENES_PER_STRAND
-                if new_genes.len() > MAX_GENES_PER_STRAND {
-                    vm.output.push(format!(
-                        "FRANKENSTEIN: Result length {} exceeds limit {}",
-                        new_genes.len(),
-                        MAX_GENES_PER_STRAND
-                    ));
-                    vm.stack.push(Value::Int(-1));
-                    return None;
-                }
-
-                if vm.dna.helix.strands.len() >= MAX_STRANDS {
-                    vm.output
-                        .push("Error: Strand limit exceeded for Frankenstein".to_string());
-                    vm.stack.push(Value::Int(-1));
-                    return None;
-                }
-
-                vm.dna
-                    .helix
-                    .strands
-                    .push(crate::ast::Strand { genes: new_genes });
-                vm.telomeres.push(50);
-                #[cfg(feature = "cortex")]
-                {
-                    vm.activation_levels.push(0);
-                    vm.synapse_map.push(Vec::with_capacity(4));
-                }
-                let new_idx = vm.dna.helix.strands.len() - 1;
-
-                vm.cladistics.register_strand(
-                    new_idx,
-                    Some(idx_a),
-                    vm.tick_counter,
-                    format!("Frankenstein({}, {})", idx_a, idx_b),
-                );
-
-                vm.stack.push(Value::Int(new_idx as i64));
-                vm.energy = vm.energy.saturating_sub(100); // Very expensive
-                vm.output.push(format!(
-                    "FRANKENSTEIN: It's Alive! Created strand {}",
-                    new_idx
-                ));
-            } else {
-                vm.output
-                    .push("Error: Strand index out of bounds".to_string());
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for Frankenstein".to_string());
-        }
-    } else {
+    if vm.stack.len() < 3 {
         vm.output
             .push("Error: Stack underflow for Frankenstein".to_string());
+        return None;
     }
+
+    let stitches_val = vm.stack.pop().unwrap();
+    let strand_b_val = vm.stack.pop().unwrap();
+    let strand_a_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(s_a), Value::Int(s_b), Value::Int(stitches)) =
+        (strand_a_val, strand_b_val, stitches_val)
+    else {
+        vm.output
+            .push("Error: Type mismatch for Frankenstein".to_string());
+        return None;
+    };
+
+    let idx_a = s_a as usize;
+    let idx_b = s_b as usize;
+    let helix_len = vm.dna.helix.strands.len();
+
+    if s_a < 0 || s_b < 0 || idx_a >= helix_len || idx_b >= helix_len {
+        vm.output
+            .push("Error: Strand index out of bounds".to_string());
+        return None;
+    }
+
+    let genes_a = &vm.dna.helix.strands[idx_a].genes;
+    let genes_b = &vm.dna.helix.strands[idx_b].genes;
+    let len_a = genes_a.len();
+    let len_b = genes_b.len();
+
+    let n_stitches = stitches.max(1) as usize;
+    let chunk_size_a = (len_a / (n_stitches + 1)).max(1);
+    let chunk_size_b = (len_b / (n_stitches + 1)).max(1);
+
+    let mut new_genes = Vec::new();
+    let mut ptr_a = 0;
+    let mut ptr_b = 0;
+
+    for i in 0..=n_stitches {
+        // Alternate chunks
+        if i % 2 == 0 {
+            // Take from A
+            let end = (ptr_a + chunk_size_a).min(len_a);
+            if ptr_a < len_a {
+                new_genes.extend_from_slice(&genes_a[ptr_a..end]);
+                ptr_a = end;
+            }
+        } else {
+            // Take from B
+            let end = (ptr_b + chunk_size_b).min(len_b);
+            if ptr_b < len_b {
+                new_genes.extend_from_slice(&genes_b[ptr_b..end]);
+                ptr_b = end;
+            }
+        }
+
+        // Insert Spark at seam (if not last chunk)
+        if i < n_stitches {
+            #[cfg(feature = "elektra")]
+            let spark = crate::ast::Gene {
+                op: OpCode::Lightning,
+                args: vec![], // Lightning args handled by VM or usually grid based, but here acts as a "Spark"
+            };
+            #[cfg(not(feature = "elektra"))]
+            let spark = crate::ast::Gene {
+                op: OpCode::Glitch,
+                args: vec![Nucleotide::Number(1)], // Minor glitch
+            };
+            new_genes.push(spark);
+        }
+    }
+
+    // Append remainders if any (Frankenstein is messy)
+    if ptr_a < len_a {
+        new_genes.extend_from_slice(&genes_a[ptr_a..]);
+    }
+    if ptr_b < len_b {
+        new_genes.extend_from_slice(&genes_b[ptr_b..]);
+    }
+
+    // 🔒 WARDEN: Enforce MAX_GENES_PER_STRAND
+    if new_genes.len() > MAX_GENES_PER_STRAND {
+        vm.output.push(format!(
+            "FRANKENSTEIN: Result length {} exceeds limit {}",
+            new_genes.len(),
+            MAX_GENES_PER_STRAND
+        ));
+        vm.stack.push(Value::Int(-1));
+        return None;
+    }
+
+    if vm.dna.helix.strands.len() >= MAX_STRANDS {
+        vm.output
+            .push("Error: Strand limit exceeded for Frankenstein".to_string());
+        vm.stack.push(Value::Int(-1));
+        return None;
+    }
+
+    vm.dna
+        .helix
+        .strands
+        .push(crate::ast::Strand { genes: new_genes });
+    vm.telomeres.push(50);
+    #[cfg(feature = "cortex")]
+    {
+        vm.activation_levels.push(0);
+        vm.synapse_map.push(Vec::with_capacity(4));
+    }
+    let new_idx = vm.dna.helix.strands.len() - 1;
+
+    vm.cladistics.register_strand(
+        new_idx,
+        Some(idx_a),
+        vm.tick_counter,
+        format!("Frankenstein({}, {})", idx_a, idx_b),
+    );
+
+    vm.stack.push(Value::Int(new_idx as i64));
+    vm.energy = vm.energy.saturating_sub(100); // Very expensive
+    vm.output.push(format!(
+        "FRANKENSTEIN: It's Alive! Created strand {}",
+        new_idx
+    ));
+
     None
 }
 
@@ -413,97 +417,94 @@ pub fn exec_frankenstein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// // Example usage of exec_crossover
 /// ```
 pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 2 {
-        let b_val = vm.stack.pop().unwrap();
-        let a_val = vm.stack.pop().unwrap();
-
-        if let (Value::Int(idx_a), Value::Int(idx_b)) = (a_val, b_val) {
-            let a = idx_a as usize;
-            let b = idx_b as usize;
-            let helix_len = vm.dna.helix.strands.len();
-
-            if a < helix_len && b < helix_len {
-                if helix_len + 1 >= MAX_STRANDS {
-                    vm.output
-                        .push("CROSSOVER ERROR: Strand limit exceeded".to_string());
-                    return None;
-                }
-
-                let genes_a = &vm.dna.helix.strands[a].genes;
-                let genes_b = &vm.dna.helix.strands[b].genes;
-                let len_a = genes_a.len();
-                let len_b = genes_b.len();
-                let min_len = len_a.min(len_b);
-
-                if min_len > 0 {
-                    let mut rng = rand::thread_rng();
-                    let cut = rng.gen_range(0..min_len);
-
-                    let mut new_genes_1 = genes_a[0..cut].to_vec();
-                    new_genes_1.extend_from_slice(&genes_b[cut..]);
-
-                    let mut new_genes_2 = genes_b[0..cut].to_vec();
-                    new_genes_2.extend_from_slice(&genes_a[cut..]);
-
-                    // Add first child
-                    vm.dna
-                        .helix
-                        .strands
-                        .push(crate::ast::Strand { genes: new_genes_1 });
-                    vm.telomeres.push(50);
-                    #[cfg(feature = "cortex")]
-                    {
-                        vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::with_capacity(4));
-                    }
-                    let child_1 = vm.dna.helix.strands.len() - 1;
-                    vm.cladistics.register_strand(
-                        child_1,
-                        Some(a),
-                        vm.tick_counter,
-                        "Crossover".to_string(),
-                    );
-
-                    // Add second child
-                    vm.dna
-                        .helix
-                        .strands
-                        .push(crate::ast::Strand { genes: new_genes_2 });
-                    vm.telomeres.push(50);
-                    #[cfg(feature = "cortex")]
-                    {
-                        vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::with_capacity(4));
-                    }
-                    let child_2 = vm.dna.helix.strands.len() - 1;
-                    vm.cladistics.register_strand(
-                        child_2,
-                        Some(b),
-                        vm.tick_counter,
-                        "Crossover".to_string(),
-                    );
-
-                    vm.stack.push(Value::Int(child_1 as i64));
-                    vm.stack.push(Value::Int(child_2 as i64));
-                    vm.energy = vm.energy.saturating_sub(20);
-                    vm.output.push(format!(
-                        "CROSSOVER: {}+{} -> {}, {}",
-                        a, b, child_1, child_2
-                    ));
-                } else {
-                    vm.output.push("CROSSOVER ERROR: Empty strand".to_string());
-                }
-            } else {
-                vm.output
-                    .push("CROSSOVER ERROR: Invalid strand index".to_string());
-            }
-        } else {
-            vm.output.push("CROSSOVER ERROR: Type mismatch".to_string());
-        }
-    } else {
+    if vm.stack.len() < 2 {
         vm.output
             .push("CROSSOVER ERROR: Stack underflow".to_string());
+        return None;
     }
+
+    let b_val = vm.stack.pop().unwrap();
+    let a_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(idx_a), Value::Int(idx_b)) = (a_val, b_val) else {
+        vm.output.push("CROSSOVER ERROR: Type mismatch".to_string());
+        return None;
+    };
+
+    let a = idx_a as usize;
+    let b = idx_b as usize;
+    let helix_len = vm.dna.helix.strands.len();
+
+    if idx_a < 0 || idx_b < 0 || a >= helix_len || b >= helix_len {
+        vm.output
+            .push("CROSSOVER ERROR: Invalid strand index".to_string());
+        return None;
+    }
+
+    if helix_len + 1 >= MAX_STRANDS {
+        vm.output
+            .push("CROSSOVER ERROR: Strand limit exceeded".to_string());
+        return None;
+    }
+
+    let genes_a = &vm.dna.helix.strands[a].genes;
+    let genes_b = &vm.dna.helix.strands[b].genes;
+    let len_a = genes_a.len();
+    let len_b = genes_b.len();
+    let min_len = len_a.min(len_b);
+
+    if min_len == 0 {
+        vm.output.push("CROSSOVER ERROR: Empty strand".to_string());
+        return None;
+    }
+
+    let mut rng = rand::thread_rng();
+    let cut = rng.gen_range(0..min_len);
+
+    let mut new_genes_1 = genes_a[0..cut].to_vec();
+    new_genes_1.extend_from_slice(&genes_b[cut..]);
+
+    let mut new_genes_2 = genes_b[0..cut].to_vec();
+    new_genes_2.extend_from_slice(&genes_a[cut..]);
+
+    // Add first child
+    vm.dna
+        .helix
+        .strands
+        .push(crate::ast::Strand { genes: new_genes_1 });
+    vm.telomeres.push(50);
+    #[cfg(feature = "cortex")]
+    {
+        vm.activation_levels.push(0);
+        vm.synapse_map.push(Vec::with_capacity(4));
+    }
+    let child_1 = vm.dna.helix.strands.len() - 1;
+    vm.cladistics
+        .register_strand(child_1, Some(a), vm.tick_counter, "Crossover".to_string());
+
+    // Add second child
+    vm.dna
+        .helix
+        .strands
+        .push(crate::ast::Strand { genes: new_genes_2 });
+    vm.telomeres.push(50);
+    #[cfg(feature = "cortex")]
+    {
+        vm.activation_levels.push(0);
+        vm.synapse_map.push(Vec::with_capacity(4));
+    }
+    let child_2 = vm.dna.helix.strands.len() - 1;
+    vm.cladistics
+        .register_strand(child_2, Some(b), vm.tick_counter, "Crossover".to_string());
+
+    vm.stack.push(Value::Int(child_1 as i64));
+    vm.stack.push(Value::Int(child_2 as i64));
+    vm.energy = vm.energy.saturating_sub(20);
+    vm.output.push(format!(
+        "CROSSOVER: {}+{} -> {}, {}",
+        a, b, child_1, child_2
+    ));
+
     None
 }
 
@@ -521,122 +522,126 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: method, strand_b, strand_a (bottom)
-    if vm.stack.len() >= 3 {
-        let method_val = vm.stack.pop().unwrap();
-        let strand_b_val = vm.stack.pop().unwrap();
-        let strand_a_val = vm.stack.pop().unwrap();
-
-        if let (Value::Int(s_a), Value::Int(s_b), Value::Int(method)) =
-            (strand_a_val, strand_b_val, method_val)
-        {
-            let idx_a = s_a as usize;
-            let idx_b = s_b as usize;
-            let helix_len = vm.dna.helix.strands.len();
-
-            if s_a >= 0 && s_b >= 0 && idx_a < helix_len && idx_b < helix_len {
-                let genes_a = &vm.dna.helix.strands[idx_a].genes;
-                let genes_b = &vm.dna.helix.strands[idx_b].genes;
-                let len_a = genes_a.len();
-                let len_b = genes_b.len();
-                let max_len = len_a.max(len_b);
-
-                let mut new_genes = Vec::new();
-                let mut rng = rand::thread_rng();
-
-                match method {
-                    0 => {
-                        // Interleave
-                        for i in 0..max_len {
-                            if i < len_a {
-                                new_genes.push(genes_a[i].clone());
-                            }
-                            if i < len_b {
-                                new_genes.push(genes_b[i].clone());
-                            }
-                        }
-                        vm.output
-                            .push(format!("SPLICE: Interleaved strands {} and {}", s_a, s_b));
-                    }
-                    1 => {
-                        // Uniform Crossover
-                        for i in 0..max_len {
-                            if i < len_a && i < len_b {
-                                if rng.gen_bool(0.5) {
-                                    new_genes.push(genes_a[i].clone());
-                                } else {
-                                    new_genes.push(genes_b[i].clone());
-                                }
-                            } else if i < len_a {
-                                new_genes.push(genes_a[i].clone());
-                            } else if i < len_b {
-                                new_genes.push(genes_b[i].clone());
-                            }
-                        }
-                        vm.output
-                            .push(format!("SPLICE: Crossover strands {} and {}", s_a, s_b));
-                    }
-                    2 => {
-                        // Midpoint Split (Head A + Tail B)
-                        let mid_a = len_a / 2;
-                        let mid_b = len_b / 2;
-                        for gene in genes_a.iter().take(mid_a) {
-                            new_genes.push(gene.clone());
-                        }
-                        for gene in genes_b.iter().skip(mid_b) {
-                            new_genes.push(gene.clone());
-                        }
-                        vm.output
-                            .push(format!("SPLICE: Hybridized strands {} and {}", s_a, s_b));
-                    }
-                    _ => {
-                        vm.output.push("Error: Invalid splice method".to_string());
-                    }
-                }
-
-                if !new_genes.is_empty() {
-                    if vm.dna.helix.strands.len() >= MAX_STRANDS {
-                        vm.output
-                            .push("Error: Strand limit exceeded for splice".to_string());
-                        vm.stack.push(Value::Int(-1));
-                        return None;
-                    }
-                    vm.dna
-                        .helix
-                        .strands
-                        .push(crate::ast::Strand { genes: new_genes });
-                    vm.telomeres.push(50);
-                    #[cfg(feature = "cortex")]
-                    {
-                        vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::with_capacity(4));
-                    }
-                    let new_idx = vm.dna.helix.strands.len() - 1;
-
-                    vm.cladistics.register_strand(
-                        new_idx,
-                        Some(idx_a),
-                        vm.tick_counter,
-                        format!("Splice({}, {})", idx_a, idx_b),
-                    );
-
-                    vm.stack.push(Value::Int(new_idx as i64));
-                    vm.energy = vm.energy.saturating_sub(30);
-                } else if method <= 2 {
-                    // If result empty but method valid (e.g. empty parents)
-                    vm.stack.push(Value::Int(-1));
-                }
-            } else {
-                vm.output
-                    .push("Error: Strand index out of bounds for splice".to_string());
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for splice".to_string());
-        }
-    } else {
+    if vm.stack.len() < 3 {
         vm.output
             .push("Error: Stack underflow for splice".to_string());
+        return None;
     }
+
+    let method_val = vm.stack.pop().unwrap();
+    let strand_b_val = vm.stack.pop().unwrap();
+    let strand_a_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(s_a), Value::Int(s_b), Value::Int(method)) =
+        (strand_a_val, strand_b_val, method_val)
+    else {
+        vm.output
+            .push("Error: Type mismatch for splice".to_string());
+        return None;
+    };
+
+    let idx_a = s_a as usize;
+    let idx_b = s_b as usize;
+    let helix_len = vm.dna.helix.strands.len();
+
+    if s_a < 0 || s_b < 0 || idx_a >= helix_len || idx_b >= helix_len {
+        vm.output
+            .push("Error: Strand index out of bounds for splice".to_string());
+        return None;
+    }
+
+    let genes_a = &vm.dna.helix.strands[idx_a].genes;
+    let genes_b = &vm.dna.helix.strands[idx_b].genes;
+    let len_a = genes_a.len();
+    let len_b = genes_b.len();
+    let max_len = len_a.max(len_b);
+
+    let mut new_genes = Vec::new();
+    let mut rng = rand::thread_rng();
+
+    match method {
+        0 => {
+            // Interleave
+            for i in 0..max_len {
+                if i < len_a {
+                    new_genes.push(genes_a[i].clone());
+                }
+                if i < len_b {
+                    new_genes.push(genes_b[i].clone());
+                }
+            }
+            vm.output
+                .push(format!("SPLICE: Interleaved strands {} and {}", s_a, s_b));
+        }
+        1 => {
+            // Uniform Crossover
+            for i in 0..max_len {
+                if i < len_a && i < len_b {
+                    if rng.gen_bool(0.5) {
+                        new_genes.push(genes_a[i].clone());
+                    } else {
+                        new_genes.push(genes_b[i].clone());
+                    }
+                } else if i < len_a {
+                    new_genes.push(genes_a[i].clone());
+                } else if i < len_b {
+                    new_genes.push(genes_b[i].clone());
+                }
+            }
+            vm.output
+                .push(format!("SPLICE: Crossover strands {} and {}", s_a, s_b));
+        }
+        2 => {
+            // Midpoint Split (Head A + Tail B)
+            let mid_a = len_a / 2;
+            let mid_b = len_b / 2;
+            for gene in genes_a.iter().take(mid_a) {
+                new_genes.push(gene.clone());
+            }
+            for gene in genes_b.iter().skip(mid_b) {
+                new_genes.push(gene.clone());
+            }
+            vm.output
+                .push(format!("SPLICE: Hybridized strands {} and {}", s_a, s_b));
+        }
+        _ => {
+            vm.output.push("Error: Invalid splice method".to_string());
+        }
+    }
+
+    if !new_genes.is_empty() {
+        if vm.dna.helix.strands.len() >= MAX_STRANDS {
+            vm.output
+                .push("Error: Strand limit exceeded for splice".to_string());
+            vm.stack.push(Value::Int(-1));
+            return None;
+        }
+        vm.dna
+            .helix
+            .strands
+            .push(crate::ast::Strand { genes: new_genes });
+        vm.telomeres.push(50);
+        #[cfg(feature = "cortex")]
+        {
+            vm.activation_levels.push(0);
+            vm.synapse_map.push(Vec::with_capacity(4));
+        }
+        let new_idx = vm.dna.helix.strands.len() - 1;
+
+        vm.cladistics.register_strand(
+            new_idx,
+            Some(idx_a),
+            vm.tick_counter,
+            format!("Splice({}, {})", idx_a, idx_b),
+        );
+
+        vm.stack.push(Value::Int(new_idx as i64));
+        vm.energy = vm.energy.saturating_sub(30);
+    } else if method <= 2 {
+        // If result empty but method valid (e.g. empty parents)
+        vm.stack.push(Value::Int(-1));
+    }
+
     None
 }
 
@@ -653,83 +658,88 @@ pub fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: split_point, strand_b, strand_a (bottom)
-    if vm.stack.len() >= 3 {
-        let split_val = vm.stack.pop().unwrap();
-        let strand_b_val = vm.stack.pop().unwrap();
-        let strand_a_val = vm.stack.pop().unwrap();
-
-        match (strand_a_val, strand_b_val, split_val) {
-            (Value::Int(sa), Value::Int(sb), Value::Int(split)) => {
-                let helix_len = vm.dna.helix.strands.len();
-                let sa_idx = sa as usize;
-                let sb_idx = sb as usize;
-                let split_idx = split as usize;
-
-                if sa >= 0 && sb >= 0 && split >= 0 && sa_idx < helix_len && sb_idx < helix_len {
-                    // We need to check split bounds for both strands
-                    let len_a = vm.dna.helix.strands[sa_idx].genes.len();
-                    let len_b = vm.dna.helix.strands[sb_idx].genes.len();
-
-                    if split_idx <= len_a && split_idx <= len_b {
-                        // Perform recombination
-                        // We need to borrow strands mutably.
-                        // Since they are in the same Vec, we need split_at_mut or similar trickery,
-                        // or just use indices if we can modify the Vec safely.
-                        // We can't get two mutable references to the same Vec at different indices directly.
-                        // So we'll use `split_at_mut` if they are different indices, or just do nothing if same.
-
-                        if sa_idx == sb_idx {
-                            // Recombining same strand with itself at same point is a no-op.
-                            vm.output
-                                .push("Warning: Recombining strand with itself".to_string());
-                        } else {
-                            // Ensure ordered access to avoid panic
-                            let (lower, upper) = if sa_idx < sb_idx {
-                                (sa_idx, sb_idx)
-                            } else {
-                                (sb_idx, sa_idx)
-                            };
-
-                            let (first_slice, second_slice) =
-                                vm.dna.helix.strands.split_at_mut(upper);
-                            let strand_low = &mut first_slice[lower];
-                            let strand_high = &mut second_slice[0]; // relative index 0 is absolute 'upper'
-
-                            // Identify which is A and B
-                            let (strand_a, strand_b) = if sa_idx < sb_idx {
-                                (strand_low, strand_high)
-                            } else {
-                                (strand_high, strand_low)
-                            };
-
-                            let mut tail_a = strand_a.genes.split_off(split_idx);
-                            let mut tail_b = strand_b.genes.split_off(split_idx);
-
-                            strand_a.genes.append(&mut tail_b);
-                            strand_b.genes.append(&mut tail_a);
-
-                            vm.output.push(format!(
-                                "RECOMBINATION: Swapped tails of strand {} and {} at {}",
-                                sa, sb, split
-                            ));
-                        }
-                    } else {
-                        vm.output
-                            .push("Error: Split point out of bounds".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Strand index out of bounds".to_string());
-                }
-            }
-            _ => vm
-                .output
-                .push("Error: Type mismatch for recombine".to_string()),
-        }
-    } else {
+    if vm.stack.len() < 3 {
         vm.output
             .push("Error: Stack underflow for recombine".to_string());
+        return None;
     }
+
+    let split_val = vm.stack.pop().unwrap();
+    let strand_b_val = vm.stack.pop().unwrap();
+    let strand_a_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(sa), Value::Int(sb), Value::Int(split)) =
+        (strand_a_val, strand_b_val, split_val)
+    else {
+        vm.output
+            .push("Error: Type mismatch for recombine".to_string());
+        return None;
+    };
+
+    let helix_len = vm.dna.helix.strands.len();
+    let sa_idx = sa as usize;
+    let sb_idx = sb as usize;
+    let split_idx = split as usize;
+
+    if sa < 0 || sb < 0 || split < 0 || sa_idx >= helix_len || sb_idx >= helix_len {
+        vm.output
+            .push("Error: Strand index out of bounds".to_string());
+        return None;
+    }
+
+    // We need to check split bounds for both strands
+    let len_a = vm.dna.helix.strands[sa_idx].genes.len();
+    let len_b = vm.dna.helix.strands[sb_idx].genes.len();
+
+    if split_idx > len_a || split_idx > len_b {
+        vm.output
+            .push("Error: Split point out of bounds".to_string());
+        return None;
+    }
+
+    // Perform recombination
+    // We need to borrow strands mutably.
+    // Since they are in the same Vec, we need split_at_mut or similar trickery,
+    // or just use indices if we can modify the Vec safely.
+    // We can't get two mutable references to the same Vec at different indices directly.
+    // So we'll use `split_at_mut` if they are different indices, or just do nothing if same.
+
+    if sa_idx == sb_idx {
+        // Recombining same strand with itself at same point is a no-op.
+        vm.output
+            .push("Warning: Recombining strand with itself".to_string());
+        return None;
+    }
+
+    // Ensure ordered access to avoid panic
+    let (lower, upper) = if sa_idx < sb_idx {
+        (sa_idx, sb_idx)
+    } else {
+        (sb_idx, sa_idx)
+    };
+
+    let (first_slice, second_slice) = vm.dna.helix.strands.split_at_mut(upper);
+    let strand_low = &mut first_slice[lower];
+    let strand_high = &mut second_slice[0]; // relative index 0 is absolute 'upper'
+
+    // Identify which is A and B
+    let (strand_a, strand_b) = if sa_idx < sb_idx {
+        (strand_low, strand_high)
+    } else {
+        (strand_high, strand_low)
+    };
+
+    let mut tail_a = strand_a.genes.split_off(split_idx);
+    let mut tail_b = strand_b.genes.split_off(split_idx);
+
+    strand_a.genes.append(&mut tail_b);
+    strand_b.genes.append(&mut tail_a);
+
+    vm.output.push(format!(
+        "RECOMBINATION: Swapped tails of strand {} and {} at {}",
+        sa, sb, split
+    ));
+
     None
 }
 
@@ -1188,63 +1198,68 @@ pub fn exec_tlen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_ligase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: donor_idx, recipient_idx (bottom)
-    if vm.stack.len() >= 2 {
-        let donor_val = vm.stack.pop().unwrap();
-        let recipient_val = vm.stack.pop().unwrap();
-
-        if let (Value::Int(d_idx), Value::Int(r_idx)) = (donor_val, recipient_val) {
-            let d_idx = d_idx as usize;
-            let r_idx = r_idx as usize;
-            let helix_len = vm.dna.helix.strands.len();
-
-            if d_idx < helix_len && r_idx < helix_len {
-                if d_idx == r_idx {
-                    vm.output
-                        .push("Warning: Ligase on same strand is no-op".to_string());
-                } else {
-                    // We need to move genes from donor to recipient.
-                    let (lower, upper) = if d_idx < r_idx {
-                        (d_idx, r_idx)
-                    } else {
-                        (r_idx, d_idx)
-                    };
-
-                    let (first_slice, second_slice) = vm.dna.helix.strands.split_at_mut(upper);
-                    let strand_low = &mut first_slice[lower];
-                    let strand_high = &mut second_slice[0];
-
-                    let (strand_d, strand_r) = if d_idx < r_idx {
-                        (strand_low, strand_high)
-                    } else {
-                        (strand_high, strand_low)
-                    };
-
-                    // 🔒 WARDEN: Enforce MAX_GENES_PER_STRAND
-                    if strand_r.genes.len() + strand_d.genes.len() <= MAX_GENES_PER_STRAND {
-                        strand_r.genes.append(&mut strand_d.genes);
-                        // donor genes are now empty.
-
-                        vm.energy = vm.energy.saturating_sub(10);
-                        vm.output
-                            .push(format!("LIGASE: Appended strand {} to {}", d_idx, r_idx));
-                    } else {
-                        // Deduct energy even on failure to prevent free infinite loops (DoS)
-                        vm.energy = vm.energy.saturating_sub(10);
-                        vm.output.push("LIGASE: Gene Limit Exceeded".to_string());
-                    }
-                }
-            } else {
-                vm.output
-                    .push("Error: Strand index out of bounds for ligase".to_string());
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for ligase".to_string());
-        }
-    } else {
+    if vm.stack.len() < 2 {
         vm.output
             .push("Error: Stack underflow for ligase".to_string());
+        return None;
     }
+
+    let donor_val = vm.stack.pop().unwrap();
+    let recipient_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(d_idx_int), Value::Int(r_idx_int)) = (donor_val, recipient_val) else {
+        vm.output
+            .push("Error: Type mismatch for ligase".to_string());
+        return None;
+    };
+
+    let d_idx = d_idx_int as usize;
+    let r_idx = r_idx_int as usize;
+    let helix_len = vm.dna.helix.strands.len();
+
+    if d_idx_int < 0 || r_idx_int < 0 || d_idx >= helix_len || r_idx >= helix_len {
+        vm.output
+            .push("Error: Strand index out of bounds for ligase".to_string());
+        return None;
+    }
+
+    if d_idx == r_idx {
+        vm.output
+            .push("Warning: Ligase on same strand is no-op".to_string());
+        return None;
+    }
+
+    // We need to move genes from donor to recipient.
+    let (lower, upper) = if d_idx < r_idx {
+        (d_idx, r_idx)
+    } else {
+        (r_idx, d_idx)
+    };
+
+    let (first_slice, second_slice) = vm.dna.helix.strands.split_at_mut(upper);
+    let strand_low = &mut first_slice[lower];
+    let strand_high = &mut second_slice[0];
+
+    let (strand_d, strand_r) = if d_idx < r_idx {
+        (strand_low, strand_high)
+    } else {
+        (strand_high, strand_low)
+    };
+
+    // 🔒 WARDEN: Enforce MAX_GENES_PER_STRAND
+    if strand_r.genes.len() + strand_d.genes.len() <= MAX_GENES_PER_STRAND {
+        strand_r.genes.append(&mut strand_d.genes);
+        // donor genes are now empty.
+
+        vm.energy = vm.energy.saturating_sub(10);
+        vm.output
+            .push(format!("LIGASE: Appended strand {} to {}", d_idx, r_idx));
+    } else {
+        // Deduct energy even on failure to prevent free infinite loops (DoS)
+        vm.energy = vm.energy.saturating_sub(10);
+        vm.output.push("LIGASE: Gene Limit Exceeded".to_string());
+    }
+
     None
 }
 
@@ -1257,65 +1272,67 @@ pub fn exec_ligase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_mitosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: strand_idx (target to clone)
-    if let Some(val) = vm.stack.pop() {
-        match val {
-            Value::Int(idx) => {
-                let s_idx = idx as usize;
-                if s_idx < vm.dna.helix.strands.len() {
-                    if vm.dna.helix.strands.len() >= MAX_STRANDS {
-                        vm.output
-                            .push("Error: Strand limit exceeded for mitosis".to_string());
-                        return None;
-                    }
-                    // Clone the strand
-                    let new_strand = vm.dna.helix.strands[s_idx].clone();
-                    vm.dna.helix.strands.push(new_strand);
-                    vm.telomeres.push(50); // Default life
-
-                    #[cfg(feature = "cortex")]
-                    {
-                        vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::with_capacity(4));
-                    }
-
-                    // Inherit epigenetics
-                    // We need to find all keys (s_idx, g_idx) and insert (new_idx, g_idx)
-                    let new_s_idx = vm.dna.helix.strands.len() - 1;
-
-                    vm.cladistics.register_strand(
-                        new_s_idx,
-                        Some(s_idx),
-                        vm.tick_counter,
-                        "Mitosis".to_string(),
-                    );
-
-                    let genes_to_methylate: Vec<usize> = vm
-                        .epigenome
-                        .iter()
-                        .filter(|(s, _)| *s == s_idx)
-                        .map(|(_, g)| *g)
-                        .collect();
-
-                    for g_idx in genes_to_methylate {
-                        vm.epigenome.insert((new_s_idx, g_idx));
-                    }
-
-                    vm.energy = vm.energy.saturating_sub(30); // Cost
-                    vm.output
-                        .push(format!("MITOSIS: Cloned strand {} to {}", s_idx, new_s_idx));
-                } else {
-                    vm.output
-                        .push("Error: Strand index out of bounds for mitosis".to_string());
-                }
-            }
-            _ => vm
-                .output
-                .push("Error: Type mismatch for mitosis".to_string()),
-        }
-    } else {
+    let Some(val) = vm.stack.pop() else {
         vm.output
             .push("Error: Stack underflow for mitosis".to_string());
+        return None;
+    };
+
+    let Value::Int(idx) = val else {
+        vm.output
+            .push("Error: Type mismatch for mitosis".to_string());
+        return None;
+    };
+
+    let s_idx = idx as usize;
+    if idx < 0 || s_idx >= vm.dna.helix.strands.len() {
+        vm.output
+            .push("Error: Strand index out of bounds for mitosis".to_string());
+        return None;
     }
+
+    if vm.dna.helix.strands.len() >= MAX_STRANDS {
+        vm.output
+            .push("Error: Strand limit exceeded for mitosis".to_string());
+        return None;
+    }
+    // Clone the strand
+    let new_strand = vm.dna.helix.strands[s_idx].clone();
+    vm.dna.helix.strands.push(new_strand);
+    vm.telomeres.push(50); // Default life
+
+    #[cfg(feature = "cortex")]
+    {
+        vm.activation_levels.push(0);
+        vm.synapse_map.push(Vec::with_capacity(4));
+    }
+
+    // Inherit epigenetics
+    // We need to find all keys (s_idx, g_idx) and insert (new_idx, g_idx)
+    let new_s_idx = vm.dna.helix.strands.len() - 1;
+
+    vm.cladistics.register_strand(
+        new_s_idx,
+        Some(s_idx),
+        vm.tick_counter,
+        "Mitosis".to_string(),
+    );
+
+    let genes_to_methylate: Vec<usize> = vm
+        .epigenome
+        .iter()
+        .filter(|(s, _)| *s == s_idx)
+        .map(|(_, g)| *g)
+        .collect();
+
+    for g_idx in genes_to_methylate {
+        vm.epigenome.insert((new_s_idx, g_idx));
+    }
+
+    vm.energy = vm.energy.saturating_sub(30); // Cost
+    vm.output
+        .push(format!("MITOSIS: Cloned strand {} to {}", s_idx, new_s_idx));
+
     None
 }
 
@@ -1372,82 +1389,86 @@ pub fn exec_apoptosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_integrase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: arg, name, gene_idx, strand_idx (bottom)
-    if vm.stack.len() >= 4 {
-        let arg_val = vm.stack.pop().unwrap();
-        let name_val = vm.stack.pop().unwrap();
-        let gene_idx_val = vm.stack.pop().unwrap();
-        let strand_idx_val = vm.stack.pop().unwrap();
-
-        match (strand_idx_val, gene_idx_val, name_val, arg_val) {
-            (Value::Int(s), Value::Int(g), Value::Str(name), arg) => {
-                let s_idx = s as usize;
-                let g_idx = g as usize;
-                let helix_len = vm.dna.helix.strands.len();
-
-                if s >= 0 && s_idx < helix_len {
-                    let strand_len = vm.dna.helix.strands[s_idx].genes.len();
-                    if g >= 0 && g_idx <= strand_len {
-                        // Create Gene
-                        let new_gene = crate::ast::Gene {
-                            op: name.parse().unwrap_or(OpCode::Unknown(name.clone())),
-                            args: if let Some(n) = value_to_nucleotide(&arg, 0) {
-                                vec![n]
-                            } else {
-                                vm.output.push(
-                                    "INTEGRASE: Warning: Recursion limit exceeded".to_string(),
-                                );
-                                vec![]
-                            },
-                        };
-
-                        // Insert
-                        vm.dna.helix.strands[s_idx].genes.insert(g_idx, new_gene);
-
-                        // Update Epigenome: Shift all markers at (s_idx, k >= g_idx) to k+1
-                        let mut new_markers = Vec::new();
-                        let mut to_remove = Vec::new();
-                        for &(ms, mg) in vm.epigenome.iter() {
-                            if ms == s_idx && mg >= g_idx {
-                                to_remove.push((ms, mg));
-                                new_markers.push((ms, mg + 1));
-                            }
-                        }
-                        for marker in to_remove {
-                            vm.epigenome.remove(&marker);
-                        }
-                        for marker in new_markers {
-                            vm.epigenome.insert(marker);
-                        }
-
-                        vm.energy = vm.energy.saturating_sub(20);
-                        vm.output
-                            .push(format!("INTEGRASE: Inserted {} at {}:{}", name, s, g));
-
-                        // Update IP if we inserted before or at current execution
-                        if vm.ip.0 == s_idx && vm.ip.1 >= g_idx {
-                            vm.ip.1 += 1;
-                        }
-                        // Default None means step() will increment IP +1.
-                        // If we shifted IP +1 here, total is +2.
-                        // This skips the inserted gene (if at g_idx) and the current gene (now at g_idx+1).
-                        // Correct.
-                    } else {
-                        vm.output
-                            .push("Error: Gene index out of bounds for integrase".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Strand index out of bounds for integrase".to_string());
-                }
-            }
-            _ => vm
-                .output
-                .push("Error: Type mismatch for integrase".to_string()),
-        }
-    } else {
+    if vm.stack.len() < 4 {
         vm.output
             .push("Error: Stack underflow for integrase".to_string());
+        return None;
     }
+
+    let arg_val = vm.stack.pop().unwrap();
+    let name_val = vm.stack.pop().unwrap();
+    let gene_idx_val = vm.stack.pop().unwrap();
+    let strand_idx_val = vm.stack.pop().unwrap();
+
+    let (Value::Int(s), Value::Int(g), Value::Str(name), arg) =
+        (strand_idx_val, gene_idx_val, name_val, arg_val)
+    else {
+        vm.output
+            .push("Error: Type mismatch for integrase".to_string());
+        return None;
+    };
+
+    let s_idx = s as usize;
+    let g_idx = g as usize;
+    let helix_len = vm.dna.helix.strands.len();
+
+    if s < 0 || s_idx >= helix_len {
+        vm.output
+            .push("Error: Strand index out of bounds for integrase".to_string());
+        return None;
+    }
+
+    let strand_len = vm.dna.helix.strands[s_idx].genes.len();
+    if g < 0 || g_idx > strand_len {
+        vm.output
+            .push("Error: Gene index out of bounds for integrase".to_string());
+        return None;
+    }
+
+    // Create Gene
+    let new_gene = crate::ast::Gene {
+        op: name.parse().unwrap_or(OpCode::Unknown(name.clone())),
+        args: if let Some(n) = value_to_nucleotide(&arg, 0) {
+            vec![n]
+        } else {
+            vm.output
+                .push("INTEGRASE: Warning: Recursion limit exceeded".to_string());
+            vec![]
+        },
+    };
+
+    // Insert
+    vm.dna.helix.strands[s_idx].genes.insert(g_idx, new_gene);
+
+    // Update Epigenome: Shift all markers at (s_idx, k >= g_idx) to k+1
+    let mut new_markers = Vec::new();
+    let mut to_remove = Vec::new();
+    for &(ms, mg) in vm.epigenome.iter() {
+        if ms == s_idx && mg >= g_idx {
+            to_remove.push((ms, mg));
+            new_markers.push((ms, mg + 1));
+        }
+    }
+    for marker in to_remove {
+        vm.epigenome.remove(&marker);
+    }
+    for marker in new_markers {
+        vm.epigenome.insert(marker);
+    }
+
+    vm.energy = vm.energy.saturating_sub(20);
+    vm.output
+        .push(format!("INTEGRASE: Inserted {} at {}:{}", name, s, g));
+
+    // Update IP if we inserted before or at current execution
+    if vm.ip.0 == s_idx && vm.ip.1 >= g_idx {
+        vm.ip.1 += 1;
+    }
+    // Default None means step() will increment IP +1.
+    // If we shifted IP +1 here, total is +2.
+    // This skips the inserted gene (if at g_idx) and the current gene (now at g_idx+1).
+    // Correct.
+
     None
 }
 

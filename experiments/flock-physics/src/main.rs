@@ -41,7 +41,11 @@ async fn async_main() {
             let px = offset_x + x as f32 * spacing;
             let py = offset_y + y as f32 * spacing;
             // Pin the top corners
-            let inv_mass = if y == 0 && (x == 0 || x == cols - 1) { 0.0 } else { 1.0 };
+            let inv_mass = if y == 0 && (x == 0 || x == cols - 1) {
+                0.0
+            } else {
+                1.0
+            };
             p_indices.push(system.add_particle(::glam::Vec3::new(px, py, 0.0), inv_mass));
         }
     }
@@ -54,7 +58,8 @@ async fn async_main() {
                 let _ = system.add_distance_constraint(p_indices[idx], p_indices[idx + 1], spacing);
             }
             if y < rows - 1 {
-                let _ = system.add_distance_constraint(p_indices[idx], p_indices[idx + cols], spacing);
+                let _ =
+                    system.add_distance_constraint(p_indices[idx], p_indices[idx + cols], spacing);
             }
         }
     }
@@ -62,21 +67,11 @@ async fn async_main() {
     // Initialize the flock
     let num_boids = 50;
     let mut positions: Vec<Vec2> = (0..num_boids)
-        .map(|_| {
-            Vec2::new(
-                rand::gen_range(0.0, WIDTH),
-                rand::gen_range(0.0, HEIGHT),
-            )
-        })
+        .map(|_| Vec2::new(rand::gen_range(0.0, WIDTH), rand::gen_range(0.0, HEIGHT)))
         .collect();
     let mut velocities: Vec<Vec2> = (0..num_boids)
         .map(|_| {
-            Vec2::new(
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-            )
-            .normalize()
-                * 2.0
+            Vec2::new(rand::gen_range(-1.0, 1.0), rand::gen_range(-1.0, 1.0)).normalize() * 2.0
         })
         .collect();
 
@@ -133,7 +128,9 @@ async fn async_main() {
 
                 if dist < interaction_radius && system.particles[p_idx].inv_mass > 0.0 {
                     // Push particle along boid velocity
-                    let push = ::glam::Vec3::new(velocities[i].x as f32, velocities[i].y as f32, 0.0) * force_multiplier;
+                    let push =
+                        ::glam::Vec3::new(velocities[i].x as f32, velocities[i].y as f32, 0.0)
+                            * force_multiplier;
                     system.particles[p_idx].vel += push;
                 }
             }

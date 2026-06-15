@@ -14,9 +14,8 @@ fn main() {
     println!("Projecting hierarchical crystalline data onto a continuous Torus topology.");
 
     // Parse the file system to build the crystalline lattice
-    let crystal = Crystal::build_from_path(Path::new(".")).unwrap_or_else(|_| {
-        Crystal::build_from_path(Path::new("src")).unwrap()
-    });
+    let crystal = Crystal::build_from_path(Path::new("."))
+        .unwrap_or_else(|_| Crystal::build_from_path(Path::new("src")).unwrap());
 
     println!("Generated lattice with {} atoms.", crystal.atoms.len());
 
@@ -49,6 +48,9 @@ fn main() {
         }
     }
 
-    println!("Total atoms that exceeded bounds and wrapped smoothly via Torus topology: {}", wrapped_count);
+    println!(
+        "Total atoms that exceeded bounds and wrapped smoothly via Torus topology: {}",
+        wrapped_count
+    );
     println!("Emergent phenotype: Dense directory hierarchies folded across continuous boundaries forming spatial clusters.");
 }
