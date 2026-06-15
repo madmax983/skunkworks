@@ -31,10 +31,14 @@ for report in reports:
             val = "Turns out the repository is a massive workspace so a bare `cargo run` doesn't work. Furthermore, the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README."
         if "Turns out the Mad Scientist mode injects chaos runes" in val:
             val = "Turns out the Mad Scientist mode injects chaos runes that the VM tries to execute as OpCodes, causing error spam. The repo structure doesn't match the clone instructions, and the library is deeply coupled with random workspace crates instead of keeping them optional or private."
+
+        # Adding some missing matches explicitly if missing
+        if "Turns out the README only describes the core concepts but completely omits how to actually use or install the crate" in val:
+            pass # Keep it as is
+
         target_reports[target].append(val)
 
 # Also capture any OTHER Echo items in DX_AUDIT_LOG that are maybe not explicitly "The Reality"
-# For example, missing `genesis.chs`
 for report in reports:
     if "Echo's DX Audit Log" not in report:
         continue
@@ -46,7 +50,7 @@ for report in reports:
     target = target_match.group(1).strip('` ')
 
     # if it's genesis missing
-    if "genesis.chs" in report and "does not exist in the codebase" in report and not reality_match:
+    if "genesis.chs" in report and "does not exist in the codebase" in report:
         pass # Already captured above because reality_match handles "(.*?)"
 
 # Handle cases where DX_AUDIT_LOG might use slightly different target names for the same module
@@ -71,7 +75,12 @@ with open('GUESTBOOK.md', 'r') as f:
     gb_content = f.read()
 
 map_start = gb_content.find('## 🧫 Current Pheromone Map')
-decay_start = gb_content.find('## 🍂 History/Decay')
+
+decay_start_matches = [m.start() for m in re.finditer(r'## (🍂 |🧫 )?History/Decay', gb_content)]
+if len(decay_start_matches) > 0:
+    decay_start = decay_start_matches[0]
+else:
+    decay_start = len(gb_content)
 
 pre_map = gb_content[:map_start + len('## 🧫 Current Pheromone Map\n\n')]
 current_map_section = gb_content[map_start + len('## 🧫 Current Pheromone Map\n\n'):decay_start]
@@ -80,7 +89,7 @@ decay_section = gb_content[decay_start:]
 blocks = re.split(r'(### \[[^\]]+\](?: - Location:.*)?\n)', current_map_section)
 
 existing_map_blocks = []
-decay_blocks_to_add = []
+seen_echo_targets = set()
 
 i = 1
 while i < len(blocks):
@@ -103,6 +112,7 @@ while i < len(blocks):
         # We process it and DO NOT append to existing_map_blocks
         status_match = re.search(r'\*\*Status:\*\*\s*(.*?)\n', body, re.DOTALL)
         if status_match and loc:
+            seen_echo_targets.add(loc)
             old_status_raw = status_match.group(1).strip()
             # It could be single or multiple
             if "Multiple friction points:" in old_status_raw:
@@ -117,6 +127,30 @@ while i < len(blocks):
     else:
         # Keep non-Echo entries
         existing_map_blocks.append(header + body)
+
+    i += 2
+
+# What if there's an Echo entry for a target that isn't in DX_AUDIT_LOG?
+# We want to keep it.
+i = 1
+while i < len(blocks):
+    header = blocks[i]
+    body = blocks[i+1] if i+1 < len(blocks) else ""
+
+    # Find the target if it exists
+    target_match = re.search(r'Location:\s*([^\n]+)', header)
+    loc = None
+    if target_match:
+        loc = target_match.group(1).strip().strip('`')
+        if loc == "chimera-lang" or loc == "experiments/chimera-lang/README.md" or loc == "chimera-lang/README.md" or "chimera-lang" in loc:
+            loc = "experiments/chimera-lang"
+    elif "MARKETPLACE.md" in header:
+        loc = "MARKETPLACE.md"
+    elif "README.md" in header:
+        loc = "README.md"
+
+    if "Scent Origin:** Echo" in body and loc not in normalized_reports:
+         existing_map_blocks.append(header + body)
 
     i += 2
 
