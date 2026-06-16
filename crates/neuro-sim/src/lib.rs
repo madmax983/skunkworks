@@ -342,8 +342,12 @@ impl Network {
     ///
     /// assert!(net.is_spiking(n1));
     /// ```
+    ///
+    /// ⚡ Bolt Optimization: Uses `.copied()` instead of `.cloned()` for `bool`.
+    /// While the compiler optimizes both identically, `.copied()` semantically
+    /// expresses that a trivial bitwise copy is occurring, satisfying zero-cost abstraction idioms.
     pub fn is_spiking(&self, index: usize) -> bool {
-        self.spikes.get(index).cloned().unwrap_or(false)
+        self.spikes.get(index).copied().unwrap_or(false)
     }
 
     /// Checks if a specific synapse was active (delivered a spike) in the most recent step.

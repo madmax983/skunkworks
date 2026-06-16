@@ -40,7 +40,9 @@ async fn run_sim() {
         cursor.y += perturbation * 0.5;
 
         // Wrap the cursor using locus topology
-        if let Some((y, x)) = current_topology.normalize(cursor.y as i64, cursor.x as i64, width, height) {
+        if let Some((y, x)) =
+            current_topology.normalize(cursor.y as i64, cursor.x as i64, width, height)
+        {
             cursor.y = y as f32;
             cursor.x = x as f32;
         }
@@ -51,7 +53,8 @@ async fn run_sim() {
     if commit_points.is_empty() {
         for i in 0..100 {
             let mut p = Vec2::new(400.0 + (i as f32 * 15.0), 300.0 + (i as f32 * 10.0));
-            if let Some((y, x)) = current_topology.normalize(p.y as i64, p.x as i64, width, height) {
+            if let Some((y, x)) = current_topology.normalize(p.y as i64, p.x as i64, width, height)
+            {
                 p.y = y as f32;
                 p.x = x as f32;
             }
@@ -72,15 +75,29 @@ async fn run_sim() {
             point.x += (time.sin() * 5.0) * get_frame_time() * 10.0;
             point.y += (time.cos() * 5.0) * get_frame_time() * 10.0;
 
-            if let Some((y, x)) = current_topology.normalize(point.y as i64, point.x as i64, width, height) {
+            if let Some((y, x)) =
+                current_topology.normalize(point.y as i64, point.x as i64, width, height)
+            {
                 point.y = y as f32;
                 point.x = x as f32;
             }
             draw_circle(point.x, point.y, 4.0, Color::new(0.2, 0.8, 0.4, 0.8));
         }
 
-        draw_text("Git Locus: Topological Repository History", 20.0, 30.0, 20.0, WHITE);
-        draw_text(&format!("Topology: {:?}", current_topology), 20.0, 50.0, 20.0, GRAY);
+        draw_text(
+            "Git Locus: Topological Repository History",
+            20.0,
+            30.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Topology: {:?}", current_topology),
+            20.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
 
         // Cycle topology
         if is_key_pressed(KeyCode::T) {
