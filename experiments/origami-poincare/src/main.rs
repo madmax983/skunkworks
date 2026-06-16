@@ -100,7 +100,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn ui(f: &mut Frame, app: &mut App) {
-    let area = f.size();
+    let area = f.area();
 
     let canvas_block = Block::default()
         .borders(Borders::ALL)

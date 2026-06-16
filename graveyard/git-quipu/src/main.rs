@@ -121,7 +121,7 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             Constraint::Min(0),
             Constraint::Length(3),
         ])
-        .split(f.size());
+        .split(f.area());
 
     let title = Paragraph::new("🧬 GIT QUIPU: Physical History")
         .style(Style::default().fg(Color::Cyan).bold())

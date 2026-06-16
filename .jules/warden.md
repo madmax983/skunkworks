@@ -52,3 +52,6 @@
 **2026-10-08 - [Fabric-Limb Arm Solver Out-Of-Bounds Panic]**
 **Threat:** The `Arm::solve` method in `experiments/fabric-limb/src/physics.rs` blindly accessed `self.joints[0]` and used `self.joints.last().unwrap()` without checking if the public `joints` vector was empty. If an attacker or external logic cleared the vector, this caused a deterministic out-of-bounds array access panic, leading to a Denial of Service (DoS).
 **Defense:** Added an early return check `if self.joints.is_empty() { return; }` to `Arm::solve`. Replaced all remaining unwrap calls on `self.joints.last()` with safe `.unwrap_or()` fallbacks, ensuring the simulation simply ignores the request or returns zero instead of exploding. Updated the `havoc` integration test to confirm the process now succeeds without crashing.
+2026-10-07 - [LRU Unsoundness]
+**Threat:** The `lru` crate version 0.12.5 used by `ratatui` version 0.26 violates Stacked Borrows by invalidating the internal pointer during `IterMut` iteration. This allows Undefined Behavior (UB) and memory corruption during iteration.
+**Defense:** Updated the `ratatui` crate dependency to version `0.30` across the codebase, which bumps the transitive dependency on `lru` to version `0.18.0`, resolving the memory safety bug (RUSTSEC-2026-0002).

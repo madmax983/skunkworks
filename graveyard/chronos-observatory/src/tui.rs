@@ -106,7 +106,7 @@ fn run_app_loop<B: Backend>(terminal: &mut Terminal<B>, app: App) -> io::Result<
 }
 
 fn ui(f: &mut Frame, app: &App) {
-    let size = f.size();
+    let size = f.area();
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)

@@ -64,7 +64,7 @@ impl App {
                     .direction(Direction::Vertical)
                     .margin(1)
                     .constraints([Constraint::Percentage(10), Constraint::Percentage(90)].as_ref())
-                    .split(f.size());
+                    .split(f.area());
 
                 let title =
                     Paragraph::new("Sync-Opation: Thread Contention Rhythms (Press 'q' to quit)")

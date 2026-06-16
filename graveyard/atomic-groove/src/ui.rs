@@ -146,7 +146,7 @@ fn ui(f: &mut Frame, app: &App) {
             Constraint::Min(0),
             Constraint::Length(1),
         ].as_ref())
-        .split(f.size());
+        .split(f.area());
 
     let title = Paragraph::new("ATOMIC GROOVE: Thread Synchronization Sonifier")
         .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))

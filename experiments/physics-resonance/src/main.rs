@@ -119,7 +119,7 @@ impl App {
 
     fn render(&self, terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> io::Result<()> {
         terminal.draw(|f| {
-            let size = f.size();
+            let size = f.area();
             let block = Block::default()
                 .title(" Acoustic Rigid Body Physics ⛓️🔊 ")
                 .borders(Borders::ALL);

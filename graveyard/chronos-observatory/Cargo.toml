@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ratatui = "0.26.1"
+ratatui = "0.30.0"
 crossterm = "0.27.0"
 num-rational = "0.4"
 num-bigint = "0.4"

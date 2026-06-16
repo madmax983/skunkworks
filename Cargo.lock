@@ -536,7 +536,7 @@ version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1bf74a7c20e83a40e542c032c918f1b5653ad4a137b49b7063e61030983ce243"
 dependencies = [
- "compact_str 0.9.1",
+ "compact_str",
  "miniz_oxide",
 ]
 
@@ -547,7 +547,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c27cc93582c7ce0f7350adcd2e0ffe21237687ba6bfb67cdea15e6e37001d19f"
 dependencies = [
  "beamterm-data",
- "compact_str 0.9.1",
+ "compact_str",
  "console_error_panic_hook",
  "js-sys",
  "thiserror 2.0.18",
@@ -2063,7 +2063,7 @@ dependencies = [
  "chimera-lang",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "serde",
  "serde_json",
  "sha2",
@@ -2077,7 +2077,7 @@ dependencies = [
  "crossterm 0.28.1",
  "glam 0.24.2",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2089,7 +2089,7 @@ dependencies = [
  "crossterm 0.28.1",
  "glam 0.24.2",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2282,6 +2282,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 
 [[package]]
+name = "by_address"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64fa3c856b712db6612c019f14756e64e4bcea13337a6b33b696333a9eaa2d06"
+
+[[package]]
 name = "bytemuck"
 version = "1.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2386,7 +2392,7 @@ dependencies = [
  "crossterm 0.28.1",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "serde",
  "serde_json",
  "tui-shared",
@@ -2405,12 +2411,6 @@ dependencies = [
  "serde_json",
  "thiserror 1.0.69",
 ]
-
-[[package]]
-name = "cassowary"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df8670b8c7b9dae1793364eafadf7239c40d669904660c5960d74cfd80b46a53"
 
 [[package]]
 name = "castaway"
@@ -2495,7 +2495,7 @@ dependencies = [
  "flocking",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2520,7 +2520,7 @@ dependencies = [
  "font8x8",
  "locus",
  "num-complex",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
  "tui-shared",
 ]
@@ -2548,7 +2548,7 @@ dependencies = [
  "crossterm 0.27.0",
  "macroquad",
  "rand 0.8.6",
- "ratatui 0.26.3",
+ "ratatui",
  "resonance-audio",
  "tui-shared",
 ]
@@ -2603,7 +2603,7 @@ dependencies = [
  "crossterm 0.28.1",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2628,7 +2628,7 @@ dependencies = [
  "comfy-table",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "serde_json",
 ]
 
@@ -2650,7 +2650,7 @@ dependencies = [
  "chimera-lang",
  "crossterm 0.28.1",
  "num-complex",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
 ]
 
@@ -2675,7 +2675,7 @@ dependencies = [
  "poincare-disk",
  "proptest",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "regex",
  "resonance-audio",
  "rodio 0.17.3",
@@ -2695,7 +2695,7 @@ dependencies = [
  "chimera-lang",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2728,7 +2728,7 @@ dependencies = [
  "crossterm 0.28.1",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2760,7 +2760,7 @@ dependencies = [
  "image 0.24.9",
  "rand 0.8.6",
  "rand_chacha 0.3.1",
- "ratatui 0.30.0",
+ "ratatui",
  "sha2",
  "strum 0.26.3",
 ]
@@ -2799,7 +2799,7 @@ dependencies = [
  "crossterm 0.28.1",
  "hound",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "serde",
  "serde_json",
 ]
@@ -2822,7 +2822,7 @@ dependencies = [
  "crossterm 0.28.1",
  "image 0.24.9",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2836,7 +2836,7 @@ dependencies = [
  "crossterm 0.28.1",
  "git2",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2851,7 +2851,7 @@ dependencies = [
  "git2",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -2863,7 +2863,7 @@ dependencies = [
  "git2",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
  "tui-shared",
 ]
@@ -2877,7 +2877,7 @@ dependencies = [
  "crossterm 0.28.1",
  "git2",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "tui-shared",
 ]
@@ -2903,7 +2903,7 @@ dependencies = [
  "chrono",
  "crossterm 0.28.1",
  "git2",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -3021,7 +3021,7 @@ dependencies = [
  "crossterm 0.28.1",
  "logos",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -3036,7 +3036,7 @@ dependencies = [
  "parking_lot",
  "petgraph",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -3105,19 +3105,6 @@ dependencies = [
 
 [[package]]
 name = "compact_str"
-version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f86b9c4c00838774a6d902ef931eff7470720c51d90c2e32cfe15dc304737b3f"
-dependencies = [
- "castaway",
- "cfg-if",
- "itoa",
- "ryu",
- "static_assertions",
-]
-
-[[package]]
-name = "compact_str"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9dfdd1c2274d9aa354115b09dc9a901d6c5576818cdf70d14cae2bdb47df00ab"
@@ -3139,7 +3126,7 @@ dependencies = [
  "chrono",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
  "walkdir",
 ]
@@ -3276,7 +3263,7 @@ dependencies = [
  "crossterm 0.28.1",
  "glam 0.24.2",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rodio 0.19.0",
 ]
 
@@ -3329,6 +3316,12 @@ checksum = "9481c1c90cbf2ac953f07c8d4a58aa3945c425b7185c9154d67a65e4230da511"
 dependencies = [
  "cfg-if",
 ]
+
+[[package]]
+name = "critical-section"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b"
 
 [[package]]
 name = "crossbeam"
@@ -3647,7 +3640,7 @@ dependencies = [
  "noise",
  "petgraph",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -3700,7 +3693,7 @@ dependencies = [
  "chrono",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
  "walkdir",
 ]
@@ -3715,7 +3708,7 @@ dependencies = [
  "git2",
  "nom 7.1.3",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -3868,7 +3861,7 @@ dependencies = [
  "crossterm 0.28.1",
  "git-associates",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -3948,7 +3941,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -4020,7 +4013,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "crossterm 0.28.1",
- "ratatui 0.30.0",
+ "ratatui",
  "tempfile",
  "tui-shared",
  "walkdir",
@@ -4033,7 +4026,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4046,6 +4039,12 @@ dependencies = [
  "bit-set 0.5.3",
  "regex",
 ]
+
+[[package]]
+name = "fast-srgb8"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd2e7510819d6fbf51a5545c8f922716ecfb14df168a3242f7d33e0239efe6a1"
 
 [[package]]
 name = "fastrand"
@@ -4094,7 +4093,7 @@ dependencies = [
  "ferrous-core",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -4104,7 +4103,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "regex",
  "walkdir",
 ]
@@ -4126,7 +4125,7 @@ dependencies = [
  "ferrous-core",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4139,7 +4138,7 @@ dependencies = [
  "crossterm 0.28.1",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4153,7 +4152,7 @@ dependencies = [
  "git-associates",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "regex",
  "walkdir",
 ]
@@ -4168,7 +4167,7 @@ dependencies = [
  "locus",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
  "tui-shared",
 ]
@@ -4184,7 +4183,7 @@ dependencies = [
  "locus",
  "neuro-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "regex",
  "walkdir",
 ]
@@ -4197,7 +4196,7 @@ dependencies = [
  "crossterm 0.28.1",
  "quipu",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4247,7 +4246,7 @@ dependencies = [
  "quipu",
  "quipu-serializer",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4345,7 +4344,7 @@ dependencies = [
  "locus",
  "platter",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4435,7 +4434,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4560,7 +4559,7 @@ dependencies = [
  "crossterm 0.28.1",
  "glam 0.25.0",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4687,7 +4686,7 @@ dependencies = [
  "git-associates",
  "git2",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rodio 0.19.0",
  "tui-shared",
 ]
@@ -4710,7 +4709,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "gray-scott",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4725,7 +4724,7 @@ dependencies = [
  "git2",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4738,7 +4737,7 @@ dependencies = [
  "ferrous-core",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -4754,7 +4753,7 @@ dependencies = [
  "num-complex",
  "platter",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
  "tui-shared",
 ]
@@ -4767,7 +4766,7 @@ dependencies = [
  "crossterm 0.28.1",
  "git-associates",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rodio 0.19.0",
  "tui-shared",
 ]
@@ -4792,7 +4791,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "tui-shared",
 ]
@@ -4865,7 +4864,7 @@ dependencies = [
  "crossterm 0.28.1",
  "git-associates",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5128,7 +5127,7 @@ dependencies = [
  "gray-scott",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5142,7 +5141,7 @@ dependencies = [
  "gray-scott",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5155,7 +5154,7 @@ dependencies = [
  "gray-scott",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "rustfft",
  "tui-shared",
@@ -5169,7 +5168,7 @@ dependencies = [
  "crossterm 0.28.1",
  "gray-scott",
  "miller-lattice",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5191,7 +5190,7 @@ dependencies = [
  "crossterm 0.28.1",
  "gray-scott",
  "platter",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5203,7 +5202,7 @@ dependencies = [
  "gray-scott",
  "num-complex",
  "poincare-disk",
- "ratatui 0.26.3",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5217,7 +5216,7 @@ dependencies = [
  "crossterm 0.27.0",
  "gray-scott",
  "macroquad",
- "ratatui 0.26.3",
+ "ratatui",
  "resonance-audio",
  "tui-shared",
 ]
@@ -5296,7 +5295,7 @@ dependencies = [
  "crossterm 0.28.1",
  "nalgebra",
  "rapier2d 0.27.0",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5353,6 +5352,11 @@ name = "hashbrown"
 version = "0.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+dependencies = [
+ "allocator-api2",
+ "equivalent",
+ "foldhash 0.2.0",
+]
 
 [[package]]
 name = "hassle-rs"
@@ -5378,7 +5382,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "syn 2.0.117",
  "tempfile",
  "tui-shared",
@@ -5438,7 +5442,7 @@ dependencies = [
  "crossterm 0.28.1",
  "image 0.25.10",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -5449,7 +5453,7 @@ dependencies = [
  "crossterm 0.28.1",
  "petgraph",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -5468,7 +5472,7 @@ dependencies = [
  "crossterm 0.28.1",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
 ]
 
@@ -5480,7 +5484,7 @@ dependencies = [
  "crossbeam-channel",
  "crossterm 0.28.1",
  "num-complex",
- "ratatui 0.30.0",
+ "ratatui",
  "resonance-audio",
  "rustfft",
 ]
@@ -5493,7 +5497,7 @@ dependencies = [
  "crossterm 0.28.1",
  "font8x8",
  "num-complex",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
 ]
 
@@ -5506,7 +5510,7 @@ dependencies = [
  "neuro-sim",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
 ]
 
@@ -5523,7 +5527,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5636,7 +5640,7 @@ dependencies = [
  "hyper-system",
  "quipu",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "sysinfo",
 ]
 
@@ -5670,7 +5674,7 @@ dependencies = [
  "num-complex",
  "poincare-disk",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5705,7 +5709,7 @@ dependencies = [
  "num-complex",
  "poincare-disk",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -5717,7 +5721,7 @@ dependencies = [
  "num-complex",
  "poincare-disk",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -5743,7 +5747,7 @@ dependencies = [
  "git2",
  "num-complex",
  "poincare-disk",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6094,15 +6098,6 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
 
 [[package]]
 name = "itertools"
-version = "0.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba291022dbbd398a455acf126c1e341954079855bc60dfdda641363bd6922569"
-dependencies = [
- "either",
-]
-
-[[package]]
-name = "itertools"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
@@ -6315,7 +6310,7 @@ dependencies = [
  "crossterm 0.28.1",
  "glam 0.28.0",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -6326,7 +6321,7 @@ dependencies = [
  "crossterm 0.28.1",
  "glam 0.28.0",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "walkdir",
 ]
 
@@ -6374,7 +6369,7 @@ dependencies = [
  "nalgebra",
  "neuro-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "ringbuf",
  "tui-shared",
 ]
@@ -6538,7 +6533,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6590,7 +6585,7 @@ dependencies = [
  "flocking",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6604,7 +6599,7 @@ dependencies = [
  "flocking",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6627,7 +6622,7 @@ dependencies = [
  "locus",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
  "tui-shared",
 ]
@@ -6704,20 +6699,11 @@ dependencies = [
 
 [[package]]
 name = "lru"
-version = "0.12.5"
+version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "234cf4f4a04dc1f57e24b96cc0cd600cf2af460d4161ac5ecdd0af8e1f3b2a38"
+checksum = "8a860605968fce16869fd239cf4237a82f3ac470723415db603b0e8b6c8d4fb9"
 dependencies = [
- "hashbrown 0.15.5",
-]
-
-[[package]]
-name = "lru"
-version = "0.16.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f66e8d5d03f609abc3a39e6f08e4164ebf1447a732906d39eb9b99b7919ef39"
-dependencies = [
- "hashbrown 0.16.1",
+ "hashbrown 0.17.1",
 ]
 
 [[package]]
@@ -6729,7 +6715,7 @@ dependencies = [
  "flocking",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6812,7 +6798,7 @@ dependencies = [
  "num-rational",
  "num-traits",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -6896,7 +6882,7 @@ dependencies = [
  "locus",
  "market-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6909,7 +6895,7 @@ dependencies = [
  "gray-scott",
  "market-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6923,7 +6909,7 @@ dependencies = [
  "market-sim",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
  "tui-shared",
 ]
@@ -6936,7 +6922,7 @@ dependencies = [
  "locus",
  "market-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6961,7 +6947,7 @@ dependencies = [
  "market-sim",
  "platter",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6974,7 +6960,7 @@ dependencies = [
  "market-sim",
  "poincare-disk",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -6988,7 +6974,7 @@ dependencies = [
  "crossterm 0.27.0",
  "market-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "resonance-audio",
  "tui-shared",
 ]
@@ -7010,7 +6996,7 @@ dependencies = [
  "crossterm 0.28.1",
  "market-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "resonance-audio",
 ]
 
@@ -7041,7 +7027,7 @@ dependencies = [
  "chrono",
  "crossterm 0.28.1",
  "git-associates",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -7067,7 +7053,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "rstest",
 ]
@@ -7258,7 +7244,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "nalgebra",
- "ratatui 0.30.0",
+ "ratatui",
  "regex",
  "tui-shared",
 ]
@@ -7365,7 +7351,7 @@ dependencies = [
  "flocking",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "tui-shared",
 ]
@@ -7379,7 +7365,7 @@ dependencies = [
  "ferrous-core",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "tui-shared",
 ]
@@ -7392,7 +7378,7 @@ dependencies = [
  "crossterm 0.28.1",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "rustfft",
  "tui-shared",
@@ -7417,7 +7403,7 @@ dependencies = [
  "crossterm 0.28.1",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "tui-shared",
 ]
@@ -7430,7 +7416,7 @@ dependencies = [
  "crossterm 0.28.1",
  "market-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
 ]
 
@@ -7442,7 +7428,7 @@ dependencies = [
  "crossterm 0.28.1",
  "poincare-disk",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "tui-shared",
 ]
@@ -7486,7 +7472,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rayon",
  "tui-shared",
 ]
@@ -7705,7 +7691,7 @@ dependencies = [
  "locus",
  "neuro-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -7719,7 +7705,7 @@ dependencies = [
  "locus",
  "neuro-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -7742,7 +7728,7 @@ dependencies = [
  "neuro-sim",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
 ]
 
@@ -7765,7 +7751,7 @@ dependencies = [
  "locus",
  "neuro-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -7777,7 +7763,7 @@ dependencies = [
  "crossterm 0.28.1",
  "neuro-sim",
  "platter",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -7799,7 +7785,7 @@ dependencies = [
  "neuro-sim",
  "quipu",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -7812,7 +7798,7 @@ dependencies = [
  "crossterm 0.27.0",
  "neuro-sim",
  "rand 0.8.6",
- "ratatui 0.26.3",
+ "ratatui",
  "resonance-audio",
 ]
 
@@ -7846,7 +7832,7 @@ dependencies = [
  "neuro-sim",
  "parking_lot",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -7866,7 +7852,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -7965,7 +7951,7 @@ version = "0.50.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -8468,7 +8454,7 @@ dependencies = [
  "num-complex",
  "origami",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "rustfft",
  "tui-shared",
 ]
@@ -8499,7 +8485,7 @@ dependencies = [
  "crossterm 0.29.0",
  "origami",
  "platter",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -8511,7 +8497,7 @@ dependencies = [
  "glam 0.27.0",
  "origami",
  "poincare-disk",
- "ratatui 0.26.3",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -8525,7 +8511,7 @@ dependencies = [
  "glam 0.28.0",
  "origami",
  "physics-pbd",
- "ratatui 0.30.0",
+ "ratatui",
  "resonance-audio",
  "tui-shared",
 ]
@@ -8547,6 +8533,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "36820e9051aca1014ddc75770aab4d68bc1e9e632f0f5627c4086bc216fb583b"
 dependencies = [
  "ttf-parser 0.25.1",
+]
+
+[[package]]
+name = "palette"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cbf71184cc5ecc2e4e1baccdb21026c20e5fc3dcf63028a086131b3ab00b6e6"
+dependencies = [
+ "approx 0.5.1",
+ "fast-srgb8",
+ "libm",
+ "palette_derive",
+]
+
+[[package]]
+name = "palette_derive"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5030daf005bface118c096f510ffb781fc28f9ab6a32ab224d8631be6851d30"
+dependencies = [
+ "by_address",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -8648,7 +8658,7 @@ dependencies = [
  "pest",
  "pest_derive",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -8790,7 +8800,7 @@ dependencies = [
  "crossterm 0.28.1",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -8802,7 +8812,7 @@ dependencies = [
  "glam 0.28.0",
  "locus",
  "physics-pbd",
- "ratatui 0.26.3",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -8815,7 +8825,7 @@ dependencies = [
  "glam 0.28.0",
  "origami",
  "physics-pbd",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -8846,7 +8856,7 @@ dependencies = [
  "glam 0.28.0",
  "physics-pbd",
  "poincare-disk",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -8860,7 +8870,7 @@ dependencies = [
  "glam 0.28.0",
  "physics-pbd",
  "rand 0.8.6",
- "ratatui 0.26.3",
+ "ratatui",
  "resonance-audio",
  "tui-shared",
 ]
@@ -8945,7 +8955,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "platter",
- "ratatui 0.30.0",
+ "ratatui",
  "resonance-audio",
  "tui-shared",
 ]
@@ -8994,7 +9004,7 @@ dependencies = [
  "locus",
  "poincare-disk",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -9008,7 +9018,7 @@ dependencies = [
  "locus",
  "poincare-disk",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -9021,7 +9031,7 @@ dependencies = [
  "num-complex",
  "platter",
  "poincare-disk",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -9138,7 +9148,7 @@ dependencies = [
  "crossterm 0.27.0",
  "git2",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -9148,7 +9158,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -9255,7 +9265,7 @@ dependencies = [
  "locus",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -9267,7 +9277,7 @@ dependencies = [
  "crossterm 0.28.1",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -9287,7 +9297,7 @@ dependencies = [
  "crossterm 0.28.1",
  "num-complex",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -9349,7 +9359,7 @@ dependencies = [
  "glam 0.28.0",
  "locus",
  "quipu",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -9360,7 +9370,7 @@ dependencies = [
  "crossterm 0.28.1",
  "gray-scott",
  "quipu",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -9371,7 +9381,7 @@ dependencies = [
  "crossterm 0.28.1",
  "quipu",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -9383,7 +9393,7 @@ dependencies = [
  "locus",
  "quipu",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -9405,7 +9415,7 @@ dependencies = [
  "crossterm 0.28.1",
  "poincare-disk",
  "quipu",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -9418,7 +9428,7 @@ dependencies = [
  "locus",
  "quipu",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "resonance-audio",
  "tui-shared",
 ]
@@ -9430,7 +9440,7 @@ dependencies = [
  "anyhow",
  "crossterm 0.28.1",
  "quipu",
- "ratatui 0.30.0",
+ "ratatui",
  "serde",
  "serde_json",
  "thiserror 1.0.69",
@@ -9600,29 +9610,9 @@ dependencies = [
 
 [[package]]
 name = "ratatui"
-version = "0.26.3"
+version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f44c9e68fd46eda15c646fbb85e1040b657a58cdc8c98db1d97a55930d991eef"
-dependencies = [
- "bitflags 2.12.1",
- "cassowary",
- "compact_str 0.7.1",
- "crossterm 0.27.0",
- "itertools 0.12.1",
- "lru 0.12.5",
- "paste",
- "stability",
- "strum 0.26.3",
- "unicode-segmentation",
- "unicode-truncate 1.1.0",
- "unicode-width 0.1.14",
-]
-
-[[package]]
-name = "ratatui"
-version = "0.30.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1ce67fb8ba4446454d1c8dbaeda0557ff5e94d39d5e5ed7f10a65eb4c8266bc"
+checksum = "1695748e3a735b34968c887ceea5a380b43545903868ae8f5b666593100f6b68"
 dependencies = [
  "instability",
  "ratatui-core",
@@ -9630,33 +9620,37 @@ dependencies = [
  "ratatui-macros",
  "ratatui-termwiz",
  "ratatui-widgets",
+ "serde",
 ]
 
 [[package]]
 name = "ratatui-core"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ef8dea09a92caaf73bff7adb70b76162e5937524058a7e5bff37869cbbec293"
+checksum = "42d3603f354bba8c595fa47860e60142d7372b7210c27044c6a7d0e1a4336b44"
 dependencies = [
  "bitflags 2.12.1",
- "compact_str 0.9.1",
- "hashbrown 0.16.1",
+ "compact_str",
+ "critical-section",
+ "hashbrown 0.17.1",
  "indoc",
  "itertools 0.14.0",
  "kasuari",
- "lru 0.16.4",
- "strum 0.27.2",
+ "lru",
+ "palette",
+ "serde",
+ "strum 0.28.0",
  "thiserror 2.0.18",
  "unicode-segmentation",
- "unicode-truncate 2.0.1",
+ "unicode-truncate",
  "unicode-width 0.2.2",
 ]
 
 [[package]]
 name = "ratatui-crossterm"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "577c9b9f652b4c121fb25c6a391dd06406d3b092ba68827e6d2f09550edc54b3"
+checksum = "2b2867bedcbd6a690ca4f8672a687b730ec07660c79844517b084311b529980c"
 dependencies = [
  "cfg-if",
  "crossterm 0.29.0",
@@ -9666,9 +9660,9 @@ dependencies = [
 
 [[package]]
 name = "ratatui-macros"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7f1342a13e83e4bb9d0b793d0ea762be633f9582048c892ae9041ef39c936f4"
+checksum = "80fac59720679490d89d200df411faa249be728681adcabed3d047ae72c48f1d"
 dependencies = [
  "ratatui-core",
  "ratatui-widgets",
@@ -9676,9 +9670,9 @@ dependencies = [
 
 [[package]]
 name = "ratatui-termwiz"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f76fe0bd0ed4295f0321b1676732e2454024c15a35d01904ddb315afd3d545c"
+checksum = "386b8ff8f74ed749509391c56d549761a2fcdb408e1f42e467286bcb7dac8967"
 dependencies = [
  "ratatui-core",
  "termwiz",
@@ -9686,18 +9680,19 @@ dependencies = [
 
 [[package]]
 name = "ratatui-widgets"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7dbfa023cd4e604c2553483820c5fe8aa9d71a42eea5aa77c6e7f35756612db"
+checksum = "7ef4f17dd7ac3abf5adc2b920a03c61eee4bfe6a88fa5191936895525371d79c"
 dependencies = [
  "bitflags 2.12.1",
- "hashbrown 0.16.1",
+ "hashbrown 0.17.1",
  "indoc",
  "instability",
  "itertools 0.14.0",
  "line-clipping",
  "ratatui-core",
- "strum 0.27.2",
+ "serde",
+ "strum 0.28.0",
  "time",
  "unicode-segmentation",
  "unicode-width 0.2.2",
@@ -9711,9 +9706,9 @@ checksum = "cfc729362a3a8714b512f330c8dfaa03979813e9491e21b8e49b81e1e5d78014"
 dependencies = [
  "beamterm-renderer",
  "bitvec",
- "compact_str 0.9.1",
+ "compact_str",
  "console_error_panic_hook",
- "ratatui 0.30.0",
+ "ratatui",
  "thiserror 2.0.18",
  "unicode-width 0.2.2",
  "web-sys",
@@ -10127,7 +10122,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.12.1",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -10475,7 +10470,7 @@ dependencies = [
  "flocking",
  "locus",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "resonance-audio",
  "tui-shared",
 ]
@@ -10534,17 +10529,7 @@ dependencies = [
  "num-integer",
  "num-traits",
  "rand 0.8.6",
- "ratatui 0.30.0",
-]
-
-[[package]]
-name = "stability"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d904e7009df136af5297832a3ace3370cd14ff1546a232f4f185036c2736fcac"
-dependencies = [
- "quote",
- "syn 2.0.117",
+ "ratatui",
 ]
 
 [[package]]
@@ -10594,17 +10579,14 @@ name = "strum"
 version = "0.26.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fec0f0aef304996cf250b31b5a10dee7980c85da9d759361292b8bca5a18f06"
-dependencies = [
- "strum_macros 0.26.4",
-]
 
 [[package]]
 name = "strum"
-version = "0.27.2"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af23d6f6c1a224baef9d3f61e287d2761385a5b88fdab4eb4c6f11aeb54c4bcf"
+checksum = "9628de9b8791db39ceda2b119bbe13134770b56c138ec1d3af810d045c04f9bd"
 dependencies = [
- "strum_macros 0.27.2",
+ "strum_macros 0.28.0",
 ]
 
 [[package]]
@@ -10622,9 +10604,9 @@ dependencies = [
 
 [[package]]
 name = "strum_macros"
-version = "0.27.2"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7695ce3845ea4b33927c055a39dc438a45b059f7c1b3d91d38d10355fb8cbca7"
+checksum = "ab85eea0270ee17587ed4156089e10b9e6880ee688791d45a905f5b1ca36f664"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -10743,7 +10725,7 @@ dependencies = [
  "locus",
  "neuro-sim",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "ringbuf",
  "tui-shared",
 ]
@@ -10757,7 +10739,7 @@ dependencies = [
  "crossterm 0.28.1",
  "hound",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
 ]
 
 [[package]]
@@ -10777,7 +10759,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "crossterm 0.28.1",
- "ratatui 0.30.0",
+ "ratatui",
  "syn 2.0.117",
  "walkdir",
 ]
@@ -10817,7 +10799,7 @@ dependencies = [
  "crossterm 0.28.1",
  "gray-scott",
  "rand 0.8.6",
- "ratatui 0.30.0",
+ "ratatui",
  "tui-shared",
 ]
 
@@ -10873,7 +10855,7 @@ dependencies = [
  "getrandom 0.4.2",
  "once_cell",
  "rustix 1.1.4",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -11284,7 +11266,7 @@ dependencies = [
  "crossterm 0.28.1",
  "locus",
  "proptest",
- "ratatui 0.30.0",
+ "ratatui",
  "serde",
  "serde_json",
 ]
@@ -11354,17 +11336,6 @@ name = "unicode-segmentation"
 version = "1.13.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c6f5d3c3b1bf09027a88a6bc961fc00497d651009560b5463668dc81b0fa87a8"
-
-[[package]]
-name = "unicode-truncate"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b3644627a5af5fa321c95b9b235a72fd24cd29c648c2c379431e6628655627bf"
-dependencies = [
- "itertools 0.13.0",
- "unicode-segmentation",
- "unicode-width 0.1.14",
-]
 
 [[package]]
 name = "unicode-truncate"
@@ -12073,7 +12044,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]

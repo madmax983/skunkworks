@@ -32,7 +32,7 @@ fn main() -> Result<()> {
     loop {
         // Render
         terminal.draw(|f| {
-            let size = f.size();
+            let size = f.area();
             ui::draw_grid(f, &grid, size, Some((cursor_x, cursor_y)));
         })?;
 

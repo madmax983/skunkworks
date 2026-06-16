@@ -95,7 +95,7 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
             Constraint::Length(10),
             Constraint::Length(3), // Status bar
         ])
-        .split(f.size());
+        .split(f.area());
 
     // Main Game View
     // We can use Canvas for drawing points
