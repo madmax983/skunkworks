@@ -5576,18 +5576,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hyper-fold"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "glam 0.28.0",
- "hyper-system",
- "macroquad",
- "origami",
- "rand 0.8.6",
-]
-
-[[package]]
 name = "hyper-garden"
 version = "0.1.0"
 dependencies = [

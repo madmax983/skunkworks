@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-fold**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Private Module Violation. Failed to adapt to architectural boundary enforcements (`error[E0603]`). Grace period: 24h.
+- **neuro-terminal**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Documentation Void / Skeletal Genericism. Private module leakage, type inference collapse, and missing README detected. Grace period: 24h.
 
 ## ☠️ Executed
+- **hyper-fold**: Specimen executed. Diagnosis: Terminal Compilation Failure / Private Module Violation. Failed to adapt to architectural boundary enforcements (`error[E0603]`). Grace period expired. Moved to graveyard.
 - **neuro-physics**: Specimen executed. Diagnosis: Documentation Void / Skeletal Genericism. Lacks a `README.md` and remains a basic hardcoded implementation. Grace period expired. Moved to graveyard.
 - **miller-market**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a `README.md` and remains a skeletal implementation mapping generic 3D structures to 2D grids without complex emergence. Grace period expired. Moved to graveyard.
 - **bifurcation-crawler**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to a `glam` version mismatch. Grace period expired. Moved to graveyard.
