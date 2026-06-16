@@ -110,7 +110,7 @@ fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.size());
+        .split(f.area());
 
     // Left: Source Code
     // In a real implementation, we'd map events back to line numbers.

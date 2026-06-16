@@ -91,7 +91,7 @@ impl App {
 
     fn render(&self, terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> io::Result<()> {
         terminal.draw(|f| {
-            let size = f.size();
+            let size = f.area();
             let block = Block::default()
                 .title(" Acoustic Market Volatility 📉🔊 ")
                 .borders(Borders::ALL);

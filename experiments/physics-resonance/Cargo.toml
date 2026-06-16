@@ -9,7 +9,7 @@ resonance-audio = { path = "../../crates/resonance-audio" }
 tui-shared = { path = "../../crates/tui-shared" }
 glam = "0.28.0"
 crossterm = "0.27.0"
-ratatui = "0.26.3"
+ratatui = "0.30.0"
 cpal = "0.15.3"
 rand = "0.8.6"
 crossbeam-channel = "0.5.15"

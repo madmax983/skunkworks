@@ -1,3 +1,4 @@
+#![allow(clippy::manual_is_multiple_of)]
 use crossbeam_channel::{bounded, Receiver, Sender};
 use crossterm::{
     event::{self, Event, KeyCode},
@@ -99,7 +100,7 @@ impl App {
 
     fn render(&self, terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> io::Result<()> {
         terminal.draw(|f| {
-            let size = f.size();
+            let size = f.area();
             let block = Block::default()
                 .title(" Acoustic Chemical Morphogenesis 🧪🔊 ")
                 .borders(Borders::ALL);

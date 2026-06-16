@@ -140,7 +140,7 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(1)])
-        .split(f.area()); // Changed from f.size() to f.area() for ratatui 0.26+
+        .split(f.area()); // Changed from f.area() to f.area() for ratatui 0.26+
 
     // Canvas
     let canvas = Canvas::default()

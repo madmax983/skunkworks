@@ -48,13 +48,13 @@ fn run_app<B: ratatui::backend::Backend>(
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-                .split(f.size());
+                .split(f.area());
 
             // Render played events (scrolling log)
             let log_text = messages
                 .iter()
                 .rev()
-                .take(f.size().height as usize - 5)
+                .take(f.area().height as usize - 5)
                 .rev()
                 .cloned()
                 .collect::<Vec<String>>()

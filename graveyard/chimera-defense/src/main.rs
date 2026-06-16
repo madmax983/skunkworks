@@ -92,7 +92,7 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
     let main_layout = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)])
-        .split(f.size());
+        .split(f.area());
 
     let left_chunks = Layout::default()
         .direction(Direction::Vertical)

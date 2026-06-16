@@ -45,7 +45,7 @@ impl App {
 
     fn render(&self, terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> io::Result<()> {
         terminal.draw(|f| {
-            let size = f.size();
+            let size = f.area();
             let block = Block::default()
                 .title(" Hyperbolic Reaction-Diffusion 🧬 ")
                 .borders(Borders::ALL);

@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 neuro-sim = { path = "../../crates/neuro-sim" }
 resonance-audio = { path = "../../crates/resonance-audio" }
-ratatui = "0.26"
+ratatui = "0.30.0"
 crossterm = "0.27"
 crossbeam-channel = "0.5"
 rand = "0.8"
