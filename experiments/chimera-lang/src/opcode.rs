@@ -2753,6 +2753,8 @@ pub enum OpCode {
     Syncopation,
     /// Triggers the Choreography logic
     Choreography,
+    /// Triggers the Runes logic
+    Runes,
 }
 
 impl fmt::Display for OpCode {

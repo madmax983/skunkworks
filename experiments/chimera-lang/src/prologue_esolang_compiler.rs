@@ -1068,6 +1068,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_choreography_instr(instr)?);
                 }
             }
+            Rule::runes_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_runes_instr(instr)?);
+                }
+            }
             Rule::quipu_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_quipu_instr(instr)?);
@@ -1193,6 +1198,35 @@ fn compile_choreography_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<G
             let op = inner.as_str().to_ascii_lowercase();
             if op == "simulate" {
                 genes.push(Gene::new(OpCode::Choreography, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let num = inner.as_str().parse::<i64>().unwrap();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(num)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
+}
+
+fn compile_runes_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair.into_inner().next().unwrap();
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "simulate" {
+                genes.push(Gene::new(OpCode::Runes, vec![]));
             } else if let Ok(opcode) = OpCode::from_str(&op) {
                 genes.push(Gene::new(opcode, vec![]));
             } else {
@@ -2275,5 +2309,18 @@ chaos {
         assert_eq!(genes[0].args[0], Nucleotide::Number(100));
         assert_eq!(genes[1].op, OpCode::Glitch);
         assert_eq!(genes[2].op, OpCode::EntropySurge);
+    }
+
+    #[test]
+    fn test_runes_block() {
+        let code = r#"
+runes {
+    simulate
+}
+"#;
+        let dna = compile(code).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+        assert_eq!(genes.len(), 1);
+        assert_eq!(genes[0].op, OpCode::Runes);
     }
 }
