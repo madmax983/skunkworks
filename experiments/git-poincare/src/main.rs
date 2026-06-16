@@ -1,6 +1,6 @@
 use git_associates::GitModel;
-use poincare_disk::Point;
 use macroquad::prelude::*;
+use poincare_disk::Point;
 use std::env;
 
 #[macroquad::main("Git Poincaré")]
@@ -17,7 +17,8 @@ async fn main() {
     let mut commit_points = Vec::new();
     for (i, commit) in history.iter().enumerate() {
         let r = 1.0 - (1.0 / (1.0 + i as f64 * 0.1)); // distance from center based on age
-        let theta = (commit.short_hash.chars().next().unwrap() as u32 as f64) * std::f64::consts::PI / 8.0;
+        let theta =
+            (commit.short_hash.chars().next().unwrap() as u32 as f64) * std::f64::consts::PI / 8.0;
 
         let point = Point::new(r * theta.cos(), r * theta.sin());
         commit_points.push(point);
@@ -34,7 +35,13 @@ async fn main() {
         clear_background(BLACK);
 
         // Draw Poincare Disk boundary
-        draw_circle_lines(screen_width() / 2.0, screen_height() / 2.0, 300.0, 2.0, WHITE);
+        draw_circle_lines(
+            screen_width() / 2.0,
+            screen_height() / 2.0,
+            300.0,
+            2.0,
+            WHITE,
+        );
 
         // Draw commits
         for point in &commit_points {
