@@ -552,8 +552,7 @@ impl crate::vm::ChimeraVM {
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             OpCode::Runes => {
-                self.output
-                    .push("Runes logic triggered.".to_string());
+                self.output.push("Runes logic triggered.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
             #[cfg(feature = "oracle")]
