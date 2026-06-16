@@ -9,3 +9,7 @@
 **Replacing to_string_lossy().to_string()**
 **Learning:** `.to_string_lossy()` returns a `Cow<str>`. Calling `.to_string()` on a `Cow<str>` unconditionally allocates a new `String` on the heap, bypassing the zero-cost advantage of `Cow`. If the data was already a valid borrowed string, we end up copying it. If the data needed allocation (invalid UTF-8), we make *another* allocation.
 **Action:** Use `.into_owned()` on the returned `Cow<str>` instead. This safely converts the `Cow` into a `String` by either reusing the internal allocation (if it was `Owned`) or allocating only when necessary (if it was `Borrowed`).
+
+**Refactoring Intermediate Vectors in Error Chains**
+**Learning:** Chaining `.collect::<Result<Vec<_>>>()?` followed by `.flatten().collect()` creates a needless intermediate `Vec<Vec<T>>` allocation on the heap.
+**Action:** Use a `for` loop with `extend()` and `?` for error propagation to append directly to a single `Vec`, maintaining zero-cost abstractions and immediate short-circuiting.
