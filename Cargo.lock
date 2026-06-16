@@ -4773,6 +4773,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "git-locus"
+version = "0.1.0"
+dependencies = [
+ "comfy-table",
+ "crossbeam-channel",
+ "git-associates",
+ "glam 0.27.0",
+ "itertools 0.13.0",
+ "locus",
+ "macroquad",
+]
+
+[[package]]
 name = "git-mycelium"
 version = "0.1.0"
 dependencies = [

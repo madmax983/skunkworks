@@ -1,0 +1,13 @@
+[package]
+name = "git-locus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+locus = { path = "../../crates/locus" }
+git-associates = { path = "../../crates/git-associates" }
+macroquad = "0.4.15"
+glam = "0.27.0"
+crossbeam-channel = "0.5"
+itertools = "0.13"
+comfy-table = "7.1"
