@@ -602,6 +602,10 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Turns out the README only describes the core concepts but completely omits how to actually use or install the crate.
 
+### [Concentration Level: STABLE TRAIL] - Location: crates/ferrous-core/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Turns out the README only describes the core concepts but completely omits how to actually use or install the crate.
+
 ### [Concentration Level: STABLE TRAIL] - Location: README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** The root Quick Start command is broken and lacks details on the `nova` feature requirement.
