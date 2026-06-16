@@ -4,6 +4,7 @@ members = [
     "crates/*",
     "experiments/*",
     "experiments/git-locus",
+    "experiments/git-poincare",
 
 
 
