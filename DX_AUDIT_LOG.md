@@ -855,3 +855,90 @@ available binaries: bifurcation-crawler, bio-chain, biomorphic-lexicon, biomorph
 *   🤦 **The Confusion:** "Tried to use the `ferrous-core` crate. There is no example to run and no instructions on how to install it."
 *   🕵️ **The Reality:** "Turns out the README only describes the core concepts but completely omits how to actually use or install the crate."
 *   💡 **The Fix:** "Add a clear `Installation` section and a simple `Quick Start` example."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/flocking/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the minimal simulation example for the `flocking` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs` and tried to compile it.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Hidden Dependencies in Example:** The example imports `locus::Vec2`, but there is no mention of adding `locus` to the `Cargo.toml`.
+    - *Impact:* Compilation error (`unresolved import locus`).
+    - *Fix:* Add `locus` to the required installation dependencies.
+2.  **Missing Installation Instructions:** There is no section explaining how to add `flocking` to `Cargo.toml`.
+    - *Impact:* Confusion for new users trying to use the crate.
+    - *Fix:* Add a clear `Installation` section with the `Cargo.toml` snippet.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions and hidden dependencies in example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `flocking` example. Got an unresolved import error for `locus::Vec2` and didn't know how to install the crate."
+*   🕵️ **The Reality:** "Turns out the example relies on an external crate (`locus`) for `Vec2`, but neither `flocking` nor `locus` are mentioned in any installation instructions."
+*   💡 **The Fix:** "Add an `Installation` section that includes both `flocking` and `locus` in the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/git-associates/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the example for the `git-associates` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs` and tried to compile it.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Hidden Dependencies in Example:** The example returns `anyhow::Result<()>`, but there is no mention of adding `anyhow` to the `Cargo.toml`.
+    - *Impact:* Compilation error (`use of undeclared crate or module anyhow`).
+    - *Fix:* Add `anyhow` to the required installation dependencies.
+2.  **Missing Installation Instructions:** There is no section explaining how to add `git-associates` to `Cargo.toml`.
+    - *Impact:* Confusion for new users trying to use the crate.
+    - *Fix:* Add a clear `Installation` section with the `Cargo.toml` snippet.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions and hidden dependencies in example
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `git-associates` example. Got an undeclared module error for `anyhow` and didn't know how to install the main crate."
+*   🕵️ **The Reality:** "Turns out the example relies on an external crate (`anyhow`) for error handling, but neither `git-associates` nor `anyhow` are mentioned in any installation instructions."
+*   💡 **The Fix:** "Add an `Installation` section that includes both `git-associates` and `anyhow` in the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/gray-scott/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the example for the `gray-scott` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Installation Instructions:** There is no section explaining how to add `gray-scott` to `Cargo.toml`.
+    - *Impact:* Confusion for new users trying to use the crate.
+    - *Fix:* Add a clear `Installation` section with the `Cargo.toml` snippet.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to use the `gray-scott` crate but there are no instructions on how to install it in my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out the README completely omits the installation block."
+*   💡 **The Fix:** "Add an `Installation` section with the `Cargo.toml` snippet for `gray-scott`."
