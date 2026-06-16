@@ -5,6 +5,36 @@
 //! The `platter` crate provides the [`Platter`] struct, which is designed to efficiently
 //! store and update field values across a 2D grid. It includes methods for accumulating values,
 //! hard-capping saturation, and applying time-based decay.
+//!
+//! ## Installation
+//!
+//! Add this to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! platter = { path = "../platter" }
+//! ```
+//!
+//! ## Quick Start
+//!
+//! ```rust
+//! use platter::Platter;
+//!
+//! // Create a 10x10 platter
+//! let mut p = Platter::new(10, 10);
+//!
+//! // Accumulate some value at (5, 5)
+//! p.accumulate(5, 5, 0.5);
+//!
+//! // Check the value
+//! assert_eq!(p.get(5, 5), 0.5);
+//!
+//! // Apply decay
+//! p.decay(0.9);
+//!
+//! // Check the decayed value
+//! assert_eq!(p.get(5, 5), 0.45);
+//! ```
 
 /// A 2D grid representing a field of values, commonly used for magnetism or fluid density.
 ///
