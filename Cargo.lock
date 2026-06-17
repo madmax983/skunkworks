@@ -7303,17 +7303,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mnem-mycelium"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "rand 0.8.6",
- "rayon",
- "regex",
- "walkdir",
-]
-
-[[package]]
 name = "mnem-rot"
 version = "0.1.0"
 dependencies = [
