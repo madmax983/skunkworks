@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::{Dna, Helix};
-    use chimera_lang::vm::prologue::astral::AstralState;
     use chimera_lang::vm::prologue::exec_prologue_tick;
+    use chimera_lang::vm::prologue::AstralState;
     use chimera_lang::vm::{ChimeraVM, Value};
 
     #[test]
