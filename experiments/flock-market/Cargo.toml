@@ -1,0 +1,12 @@
+[package]
+name = "flock-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+flocking = { path = "../../crates/flocking" }
+market-sim = { path = "../../crates/market-sim" }
+macroquad = "0.4.15"
+locus = { path = "../../crates/locus" }
+glam = "0.27.0"
+futures = "0.3.32"
