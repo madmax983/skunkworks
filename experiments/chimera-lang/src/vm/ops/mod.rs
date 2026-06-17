@@ -31,3 +31,9 @@ pub(crate) mod stack;
 #[cfg(feature = "nova")]
 /// The `nova_dispatch` module.
 pub(crate) mod nova_dispatch;
+
+pub(crate) enum Dispatch {
+    Handled,
+    Jump(usize, usize),
+    Unhandled,
+}

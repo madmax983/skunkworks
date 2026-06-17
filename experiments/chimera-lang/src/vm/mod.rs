@@ -50000,8 +50000,10 @@ impl ChimeraVM {
     ) -> Option<(usize, usize)> {
         #[cfg(feature = "nova")]
         #[cfg(feature = "nova")]
-        if let Some(res) = self.exec_core_op(op.clone(), args) {
-            return res;
+        match self.exec_core_op(op.clone(), args) {
+            crate::vm::ops::Dispatch::Handled => return None,
+            crate::vm::ops::Dispatch::Jump(i, j) => return Some((i, j)),
+            crate::vm::ops::Dispatch::Unhandled => {}
         }
 
         #[cfg(feature = "cortex")]
@@ -50014,8 +50016,10 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "nova")]
-        if let Some(res) = self.exec_nova_dispatch(op.clone(), args) {
-            return res;
+        match self.exec_nova_dispatch(op.clone(), args) {
+            crate::vm::ops::Dispatch::Handled => return None,
+            crate::vm::ops::Dispatch::Jump(i, j) => return Some((i, j)),
+            crate::vm::ops::Dispatch::Unhandled => {}
         }
 
         #[cfg(feature = "oracle")]

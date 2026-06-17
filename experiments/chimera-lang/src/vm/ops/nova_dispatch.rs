@@ -67,9 +67,14 @@ impl crate::vm::ChimeraVM {
         &mut self,
         op: OpCode,
         args: &[Nucleotide],
-    ) -> Option<Option<(usize, usize)>> {
+    ) -> crate::vm::ops::Dispatch {
         match op {
-            OpCode::Remap | OpCode::Restore | OpCode::Mirror => Some(self.exec_prion_op(op, args)),
+            OpCode::Remap | OpCode::Restore | OpCode::Mirror => {
+                match self.exec_prion_op(op, args) {
+                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                    None => crate::vm::ops::Dispatch::Handled,
+                }
+            }
             OpCode::AkashicWrite
             | OpCode::AkashicRead
             | OpCode::AkashicSave
@@ -77,40 +82,73 @@ impl crate::vm::ChimeraVM {
             | OpCode::Karma
             | OpCode::Miracle => {
                 akashic::exec_akashic_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Blackbox => {
                 let dump = self.blackbox.dump();
                 self.stack.push(Value::Str(dump));
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Invoke => Some(nova_sigil::exec_invoke(self, op, args)),
-            OpCode::Inscribe => Some(nova_sigil::exec_inscribe(self, op, args)),
-            OpCode::Ward => Some(nova_ward::exec_ward(self, op, args)),
-            OpCode::AutoCast => Some(nova_sigil::exec_auto_cast(self, op, args)),
+            OpCode::Invoke => match nova_sigil::exec_invoke(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Inscribe => match nova_sigil::exec_inscribe(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Ward => match nova_ward::exec_ward(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::AutoCast => match nova_sigil::exec_auto_cast(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
-                Some(nova_security::exec_security_op(self, op, args))
+                match nova_security::exec_security_op(self, op, args) {
+                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                    None => crate::vm::ops::Dispatch::Handled,
+                }
             }
             OpCode::Morph => {
                 nova_morphogenesis::exec_morph(self);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Morphogen => Some(nova_cambrian::exec_morphogen(self, op, args)),
-            OpCode::HoxSwitch => Some(nova_cambrian::exec_hox_switch(self, op, args)),
-            OpCode::Adhere => Some(nova_cambrian::exec_adhere(self, op, args)),
+            OpCode::Morphogen => match nova_cambrian::exec_morphogen(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::HoxSwitch => match nova_cambrian::exec_hox_switch(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Adhere => match nova_cambrian::exec_adhere(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Grow => {
                 nova_morphogenesis::exec_grow(self);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Plant => {
                 nova_botany::exec_plant(self);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Signal | OpCode::Receive => Some(nova::exec_nova_op(self, op, args)),
+            OpCode::Signal | OpCode::Receive => match nova::exec_nova_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Define | OpCode::Undefine | OpCode::Dictionary => {
-                Some(meta::exec_meta_op(self, op, args))
+                match meta::exec_meta_op(self, op, args) {
+                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                    None => crate::vm::ops::Dispatch::Handled,
+                }
             }
-            OpCode::Operator => Some(nova::exec_operator(self, args)),
+            OpCode::Operator => match nova::exec_operator(self, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Grammar
             | OpCode::Parse
             | OpCode::ParserMatch
@@ -128,19 +166,31 @@ impl crate::vm::ChimeraVM {
             | OpCode::GridGrammar
             | OpCode::BabelLive
             | OpCode::DefineRule
-            | OpCode::Ouroboros => Some(babel::exec_babel_op(self, op, args)),
+            | OpCode::Ouroboros => match babel::exec_babel_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Superpose
             | OpCode::Collapse
             | OpCode::Observe
             | OpCode::Interfere
             | OpCode::Project
-            | OpCode::Refract => Some(nova::exec_nova_op(self, op, args)),
+            | OpCode::Refract => match nova::exec_nova_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Levenshtein
             | OpCode::Soundex
             | OpCode::Anagram
             | OpCode::Cipher
-            | OpCode::Pangram => Some(nova::exec_nova_op(self, op, args)),
-            OpCode::Transposon => Some(self.exec_transposon()),
+            | OpCode::Pangram => match nova::exec_nova_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Transposon => match self.exec_transposon() {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Horcrux
             | OpCode::Rebirth
             | OpCode::Resonate
@@ -356,7 +406,10 @@ impl crate::vm::ChimeraVM {
             | OpCode::HoloSpeak
             | OpCode::Luciferin
             | OpCode::Photophore
-            | OpCode::Etymology => Some(nova::exec_nova_op(self, op, args)),
+            | OpCode::Etymology => match nova::exec_nova_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::EvoPopSize
             | OpCode::EvoLoad
             | OpCode::EvoStore
@@ -365,7 +418,10 @@ impl crate::vm::ChimeraVM {
             | OpCode::EvoMutate
             | OpCode::EvoReplace
             | OpCode::EvoClear
-            | OpCode::EvoSave => Some(evolution::exec_evo_op(self, op, args)),
+            | OpCode::EvoSave => match evolution::exec_evo_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             #[cfg(feature = "nova")]
             OpCode::Codex => {
                 if let Some(Value::Int(id)) = self.stack.pop() {
@@ -379,99 +435,156 @@ impl crate::vm::ChimeraVM {
                     self.output
                         .push("Error: Codex requires spell ID (Int)".to_string());
                 }
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Fluid => Some(None),
-            OpCode::Weave | OpCode::Unravel => Some(nova_weaver::exec_weave_op(self, op, args)),
-            OpCode::Mutagen => Some(self.exec_mutagen_op()),
-            OpCode::Scavenge => Some(self.exec_scavenge_op()),
-            OpCode::Digest => Some(self.exec_digest_op()),
+            OpCode::Fluid => crate::vm::ops::Dispatch::Handled,
+            OpCode::Weave | OpCode::Unravel => match nova_weaver::exec_weave_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Mutagen => match self.exec_mutagen_op() {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Scavenge => match self.exec_scavenge_op() {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Digest => match self.exec_digest_op() {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::EntropySurge => {
                 nova_flux::exec_entropy_surge(self);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
-            OpCode::QuantumTunnel => Some(nova_flux::exec_quantum_tunnel(self)),
+            OpCode::QuantumTunnel => match nova_flux::exec_quantum_tunnel(self) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Chain | OpCode::Curry | OpCode::Quote => {
-                Some(nova_functional::exec_functional_op(self, op, args))
+                match nova_functional::exec_functional_op(self, op, args) {
+                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                    None => crate::vm::ops::Dispatch::Handled,
+                }
             }
-            OpCode::Crossover => Some(nova_genetics::exec_crossover(self)),
+            OpCode::Crossover => match nova_genetics::exec_crossover(self) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Orca => {
                 self.orca_mode = !self.orca_mode;
                 let status = if self.orca_mode { "ON" } else { "OFF" };
                 self.output
                     .push(format!("ORCA: Signal Processing {}", status));
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Glossolalia | OpCode::Clarify | OpCode::Confuse => {
                 babel_chaos::exec_babel_chaos_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Crucible => {
                 alchemy::exec_crucible_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Chr => Some(self.exec_char_op()),
-            OpCode::Guild => Some(nova_guild::exec_guild(self)),
-            OpCode::Charter => Some(nova_guild::exec_charter(self)),
+            OpCode::Chr => match self.exec_char_op() {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Guild => match nova_guild::exec_guild(self) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Charter => match nova_guild::exec_charter(self) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Logos => {
                 self.logos_mode = !self.logos_mode;
                 let status = if self.logos_mode { "ON" } else { "OFF" };
                 self.output
                     .push(format!("LOGOS: Logic Chemistry {}", status));
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
                 bard::exec_bard_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Scan | OpCode::Locate | OpCode::Chart | OpCode::Atlas => {
                 nova_cartography::exec_cartography_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Pocket | OpCode::Unpocket => Some(nova::exec_nova_op(self, op, args)),
+            OpCode::Pocket | OpCode::Unpocket => match nova::exec_nova_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::Quake
             | OpCode::Erode
             | OpCode::Sediment
             | OpCode::Tectonics
             | OpCode::Volcano => {
                 nova_geology::exec_geology_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::LeySense | OpCode::LeyTap | OpCode::LeyWarp | OpCode::LeyShift => {
-                Some(nova_ley::exec_ley_op(self, op, args))
+                match nova_ley::exec_ley_op(self, op, args) {
+                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                    None => crate::vm::ops::Dispatch::Handled,
+                }
             }
             OpCode::Nucleate | OpCode::Accrete | OpCode::Shatter | OpCode::Anneal => {
                 nova_crystal::exec_crystal_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Dimension | OpCode::DRead | OpCode::DWrite | OpCode::DMerge | OpCode::DView => {
                 nova_planes::exec_planes_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
-                Some(nova_strings::exec_string_op(self, op, args))
+                match nova_strings::exec_string_op(self, op, args) {
+                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                    None => crate::vm::ops::Dispatch::Handled,
+                }
             }
-            OpCode::Bond => Some(nova_metazoa::exec_bond(self, op, args)),
-            OpCode::Unbond => Some(nova_metazoa::exec_unbond(self, op, args)),
-            OpCode::Signify => Some(nova_metazoa::exec_signify(self, op, args)),
-            OpCode::Tissue => Some(nova_metazoa::exec_tissue(self, op, args)),
+            OpCode::Bond => match nova_metazoa::exec_bond(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Unbond => match nova_metazoa::exec_unbond(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Signify => match nova_metazoa::exec_signify(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            OpCode::Tissue => match nova_metazoa::exec_tissue(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
             OpCode::MeshNet
             | OpCode::MeshGrow
             | OpCode::MeshPrune
             | OpCode::MeshSend
             | OpCode::MeshRecv => {
                 crate::vm::nova::exec_nova_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Reactor | OpCode::Reaction => {
                 crate::vm::nova::exec_nova_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::AbsorbGeometry => {
-                Some(nova_alchemy_prime::exec_absorb_geometry(self, op, args))
+                match nova_alchemy_prime::exec_absorb_geometry(self, op, args) {
+                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                    None => crate::vm::ops::Dispatch::Handled,
+                }
             }
             OpCode::ProjectGeometry => {
-                Some(nova_alchemy_prime::exec_project_geometry(self, op, args))
+                match nova_alchemy_prime::exec_project_geometry(self, op, args) {
+                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                    None => crate::vm::ops::Dispatch::Handled,
+                }
             }
             OpCode::HyperAdd
             | OpCode::HyperSub
@@ -481,87 +594,90 @@ impl crate::vm::ChimeraVM {
             | OpCode::Cross
             | OpCode::ZipWith => {
                 nova_raku::exec_raku_op(self, op, args);
-                Some(None)
+                crate::vm::ops::Dispatch::Handled
             }
             OpCode::Flock => {
                 self.output.push("Flocking step simulated.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Poincare => {
                 self.output
                     .push("Poincare hyperbolic geometry evaluated.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
 
             OpCode::GrayScott => {
                 self.output
                     .push("Gray-Scott diffusion evaluated.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Locus => {
                 self.output.push("Locus topology evaluated.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Neuro => {
                 self.output.push("Neural network simulated.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Platter => {
                 self.output.push("Platter heatmap simulated.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::MillerLattice => {
                 self.output
                     .push("Miller Lattice simulation triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::HyperSystem => {
                 self.output
                     .push("Hyper System monitoring triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::PhysicsPbd => {
                 self.output
                     .push("Physics PBD position-based dynamics triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Tardis => {
                 self.output.push("Tardis logic triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Pachinko => {
                 self.output.push("Pachinko physics simulated.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Automaton => {
                 self.output.push("Automaton logic simulated.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Syncopation => {
                 self.output.push("Syncopation logic triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::FerrousCore => {
                 self.output
                     .push("Ferrous Core magnetic field triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Choreography => {
                 self.output
                     .push("Choreography logic triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Runes => {
                 self.output.push("Runes logic triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Hologram => {
                 self.output.push("Hologram logic triggered.".to_string());
-                Some(Some((self.ip.0, self.ip.1 + 1)))
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             #[cfg(feature = "oracle")]
-            OpCode::Divergence => Some(nova::exec_nova_op(self, op, args)),
-            _ => None,
+            OpCode::Divergence => match nova::exec_nova_op(self, op, args) {
+                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
+                None => crate::vm::ops::Dispatch::Handled,
+            },
+            _ => crate::vm::ops::Dispatch::Unhandled,
         }
     }
 }
