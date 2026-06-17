@@ -16,7 +16,6 @@ fn window_conf() -> Conf {
 }
 
 async fn run_sim(headless: bool) {
-
     let mut market = Grid::new(GRID_WIDTH, GRID_HEIGHT);
     let mut positions = Vec::new();
     let mut velocities = Vec::new();
@@ -94,9 +93,11 @@ async fn run_sim(headless: bool) {
             // In market-sim: y=0 is High Price, y=H is Low Price.
             // Bids move up from bottom (y increasing towards 0, i.e. going UP)
             // Asks move down from top (y increasing towards H, i.e. going DOWN)
-            if velocities[i].y < 0.0 { // Moving UP (towards y=0)
+            if velocities[i].y < 0.0 {
+                // Moving UP (towards y=0)
                 market.set(grid_x, grid_y, Particle::Bid(ids[i]));
-            } else { // Moving DOWN (towards y=H)
+            } else {
+                // Moving DOWN (towards y=H)
                 market.set(grid_x, grid_y, Particle::Ask(ids[i]));
             }
         }
@@ -116,7 +117,14 @@ async fn run_sim(headless: bool) {
         for trade in trades {
             // We don't have x, just price (y) and buyer/seller.
             // We'll draw a flash line at the price level.
-            draw_line(0.0, trade.price as f32 * cell_h, screen_width(), trade.price as f32 * cell_h, 4.0, YELLOW);
+            draw_line(
+                0.0,
+                trade.price as f32 * cell_h,
+                screen_width(),
+                trade.price as f32 * cell_h,
+                4.0,
+                YELLOW,
+            );
         }
 
         next_frame().await;

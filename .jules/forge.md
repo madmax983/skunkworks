@@ -99,3 +99,7 @@
 **[Flattening VM Pyramids of Doom]**
 **Learning:** Massive VM dispatchers easily become "God Functions" with deeply nested Pyramids of Doom. For example, `OpCode::Outbreak` in `memetics.rs` had up to 68 levels of indentation.
 **Action:** Extract logical phases (like Spread, Mutate, Quorum) into standalone helper functions. Use guard clauses (early returns) within those helpers. Accept slices (`&mut [T]`) instead of references to vectors (`&mut Vec<T>`) to appease Clippy (`ptr_arg`) and improve readability.
+
+**[Flattening Match Pyramids into Helper Functions]**
+**Learning:** When extracting deeply nested match arms into helper functions to flatten 'Pyramids of Doom', use `#[allow(clippy::too_many_arguments)]` on the extracted helpers if creating a temporary context struct adds unnecessary overhead to a pure readability refactoring task.
+**Action:** Extract large match arms into appropriately named helper functions, using `#[allow(clippy::too_many_arguments)]` to pass all required local state, and use guard clauses inside the helpers to flatten loop nesting.

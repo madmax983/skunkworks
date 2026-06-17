@@ -672,6 +672,1035 @@ pub fn solve(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
+fn check_cell(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let arg_x = &args[1];
+    let arg_y = &args[2];
+    let arg_val = &args[3];
+
+    for y in 0..crate::vm::GRID_SIZE {
+        for x in 0..crate::vm::GRID_SIZE {
+            let fact_x = Value::Int(x as i64);
+            let fact_y = Value::Int(y as i64);
+            let fact_val = vm.grid[y][x].clone();
+
+            let Some(subst_x) = unify(arg_x, &fact_x, subst) else {
+                continue;
+            };
+            let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) else {
+                continue;
+            };
+            let Some(final_subst) = unify(arg_val, &fact_val, &subst_y) else {
+                continue;
+            };
+
+            solve(remaining_goals, final_subst, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_orca_signal(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let arg_x = &args[1];
+    let arg_y = &args[2];
+    let arg_val = &args[3];
+
+    for y in 0..crate::vm::GRID_SIZE {
+        for x in 0..crate::vm::GRID_SIZE {
+            let fact_x = Value::Int(x as i64);
+            let fact_y = Value::Int(y as i64);
+            let fact_val = Value::Int(vm.signal_grid[y][x] as i64);
+
+            let Some(subst_x) = unify(arg_x, &fact_x, subst) else {
+                continue;
+            };
+            let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) else {
+                continue;
+            };
+            let Some(final_subst) = unify(arg_val, &fact_val, &subst_y) else {
+                continue;
+            };
+
+            solve(remaining_goals, final_subst, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_math_add(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let val_a = resolve(&args[1], subst);
+    let val_b = resolve(&args[2], subst);
+    let arg_res = &args[3];
+
+    if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+        let res = Value::Int(a + b);
+        if let Some(new_subst) = unify(arg_res, &res, subst) {
+            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_math_sub(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let val_a = resolve(&args[1], subst);
+    let val_b = resolve(&args[2], subst);
+    let arg_res = &args[3];
+
+    if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+        let res = Value::Int(a - b);
+        if let Some(new_subst) = unify(arg_res, &res, subst) {
+            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_math_mul(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let val_a = resolve(&args[1], subst);
+    let val_b = resolve(&args[2], subst);
+    let arg_res = &args[3];
+
+    if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+        let res = Value::Int(a * b);
+        if let Some(new_subst) = unify(arg_res, &res, subst) {
+            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_math_div(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let val_a = resolve(&args[1], subst);
+    let val_b = resolve(&args[2], subst);
+    let arg_res = &args[3];
+
+    if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+        if b != 0 {
+            let res = Value::Int(a / b);
+            if let Some(new_subst) = unify(arg_res, &res, subst) {
+                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+            }
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_math_mod(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let val_a = resolve(&args[1], subst);
+    let val_b = resolve(&args[2], subst);
+    let arg_res = &args[3];
+
+    if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+        if b != 0 {
+            let res = Value::Int(a % b);
+            if let Some(new_subst) = unify(arg_res, &res, subst) {
+                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+            }
+        }
+    }
+    true
+}
+
+#[cfg(feature = "elektra")]
+#[allow(clippy::too_many_arguments)]
+fn check_voltage(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let arg_x = &args[1];
+    let arg_y = &args[2];
+    let arg_v = &args[3];
+
+    for y in 0..crate::vm::GRID_SIZE {
+        for x in 0..crate::vm::GRID_SIZE {
+            let fact_x = Value::Int(x as i64);
+            let fact_y = Value::Int(y as i64);
+            let fact_v = Value::Int(vm.voltage_grid[y][x] as i64);
+
+            let Some(subst_x) = unify(arg_x, &fact_x, subst) else {
+                continue;
+            };
+            let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) else {
+                continue;
+            };
+            let Some(final_subst) = unify(arg_v, &fact_v, &subst_y) else {
+                continue;
+            };
+
+            solve(remaining_goals, final_subst, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_generate(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 3 {
+        return false;
+    }
+    let arg_grammar = &args[1];
+    let arg_output = &args[2];
+
+    let resolved_grammar = resolve(arg_grammar, subst);
+    let generated = babel::generate_string(&resolved_grammar);
+    let fact_generated = Value::Str(generated);
+
+    if let Some(new_subst) = unify(arg_output, &fact_generated, subst) {
+        solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_metabolism(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 3 {
+        return false;
+    }
+    let arg_e = &args[1];
+    let arg_exp = &args[2];
+    let fact_e = Value::Int(vm.energy);
+    let fact_exp = Value::Int(vm.experience as i64);
+
+    let Some(s1) = unify(arg_e, &fact_e, subst) else {
+        return true;
+    };
+    let Some(s2) = unify(arg_exp, &fact_exp, &s1) else {
+        return true;
+    };
+
+    solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_path_find(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 7 {
+        return false;
+    }
+    let x1_val = resolve(&args[1], subst);
+    let y1_val = resolve(&args[2], subst);
+    let x2_val = resolve(&args[3], subst);
+    let y2_val = resolve(&args[4], subst);
+
+    let next_x_arg = &args[5];
+    let next_y_arg = &args[6];
+
+    let (Value::Int(x1), Value::Int(y1), Value::Int(x2), Value::Int(y2)) =
+        (x1_val, y1_val, x2_val, y2_val)
+    else {
+        return true;
+    };
+
+    let start = (y1 as usize, x1 as usize);
+    let end = (y2 as usize, x2 as usize);
+
+    if start == end {
+        let fact_nx = Value::Int(x1);
+        let fact_ny = Value::Int(y1);
+        if let Some(s1) = unify(next_x_arg, &fact_nx, subst) {
+            if let Some(s2) = unify(next_y_arg, &fact_ny, &s1) {
+                solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
+            }
+        }
+        return true;
+    }
+
+    use std::collections::VecDeque;
+    let mut queue = VecDeque::new();
+    queue.push_back(start);
+
+    let mut came_from = std::collections::HashMap::new();
+    came_from.insert(start, None);
+
+    let mut found = false;
+
+    while let Some(current) = queue.pop_front() {
+        if current == end {
+            found = true;
+            break;
+        }
+
+        let dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+        for (dy, dx) in dirs {
+            let ny = current.0 as i64 + dy;
+            let nx = current.1 as i64 + dx;
+
+            if ny >= 0
+                && ny < crate::vm::GRID_SIZE as i64
+                && nx >= 0
+                && nx < crate::vm::GRID_SIZE as i64
+            {
+                let next = (ny as usize, nx as usize);
+                if let std::collections::hash_map::Entry::Vacant(e) = came_from.entry(next) {
+                    let val = &vm.grid[next.0][next.1];
+                    let traversable = match val {
+                        Value::Int(0) => true,
+                        _ => next == end,
+                    };
+
+                    if traversable {
+                        e.insert(Some(current));
+                        queue.push_back(next);
+                    }
+                }
+            }
+        }
+    }
+
+    if found {
+        let mut curr = end;
+        while let Some(Some(prev)) = came_from.get(&curr) {
+            if *prev == start {
+                let fact_nx = Value::Int(curr.1 as i64);
+                let fact_ny = Value::Int(curr.0 as i64);
+
+                if let Some(s1) = unify(next_x_arg, &fact_nx, subst) {
+                    if let Some(s2) = unify(next_y_arg, &fact_ny, &s1) {
+                        solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
+                    }
+                }
+                break;
+            }
+            curr = *prev;
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_neighbor_organelle(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 5 {
+        return false;
+    }
+    let arg_x = &args[1];
+    let arg_y = &args[2];
+    let arg_type = &args[3];
+    let arg_id = &args[4];
+
+    #[cfg(feature = "nova")]
+    for org in &vm.organelles {
+        let fact_x = Value::Int(org.context_loc.1 as i64);
+        let fact_y = Value::Int(org.context_loc.0 as i64);
+        let fact_type = Value::Str(format!("{:?}", org.kind));
+        let fact_id = Value::Int(org.id as i64);
+
+        let mut current_subst = subst.clone();
+        let Some(s1) = unify(arg_x, &fact_x, &current_subst) else {
+            continue;
+        };
+        current_subst = s1;
+        let Some(s2) = unify(arg_y, &fact_y, &current_subst) else {
+            continue;
+        };
+        current_subst = s2;
+        let Some(s3) = unify(arg_type, &fact_type, &current_subst) else {
+            continue;
+        };
+        current_subst = s3;
+        let Some(s4) = unify(arg_id, &fact_id, &current_subst) else {
+            continue;
+        };
+
+        solve(remaining_goals, s4, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_ecology_pop(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 2 {
+        return false;
+    }
+    let arg_n = &args[1];
+    #[cfg(feature = "nova")]
+    let fact_n = Value::Int(vm.organelles.len() as i64);
+    #[cfg(not(feature = "nova"))]
+    let fact_n = Value::Int(0);
+
+    if let Some(new_subst) = unify(arg_n, &fact_n, subst) {
+        solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_ecology_energy(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 2 {
+        return false;
+    }
+    let arg_e = &args[1];
+    #[cfg(feature = "nova")]
+    let total: i64 = vm.organelles.iter().map(|o| o.energy).sum();
+    #[cfg(not(feature = "nova"))]
+    let total = 0;
+
+    let fact_e = Value::Int(total);
+    if let Some(new_subst) = unify(arg_e, &fact_e, subst) {
+        solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_species_count(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 2 {
+        return false;
+    }
+    let arg_n = &args[1];
+    #[cfg(feature = "nova")]
+    let count = vm
+        .organelles
+        .iter()
+        .map(|o| &o.name)
+        .collect::<std::collections::HashSet<_>>()
+        .len() as i64;
+    #[cfg(not(feature = "nova"))]
+    let count = 0;
+
+    let fact_n = Value::Int(count);
+    if let Some(new_subst) = unify(arg_n, &fact_n, subst) {
+        solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_energy(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 2 {
+        return false;
+    }
+    let arg_e = &args[1];
+    let fact_e = Value::Int(vm.energy);
+    if let Some(new_subst) = unify(arg_e, &fact_e, subst) {
+        solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_stack(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 2 {
+        return false;
+    }
+    let arg_list = &args[1];
+    let stack_vals = vm.stack.clone();
+    let fact_list = Value::Junction(JunctionType::All, stack_vals);
+
+    if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
+        solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_inventory(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 2 {
+        return false;
+    }
+    let arg_list = &args[1];
+    #[cfg(feature = "nova")]
+    {
+        let org_vals: Vec<Value> = vm
+            .organelles
+            .iter()
+            .map(|o| Value::Str(format!("{:?}", o.kind)))
+            .collect();
+        let fact_list = Value::Junction(JunctionType::All, org_vals);
+        if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
+            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+        }
+    }
+    #[cfg(not(feature = "nova"))]
+    {
+        let fact_list = Value::Junction(JunctionType::All, vec![]);
+        if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
+            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_dna_len(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 2 {
+        return false;
+    }
+    let arg_len = &args[1];
+    let fact_len = Value::Int(vm.dna.helix.strands.len() as i64);
+    if let Some(new_subst) = unify(arg_len, &fact_len, subst) {
+        solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_gene(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 4 {
+        return false;
+    }
+    let arg_strand = &args[1];
+    let arg_idx = &args[2];
+    let arg_op = &args[3];
+
+    for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+        let fact_s = Value::Int(s_idx as i64);
+        if unify(arg_strand, &fact_s, subst).is_none() {
+            continue;
+        }
+
+        for (g_idx, gene) in strand.genes.iter().enumerate() {
+            let fact_idx = Value::Int(g_idx as i64);
+            let fact_op = Value::Str(gene.op.to_string());
+
+            let mut current = subst.clone();
+            let Some(s1) = unify(arg_strand, &fact_s, &current) else {
+                continue;
+            };
+            current = s1;
+            let Some(s2) = unify(arg_idx, &fact_idx, &current) else {
+                continue;
+            };
+            current = s2;
+            let Some(s3) = unify(arg_op, &fact_op, &current) else {
+                continue;
+            };
+
+            solve(remaining_goals, s3, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_organelle(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 5 {
+        return false;
+    }
+    #[cfg(feature = "nova")]
+    for (i, org) in vm.organelles.iter().enumerate() {
+        let fact_idx = Value::Int(i as i64);
+        let fact_type = Value::Str(format!("{:?}", org.kind));
+        let fact_x = Value::Int(org.context_loc.1 as i64);
+        let fact_y = Value::Int(org.context_loc.0 as i64);
+
+        let current_subst = subst.clone();
+        let Some(s1) = unify(&args[1], &fact_idx, &current_subst) else {
+            continue;
+        };
+        let Some(s2) = unify(&args[2], &fact_type, &s1) else {
+            continue;
+        };
+        let Some(s3) = unify(&args[3], &fact_x, &s2) else {
+            continue;
+        };
+        let Some(s4) = unify(&args[4], &fact_y, &s3) else {
+            continue;
+        };
+
+        solve(remaining_goals, s4, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_future(
+    args: &[Value],
+    subst: &Subst,
+    _remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 3 {
+        return false;
+    }
+    let arg_ticks = &args[1];
+    let arg_goal = &args[2];
+
+    let r_ticks = resolve(arg_ticks, subst);
+    if let Value::Int(ticks) = r_ticks {
+        let safe_ticks = ticks.clamp(1, 100);
+
+        if vm.recursion_depth <= 5 {
+            let mut sim_vm = vm.clone();
+            sim_vm.recursion_depth += 1;
+            sim_vm.output.clear();
+            sim_vm.halted = false;
+
+            for _ in 0..safe_ticks {
+                sim_vm.step();
+                if sim_vm.halted {
+                    break;
+                }
+            }
+
+            solve(
+                std::slice::from_ref(arg_goal),
+                subst.clone(),
+                kb,
+                &sim_vm,
+                solutions,
+                depth + 1,
+            );
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_past_cell(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    #[cfg(feature = "nova")]
+    if args.len() == 5 {
+        let arg_t = &args[1];
+        let arg_x = &args[2];
+        let arg_y = &args[3];
+        let arg_val = &args[4];
+
+        let r_t = resolve(arg_t, subst);
+        let r_x = resolve(arg_x, subst);
+        let r_y = resolve(arg_y, subst);
+
+        let history_len = vm.grid_history.len();
+        let t_range = if let Value::Int(t) = r_t {
+            if t >= 0 && (t as usize) < history_len {
+                (t as usize)..(t as usize + 1)
+            } else {
+                0..0
+            }
+        } else {
+            0..history_len
+        };
+
+        let x_range = if let Value::Int(x) = r_x {
+            if x >= 0 && (x as usize) < crate::vm::GRID_SIZE {
+                (x as usize)..(x as usize + 1)
+            } else {
+                0..0
+            }
+        } else {
+            0..crate::vm::GRID_SIZE
+        };
+
+        let y_range = if let Value::Int(y) = r_y {
+            if y >= 0 && (y as usize) < crate::vm::GRID_SIZE {
+                (y as usize)..(y as usize + 1)
+            } else {
+                0..0
+            }
+        } else {
+            0..crate::vm::GRID_SIZE
+        };
+
+        for t in t_range {
+            let idx = history_len.saturating_sub(1).saturating_sub(t);
+            let grid_snapshot = &vm.grid_history[idx];
+            let fact_t = Value::Int(t as i64);
+
+            for y in y_range.clone() {
+                for x in x_range.clone() {
+                    let fact_x = Value::Int(x as i64);
+                    let fact_y = Value::Int(y as i64);
+                    let fact_val = grid_snapshot[y][x].clone();
+
+                    let mut current_subst = subst.clone();
+                    let Some(s1) = unify(arg_t, &fact_t, &current_subst) else {
+                        continue;
+                    };
+                    current_subst = s1;
+                    let Some(s2) = unify(arg_x, &fact_x, &current_subst) else {
+                        continue;
+                    };
+                    current_subst = s2;
+                    let Some(s3) = unify(arg_y, &fact_y, &current_subst) else {
+                        continue;
+                    };
+                    current_subst = s3;
+                    let Some(s4) = unify(arg_val, &fact_val, &current_subst) else {
+                        continue;
+                    };
+
+                    solve(remaining_goals, s4, kb, vm, solutions, depth + 1);
+                }
+            }
+        }
+        return true;
+    }
+    false
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_neighbor(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 6 {
+        return false;
+    }
+    let arg_x = &args[1];
+    let arg_y = &args[2];
+    let arg_dir = &args[3];
+    let arg_nx = &args[4];
+    let arg_ny = &args[5];
+
+    let r_x = resolve(arg_x, subst);
+    let r_y = resolve(arg_y, subst);
+
+    let x_range = if let Value::Int(x) = r_x {
+        if x >= 0 && (x as usize) < crate::vm::GRID_SIZE {
+            (x as usize)..(x as usize + 1)
+        } else {
+            0..0
+        }
+    } else {
+        0..crate::vm::GRID_SIZE
+    };
+
+    let y_range = if let Value::Int(y) = r_y {
+        if y >= 0 && (y as usize) < crate::vm::GRID_SIZE {
+            (y as usize)..(y as usize + 1)
+        } else {
+            0..0
+        }
+    } else {
+        0..crate::vm::GRID_SIZE
+    };
+
+    for y in y_range {
+        for x in x_range.clone() {
+            let dirs = [(-1, 0, 0), (0, 1, 1), (1, 0, 2), (0, -1, 3)];
+            for (dy, dx, d_code) in dirs {
+                #[allow(unused_assignments)]
+                let mut neighbor_opt = None;
+
+                #[cfg(any(feature = "nova", feature = "silicon"))]
+                {
+                    neighbor_opt = vm.normalize_coords(y as i64 + dy, x as i64 + dx);
+                }
+                #[cfg(not(any(feature = "nova", feature = "silicon")))]
+                {
+                    let ny = y as i64 + dy;
+                    let nx = x as i64 + dx;
+                    if ny >= 0
+                        && ny < crate::vm::GRID_SIZE as i64
+                        && nx >= 0
+                        && nx < crate::vm::GRID_SIZE as i64
+                    {
+                        neighbor_opt = Some((ny as usize, nx as usize));
+                    }
+                }
+
+                if let Some((ny, nx)) = neighbor_opt {
+                    let fact_x = Value::Int(x as i64);
+                    let fact_y = Value::Int(y as i64);
+                    let fact_dir = Value::Int(d_code);
+                    let fact_nx = Value::Int(nx as i64);
+                    let fact_ny = Value::Int(ny as i64);
+
+                    let current_subst = subst.clone();
+                    let Some(s1) = unify(arg_x, &fact_x, &current_subst) else {
+                        continue;
+                    };
+                    let Some(s2) = unify(arg_y, &fact_y, &s1) else {
+                        continue;
+                    };
+                    let Some(s3) = unify(arg_dir, &fact_dir, &s2) else {
+                        continue;
+                    };
+                    let Some(s4) = unify(arg_nx, &fact_nx, &s3) else {
+                        continue;
+                    };
+                    let Some(s5) = unify(arg_ny, &fact_ny, &s4) else {
+                        continue;
+                    };
+
+                    solve(remaining_goals, s5, kb, vm, solutions, depth + 1);
+                }
+            }
+        }
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_opcode(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 3 {
+        return false;
+    }
+    let arg_name = &args[1];
+    let arg_val = &args[2];
+
+    for op in OpCode::iter() {
+        let op_name = op.to_string();
+        let fact_name = Value::Str(op_name.clone());
+        let fact_val = Value::Str(op_name);
+
+        let current_subst = subst.clone();
+        let Some(s1) = unify(arg_name, &fact_name, &current_subst) else {
+            continue;
+        };
+        let Some(s2) = unify(arg_val, &fact_val, &s1) else {
+            continue;
+        };
+
+        solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
+    }
+    true
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_has_feature(
+    args: &[Value],
+    subst: &Subst,
+    remaining_goals: &[Value],
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if args.len() != 3 {
+        return false;
+    }
+    let arg_strand = &args[1];
+    let arg_op = &args[2];
+
+    for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+        let fact_strand = Value::Int(s_idx as i64);
+
+        for gene in &strand.genes {
+            let op_name = gene.op.to_string();
+            let fact_op = Value::Str(op_name);
+
+            let current_subst = subst.clone();
+            let Some(s1) = unify(arg_strand, &fact_strand, &current_subst) else {
+                continue;
+            };
+            let Some(s2) = unify(arg_op, &fact_op, &s1) else {
+                continue;
+            };
+
+            solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
+        }
+    }
+    true
+}
+
 fn check_dynamic_predicates(
     goal: &Value,
     remaining_goals: &[Value],
@@ -682,839 +1711,76 @@ fn check_dynamic_predicates(
     depth: usize,
 ) -> bool {
     if let Value::Junction(JunctionType::Any, args) = goal {
-        // We use Junction(Any, [Name, Args...]) as predicate format generally?
-        // But tests use Junction(Any, [Pred, Arg1...]).
         if args.is_empty() {
             return false;
         }
         if let Value::Str(pred_name) = &args[0] {
-            match pred_name.as_str() {
-                "cell" => {
-                    // cell(X, Y, Val)
-                    if args.len() == 4 {
-                        let arg_x = &args[1];
-                        let arg_y = &args[2];
-                        let arg_val = &args[3];
-
-                        // Iterate over grid (0..16, 0..16)
-                        for y in 0..crate::vm::GRID_SIZE {
-                            for x in 0..crate::vm::GRID_SIZE {
-                                let fact_x = Value::Int(x as i64);
-                                let fact_y = Value::Int(y as i64);
-                                let fact_val = vm.grid[y][x].clone();
-
-                                // Try to unify X
-                                if let Some(subst_x) = unify(arg_x, &fact_x, subst) {
-                                    // Try to unify Y
-                                    if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
-                                        // Try to unify Val
-                                        if let Some(final_subst) =
-                                            unify(arg_val, &fact_val, &subst_y)
-                                        {
-                                            solve(
-                                                remaining_goals,
-                                                final_subst,
-                                                kb,
-                                                vm,
-                                                solutions,
-                                                depth + 1,
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true; // Handled
-                    }
-                }
+            return match pred_name.as_str() {
+                "cell" => check_cell(args, subst, remaining_goals, kb, vm, solutions, depth),
                 "orca_signal" => {
-                    // orca_signal(X, Y, Val)
-                    if args.len() == 4 {
-                        let arg_x = &args[1];
-                        let arg_y = &args[2];
-                        let arg_val = &args[3];
-
-                        for y in 0..crate::vm::GRID_SIZE {
-                            for x in 0..crate::vm::GRID_SIZE {
-                                let fact_x = Value::Int(x as i64);
-                                let fact_y = Value::Int(y as i64);
-                                let fact_val = Value::Int(vm.signal_grid[y][x] as i64);
-
-                                if let Some(subst_x) = unify(arg_x, &fact_x, subst) {
-                                    if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
-                                        if let Some(final_subst) =
-                                            unify(arg_val, &fact_val, &subst_y)
-                                        {
-                                            solve(
-                                                remaining_goals,
-                                                final_subst,
-                                                kb,
-                                                vm,
-                                                solutions,
-                                                depth + 1,
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_orca_signal(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "math_add" => {
-                    // math_add(A, B, Res)
-                    if args.len() == 4 {
-                        let val_a = resolve(&args[1], subst);
-                        let val_b = resolve(&args[2], subst);
-                        let arg_res = &args[3];
-
-                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
-                            let res = Value::Int(a + b);
-                            if let Some(new_subst) = unify(arg_res, &res, subst) {
-                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                            }
-                        }
-                        return true;
-                    }
+                    check_math_add(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "math_sub" => {
-                    // math_sub(A, B, Res)
-                    if args.len() == 4 {
-                        let val_a = resolve(&args[1], subst);
-                        let val_b = resolve(&args[2], subst);
-                        let arg_res = &args[3];
-
-                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
-                            let res = Value::Int(a - b);
-                            if let Some(new_subst) = unify(arg_res, &res, subst) {
-                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                            }
-                        }
-                        return true;
-                    }
+                    check_math_sub(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "math_mul" => {
-                    // math_mul(A, B, Res)
-                    if args.len() == 4 {
-                        let val_a = resolve(&args[1], subst);
-                        let val_b = resolve(&args[2], subst);
-                        let arg_res = &args[3];
-
-                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
-                            let res = Value::Int(a * b);
-                            if let Some(new_subst) = unify(arg_res, &res, subst) {
-                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                            }
-                        }
-                        return true;
-                    }
+                    check_math_mul(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "math_div" => {
-                    // math_div(A, B, Res)
-                    if args.len() == 4 {
-                        let val_a = resolve(&args[1], subst);
-                        let val_b = resolve(&args[2], subst);
-                        let arg_res = &args[3];
-
-                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
-                            if b != 0 {
-                                let res = Value::Int(a / b);
-                                if let Some(new_subst) = unify(arg_res, &res, subst) {
-                                    solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_math_div(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "math_mod" => {
-                    // math_mod(A, B, Res)
-                    if args.len() == 4 {
-                        let val_a = resolve(&args[1], subst);
-                        let val_b = resolve(&args[2], subst);
-                        let arg_res = &args[3];
-
-                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
-                            if b != 0 {
-                                let res = Value::Int(a % b);
-                                if let Some(new_subst) = unify(arg_res, &res, subst) {
-                                    solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_math_mod(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
-                "voltage" => {
-                    // voltage(X, Y, V)
-                    #[cfg(feature = "elektra")]
-                    if args.len() == 4 {
-                        let arg_x = &args[1];
-                        let arg_y = &args[2];
-                        let arg_v = &args[3];
-
-                        for y in 0..crate::vm::GRID_SIZE {
-                            for x in 0..crate::vm::GRID_SIZE {
-                                let fact_x = Value::Int(x as i64);
-                                let fact_y = Value::Int(y as i64);
-                                let fact_v = Value::Int(vm.voltage_grid[y][x] as i64);
-
-                                if let Some(subst_x) = unify(arg_x, &fact_x, subst) {
-                                    if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
-                                        if let Some(final_subst) = unify(arg_v, &fact_v, &subst_y) {
-                                            solve(
-                                                remaining_goals,
-                                                final_subst,
-                                                kb,
-                                                vm,
-                                                solutions,
-                                                depth + 1,
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                }
+                #[cfg(feature = "elektra")]
+                "voltage" => check_voltage(args, subst, remaining_goals, kb, vm, solutions, depth),
                 "generate" => {
-                    // generate(Grammar, Output)
-                    if args.len() == 3 {
-                        let arg_grammar = &args[1];
-                        let arg_output = &args[2];
-
-                        // Resolve grammar (it might be a variable bound to a grammar, or a grammar literal)
-                        let resolved_grammar = resolve(arg_grammar, subst);
-
-                        // Generate
-                        let generated = babel::generate_string(&resolved_grammar);
-                        let fact_generated = Value::Str(generated);
-
-                        if let Some(new_subst) = unify(arg_output, &fact_generated, subst) {
-                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                        }
-                        return true;
-                    }
+                    check_generate(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "metabolism" => {
-                    // metabolism(E, Experience)
-                    if args.len() == 3 {
-                        let arg_e = &args[1];
-                        let arg_exp = &args[2];
-                        let fact_e = Value::Int(vm.energy);
-                        let fact_exp = Value::Int(vm.experience as i64);
-
-                        if let Some(s1) = unify(arg_e, &fact_e, subst) {
-                            if let Some(s2) = unify(arg_exp, &fact_exp, &s1) {
-                                solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
-                            }
-                        }
-                        return true;
-                    }
+                    check_metabolism(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "path_find" => {
-                    // path_find(X1, Y1, X2, Y2, NextX, NextY)
-                    if args.len() == 7 {
-                        let x1_val = resolve(&args[1], subst);
-                        let y1_val = resolve(&args[2], subst);
-                        let x2_val = resolve(&args[3], subst);
-                        let y2_val = resolve(&args[4], subst);
-
-                        let next_x_arg = &args[5];
-                        let next_y_arg = &args[6];
-
-                        if let (Value::Int(x1), Value::Int(y1), Value::Int(x2), Value::Int(y2)) =
-                            (x1_val, y1_val, x2_val, y2_val)
-                        {
-                            // BFS
-                            let start = (y1 as usize, x1 as usize);
-                            let end = (y2 as usize, x2 as usize);
-
-                            if start == end {
-                                // Already there
-                                let fact_nx = Value::Int(x1);
-                                let fact_ny = Value::Int(y1);
-                                if let Some(s1) = unify(next_x_arg, &fact_nx, subst) {
-                                    if let Some(s2) = unify(next_y_arg, &fact_ny, &s1) {
-                                        solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
-                                    }
-                                }
-                                return true;
-                            }
-
-                            use std::collections::VecDeque;
-                            let mut queue = VecDeque::new();
-                            queue.push_back(start);
-
-                            let mut came_from = std::collections::HashMap::new();
-                            came_from.insert(start, None);
-
-                            let mut found = false;
-
-                            while let Some(current) = queue.pop_front() {
-                                if current == end {
-                                    found = true;
-                                    break;
-                                }
-
-                                // Neighbors
-                                let dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                                for (dy, dx) in dirs {
-                                    let ny = current.0 as i64 + dy;
-                                    let nx = current.1 as i64 + dx;
-
-                                    if ny >= 0
-                                        && ny < crate::vm::GRID_SIZE as i64
-                                        && nx >= 0
-                                        && nx < crate::vm::GRID_SIZE as i64
-                                    {
-                                        let next = (ny as usize, nx as usize);
-                                        if let std::collections::hash_map::Entry::Vacant(e) =
-                                            came_from.entry(next)
-                                        {
-                                            let val = &vm.grid[next.0][next.1];
-                                            let traversable = match val {
-                                                Value::Int(0) => true,
-                                                _ => next == end, // Can move into target
-                                            };
-
-                                            if traversable {
-                                                e.insert(Some(current));
-                                                queue.push_back(next);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            if found {
-                                // Reconstruct path to find first step
-                                let mut curr = end;
-                                while let Some(Some(prev)) = came_from.get(&curr) {
-                                    if *prev == start {
-                                        // curr is the next step
-                                        let fact_nx = Value::Int(curr.1 as i64);
-                                        let fact_ny = Value::Int(curr.0 as i64);
-
-                                        if let Some(s1) = unify(next_x_arg, &fact_nx, subst) {
-                                            if let Some(s2) = unify(next_y_arg, &fact_ny, &s1) {
-                                                solve(
-                                                    remaining_goals,
-                                                    s2,
-                                                    kb,
-                                                    vm,
-                                                    solutions,
-                                                    depth + 1,
-                                                );
-                                            }
-                                        }
-                                        break;
-                                    }
-                                    curr = *prev;
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_path_find(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "neighbor_organelle" => {
-                    // neighbor_organelle(X, Y, Type, Id)
-                    if args.len() == 5 {
-                        let arg_x = &args[1];
-                        let arg_y = &args[2];
-                        let arg_type = &args[3];
-                        let arg_id = &args[4];
-
-                        #[cfg(feature = "nova")]
-                        for org in &vm.organelles {
-                            let fact_x = Value::Int(org.context_loc.1 as i64);
-                            let fact_y = Value::Int(org.context_loc.0 as i64);
-                            let fact_type = Value::Str(format!("{:?}", org.kind));
-                            let fact_id = Value::Int(org.id as i64);
-
-                            let mut current_subst = subst.clone();
-                            if let Some(s1) = unify(arg_x, &fact_x, &current_subst) {
-                                current_subst = s1;
-                                if let Some(s2) = unify(arg_y, &fact_y, &current_subst) {
-                                    current_subst = s2;
-                                    if let Some(s3) = unify(arg_type, &fact_type, &current_subst) {
-                                        current_subst = s3;
-                                        if let Some(s4) = unify(arg_id, &fact_id, &current_subst) {
-                                            solve(
-                                                remaining_goals,
-                                                s4,
-                                                kb,
-                                                vm,
-                                                solutions,
-                                                depth + 1,
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_neighbor_organelle(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "ecology_pop" => {
-                    if args.len() == 2 {
-                        let arg_n = &args[1];
-                        #[cfg(feature = "nova")]
-                        let fact_n = Value::Int(vm.organelles.len() as i64);
-                        #[cfg(not(feature = "nova"))]
-                        let fact_n = Value::Int(0);
-
-                        if let Some(new_subst) = unify(arg_n, &fact_n, subst) {
-                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                        }
-                        return true;
-                    }
+                    check_ecology_pop(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "ecology_energy" => {
-                    if args.len() == 2 {
-                        let arg_e = &args[1];
-                        #[cfg(feature = "nova")]
-                        let total: i64 = vm.organelles.iter().map(|o| o.energy).sum();
-                        #[cfg(not(feature = "nova"))]
-                        let total = 0;
-
-                        let fact_e = Value::Int(total);
-                        if let Some(new_subst) = unify(arg_e, &fact_e, subst) {
-                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                        }
-                        return true;
-                    }
+                    check_ecology_energy(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "species_count" => {
-                    if args.len() == 2 {
-                        let arg_n = &args[1];
-                        #[cfg(feature = "nova")]
-                        let count = vm
-                            .organelles
-                            .iter()
-                            .map(|o| &o.name)
-                            .collect::<std::collections::HashSet<_>>()
-                            .len() as i64;
-                        #[cfg(not(feature = "nova"))]
-                        let count = 0;
-
-                        let fact_n = Value::Int(count);
-                        if let Some(new_subst) = unify(arg_n, &fact_n, subst) {
-                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                        }
-                        return true;
-                    }
+                    check_species_count(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
-                "energy" => {
-                    // energy(E)
-                    if args.len() == 2 {
-                        let arg_e = &args[1];
-                        let fact_e = Value::Int(vm.energy);
-                        if let Some(new_subst) = unify(arg_e, &fact_e, subst) {
-                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                        }
-                        return true;
-                    }
-                }
-                "stack" => {
-                    // stack(List)
-                    if args.len() == 2 {
-                        let arg_list = &args[1];
-                        let stack_vals = vm.stack.clone();
-                        let fact_list = Value::Junction(JunctionType::All, stack_vals);
-
-                        if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
-                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                        }
-                        return true;
-                    }
-                }
+                "energy" => check_energy(args, subst, remaining_goals, kb, vm, solutions, depth),
+                "stack" => check_stack(args, subst, remaining_goals, kb, vm, solutions, depth),
                 "inventory" => {
-                    // inventory(List)
-                    if args.len() == 2 {
-                        let arg_list = &args[1];
-                        #[cfg(feature = "nova")]
-                        {
-                            let org_vals: Vec<Value> = vm
-                                .organelles
-                                .iter()
-                                .map(|o| Value::Str(format!("{:?}", o.kind)))
-                                .collect();
-                            let fact_list = Value::Junction(JunctionType::All, org_vals);
-                            if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
-                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                            }
-                        }
-                        #[cfg(not(feature = "nova"))]
-                        {
-                            let fact_list = Value::Junction(JunctionType::All, vec![]);
-                            if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
-                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                            }
-                        }
-                        return true;
-                    }
+                    check_inventory(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
-                "dna_len" => {
-                    if args.len() == 2 {
-                        let arg_len = &args[1];
-                        let fact_len = Value::Int(vm.dna.helix.strands.len() as i64);
-                        if let Some(new_subst) = unify(arg_len, &fact_len, subst) {
-                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
-                        }
-                        return true;
-                    }
-                }
-                "gene" => {
-                    // gene(Strand, Idx, Op)
-                    if args.len() == 4 {
-                        let arg_strand = &args[1];
-                        let arg_idx = &args[2];
-                        let arg_op = &args[3];
-
-                        for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
-                            let fact_s = Value::Int(s_idx as i64);
-                            if unify(arg_strand, &fact_s, subst).is_none() {
-                                continue;
-                            }
-
-                            for (g_idx, gene) in strand.genes.iter().enumerate() {
-                                let fact_idx = Value::Int(g_idx as i64);
-                                let fact_op = Value::Str(gene.op.to_string());
-
-                                let mut current = subst.clone();
-                                if let Some(s1) = unify(arg_strand, &fact_s, &current) {
-                                    current = s1;
-                                    if let Some(s2) = unify(arg_idx, &fact_idx, &current) {
-                                        current = s2;
-                                        if let Some(s3) = unify(arg_op, &fact_op, &current) {
-                                            solve(
-                                                remaining_goals,
-                                                s3,
-                                                kb,
-                                                vm,
-                                                solutions,
-                                                depth + 1,
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                }
+                "dna_len" => check_dna_len(args, subst, remaining_goals, kb, vm, solutions, depth),
+                "gene" => check_gene(args, subst, remaining_goals, kb, vm, solutions, depth),
                 "organelle" => {
-                    // organelle(Idx, Type, X, Y)
-                    // organelle(Name, Type, X, Y) maybe better if Name is unique? But idx is safer.
-                    if args.len() == 5 {
-                        #[cfg(feature = "nova")]
-                        for (i, org) in vm.organelles.iter().enumerate() {
-                            let fact_idx = Value::Int(i as i64);
-                            let fact_type = Value::Str(format!("{:?}", org.kind));
-                            let fact_x = Value::Int(org.context_loc.1 as i64);
-                            let fact_y = Value::Int(org.context_loc.0 as i64);
-
-                            let current_subst = subst.clone();
-                            if let Some(current_subst) = unify(&args[1], &fact_idx, &current_subst)
-                            {
-                                if let Some(current_subst) =
-                                    unify(&args[2], &fact_type, &current_subst)
-                                {
-                                    if let Some(current_subst) =
-                                        unify(&args[3], &fact_x, &current_subst)
-                                    {
-                                        if let Some(s4) = unify(&args[4], &fact_y, &current_subst) {
-                                            solve(
-                                                remaining_goals,
-                                                s4,
-                                                kb,
-                                                vm,
-                                                solutions,
-                                                depth + 1,
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_organelle(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
-                "future" => {
-                    // future(Ticks, Goal)
-                    if args.len() == 3 {
-                        let arg_ticks = &args[1];
-                        let arg_goal = &args[2];
-
-                        let r_ticks = resolve(arg_ticks, subst);
-                        if let Value::Int(ticks) = r_ticks {
-                            let safe_ticks = ticks.clamp(1, 100);
-
-                            // Check recursion depth to prevent infinite future recursion
-                            if vm.recursion_depth <= 5 {
-                                // Clone VM
-                                let mut sim_vm = vm.clone();
-                                sim_vm.recursion_depth += 1;
-                                sim_vm.output.clear();
-                                sim_vm.halted = false;
-
-                                for _ in 0..safe_ticks {
-                                    sim_vm.step();
-                                    if sim_vm.halted {
-                                        break;
-                                    }
-                                }
-
-                                // Check goal on sim_vm
-                                // Note: We use recursion depth + 1 for solve depth check
-                                solve(
-                                    std::slice::from_ref(arg_goal),
-                                    subst.clone(),
-                                    kb,
-                                    &sim_vm,
-                                    solutions,
-                                    depth + 1,
-                                );
-                            }
-                        }
-                        return true;
-                    }
-                }
+                "future" => check_future(args, subst, remaining_goals, kb, vm, solutions, depth),
                 "past_cell" => {
-                    // past_cell(Ticks, X, Y, Val)
-                    #[cfg(feature = "nova")]
-                    if args.len() == 5 {
-                        let arg_t = &args[1];
-                        let arg_x = &args[2];
-                        let arg_y = &args[3];
-                        let arg_val = &args[4];
-
-                        let r_t = resolve(arg_t, subst);
-                        let r_x = resolve(arg_x, subst);
-                        let r_y = resolve(arg_y, subst);
-
-                        let history_len = vm.grid_history.len();
-                        let t_range = if let Value::Int(t) = r_t {
-                            if t >= 0 && (t as usize) < history_len {
-                                (t as usize)..(t as usize + 1)
-                            } else {
-                                0..0
-                            }
-                        } else {
-                            0..history_len
-                        };
-
-                        let x_range = if let Value::Int(x) = r_x {
-                            if x >= 0 && (x as usize) < crate::vm::GRID_SIZE {
-                                (x as usize)..(x as usize + 1)
-                            } else {
-                                0..0
-                            }
-                        } else {
-                            0..crate::vm::GRID_SIZE
-                        };
-
-                        let y_range = if let Value::Int(y) = r_y {
-                            if y >= 0 && (y as usize) < crate::vm::GRID_SIZE {
-                                (y as usize)..(y as usize + 1)
-                            } else {
-                                0..0
-                            }
-                        } else {
-                            0..crate::vm::GRID_SIZE
-                        };
-
-                        for t in t_range {
-                            let idx = history_len.saturating_sub(1).saturating_sub(t);
-                            let grid_snapshot = &vm.grid_history[idx];
-                            let fact_t = Value::Int(t as i64);
-
-                            for y in y_range.clone() {
-                                for x in x_range.clone() {
-                                    let fact_x = Value::Int(x as i64);
-                                    let fact_y = Value::Int(y as i64);
-                                    let fact_val = grid_snapshot[y][x].clone();
-
-                                    let mut current_subst = subst.clone();
-                                    if let Some(s1) = unify(arg_t, &fact_t, &current_subst) {
-                                        current_subst = s1;
-                                        if let Some(s2) = unify(arg_x, &fact_x, &current_subst) {
-                                            current_subst = s2;
-                                            if let Some(s3) = unify(arg_y, &fact_y, &current_subst)
-                                            {
-                                                current_subst = s3;
-                                                if let Some(s4) =
-                                                    unify(arg_val, &fact_val, &current_subst)
-                                                {
-                                                    solve(
-                                                        remaining_goals,
-                                                        s4,
-                                                        kb,
-                                                        vm,
-                                                        solutions,
-                                                        depth + 1,
-                                                    );
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_past_cell(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
                 "neighbor" => {
-                    // neighbor(X, Y, Dir, NX, NY)
-                    if args.len() == 6 {
-                        let arg_x = &args[1];
-                        let arg_y = &args[2];
-                        let arg_dir = &args[3];
-                        let arg_nx = &args[4];
-                        let arg_ny = &args[5];
-
-                        let r_x = resolve(arg_x, subst);
-                        let r_y = resolve(arg_y, subst);
-
-                        let x_range = if let Value::Int(x) = r_x {
-                            if x >= 0 && (x as usize) < crate::vm::GRID_SIZE {
-                                (x as usize)..(x as usize + 1)
-                            } else {
-                                0..0
-                            }
-                        } else {
-                            0..crate::vm::GRID_SIZE
-                        };
-
-                        let y_range = if let Value::Int(y) = r_y {
-                            if y >= 0 && (y as usize) < crate::vm::GRID_SIZE {
-                                (y as usize)..(y as usize + 1)
-                            } else {
-                                0..0
-                            }
-                        } else {
-                            0..crate::vm::GRID_SIZE
-                        };
-
-                        for y in y_range {
-                            for x in x_range.clone() {
-                                // 0=N, 1=E, 2=S, 3=W
-                                let dirs = [(-1, 0, 0), (0, 1, 1), (1, 0, 2), (0, -1, 3)];
-                                for (dy, dx, d_code) in dirs {
-                                    #[allow(unused_assignments)]
-                                    let mut neighbor_opt = None;
-
-                                    #[cfg(any(feature = "nova", feature = "silicon"))]
-                                    {
-                                        neighbor_opt =
-                                            vm.normalize_coords(y as i64 + dy, x as i64 + dx);
-                                    }
-                                    #[cfg(not(any(feature = "nova", feature = "silicon")))]
-                                    {
-                                        let ny = y as i64 + dy;
-                                        let nx = x as i64 + dx;
-                                        if ny >= 0
-                                            && ny < crate::vm::GRID_SIZE as i64
-                                            && nx >= 0
-                                            && nx < crate::vm::GRID_SIZE as i64
-                                        {
-                                            neighbor_opt = Some((ny as usize, nx as usize));
-                                        }
-                                    }
-
-                                    if let Some((ny, nx)) = neighbor_opt {
-                                        let fact_x = Value::Int(x as i64);
-                                        let fact_y = Value::Int(y as i64);
-                                        let fact_dir = Value::Int(d_code);
-                                        let fact_nx = Value::Int(nx as i64);
-                                        let fact_ny = Value::Int(ny as i64);
-
-                                        let current_subst = subst.clone();
-                                        if let Some(current_subst) =
-                                            unify(arg_x, &fact_x, &current_subst)
-                                        {
-                                            if let Some(current_subst) =
-                                                unify(arg_y, &fact_y, &current_subst)
-                                            {
-                                                if let Some(current_subst) =
-                                                    unify(arg_dir, &fact_dir, &current_subst)
-                                                {
-                                                    if let Some(current_subst) =
-                                                        unify(arg_nx, &fact_nx, &current_subst)
-                                                    {
-                                                        if let Some(s5) =
-                                                            unify(arg_ny, &fact_ny, &current_subst)
-                                                        {
-                                                            solve(
-                                                                remaining_goals,
-                                                                s5,
-                                                                kb,
-                                                                vm,
-                                                                solutions,
-                                                                depth + 1,
-                                                            );
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_neighbor(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
-                "opcode" => {
-                    // opcode(Name, OpVal)
-                    if args.len() == 3 {
-                        let arg_name = &args[1];
-                        let arg_val = &args[2];
-
-                        for op in OpCode::iter() {
-                            let op_name = op.to_string();
-                            let fact_name = Value::Str(op_name.clone());
-                            let fact_val = Value::Str(op_name); // For now, Val is same as Name
-
-                            let current_subst = subst.clone();
-                            if let Some(s1) = unify(arg_name, &fact_name, &current_subst) {
-                                if let Some(s2) = unify(arg_val, &fact_val, &s1) {
-                                    solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                }
+                "opcode" => check_opcode(args, subst, remaining_goals, kb, vm, solutions, depth),
                 "has_feature" => {
-                    // has_feature(StrandIdx, OpCodeName)
-                    if args.len() == 3 {
-                        let arg_strand = &args[1];
-                        let arg_op = &args[2];
-
-                        for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
-                            let fact_strand = Value::Int(s_idx as i64);
-
-                            // Check if strand has opcode
-                            for gene in &strand.genes {
-                                let op_name = gene.op.to_string();
-                                let fact_op = Value::Str(op_name);
-
-                                let current_subst = subst.clone();
-                                if let Some(s1) = unify(arg_strand, &fact_strand, &current_subst) {
-                                    if let Some(s2) = unify(arg_op, &fact_op, &s1) {
-                                        solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                    check_has_feature(args, subst, remaining_goals, kb, vm, solutions, depth)
                 }
-                _ => {}
-            }
+                _ => false,
+            };
         }
     }
     false
