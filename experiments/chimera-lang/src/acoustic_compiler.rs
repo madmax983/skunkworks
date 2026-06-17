@@ -202,7 +202,11 @@ fn compile_block(
                         match c.next() {
                             None => Err(anyhow!("Empty command")),
                             Some(f) => {
-                                let cap = f.to_uppercase().collect::<String>() + c.as_str();
+                                let mut cap = String::with_capacity(cmd_name.len());
+                                for char in f.to_uppercase() {
+                                    cap.push(char);
+                                }
+                                cap.push_str(c.as_str());
                                 OpCode::from_str(&cap)
                                     .map_err(|_| anyhow!("Unknown command/OpCode: {}", cmd_name))
                             }

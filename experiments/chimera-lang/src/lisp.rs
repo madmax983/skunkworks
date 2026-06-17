@@ -3708,11 +3708,11 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         }
                         let head = compile_as_data(&items[1], depth + 1)?;
 
-                        let body_terms: Vec<Nucleotide> = items
-                            .iter()
-                            .skip(2)
-                            .map(|item| compile_as_data(item, depth + 1))
-                            .collect::<Result<Vec<_>>>()?;
+                        let mut body_terms: Vec<Nucleotide> =
+                            Vec::with_capacity(items.len().saturating_sub(2));
+                        for item in items.iter().skip(2) {
+                            body_terms.push(compile_as_data(item, depth + 1)?);
+                        }
                         let body = Nucleotide::Junction(JunctionType::All, body_terms);
 
                         // Push head, then body (Rule op expects [..., head, body])
@@ -3774,11 +3774,11 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         let goal = if items.len() == 2 {
                             compile_as_data(&items[1], depth + 1)?
                         } else {
-                            let goals: Vec<Nucleotide> = items
-                                .iter()
-                                .skip(1)
-                                .map(|item| compile_as_data(item, depth + 1))
-                                .collect::<Result<Vec<_>>>()?;
+                            let mut goals: Vec<Nucleotide> =
+                                Vec::with_capacity(items.len().saturating_sub(1));
+                            for item in items.iter().skip(1) {
+                                goals.push(compile_as_data(item, depth + 1)?);
+                            }
                             Nucleotide::Junction(JunctionType::All, goals)
                         };
                         return Ok(vec![

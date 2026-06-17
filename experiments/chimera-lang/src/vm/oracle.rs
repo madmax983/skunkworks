@@ -1199,7 +1199,7 @@ fn check_species_count(
         .organelles
         .iter()
         .map(|o| &o.name)
-        .collect::<std::collections::HashSet<_>>()
+        .collect::<rustc_hash::FxHashSet<_>>()
         .len() as i64;
     #[cfg(not(feature = "nova"))]
     let count = 0;

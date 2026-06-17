@@ -85,7 +85,13 @@ pub fn apply_narrative_runes(
             // Revision: West (Story) + North (Edit) -> East (Edited)
             if let (Some(Value::Str(story)), Some(Value::Str(edit))) = (w_sig, n_sig) {
                 let edited = match edit.as_str() {
-                    "rev" => story.chars().rev().collect::<String>(),
+                    "rev" => {
+                        let mut rev = String::with_capacity(story.len());
+                        for c in story.chars().rev() {
+                            rev.push(c);
+                        }
+                        rev
+                    }
                     "up" => story.to_uppercase(),
                     "low" => story.to_lowercase(),
                     "cut" => story.chars().take(story.len() / 2).collect(),

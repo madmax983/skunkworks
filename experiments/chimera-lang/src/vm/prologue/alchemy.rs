@@ -274,7 +274,7 @@ pub fn apply_alchemy_runes(
                         if !s.is_empty() {
                             let mut chars = s.chars();
                             let h = chars.next().unwrap().to_string();
-                            let t = chars.collect::<String>();
+                            let t = chars.as_str().to_string();
                             (Some(Value::Str(h)), Some(Value::Str(t)))
                         } else {
                             (None, None)
