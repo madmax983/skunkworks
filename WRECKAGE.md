@@ -65,3 +65,32 @@ fatal runtime error: stack overflow
 ```
 🧪 **Reproduction:** `cargo test -p quipu --test havoc`
 😈 **Comment:** "Recursive equality on an unbounded tree? I blew your stack to pieces."
+
+### 7. `circuit-sigil`
+🧨 **The Trigger:** Provided a `0x0` dimensions to `CircuitGenerator::new(0, 0)`.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_circuit_generator_panic_inner' panicked at experiments/circuit-sigil/src/circuit.rs:44:43:
+attempt to subtract with overflow
+```
+🧪 **Reproduction:** `cargo test -p circuit-sigil --test havoc_circuit`
+😈 **Comment:** "You assumed you'd always have plenty of room to draw traces. You were wrong."
+
+### 8. `syncopated-threads`
+🧨 **The Trigger:** Initiated heavily contended parallel threads sharing the same `snare` Mutex in `spawn_rhythm_thread` using highly restrictive `RhythmParams`.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_contention' panicked at experiments/syncopated-threads/tests/havoc_deadlock.rs:59:5:
+👺 Havoc SUCCESS: Application logic suffered severe starvation under contention!
+```
+🧪 **Reproduction:** `cargo test -p syncopated-threads --test havoc_deadlock`
+😈 **Comment:** "Your threads play a symphony of starvation when you push them to the edge."
+
+### 9. `memetic-market`
+🧨 **The Trigger:** Included an out-of-bounds `sim` module as private by default, making external tests break during compilation.
+📉 **The Stack Trace:**
+```
+error[E0603]: module `sim` is private
+```
+🧪 **Reproduction:** `cargo test -p memetic-market`
+😈 **Comment:** "Your market failed to open. Visibility rules strike again."
