@@ -942,3 +942,33 @@ available binaries: bifurcation-crawler, bio-chain, biomorphic-lexicon, biomorph
 *   🤦 **The Confusion:** "Tried to use the `gray-scott` crate but there are no instructions on how to install it in my `Cargo.toml`."
 *   🕵️ **The Reality:** "Turns out the README completely omits the installation block."
 *   💡 **The Fix:** "Add an `Installation` section with the `Cargo.toml` snippet for `gray-scott`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/celestial-rhythms/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for `experiments/celestial-rhythms/README.md`."
+**Action:** Run `cargo run` and `cargo run --features audio`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Execution Failure:** The examples fail to run directly from the workspace root because the command does not specify the package and there are multiple binaries available in the workspace.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (celestial-rhythms)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the example command but it failed with an error about not determining which binary to run."
+*   🕵️ **The Reality:** "The command `cargo run` resulted in an error:
+Command failed with code 101:
+\`\`\`
+error: \`cargo run\` could not determine which binary to run. Use the \`--bin\` option to specify a binary, or the \`default-run\` manifest key.
+available binaries: bifurcation-crawler, bio-chain, biomorphic-lexicon, biomorphic-strings, bridge-specter... [truncated]
+\`\`\`"
+*   💡 **The Fix:** "Fix the example command so it works out of the box from the workspace root (e.g. by using `-p celestial-rhythms`) or document the required directory change."
