@@ -233,7 +233,7 @@ async fn main() {
             draw_text(
                 &format!(
                     "{}: {}",
-                    plant.hash.chars().take(7).collect::<String>(),
+                    &plant.hash[..7.min(plant.hash.len())],
                     plant.message
                 ),
                 10.0,
