@@ -1,0 +1,13 @@
+--- crates/git-associates/src/lib.rs
++++ crates/git-associates/src/lib.rs
+@@ -362,11 +362,8 @@
+         let mut total_deletions = 0;
+
+         for i in 0..diff.deltas().len() {
+-            let Some(patch) = git2::Patch::from_diff(diff, i).ok().flatten() else {
+-                continue;
+-            };
++            let Ok(Some(patch)) = git2::Patch::from_diff(diff, i) else { continue; };
+
+             let delta = patch.delta();
+             let path = delta

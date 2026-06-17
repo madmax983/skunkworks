@@ -368,7 +368,6 @@ impl GitModel {
             };
 
             let delta = patch.delta();
-            // Try to get the new path, fallback to old path (e.g., for deletions)
             let path = delta
                 .new_file()
                 .path()
@@ -382,7 +381,6 @@ impl GitModel {
                 .map(|s| s.to_string())
                 .unwrap_or_default();
 
-            // line_stats returns (context, insertions, deletions)
             let stats = patch.line_stats().unwrap_or((0, 0, 0));
             let insertions = stats.1;
             let deletions = stats.2;
@@ -416,26 +414,21 @@ impl GitModel {
         let num_hunks = patch.num_hunks();
         let mut hunks = Vec::with_capacity(num_hunks);
 
-        for h_idx in 0..num_hunks {
-            let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) else {
-                continue;
-            };
+        hunks.extend((0..num_hunks).filter_map(|h_idx| {
+            let (hunk_info, lines_count) = patch.hunk(h_idx).ok()?;
+
             let mut lines = Vec::with_capacity(lines_count);
+            lines.extend(
+                (0..lines_count)
+                    .filter_map(|l_idx| patch.line_in_hunk(h_idx, l_idx).ok())
+                    .filter_map(|line| Self::parse_line_change(&line))
+            );
 
-            for l_idx in 0..lines_count {
-                let Ok(line) = patch.line_in_hunk(h_idx, l_idx) else {
-                    continue;
-                };
-                if let Some(parsed) = Self::parse_line_change(&line) {
-                    lines.push(parsed);
-                }
-            }
-
-            hunks.push(Hunk {
+            Some(Hunk {
                 header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
                 lines,
-            });
-        }
+            })
+        }));
 
         hunks
     }
