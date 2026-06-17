@@ -1,3 +1,6 @@
 **Mitigating Missing Quantum System State Panics**
 **Learning:** `quantum-rogue` tracks `QubitSystem` objects in a `HashMap` mapping IDs to systems, and uses an `entity_map` linking entities to `sys_id`. During the `entangle` operation, the lookup attempts to `remove` the underlying systems and simply calls `.unwrap()`. If a system was destroyed but the `entity_map` was not properly updated, this causes a fatal DoS panic.
 **Action:** When removing entities from HashMaps in quantum logic blocks, always use safe error propagation like `.ok_or(anyhow!("System not found"))?` rather than `.unwrap()`, to ensure game engines recover gracefully when a state desync occurs.
+**Graceful OOB Handling vs Panics**
+**Learning:** `get_index` style manual memory mapping (like `y * w + x`) implementations are vulnerable to DoS attacks via index out-of-bounds panics if they just `panic!("coordinate out of bounds")` internally. Tests originally explicitly expected this panic via `#[should_panic]` which led to false positives on security.
+**Action:** Instead of `panic!` on out-of-bounds, `get_index` and similar bounds-checking logic should return `Option<usize>`. Fallible methods should map out-of-bounds to `None` and upstream API consumers should use `if let Some(idx) = ...` or similar safe recovery options rather than allowing out of bound access.

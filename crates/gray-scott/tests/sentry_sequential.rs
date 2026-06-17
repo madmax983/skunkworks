@@ -7,5 +7,5 @@ fn test_update_sequential_and_parallel() {
     let mut gs_seq = GrayScott::new(10, 10);
     gs_seq.add_chemical(5, 5, 1.0);
     gs_seq.update(0.055, 0.062, 1.0);
-    assert!(gs_seq.u()[gs_seq.get_index(5, 5)] < 1.0);
+    assert!(gs_seq.u()[gs_seq.get_index(5, 5).unwrap()] < 1.0);
 }

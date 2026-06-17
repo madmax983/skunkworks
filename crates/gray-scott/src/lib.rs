@@ -180,13 +180,15 @@ impl GrayScott {
     ///
     /// ```
     /// use gray_scott::GrayScott;
-    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// let mut gs = GrayScott::new(10, 10);
-    /// let idx = gs.get_index(5, 5);
+    /// let idx = gs.get_index(5, 5).ok_or("Out of bounds")?;
     ///
     /// // Directly reduce the concentration of U at the center
     /// gs.u_mut()[idx] = 0.5;
     /// assert_eq!(gs.u()[idx], 0.5);
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn u_mut(&mut self) -> &mut [f32] {
         &mut self.u
@@ -201,13 +203,15 @@ impl GrayScott {
     ///
     /// ```
     /// use gray_scott::GrayScott;
-    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// let mut gs = GrayScott::new(10, 10);
-    /// let idx = gs.get_index(5, 5);
+    /// let idx = gs.get_index(5, 5).ok_or("Out of bounds")?;
     ///
     /// // Directly add a high concentration of V at the center to trigger a reaction
     /// gs.v_mut()[idx] = 1.0;
     /// assert_eq!(gs.v()[idx], 1.0);
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn v_mut(&mut self) -> &mut [f32] {
         &mut self.v
@@ -222,16 +226,19 @@ impl GrayScott {
     /// # Examples
     ///
     /// ```
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// use gray_scott::GrayScott;
     /// let gs = GrayScott::new(10, 10);
-    /// let index = gs.get_index(5, 5);
+    /// let index = gs.get_index(5, 5).ok_or("Out of bounds")?;
     /// assert_eq!(index, 55);
+    /// # Ok(())
+    /// # }
     /// ```
-    pub fn get_index(&self, x: usize, y: usize) -> usize {
+    pub fn get_index(&self, x: usize, y: usize) -> Option<usize> {
         if x >= self.width || y >= self.height {
-            panic!("coordinate out of bounds");
+            return None;
         }
-        y * self.width + x
+        Some(y * self.width + x)
     }
 
     /// Adds chemical V at the given coordinates, capped at 1.0.
@@ -245,12 +252,10 @@ impl GrayScott {
     /// gs.add_chemical(5, 5, 0.5);
     /// ```
     pub fn add_chemical(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height {
-            return;
-        }
-        let idx = self.get_index(x, y);
-        if idx < self.v.len() {
-            self.v[idx] = (self.v[idx] + amount).min(1.0);
+        if let Some(idx) = self.get_index(x, y) {
+            if idx < self.v.len() {
+                self.v[idx] = (self.v[idx] + amount).min(1.0);
+            }
         }
     }
 
@@ -276,6 +281,7 @@ impl GrayScott {
     /// ```
     /// use gray_scott::GrayScott;
     ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// // Create a small dish and drop a single "spore" of chemical V in the center.
     /// let mut dish = GrayScott::new(20, 20);
     /// dish.add_chemical(10, 10, 1.0);
@@ -288,7 +294,9 @@ impl GrayScott {
     /// }
     ///
     /// // The V chemical will have diffused and reacted, spreading from the center.
-    /// assert!(dish.v()[dish.get_index(10, 10)] > 0.0);
+    /// assert!(dish.v()[dish.get_index(10, 10).ok_or("Out of bounds")?] > 0.0);
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn update(&mut self, feed: f32, kill: f32, dt: f32) {
         #[cfg(feature = "parallel")]
@@ -522,7 +530,7 @@ mod tests {
     fn test_add_chemical() {
         let mut gs = GrayScott::new(10, 10);
         gs.add_chemical(5, 5, 0.5);
-        let idx = gs.get_index(5, 5);
+        let idx = gs.get_index(5, 5).unwrap();
         assert_eq!(gs.v[idx], 0.5);
     }
 
@@ -531,8 +539,8 @@ mod tests {
         let mut gs = GrayScott::new(10, 10);
         gs.add_chemical(5, 5, 1.0); // Seed
 
-        let idx = gs.get_index(5, 5);
-        let neighbor = gs.get_index(5, 6);
+        let idx = gs.get_index(5, 5).unwrap();
+        let neighbor = gs.get_index(5, 6).unwrap();
 
         assert_eq!(gs.u[idx], 1.0);
         assert_eq!(gs.v[neighbor], 0.0);
@@ -558,7 +566,7 @@ mod tests {
         // It should NOT wrap to (0, 1) which is index 10.
         gs.add_chemical(10, 0, 0.5);
 
-        let idx = gs.get_index(0, 1);
+        let idx = gs.get_index(0, 1).unwrap();
         assert_eq!(gs.v[idx], 0.0, "Out of bounds x write wrapped to next row");
     }
 
