@@ -5,6 +5,16 @@ A friendly, high-level wrapper around `git2` for analyzing repository history, d
 This crate simplifies common git operations needed for visualization tools or analysis scripts,
 abstracting away the complexities of `git2`'s low-level API.
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+git-associates = { path = "../git-associates" }
+anyhow = "1.0"
+```
+
 ## Features
 
 - **History Traversal**: Easily fetch commit logs with metadata.

@@ -130,6 +130,10 @@ pub struct GitModel {
 impl GitModel {
     /// Opens a git repository at the specified path.
     ///
+    /// This function exists to initialize the `GitModel` by locating the `.git` directory,
+    /// even if the provided path is a subdirectory. It abstracts away the need to manually
+    /// find the repository root before initializing git2 structures.
+    ///
     /// The path can be the root of the repository or any subdirectory within it.
     /// This function uses `git2::Repository::discover` to find the git directory.
     ///
@@ -156,6 +160,10 @@ impl GitModel {
 
     /// Retrieves the commit history with basic metadata.
     ///
+    /// This method exists to quickly fetch the timeline of commits when full file diffs are
+    /// not required (e.g., just listing commit messages or authors). It skips the expensive
+    /// diff computation process.
+    ///
     /// This method fetches the most recent commits up to the specified limit.
     /// It does *not* include detailed diff statistics or file changes, making it faster
     /// than [`history_with_diffs`](Self::history_with_diffs).
@@ -181,6 +189,10 @@ impl GitModel {
     }
 
     /// Retrieves the commit history including file diff statistics.
+    ///
+    /// This method exists for deep repository analysis, extracting exact line changes and
+    /// file modifications. It is crucial for visualizers that need to know exactly *what*
+    /// changed in each commit, not just *when*.
     ///
     /// In addition to basic metadata, this method computes the diff for each commit against its parent,
     /// populating the `stats` and `files` fields of the [`Commit`] struct.
@@ -305,6 +317,10 @@ impl GitModel {
     }
 
     /// Computes the diff between the working directory and the HEAD commit.
+    ///
+    /// This method exists to evaluate the *current*, unsaved state of the repository. It is
+    /// essential for tools that need to react to live, uncommitted code edits before they
+    /// are permanently recorded in the git log.
     ///
     /// This is useful for checking uncommitted changes (both staged and unstaged).
     /// Untracked files are included in the diff.

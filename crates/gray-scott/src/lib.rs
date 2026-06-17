@@ -62,6 +62,11 @@ pub struct GrayScott {
 impl GrayScott {
     /// Creates a new Gray-Scott simulation with the given dimensions.
     ///
+    /// This function exists to initialize the complex internal state required for the
+    /// reaction-diffusion model. It allocates the flat 1D vectors that map to the 2D grid
+    /// and primes the ecosystem with a uniform sheet of chemical U (concentration 1.0),
+    /// representing an untouched, fertile environment ready for chemical V spores.
+    ///
     /// # Examples
     ///
     /// ```
@@ -135,8 +140,9 @@ impl GrayScott {
 
     /// Provides a read-only slice containing the internal 1D grid state vector for chemical U.
     ///
-    /// The U chemical is the "prey" or "food" in the reaction system. The slice has a length
-    /// of `width * height`.
+    /// This method exists to allow renderers and visualizers to read the precise state of the
+    /// simulation without cloning the massive internal arrays. The U chemical is the "prey" or
+    /// "food" in the reaction system. The slice has a length of `width * height`.
     ///
     /// # Examples
     ///
@@ -154,8 +160,9 @@ impl GrayScott {
 
     /// Provides a read-only slice containing the internal 1D grid state vector for chemical V.
     ///
-    /// The V chemical is the "predator" in the reaction system. The slice has a length
-    /// of `width * height`.
+    /// This method exists to allow renderers and visualizers to read the precise state of the
+    /// simulation without cloning the massive internal arrays. The V chemical is the "predator"
+    /// in the reaction system. The slice has a length of `width * height`.
     ///
     /// # Examples
     ///
@@ -243,6 +250,10 @@ impl GrayScott {
 
     /// Adds chemical V at the given coordinates, capped at 1.0.
     ///
+    /// This function exists as the primary interaction mechanism for the user or the
+    /// environment to perturb the system. By dropping "spores" or "seeds" of chemical V into
+    /// the otherwise stable sea of chemical U, the reaction-diffusion cascade begins.
+    ///
     /// # Examples
     ///
     /// ```
@@ -260,6 +271,10 @@ impl GrayScott {
     }
 
     /// Advances the reaction-diffusion simulation by a single time step.
+    ///
+    /// This function exists as the heartbeat of the ecosystem. It applies the complex
+    /// convolution and differential equations necessary to simulate the diffusion of chemicals
+    /// through space and their reaction with one another.
     ///
     /// The beauty of the Gray-Scott model lies in its parameter space. By tweaking the
     /// `feed` and `kill` rates, the simulation can transition between vastly different

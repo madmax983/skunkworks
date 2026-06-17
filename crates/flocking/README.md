@@ -11,6 +11,16 @@ Flocking is the art of simulating complex group behavior from simple individual 
 3.  **Cohesion ("Group Hug")**: Steer to move toward the average position of local flockmates.
     *   *Don't get left behind.*
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+flocking = { path = "../flocking" }
+locus = { path = "../locus" }
+```
+
 ## The Minimal Simulation
 
 If you are building a simulation where agents move through space in a coordinated manner, `flocking` calculates the steering forces for you.

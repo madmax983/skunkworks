@@ -50,8 +50,10 @@ use locus::Vec2;
 
 /// Configuration parameters for the flocking simulation.
 ///
-/// These values act as the "DNA" of the flock, determining whether it behaves like
-/// a swarm of angry bees, a school of fish, or a herd of sheep.
+/// This struct exists to encapsulate the myriad parameters that define the complex emergent
+/// behavior of the flock. By passing these parameters around instead of hardcoding them, we
+/// allow for dynamic tuning at runtime. These values act as the "DNA" of the flock,
+/// determining whether it behaves like a swarm of angry bees, a school of fish, or a herd of sheep.
 ///
 /// # Examples
 ///
@@ -254,7 +256,9 @@ fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_fo
 
 /// Computes the Reynolds flocking force (Separation, Alignment, Cohesion).
 ///
-/// This function calculates the steering force required to satisfy the three rules of flocking:
+/// This function exists as the core engine of the flocking simulation. It calculates the
+/// steering force required to satisfy the three rules of flocking, allowing you to compute
+/// the exact steering impulse that should be applied to an agent in this frame:
 /// 1. **Separation**: Steer to avoid crowding local flockmates.
 /// 2. **Alignment**: Steer towards the average heading of local flockmates.
 /// 3. **Cohesion**: Steer to move toward the average position of local flockmates.
