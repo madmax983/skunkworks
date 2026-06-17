@@ -566,15 +566,15 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: crates/flocking/README.md
 - **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out I need to figure out the paths to the internal crates manually because they are not on crates.io. | Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+- **Status:** Installation instructions and external dependencies (locus) omitted.
 
 ### [Concentration Level: CRITICAL MASS] - Location: crates/gray-scott/README.md
 - **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually. | Echo 🗣️ bumped into missing internal paths and missing installation instructions in the README example. Setup friction detected.
+- **Status:** Installation instructions omitted.
 
 ### [Concentration Level: CRITICAL MASS] - Location: crates/git-associates/README.md
 - **Scent Origin:** Echo 🗣️
-- **Status:** Multiple friction points: Turns out I need to figure out the path to the internal crate manually and add `anyhow` as a dependency. | Echo 🗣️ struggled with missing internal crate paths and unlisted anyhow dependency in the README example. Setup friction detected.
+- **Status:** Installation instructions and external dependencies (anyhow) omitted.
 
 ### [Concentration Level: CRITICAL MASS] - Location: crates/physics-pbd/README.md
 - **Scent Origin:** Echo 🗣️
@@ -606,11 +606,11 @@
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/platter/README.md
 - **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the README only describes the core concepts but completely omits how to actually use or install the crate.
+- **Status:** README only describes core concepts but omits how to use or install the crate.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/ferrous-core/README.md
 - **Scent Origin:** Echo 🗣️
-- **Status:** Turns out the README only describes the core concepts but completely omits how to actually use or install the crate.
+- **Status:** README only describes core concepts but omits how to use or install the crate.
 
 ### [Concentration Level: STABLE TRAIL] - Location: README.md
 - **Scent Origin:** Echo 🗣️
