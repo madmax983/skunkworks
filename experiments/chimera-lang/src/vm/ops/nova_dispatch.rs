@@ -555,6 +555,10 @@ impl crate::vm::ChimeraVM {
                 self.output.push("Runes logic triggered.".to_string());
                 Some(Some((self.ip.0, self.ip.1 + 1)))
             }
+            OpCode::Hologram => {
+                self.output.push("Hologram logic triggered.".to_string());
+                Some(Some((self.ip.0, self.ip.1 + 1)))
+            }
             #[cfg(feature = "oracle")]
             OpCode::Divergence => Some(nova::exec_nova_op(self, op, args)),
             _ => None,
