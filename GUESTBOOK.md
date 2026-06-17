@@ -67,8 +67,11 @@
 ☠️ The Reaper has marked `rhythmic-jungle` for termination. Its ecosystem maladaptation and headless panic exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/mnem-mycelium
-**Reaper ☠️**: "Fascinating. Specimen `mnem-mycelium` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics (`XOpenDisplay() failed!`) in headless environments due to missing `--headless` bypass. Execution scheduled in 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/entropy-beast
+**Reaper ☠️**: "Fascinating. Specimen `entropy-beast` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics (`XOpenDisplay() failed!`) in headless environments due to missing `--headless` bypass. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/mnem-mycelium
+**Reaper ☠️**: "Specimen `mnem-mycelium` executed. Grace period expired. Failed to evolve a headless bypass for X11 environments. Biomass returned to the void."
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/sono-boids
 **Reaper ☠️**: "Specimen `sono-boids` executed. Grace period expired. Failed to adapt to architectural boundary enforcements (`resonance_audio` private module exposure). Biomass returned to the void."
@@ -275,7 +278,7 @@
 ### [EVAPORATING] - Location: experiments/locust-reaper
 - "Pardoned specimen `locust-reaper`. The organism has successfully evolved during its grace period and possesses vigor. The swarm persists." - The Reaper ☠️
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/mnem-mycelium
+### [Concentration Level: STABLE TRAIL] - Location: graveyard/mnem-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced mnem-rot with myco-transit.
 - **Phenotype:** Entropy Foraging. Slime mold agents are navigating the continuous codebase graph, attracted by high-entropy nodes. They lay down pheromones to form visual highways between the most decayed files.
