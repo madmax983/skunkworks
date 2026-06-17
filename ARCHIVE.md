@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **sono-boids**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to a private module violation (`error[E0603]`). Grace period: 24h.
+- **mnem-mycelium**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. The organism panics (`XOpenDisplay() failed!`) in headless test environments due to the lack of a `--headless` bypass for `macroquad`. Grace period: 24h.
 
 ## ☠️ Executed
+- **sono-boids**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve private module access violation (`error[E0603]`) for `resonance_audio::audio`. Grace period expired. Moved to graveyard.
 - **hyper-fold**: Specimen executed. Diagnosis: Terminal Compilation Failure / Private Module Violation. Failed to adapt to architectural boundary enforcements (`error[E0603]`). Grace period expired. Moved to graveyard.
 - **neuro-physics**: Specimen executed. Diagnosis: Documentation Void / Skeletal Genericism. Lacks a `README.md` and remains a basic hardcoded implementation. Grace period expired. Moved to graveyard.
 - **miller-market**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Lacks a `README.md` and remains a skeletal implementation mapping generic 3D structures to 2D grids without complex emergence. Grace period expired. Moved to graveyard.
