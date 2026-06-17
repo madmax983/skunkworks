@@ -57,7 +57,7 @@ fn test_logos_grammar_definition() {
     // Check structure
     let rule = engine.rules.get("noun").unwrap();
     match rule {
-        chimera_lang::vm::prologue::logos::GrammarRule::Choice(opts) => {
+        chimera_lang::vm::prologue::GrammarRule::Choice(opts) => {
             assert_eq!(opts.len(), 2);
         }
         _ => panic!("Expected Choice rule"),

@@ -26,7 +26,7 @@ mod tests {
         #[cfg(feature = "nova")]
         {
             vm.prologue_state.scan_grid_rules(&vm.grid);
-            chimera_lang::vm::prologue::neural::scan_neural_grid(&mut vm);
+            chimera_lang::vm::prologue::scan_neural_grid(&mut vm);
 
             if let Some(n) = vm.neurons.get_mut(&(5, 5)) {
                 n.i_inj = 500.0;
@@ -67,7 +67,7 @@ mod tests {
         #[cfg(feature = "nova")]
         {
             vm.prologue_state.scan_grid_rules(&vm.grid);
-            chimera_lang::vm::prologue::neural::scan_neural_grid(&mut vm);
+            chimera_lang::vm::prologue::scan_neural_grid(&mut vm);
 
             vm.biophysics_synapses.insert((5, 5), vec![((5, 6), 1.0)]);
 

@@ -12,13 +12,13 @@
 //! * [`physics`] - Renderers for physical or continuous phenomena (e.g., fluid dynamics, geology, quantum).
 //! * [`tech`] - Renderers for logic gates, structures, or lower-level computing elements (e.g., circuits).
 
-pub mod audio;
-pub mod bio;
-pub mod core;
-pub mod magic;
-pub mod misc;
-pub mod physics;
-pub mod tech;
+pub(crate) mod audio;
+pub(crate) mod bio;
+pub(crate) mod core;
+pub(crate) mod magic;
+pub(crate) mod misc;
+pub(crate) mod physics;
+pub(crate) mod tech;
 
 pub(crate) use audio::*;
 pub(crate) use bio::*;
