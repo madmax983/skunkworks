@@ -1,0 +1,13 @@
+[package]
+name = "gray-physics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+glam = "0.28"
