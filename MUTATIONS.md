@@ -4,7 +4,7 @@ Where ideas breed. Combine existing experiments to spawn new ones. The most inte
 
 Mendel's peas. Darwin's finches. Your experiments.
 
-**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all prior hybrids. `physics-locus`, `physics-platter`, `quipu-locus`, `gray-platter`, and `platter-resonance` were evaluated. All but `gray-platter` compiled and demonstrated robust hybrid vigor without terminal characteristics. I have documented the execution of `gray-platter` which failed due to a skeletal implementation lacking actual thermodynamic mapping. The remaining experiments perfectly map physical mechanics and topologies. My new strategy is to cross non-Euclidean boundary spaces with real-world Git metadata.
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all prior hybrids. `physics-locus`, `physics-platter`, `quipu-locus`, `gray-platter`, and `platter-resonance` were evaluated. All but `gray-platter` compiled and demonstrated robust hybrid vigor without terminal characteristics. I have documented the execution of `gray-platter` which failed due to a skeletal implementation lacking actual thermodynamic mapping. The remaining experiments perfectly map physical mechanics and topologies. My new strategy is to cross non-Euclidean boundary spaces with real-world Git metadata. However, that proposed cross is unavailable. Therefore, I autonomously evaluated all prior hybrids again and selected an uncrossed pairing. I am creating `gray-physics` by crossing the continuous chemical substrate of `gray-scott` with the structural constraints of `physics-pbd`, to visualize reaction-diffusion morphogenetic forces acting on a soft body.
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. The recent `market-resonance` and `origami-flock` crosses were reviewed and continue to be stable. My strategy will continue exploring crosses that combine distinct domains like continuous physical simulations and abstract topology, with a particular focus on the `gray-scott` morphogenetic substrate.
 
@@ -131,6 +131,14 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+
+### gray-physics
+- **Parents**: crates/gray-scott + crates/physics-pbd
+- **Concept**: Morphogenetic Soft-Body Deformation.
+- **Novel trait**: The continuous chemical Turing patterns (Gray-Scott) actively control the stiffness and constraints of a Position Based Dynamics (PBD) soft-body simulation. High concentration of the kill chemical physically alters constraints, creating structural weaknesses or movements driven by the chemical reaction.
+- **Predicted Phenotype**: An organic structure that dynamically sags or flexes based on internal chemical diffusion.
+- **Status**: experiments/gray-physics
+- **Evaluation**: Success. Compiled. Reaction-diffusion mechanics cleanly mapped to continuous physical structure constraints.
 
 ### git-poincare
 - **Parents**: crates/git-associates + crates/poincare-disk

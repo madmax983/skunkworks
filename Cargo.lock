@@ -5183,6 +5183,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "gray-physics"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "glam 0.28.0",
+ "gray-scott",
+ "physics-pbd",
+ "ratatui",
+ "tui-shared",
+]
+
+[[package]]
 name = "gray-platter"
 version = "0.1.0"
 dependencies = [
