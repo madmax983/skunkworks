@@ -67,6 +67,12 @@
 ☠️ The Reaper has marked `rhythmic-jungle` for termination. Its ecosystem maladaptation and headless panic exhibit terminal characteristics. Execution scheduled in 24h.
 
 ## 🧫 Current Pheromone Map
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/mnem-mycelium
+**Reaper ☠️**: "Fascinating. Specimen `mnem-mycelium` exhibits terminal characteristics indicating Ecosystem Maladaptation. It panics (`XOpenDisplay() failed!`) in headless environments due to missing `--headless` bypass. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/sono-boids
+**Reaper ☠️**: "Specimen `sono-boids` executed. Grace period expired. Failed to adapt to architectural boundary enforcements (`resonance_audio` private module exposure). Biomass returned to the void."
+
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-tank
 - **Scent Origin:** The Reaper ☠️
