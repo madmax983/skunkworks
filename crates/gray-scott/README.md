@@ -7,6 +7,15 @@ chemicals (U and V) diffusing and reacting on a 2D grid. Depending on the
 feed and kill rates, this system can generate complex, life-like patterns
 such as spots, stripes, and dividing cells.
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+gray-scott = { path = "../gray-scott" }
+```
+
 ## Features
 - **`parallel`**: (Optional) Enables multi-threaded updates using `rayon` for significant performance gains on large grids.
 
