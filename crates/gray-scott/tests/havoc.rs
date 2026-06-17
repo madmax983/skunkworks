@@ -8,10 +8,9 @@ fn havoc_gray_scott_init_overflow() {
 }
 
 #[test]
-#[should_panic(expected = "coordinate out of bounds")]
 fn havoc_gray_scott_scanline_wrapping() {
     let gs = GrayScott::new(10, 10);
-    let _ = gs.get_index(15, 0);
+    assert_eq!(gs.get_index(15, 0), None);
 }
 
 // 👺 Havoc: `chunks_exact_mut(0)` panics!
@@ -45,27 +44,6 @@ fn havoc_gray_scott_zero_width_panic_inner() {
 
 #[test]
 fn havoc_gray_scott_oob() {
-    let status = std::process::Command::new(std::env::current_exe().unwrap())
-        .arg("--exact")
-        .arg("havoc_gray_scott_oob_inner")
-        .arg("--nocapture")
-        .arg("--ignored")
-        .status();
-
-    if let Ok(status) = status {
-        assert!(
-            status.success(),
-            "👺 Havoc: WRECKAGE! System failed to prevent Out of Bounds indexing!"
-        );
-    }
-}
-
-#[test]
-#[ignore]
-fn havoc_gray_scott_oob_inner() {
-    if std::env::args().any(|arg| arg == "havoc_gray_scott_oob_inner") {
-        let sim = gray_scott::GrayScott::new(10, 10);
-        let _ = sim.get_index(usize::MAX, usize::MAX);
-        std::process::exit(0);
-    }
+    let sim = gray_scott::GrayScott::new(10, 10);
+    assert_eq!(sim.get_index(usize::MAX, usize::MAX), None);
 }
