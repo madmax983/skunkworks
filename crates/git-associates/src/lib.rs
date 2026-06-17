@@ -421,7 +421,7 @@ impl GitModel {
             lines.extend(
                 (0..lines_count)
                     .filter_map(|l_idx| patch.line_in_hunk(h_idx, l_idx).ok())
-                    .filter_map(|line| Self::parse_line_change(&line))
+                    .filter_map(|line| Self::parse_line_change(&line)),
             );
 
             Some(Hunk {

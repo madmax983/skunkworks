@@ -1,5 +1,6 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
+use glam::Vec3;
 use gray_scott::GrayScott;
 use physics_pbd::PbdSystem;
 use ratatui::{
@@ -9,7 +10,6 @@ use ratatui::{
     Terminal,
 };
 use std::time::{Duration, Instant};
-use glam::Vec3;
 
 struct App {
     gs: GrayScott,
@@ -41,10 +41,12 @@ impl App {
             for x in 0..10 {
                 let i = y * 10 + x;
                 if x < 9 {
-                    let _ = physics.add_distance_constraint(particles[i], particles[i + 1], spacing);
+                    let _ =
+                        physics.add_distance_constraint(particles[i], particles[i + 1], spacing);
                 }
                 if y < 9 {
-                    let _ = physics.add_distance_constraint(particles[i], particles[i + 10], spacing);
+                    let _ =
+                        physics.add_distance_constraint(particles[i], particles[i + 10], spacing);
                 }
             }
         }
@@ -67,9 +69,9 @@ impl App {
         for p_idx in 0..particles_len {
             let p_id = self.particles[p_idx];
             if let Some(particle) = self.physics.particles.get_mut(p_id) {
-                 if particle.inv_mass > 0.0 {
-                     particle.vel.y += v_avg * 0.1;
-                 }
+                if particle.inv_mass > 0.0 {
+                    particle.vel.y += v_avg * 0.1;
+                }
             }
         }
 
@@ -108,7 +110,10 @@ fn main() -> Result<()> {
 
             for p in &app.particles {
                 if let Some(particle) = app.physics.particles.get(*p) {
-                    text.push_str(&format!("P: ({:.1}, {:.1}) ", particle.pos.x, particle.pos.y));
+                    text.push_str(&format!(
+                        "P: ({:.1}, {:.1}) ",
+                        particle.pos.x, particle.pos.y
+                    ));
                 }
             }
 
