@@ -3136,3 +3136,70 @@ classDiagram
     GitLocus --> CommitHistory : Parses
     GitLocus --> Boundary : Projects onto
 ```
+
+## Experiment: Flock-Market (ADR 121)
+
+**Flock-Market** is an experimental hybrid mapping continuous swarm intelligence onto discrete financial order books.
+
+### Hybrid Architecture
+
+The hybrid translates the continuous emergent herding behavior of boids from `flocking` into Bids and Asks on the continuous double auction grid of `market-sim`.
+
+```mermaid
+classDiagram
+    direction TB
+    class FlockMarket {
+        +Flock swarm
+        +Market simulation
+        +run()
+    }
+
+    class Flock {
+        <<Library: flocking>>
+        +Vec~Boid~ boids
+        +apply_rules()
+    }
+
+    class Market {
+        <<Library: market-sim>>
+        +DoubleAuction order_book
+        +execute_trades()
+    }
+
+    FlockMarket --> Flock : Intelligence
+    FlockMarket --> Market : Financial Action
+```
+
+## Experiment: Gray-Physics (ADR 122)
+
+**Gray-Physics** merges continuous reaction-diffusion simulations with constraint-based soft-body physics to simulate morphogenetic deformation.
+
+### Hybrid Architecture
+
+The continuous Turing patterns from `gray-scott` are mapped to actively control the structural distance constraints in the Position Based Dynamics mesh from `physics-pbd`.
+
+```mermaid
+classDiagram
+    direction TB
+    class GrayPhysics {
+        +GrayScott chemical_sim
+        +PbdSystem soft_body
+        +run()
+    }
+
+    class GrayScott {
+        <<Library: gray-scott>>
+        +Grid concentrations
+        +diffuse_and_react()
+    }
+
+    class PbdSystem {
+        <<Library: physics-pbd>>
+        +Vec~Particle~ particles
+        +Vec~Constraint~ distance_constraints
+        +solve()
+    }
+
+    GrayPhysics --> GrayScott : Chemical Concentration
+    GrayPhysics --> PbdSystem : Distance Constraints
+```
