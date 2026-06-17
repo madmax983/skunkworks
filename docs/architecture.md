@@ -3072,3 +3072,67 @@ classDiagram
     FlockPhysics --> Flock : Intelligence
     FlockPhysics --> PbdSystem : Structural Constraints
 ```
+
+## Experiment: Git-Poincare (ADR 119)
+
+**Git-Poincare** is an experimental hybrid mapping chronological codebase history directly into a continuous non-Euclidean hyperbolic space.
+
+### Hybrid Architecture
+
+The hybrid projects discrete chronological commit metadata from `git-associates` onto the continuous 2D hyperbolic space of `poincare-disk`. Older commits recede into the infinite boundary edge of the disk.
+
+```mermaid
+classDiagram
+    direction TB
+    class GitPoincare {
+        +CommitHistory history
+        +Poincare disk
+        +run()
+    }
+
+    class CommitHistory {
+        <<Library: git-associates>>
+        +Vec~Commit~ commits
+        +parse_metadata()
+    }
+
+    class Poincare {
+        <<Library: poincare-disk>>
+        +apply_mobius_transform(Commit)
+    }
+
+    GitPoincare --> CommitHistory : Parses
+    GitPoincare --> Poincare : Projects onto
+```
+
+## Experiment: Git-Locus (ADR 120)
+
+**Git-Locus** is an experimental hybrid mapping historical codebase activity onto continuous topological boundary loops.
+
+### Hybrid Architecture
+
+The hybrid projects discrete chronological commit metadata from `git-associates` onto the continuous non-Euclidean boundary wrapping logic of `locus`. "Ghost timelines" of the repository's evolution wrap and intersect along the topology.
+
+```mermaid
+classDiagram
+    direction TB
+    class GitLocus {
+        +CommitHistory history
+        +Boundary topology
+        +run()
+    }
+
+    class CommitHistory {
+        <<Library: git-associates>>
+        +Vec~Commit~ commits
+        +parse_metadata()
+    }
+
+    class Boundary {
+        <<Library: locus>>
+        +wrap_coordinates(Commit)
+    }
+
+    GitLocus --> CommitHistory : Parses
+    GitLocus --> Boundary : Projects onto
+```
