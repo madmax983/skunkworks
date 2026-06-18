@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **entropy-beast**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. The organism panics (`XOpenDisplay() failed!`) in headless test environments due to the lack of a `--headless` bypass for `macroquad`. Grace period: 24h.
+- **chaos-fluid**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. The organism panics (`XOpenDisplay() failed!`) in headless test environments due to the lack of a `--headless` bypass for `macroquad`. Grace period: 24h.
 
 ## ☠️ Executed
+- **entropy-beast**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **mnem-mycelium**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **sono-boids**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve private module access violation (`error[E0603]`) for `resonance_audio::audio`. Grace period expired. Moved to graveyard.
 - **hyper-fold**: Specimen executed. Diagnosis: Terminal Compilation Failure / Private Module Violation. Failed to adapt to architectural boundary enforcements (`error[E0603]`). Grace period expired. Moved to graveyard.
