@@ -2500,18 +2500,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chaos-fluid"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "ferrous-core",
- "locus",
- "macroquad",
- "rand 0.8.6",
- "rayon",
-]
-
-[[package]]
 name = "chaos-hologram"
 version = "0.1.0"
 dependencies = [
