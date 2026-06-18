@@ -50,7 +50,6 @@ impl FileExplorer {
         self.selected_idx = new_idx as usize;
     }
 
-    #[allow(dead_code)]
     pub fn selected_file(&self) -> Option<&FileEntry> {
         self.files.get(self.selected_idx)
     }

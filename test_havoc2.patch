@@ -1,0 +1,8 @@
+--- experiments/fabric-limb/tests/havoc.rs
++++ experiments/fabric-limb/tests/havoc.rs
+@@ -29,4 +29,4 @@
+         let mut arm = Arm::new((0.0, 0.0), vec![10.0, 10.0]);
+-        // 🧨 The Trigger: Mutate the public field to cause the crash!
+-        arm.joints.clear();
++        // 🧨 Let's pop one element instead
++        arm.joints.pop();

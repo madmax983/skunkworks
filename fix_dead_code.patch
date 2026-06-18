@@ -1,0 +1,7 @@
+--- experiments/fabric-limb/src/navigator.rs
++++ experiments/fabric-limb/src/navigator.rs
+@@ -52,4 +52,5 @@
+
++    #[allow(dead_code)]
+     pub fn selected_file(&self) -> Option<&FileEntry> {
+         if self.files.is_empty() {
