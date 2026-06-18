@@ -13,6 +13,15 @@ connected by [`Synapse`]s. It handles spike propagation, synaptic delays, and we
     - **Delay**: Discrete time steps before a spike reaches the target.
 - **Time**: Discrete steps. By convention, 1 step $\approx$ 1ms (though this is adjustable via interpretation).
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+neuro-sim = "0.1.0"
+```
+
 ## Hero's Journey: Building a Brain
 
 ```rust

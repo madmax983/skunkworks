@@ -253,11 +253,11 @@ You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 
 ```bash
 # Basic usage with standard DNA files (from repository root)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/evolution.pro
 
 
 # Headless mode (no TUI)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs --headless
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/evolution.pro --headless
 ```
 
 ## Nova Features
@@ -304,7 +304,7 @@ locus = { path = "path/to/skunkworks/crates/locus", features = ["serde"] }
 resonance-audio = { path = "path/to/skunkworks/crates/resonance-audio" }
 hyper-system = { path = "path/to/skunkworks/crates/hyper-system", default-features = false }
 poincare-disk = { path = "path/to/skunkworks/crates/poincare-disk" }
-miller-lattice = { path = "path/to/skunkworks/crates/miller-lattice" }
+miller-lattice = "0.1.0"
 ```
 
 Example `main.rs`:

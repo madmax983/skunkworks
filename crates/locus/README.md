@@ -16,10 +16,7 @@ First, add `locus` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-# For crates within the workspace:
-locus = { path = "../locus" }
-# For external projects, replace with the absolute path or git repo link
-
+locus = "0.1.0"
 ```
 
 If you're building a simulation where agents move through space, `locus` handles the heavy lifting. This example shows an agent moving in a Torus world (where walking off the edge wraps you around to the other side).
@@ -67,9 +64,9 @@ fn main() {
 
 ## Installation
 
-To use `locus` in another crate within the workspace, add the following to your `Cargo.toml`:
+To use `locus` in another project, add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-locus = { path = "../locus", features = ["serde"] }
+locus = { version = "0.1.0", features = ["serde"] }
 ```
