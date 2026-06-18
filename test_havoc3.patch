@@ -1,0 +1,8 @@
+--- experiments/fabric-limb/tests/havoc.rs
++++ experiments/fabric-limb/tests/havoc.rs
+@@ -30,3 +30,5 @@
+         // 🧨 Let's pop one element instead
+-        arm.joints.pop();
++        arm.joints.pop();
++        arm.joints.pop();
++        arm.joints.pop();

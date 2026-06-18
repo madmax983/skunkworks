@@ -36,16 +36,13 @@ impl Arm {
         // Check if target is unreachable
         if distance_to_target > total_length {
             // Target is unreachable, stretch fully
-            let len = std::cmp::min(self.lengths.len(), self.joints.len().saturating_sub(1));
-            for i in 0..len {
+            for i in 0..self.lengths.len() {
                 let r = dist(target, self.joints[i]);
-                if r > f64::EPSILON {
-                    let lambda = self.lengths[i] / r;
-                    self.joints[i + 1] = (
-                        (1.0 - lambda) * self.joints[i].0 + lambda * target.0,
-                        (1.0 - lambda) * self.joints[i].1 + lambda * target.1,
-                    );
-                }
+                let lambda = self.lengths[i] / r;
+                self.joints[i + 1] = (
+                    (1.0 - lambda) * self.joints[i].0 + lambda * target.0,
+                    (1.0 - lambda) * self.joints[i].1 + lambda * target.1,
+                );
             }
         } else {
             // Target is reachable
@@ -57,30 +54,24 @@ impl Arm {
                 // Backward Reaching
                 let last_idx = self.joints.len() - 1;
                 self.joints[last_idx] = target;
-                let len = std::cmp::min(self.lengths.len(), last_idx);
-                for i in (0..len).rev() {
+                for i in (0..last_idx).rev() {
                     let r = dist(self.joints[i + 1], self.joints[i]);
-                    if r > f64::EPSILON {
-                        let lambda = self.lengths[i] / r;
-                        self.joints[i] = (
-                            (1.0 - lambda) * self.joints[i + 1].0 + lambda * self.joints[i].0,
-                            (1.0 - lambda) * self.joints[i + 1].1 + lambda * self.joints[i].1,
-                        );
-                    }
+                    let lambda = self.lengths[i] / r;
+                    self.joints[i] = (
+                        (1.0 - lambda) * self.joints[i + 1].0 + lambda * self.joints[i].0,
+                        (1.0 - lambda) * self.joints[i + 1].1 + lambda * self.joints[i].1,
+                    );
                 }
 
                 // Forward Reaching
                 self.joints[0] = base;
-                let len = std::cmp::min(self.lengths.len(), self.joints.len().saturating_sub(1));
-                for i in 0..len {
+                for i in 0..self.lengths.len() {
                     let r = dist(self.joints[i + 1], self.joints[i]);
-                    if r > f64::EPSILON {
-                        let lambda = self.lengths[i] / r;
-                        self.joints[i + 1] = (
-                            (1.0 - lambda) * self.joints[i].0 + lambda * self.joints[i + 1].0,
-                            (1.0 - lambda) * self.joints[i].1 + lambda * self.joints[i + 1].1,
-                        );
-                    }
+                    let lambda = self.lengths[i] / r;
+                    self.joints[i + 1] = (
+                        (1.0 - lambda) * self.joints[i].0 + lambda * self.joints[i + 1].0,
+                        (1.0 - lambda) * self.joints[i].1 + lambda * self.joints[i + 1].1,
+                    );
                 }
 
                 diff = dist(self.joints.last().cloned().unwrap_or(base), target);
@@ -140,26 +131,5 @@ mod tests {
             "Arm did not stretch fully. Length: {}",
             d
         );
-    }
-
-    #[test]
-    fn should_not_panic_when_joints_cleared() {
-        let mut arm = Arm::new((0.0, 0.0), vec![10.0, 10.0]);
-        arm.joints.clear();
-        arm.solve((5.0, 5.0)); // Should just return
-    }
-
-    #[test]
-    fn should_not_panic_when_joints_truncated_unreachable() {
-        let mut arm = Arm::new((0.0, 0.0), vec![10.0, 10.0]);
-        arm.joints.pop();
-        arm.solve((50.0, 50.0)); // Unreachable target branch
-    }
-
-    #[test]
-    fn should_not_panic_when_joints_truncated_reachable() {
-        let mut arm = Arm::new((0.0, 0.0), vec![10.0, 10.0]);
-        arm.joints.pop();
-        arm.solve((5.0, 5.0)); // Reachable target branch
     }
 }

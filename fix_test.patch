@@ -1,0 +1,12 @@
+--- experiments/fabric-limb/tests/havoc.rs
++++ experiments/fabric-limb/tests/havoc.rs
+@@ -14,6 +14,8 @@
+         .arg("--nocapture")
+         .arg("--ignored")
+         .status();
+
++    println!("status: {:?}", status);
++
+     if let Ok(status) = status {
+         assert!(
+             status.success(),

@@ -4,3 +4,6 @@
 **Graceful OOB Handling vs Panics**
 **Learning:** `get_index` style manual memory mapping (like `y * w + x`) implementations are vulnerable to DoS attacks via index out-of-bounds panics if they just `panic!("coordinate out of bounds")` internally. Tests originally explicitly expected this panic via `#[should_panic]` which led to false positives on security.
 **Action:** Instead of `panic!` on out-of-bounds, `get_index` and similar bounds-checking logic should return `Option<usize>`. Fallible methods should map out-of-bounds to `None` and upstream API consumers should use `if let Some(idx) = ...` or similar safe recovery options rather than allowing out of bound access.
+**[Bounds Check Vulnerabilities in Fabric Limb Inverse Kinematics]**
+**Learning:** `Vec::[i]` indexing and unchecked `unwrap()` assumptions inside deeply nested solver loops (`Arm::solve` using FABRIK) can panic when the external data structure (`self.joints`) is publicly mutable or when input constraints are mismatched (e.g. `self.lengths` size vs `self.joints` size).
+**Action:** When iterating over arrays/slices that map to lengths, manually bound iterations using `std::cmp::min` and verify index bounds using `Vec::get(i)` instead of direct indexing if arrays can decouple.

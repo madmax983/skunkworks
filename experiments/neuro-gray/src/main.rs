@@ -68,7 +68,7 @@ fn main() {
                 // Inject "Chemical V" (kill chemical) where the neuron spikes
                 if let Some(x_coord) = x.try_into().ok() {
                     if let Some(y_coord) = y.try_into().ok() {
-                         dish.add_chemical(x_coord, y_coord, 1.0);
+                        dish.add_chemical(x_coord, y_coord, 1.0);
                     }
                 }
             }
@@ -78,7 +78,10 @@ fn main() {
         dish.update(feed, kill, 1.0);
 
         if args.headless && t % 10 == 0 {
-            println!("t={}: {} neurons spiked. Turing pattern evolving.", t, spike_count);
+            println!(
+                "t={}: {} neurons spiked. Turing pattern evolving.",
+                t, spike_count
+            );
         }
     }
 
