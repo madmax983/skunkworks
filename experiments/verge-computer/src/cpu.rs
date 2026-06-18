@@ -38,6 +38,58 @@ impl Default for CpuState {
     }
 }
 
+impl CpuState {
+    pub fn tick(&mut self, program: &Program) {
+        match self.phase {
+            CpuPhase::Fetch => {
+                if self.pc < program.0.len() {
+                    self.phase = CpuPhase::Decode;
+                }
+            }
+            CpuPhase::Decode => {
+                self.phase = CpuPhase::Execute;
+            }
+            CpuPhase::Execute => {
+                if let Some(instr) = program.0.get(self.pc) {
+                    self.execute_instruction(instr);
+                    self.instructions += 1;
+                    info!("CPU Executed {:?}. Registers: {:?}", instr, self.registers);
+                }
+                self.phase = CpuPhase::Fetch;
+            }
+        }
+    }
+
+    fn execute_instruction(&mut self, instr: &Instruction) {
+        match instr {
+            Instruction::Load(reg, val) => {
+                if *reg < 4 {
+                    self.registers[*reg] = *val;
+                }
+                self.pc += 1;
+            }
+            Instruction::Add(dest, src) => {
+                if *dest < 4 && *src < 4 {
+                    self.registers[*dest] += self.registers[*src];
+                }
+                self.pc += 1;
+            }
+            Instruction::Mov(dest, src) => {
+                if *dest < 4 && *src < 4 {
+                    self.registers[*dest] = self.registers[*src];
+                }
+                self.pc += 1;
+            }
+            Instruction::Jmp(target) => {
+                self.pc = *target;
+            }
+            Instruction::Halt => {
+                // Do nothing, don't advance PC
+            }
+        }
+    }
+}
+
 // Event triggered by the escapement tick
 #[derive(Event)]
 pub struct TickEvent;
@@ -49,52 +101,7 @@ pub fn cpu_tick_system(
 ) {
     for _ in events.read() {
         for mut state in &mut cpu_query {
-            match state.phase {
-                CpuPhase::Fetch => {
-                    if state.pc < program.0.len() {
-                        state.phase = CpuPhase::Decode;
-                    } else {
-                        // Halt or loop?
-                        // info!("CPU Halted (End of Program)");
-                    }
-                }
-                CpuPhase::Decode => {
-                    state.phase = CpuPhase::Execute;
-                }
-                CpuPhase::Execute => {
-                    if let Some(instr) = program.0.get(state.pc) {
-                        match instr {
-                            Instruction::Load(reg, val) => {
-                                if *reg < 4 {
-                                    state.registers[*reg] = *val;
-                                }
-                                state.pc += 1;
-                            }
-                            Instruction::Add(dest, src) => {
-                                if *dest < 4 && *src < 4 {
-                                    state.registers[*dest] += state.registers[*src];
-                                }
-                                state.pc += 1;
-                            }
-                            Instruction::Mov(dest, src) => {
-                                if *dest < 4 && *src < 4 {
-                                    state.registers[*dest] = state.registers[*src];
-                                }
-                                state.pc += 1;
-                            }
-                            Instruction::Jmp(target) => {
-                                state.pc = *target;
-                            }
-                            Instruction::Halt => {
-                                // Do nothing, don't advance PC
-                            }
-                        }
-                        state.instructions += 1;
-                        info!("CPU Executed {:?}. Registers: {:?}", instr, state.registers);
-                    }
-                    state.phase = CpuPhase::Fetch;
-                }
-            }
+            state.tick(&program);
         }
     }
 }

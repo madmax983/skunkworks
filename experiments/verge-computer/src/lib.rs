@@ -1,13 +1,11 @@
 use bevy::prelude::*;
 
-pub(crate) mod cpu;
+pub mod cpu;
 pub use cpu::*;
-pub(crate) mod mechanism;
+pub mod mechanism;
 pub use mechanism::*;
-pub(crate) mod view;
+pub mod view;
 pub use view::*;
-
-use cpu::{cpu_tick_system, Program, TickEvent};
 
 pub struct VergeComputerPlugin;
 
