@@ -15,6 +15,16 @@ boundaries (walls), and listeners.
 - **Audio Commands**: Instructions to modify the simulation state, such as plucking a string,
   adding a wall, or moving the listener.
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+resonance-audio = "0.1.0"
+crossbeam-channel = "0.5"
+```
+
 ## Usage
 
 The main entry point is the [`AudioModel`]. It runs on the audio thread, processing

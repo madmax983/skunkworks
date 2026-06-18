@@ -64,7 +64,7 @@ use poincare_disk::{TilingConsts, neighbor_transform_a};
 let consts = TilingConsts::new_4_5();
 
 // Get the translation required to move to the neighbor on the right (index 0)
-let right_step = neighbor_transform_a(0, &consts);
+let _right_step = neighbor_transform_a(0, &consts);
 
 // To render the tiling, you would recursively apply these translations to your view.
 ```
@@ -75,9 +75,9 @@ MIT
 
 ## Installation
 
-To use `poincare-disk` in another crate within the workspace, add the following to your `Cargo.toml`:
+To use `poincare-disk` in another project, add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-poincare-disk = { path = "../poincare-disk" }
+poincare-disk = "0.1.0"
 ```

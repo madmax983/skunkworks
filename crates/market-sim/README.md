@@ -21,6 +21,15 @@ When a **Bid** (moving up) collides with an **Ask** (moving down), a transaction
 3.  The `Trade` particle decays over time (visualized as a flash).
 4.  A `TradeEvent` is emitted.
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+market-sim = "0.1.0"
+```
+
 ## Example
 
 ```

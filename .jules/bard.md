@@ -29,3 +29,6 @@
 ## 2025-05-24 - [Fixing Workspace Dependency Version Conflicts in README]
 **Confusion:** In `crates/tui-shared/README.md`, it originally instructed users to depend on `ratatui = "0.30"` when the workspace explicitly was set to `ratatui = "0.29"` or another version, causing standalone examples to fail with `unicode-width` dependency resolution conflicts.
 **Clarification:** Always ensure that `README.md` standalone dependency examples reflect the exact version constraint of the workspace's root `Cargo.toml`.
+## 2024-05-24 - [Fixing DX Audit Log Friction Points]
+**Confusion:** Many README files lacked installation instructions, had unused variables generating warnings, or contained commands that didn't work from the workspace root.
+**Clarification:** Added explicit Installation sections with version constraints to crates, prefixed unused variables in doctests with underscores, and updated cargo run examples to specify the package name.

@@ -23,10 +23,10 @@ The solar system is a musical instrument. Each planet is an oscillator.
 ## Building
 To build with audio (requires ALSA on Linux):
 ```bash
-cargo run --features audio
+cargo run -p celestial-rhythms --features audio
 ```
 
 To build without audio (silent visualization):
 ```bash
-cargo run
+cargo run -p celestial-rhythms
 ```

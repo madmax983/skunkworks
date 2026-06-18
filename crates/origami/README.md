@@ -13,6 +13,15 @@ with a single motion.
 *   **[`MiuraParams`]**: Configuration for the geometric properties of the fold (unit cell dimensions, angle).
 *   **Extension Factor**: A value from 0.0 (collapsed) to 1.0 (fully expanded) that drives the simulation.
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+origami = "0.1.0"
+```
+
 ## Example
 
 ```
