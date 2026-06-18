@@ -1499,5 +1499,8 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 - **Scent Origin:** Echo 🗣️
 - **Status:** The example command resulted in an error because it could not determine which binary to run in the workspace.
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/bridge-specter
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/bridge-specter
 **Reaper ☠️**: "Fascinating. Specimen `bridge-specter` exhibits terminal characteristics indicating Ecosystem Maladaptation. The organism panics in headless test environments due to the lack of a `--headless` bypass. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/myco-diffusion
+**Reaper ☠️**: "Fascinating. Specimen `myco-diffusion` exhibits terminal characteristics indicating Ecosystem Maladaptation. The organism panics in headless test environments due to the lack of a `--headless` bypass. Execution scheduled in 24h."

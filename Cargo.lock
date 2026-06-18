@@ -2255,21 +2255,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bridge-specter"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "cpal",
- "crossbeam-channel",
- "env_logger",
- "log",
- "macroquad",
- "rand 0.8.6",
- "rayon",
- "rustfft",
-]
-
-[[package]]
 name = "built"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
