@@ -3203,3 +3203,36 @@ classDiagram
     GrayPhysics --> GrayScott : Chemical Concentration
     GrayPhysics --> PbdSystem : Distance Constraints
 ```
+
+## Experiment: Miller-Flock (ADR 123)
+
+**Miller-Flock** crosses the static, rigid crystalline structures representing a codebase with continuous swarm intelligence to create an emergent hot-spot visualizer.
+
+### Hybrid Architecture
+
+The structural crystal nodes from `miller-lattice` are flattened and serve as intense spatial attractors that the emergent boids from `flocking` navigate and forage around.
+
+```mermaid
+classDiagram
+    direction TB
+    class MillerFlock {
+        +MillerLattice crystal_nodes
+        +Flock swarm
+        +run()
+    }
+
+    class MillerLattice {
+        <<Library: miller-lattice>>
+        +Vec~Node~ crystal_structure
+        +flatten_to_2d()
+    }
+
+    class Flock {
+        <<Library: flocking>>
+        +Vec~Boid~ boids
+        +apply_rules_with_attractors()
+    }
+
+    MillerFlock --> MillerLattice : Structural Attractors
+    MillerFlock --> Flock : Swarm Intelligence
+```
