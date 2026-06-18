@@ -1,0 +1,11 @@
+[package]
+name = "miller-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
+flocking = { path = "../../crates/flocking" }
+locus = { path = "../../crates/locus" }
+macroquad = "0.4"
+crossbeam-channel = "0.5"
