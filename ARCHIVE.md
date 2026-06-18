@@ -1,7 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **bridge-specter**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. The organism panics (`XOpenDisplay() failed!`) in headless test environments due to the lack of a `--headless` bypass for `macroquad`. Grace period: 24h.
+- **myco-diffusion**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. The organism panics (`XOpenDisplay() failed!`) in headless test environments due to the lack of a `--headless` bypass for `macroquad`. Grace period: 24h.
+
 
 ## ☠️ Executed
+- **bridge-specter**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **chaos-fluid**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **entropy-beast**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **mnem-mycelium**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
