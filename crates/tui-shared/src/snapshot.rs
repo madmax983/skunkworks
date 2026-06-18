@@ -327,10 +327,11 @@ impl std::fmt::Display for Snapshot {
                         if !is_first {
                             props_str.push_str(", ");
                         }
+                        use crossterm::style::Stylize;
                         let v_str = match v {
-                            PropValue::Bool(true) => "True",
-                            PropValue::Bool(false) => "False",
-                            _ => "",
+                            PropValue::Bool(true) => "True".green().to_string(),
+                            PropValue::Bool(false) => "False".yellow().to_string(),
+                            _ => "".to_string(),
                         };
                         if !v_str.is_empty() {
                             let _ = write!(&mut props_str, "{}: {}", k, v_str);
