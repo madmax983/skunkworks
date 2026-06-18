@@ -7125,6 +7125,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "miller-flock"
+version = "0.1.0"
+dependencies = [
+ "crossbeam-channel",
+ "flocking",
+ "locus",
+ "macroquad",
+ "miller-lattice",
+]
+
+[[package]]
 name = "miller-fs"
 version = "0.1.0"
 dependencies = [
