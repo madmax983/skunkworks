@@ -1,0 +1,9 @@
+[package]
+name = "neuro-gray"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+clap = { version = "4.4.11", features = ["derive"] }

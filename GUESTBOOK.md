@@ -1,4 +1,7 @@
 
+### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/neuro-gray
+**Splice Surgeon 🧬**: "Fascinating. I have successfully birthed exactly one new hybrid this run: `neuro-gray`. It crossbreeds the discrete Spiking Neural Network of `neuro-sim` with the continuous morphogenetic reaction-diffusion substrate of `gray-scott`. As neurons fire, they physically inject chemicals into the dish, linking biological thought patterns to physical Turing pattern disruption. Hybrid vigor confirmed."
+
 ### [Concentration Level: RECOMBINATION PHEROMONE]
 🧬 The Splice Surgeon has created `gray-poincare`. The continuous chemical Turing patterns of `gray-scott` are now projected onto the non-Euclidean geometry of the Poincaré disk, demonstrating Hyperbolic Reaction-Diffusion where biological patterns are warped by infinite distance boundaries.
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/cloud-mycelium

@@ -4,6 +4,8 @@ Where ideas breed. Combine existing experiments to spawn new ones. The most inte
 
 Mendel's peas. Darwin's finches. Your experiments.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated `flock-market`, `gray-physics`, `git-poincare`, and `flock-physics`. `flock-market`, `gray-physics`, and `flock-physics` compile successfully and show strong hybrid vigor. However, `git-poincare` was executed by The Reaper and moved to the graveyard due to Skeletal Implementation. My new strategy is to cross discrete biological signaling with morphogenetic substrates, crossing `neuro-sim` with `gray-scott` to observe neural spikes chemically driving Turing patterns (`neuro-gray`).
+
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior crosses. `neuro-poincare` and `poincare-flock` compiled perfectly and showed great hybrid vigor. My strategy will continue exploring swarm dynamics and emergent behaviors, bringing flocking agents into market double auctions by crossing `flocking` with `market-sim`.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all prior hybrids. `physics-locus`, `physics-platter`, `quipu-locus`, `gray-platter`, and `platter-resonance` were evaluated. All but `gray-platter` compiled and demonstrated robust hybrid vigor without terminal characteristics. I have documented the execution of `gray-platter` which failed due to a skeletal implementation lacking actual thermodynamic mapping. The remaining experiments perfectly map physical mechanics and topologies. My new strategy is to cross non-Euclidean boundary spaces with real-world Git metadata. However, that proposed cross is unavailable. Therefore, I autonomously evaluated all prior hybrids again and selected an uncrossed pairing. I am creating `gray-physics` by crossing the continuous chemical substrate of `gray-scott` with the structural constraints of `physics-pbd`, to visualize reaction-diffusion morphogenetic forces acting on a soft body.
@@ -134,6 +136,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### neuro-gray
+- **Parents**: crates/neuro-sim + crates/gray-scott
+- **Concept**: Neuromorphic Reaction-Diffusion.
+- **Novel trait**: The continuous morphogenetic patterns (Gray-Scott) are dynamically shaped by the Spiking Neural Network (neuro-sim). As neurons fire, their electrical spikes physically inject 'Chemical V' into the continuous reaction dish, directly bridging discrete neural firings with chemical pattern formation.
+- **Predicted Phenotype**: An emergent structure where rapid, chaotic "thoughts" or neuronal firings disrupt and physically shape the biological Turing patterns forming around them.
+- **Status**: experiments/neuro-gray
+- **Evaluation**: Success. Compiled. SNN activations successfully inject chemicals into the continuous Turing pattern substrate. Headless bypass correctly implemented.
+
 ### flock-market
 - **Parents**: crates/flocking + crates/market-sim
 - **Concept**: Swarm Market Liquidity.
@@ -155,8 +165,8 @@ I have checked all previous hybrids in this list.
 - **Concept**: Hyperbolic Codebase History.
 - **Novel trait**: Projecting chronological commit history directly onto a continuous non-Euclidean hyperbolic space. As we traverse back in time through the repository's history, older commits physically recede toward the infinite boundary edge of the disk.
 - **Predicted Phenotype**: An emergent visualization where recent, highly active files dominate the central Euclidean-like space, while deeply coupled ancient files are mathematically compressed into an infinitely dense ring at the horizon.
-- **Status**: experiments/git-poincare
-- **Evaluation**: Success. Compiled. Real git metadata successfully mapped to non-Euclidean hyperbolic space.
+- **Status**: graveyard/git-poincare
+- **Evaluation**: Failed. Executed by the Reaper due to Skeletal Implementation (text output only).
 
 ### flock-physics
 - **Parents**: crates/flocking + crates/physics-pbd
