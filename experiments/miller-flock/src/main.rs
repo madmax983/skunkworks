@@ -103,7 +103,12 @@ async fn async_main() {
             );
         }
         for node in &nodes_2d {
-            draw_circle(node.x as f32, node.y as f32, 2.0, Color::new(0.0, 0.8, 1.0, 0.6));
+            draw_circle(
+                node.x as f32,
+                node.y as f32,
+                2.0,
+                Color::new(0.0, 0.8, 1.0, 0.6),
+            );
         }
 
         // Boids logic
@@ -141,10 +146,18 @@ async fn async_main() {
             boid_positions[i] += boid_velocities[i];
 
             // Wrap around edges
-            if boid_positions[i].x < 0.0 { boid_positions[i].x = WIDTH; }
-            if boid_positions[i].x > WIDTH { boid_positions[i].x = 0.0; }
-            if boid_positions[i].y < 0.0 { boid_positions[i].y = HEIGHT; }
-            if boid_positions[i].y > HEIGHT { boid_positions[i].y = 0.0; }
+            if boid_positions[i].x < 0.0 {
+                boid_positions[i].x = WIDTH;
+            }
+            if boid_positions[i].x > WIDTH {
+                boid_positions[i].x = 0.0;
+            }
+            if boid_positions[i].y < 0.0 {
+                boid_positions[i].y = HEIGHT;
+            }
+            if boid_positions[i].y > HEIGHT {
+                boid_positions[i].y = 0.0;
+            }
 
             // Draw boid
             let mut dir = boid_velocities[i];

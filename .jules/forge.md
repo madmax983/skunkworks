@@ -103,3 +103,11 @@
 **[Flattening Match Pyramids into Helper Functions]**
 **Learning:** When extracting deeply nested match arms into helper functions to flatten 'Pyramids of Doom', use `#[allow(clippy::too_many_arguments)]` on the extracted helpers if creating a temporary context struct adds unnecessary overhead to a pure readability refactoring task.
 **Action:** Extract large match arms into appropriately named helper functions, using `#[allow(clippy::too_many_arguments)]` to pass all required local state, and use guard clauses inside the helpers to flatten loop nesting.
+
+**[Flattening Game Loops & CPU Emulators]**
+**Learning:** Simulation loops (like the `git-rogue` TUI loop) and CPU ticks (like the `verge-computer` emulator) frequently build massive Pyramids of Doom combining event handling (`if let Event::Key(key) = event::read()`) with state checks (`if key.kind == KeyEventKind::Press { if app.game_over { ... } else { match ... } }`). Extracting these into separate handlers using early returns flattens the hierarchy and isolates the state transition logic cleanly.
+**Action:** Relentlessly target main loop event handling and CPU matching trees for extraction into `handle_input()` or `tick()` methods, enforcing guard clauses to remove excessive horizontal nesting.
+
+**[Glob Re-export Shadowing]**
+**Learning:** When using `pub use cpu::*;` to re-export items from an internal module defined as `pub(crate) mod cpu;`, importing those identical items explicitly elsewhere within the crate (e.g., `use cpu::{Program, TickEvent}`) will result in "private item shadows public glob re-export" compilation errors. Furthermore, the `pub(crate) mod` visibility will prevent an external `main.rs` binary in the same crate from accessing the module when importing `cpu::{self, ...}`.
+**Action:** Make internal modules strictly public (`pub mod`) if they are intended to be exposed to an internal binary or glob re-exported publicly. This ensures the namespace is resolvable without ambiguity.

@@ -40,46 +40,7 @@ fn main() -> Result<()> {
 
         if event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    if app.game_over {
-                        if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
-                            running = false;
-                        }
-                    } else {
-                        match key.code {
-                            KeyCode::Char('q') | KeyCode::Esc => running = false,
-
-                            // Digits 1-9 for Parents
-                            KeyCode::Char(c) if c.is_ascii_digit() && c != '0' => {
-                                let index = c.to_digit(10).unwrap() as usize - 1;
-                                // Check if shift is pressed for Children (if terminal sends '1' + SHIFT)
-                                if key.modifiers.contains(KeyModifiers::SHIFT) {
-                                    move_child(&mut app, index);
-                                } else {
-                                    // Go to parent
-                                    let node = app.current_node();
-                                    if index < node.parents.len() {
-                                        let next_hash = node.parents[index].clone();
-                                        app.move_to(next_hash);
-                                    }
-                                }
-                            }
-
-                            // Shift + Digits (Symbols) for Children
-                            KeyCode::Char('!') => move_child(&mut app, 0),
-                            KeyCode::Char('@') => move_child(&mut app, 1),
-                            KeyCode::Char('#') => move_child(&mut app, 2),
-                            KeyCode::Char('$') => move_child(&mut app, 3),
-                            KeyCode::Char('%') => move_child(&mut app, 4),
-                            KeyCode::Char('^') => move_child(&mut app, 5),
-                            KeyCode::Char('&') => move_child(&mut app, 6),
-                            KeyCode::Char('*') => move_child(&mut app, 7),
-                            KeyCode::Char('(') => move_child(&mut app, 8),
-
-                            _ => {}
-                        }
-                    }
-                }
+                handle_input(key, &mut app, &mut running);
             }
         }
 
@@ -89,6 +50,52 @@ fn main() -> Result<()> {
     }
 
     Ok(())
+}
+
+fn handle_input(key: crossterm::event::KeyEvent, app: &mut Game, running: &mut bool) {
+    if key.kind != KeyEventKind::Press {
+        return;
+    }
+
+    if app.game_over {
+        if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
+            *running = false;
+        }
+        return;
+    }
+
+    match key.code {
+        KeyCode::Char('q') | KeyCode::Esc => *running = false,
+
+        // Digits 1-9 for Parents
+        KeyCode::Char(c) if c.is_ascii_digit() && c != '0' => {
+            let index = c.to_digit(10).unwrap() as usize - 1;
+            // Check if shift is pressed for Children (if terminal sends '1' + SHIFT)
+            if key.modifiers.contains(KeyModifiers::SHIFT) {
+                move_child(app, index);
+            } else {
+                // Go to parent
+                let node = app.current_node();
+                if index < node.parents.len() {
+                    let next_hash = node.parents[index].clone();
+                    app.move_to(next_hash);
+                }
+            }
+        }
+
+        // Shift + Digits (Symbols) for Children
+        KeyCode::Char('!') => move_child(app, 0),
+        KeyCode::Char('@') => move_child(app, 1),
+        KeyCode::Char('#') => move_child(app, 2),
+        KeyCode::Char('$') => move_child(app, 3),
+        KeyCode::Char('%') => move_child(app, 4),
+        KeyCode::Char('^') => move_child(app, 5),
+        KeyCode::Char('&') => move_child(app, 6),
+        KeyCode::Char('*') => move_child(app, 7),
+        KeyCode::Char('(') => move_child(app, 8),
+
+        _ => {}
+    }
 }
 
 fn move_child(game: &mut Game, index: usize) {
