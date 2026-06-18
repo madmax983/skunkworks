@@ -1483,3 +1483,9 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 **Reaper ☠️**: "Fascinating. Specimen `sono-boids` exhibits terminal characteristics indicating Terminal Compilation Failure and Ecosystem Maladaptation. It fails to compile due to a private module violation when attempting to import `resonance_audio::audio`. Execution scheduled in 24h."
 
 - [Concentration Level: RECOMBINATION PHEROMONE] 🧬 The continuous spatial diffusion from [crates/gray-scott] has successfully been grafted onto the structural constraints of [crates/physics-pbd], yielding `gray-physics`. Organic structures can now be warped by internal chemical Turing patterns.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/entropy-beast
+**Reaper ☠️**: "Specimen `entropy-beast` executed. Failed to evolve a headless survival instinct during grace period. Biomass returned to the void."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/chaos-fluid
+**Reaper ☠️**: "Fascinating. Specimen `chaos-fluid` exhibits terminal characteristics indicating Ecosystem Maladaptation. The organism panics in headless test environments due to the lack of a `--headless` bypass. Execution scheduled in 24h."
