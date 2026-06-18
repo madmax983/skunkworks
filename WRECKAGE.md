@@ -94,3 +94,13 @@ error[E0603]: module `sim` is private
 ```
 🧪 **Reproduction:** `cargo test -p memetic-market`
 😈 **Comment:** "Your market failed to open. Visibility rules strike again."
+
+### 10. `turbulent-rhythms`
+🧨 **The Trigger:** Set loop_duration_ms to 0 and hold_duration_ms to 100 for 10 concurrent Musicians fighting for the same beat_lock.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_contention' panicked at experiments/turbulent-rhythms/tests/havoc_contention.rs:57:5:
+👺 Havoc SUCCESS: Application logic suffered severe starvation under contention!
+```
+🧪 **Reproduction:** `cargo test -p turbulent-rhythms --test havoc_contention`
+😈 **Comment:** "10 concurrent musicians hammering a single beat_lock with zero rest duration. Total starvation. A cacophony of deadlocks."
