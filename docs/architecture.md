@@ -3236,3 +3236,39 @@ classDiagram
     MillerFlock --> MillerLattice : Structural Attractors
     MillerFlock --> Flock : Swarm Intelligence
 ```
+
+## Chimera Lang TUI & VM Facade (ADR 124)
+
+Enforcing the Facade pattern in `chimera-lang` prevents the leakage of its internal TUI and VM structures, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace ChimeraLangFacade {
+        class TuiMod {
+            <<Facade>>
+        }
+        class VmMod {
+            <<Facade>>
+        }
+    }
+    namespace InternalModules {
+        class TuiViews {
+            <<pub(crate)>>
+        }
+        class VmOps {
+            <<pub(crate)>>
+        }
+        class VmSystems {
+            <<pub(crate)>>
+        }
+        class VmPrologue {
+            <<pub(crate)>>
+        }
+    }
+
+    TuiMod ..> TuiViews : encapsulates
+    VmMod ..> VmOps : encapsulates
+    VmMod ..> VmSystems : encapsulates
+    VmMod ..> VmPrologue : encapsulates
+```
