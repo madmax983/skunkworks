@@ -575,6 +575,15 @@ mod tests {
     }
 
     #[test]
+    fn test_get_index_out_of_bounds() {
+        let gs = GrayScott::new(10, 10);
+        assert_eq!(gs.get_index(10, 5), None);
+        assert_eq!(gs.get_index(5, 10), None);
+        assert_eq!(gs.get_index(10, 10), None);
+        assert_eq!(gs.get_index(100, 100), None);
+    }
+
+    #[test]
     fn test_add_chemical_bounds() {
         let mut gs = GrayScott::new(10, 10);
         // Add chemical at x=10, y=0. This is out of bounds for row 0 (width is 10, so max index is 9).
