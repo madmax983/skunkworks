@@ -1,8 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-canyon**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. The organism panics (`XOpenDisplay() failed!`) in headless test environments due to the lack of a `--headless` bypass for `macroquad`. Grace period: 24h.
+- **sediment-flow**: Specimen condemned. Diagnosis: Ecosystem Maladaptation. The organism panics (`XOpenDisplay() failed!`) in headless test environments due to the lack of a `--headless` bypass for `macroquad`. Grace period: 24h.
 
 
 ## ☠️ Executed
+- **code-canyon**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **myco-diffusion**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **bridge-specter**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **chaos-fluid**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
