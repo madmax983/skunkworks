@@ -1,4 +1,3 @@
-mod boid;
 mod world;
 
 use anyhow::Result;
@@ -23,6 +22,7 @@ fn main() -> Result<()> {
         println!("Headless mode detected, bypassing TUI initialization.");
         return Ok(());
     }
+
     let mut tui = Tui::init()?;
     let res = run_app(&mut tui.terminal);
     drop(tui);
@@ -59,29 +59,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
     let tick_rate = Duration::from_millis(33); // ~30 FPS
     let mut last_tick = Instant::now();
 
-    let mut trails_low = Vec::with_capacity(2048);
-    let mut trails_med = Vec::with_capacity(2048);
-    let mut trails_high = Vec::with_capacity(2048);
-
     loop {
-        // Pre-process render data
-        trails_low.clear();
-        trails_med.clear();
-        trails_high.clear();
-
-        for y in 0..(app.world.height as usize) {
-            for x in 0..(app.world.width as usize) {
-                let val = app.world.get_trail(x, y);
-                if val > 50.0 {
-                    trails_high.push((x as f64, y as f64));
-                } else if val > 20.0 {
-                    trails_med.push((x as f64, y as f64));
-                } else if val > 5.0 {
-                    trails_low.push((x as f64, y as f64));
-                }
-            }
-        }
-
         terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
@@ -92,33 +70,34 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                 .block(
                     Block::default()
                         .borders(Borders::ALL)
-                        .title("Myco-Flock: Pheromone-Guided Flocking"),
+                        .title("Miller-Physics: Codebase Physical Lattice"),
                 )
-                .x_bounds([0.0, world_width])
-                .y_bounds([0.0, world_height])
+                .x_bounds([-world_width / 2.0, world_width / 2.0])
+                .y_bounds([-world_height / 2.0, world_height / 2.0])
                 .paint(|ctx| {
-                    // Draw Trails
-                    ctx.draw(&Points {
-                        coords: &trails_low,
-                        color: Color::DarkGray,
-                    });
-                    ctx.draw(&Points {
-                        coords: &trails_med,
-                        color: Color::Gray,
-                    });
-                    ctx.draw(&Points {
-                        coords: &trails_high,
-                        color: Color::White,
-                    });
+                    // Draw Bonds
+                    for bond in &app.world.bonds {
+                        let p1 = app.world.system.particles[bond.0].pos;
+                        let p2 = app.world.system.particles[bond.1].pos;
+                        ctx.draw(&ratatui::widgets::canvas::Line {
+                            x1: p1.x as f64,
+                            y1: p1.y as f64,
+                            x2: p2.x as f64,
+                            y2: p2.y as f64,
+                            color: Color::DarkGray,
+                        });
+                    }
 
-                    // Draw Boids
-                    for boid in &app.world.boids {
-                        let base_char = boid.dna.char_representation.to_string();
-                        let color = boid.dna.color;
+                    // Draw Particles
+                    for (i, p) in app.world.system.particles.iter().enumerate() {
+                        let is_dir = app.world.is_dir[i];
+                        let color = if is_dir { Color::Blue } else { Color::Green };
+                        let char_repr = if is_dir { "■" } else { "•" };
+
                         ctx.print(
-                            boid.position.x,
-                            boid.position.y,
-                            Span::styled(base_char, Style::default().fg(color)),
+                            p.pos.x as f64,
+                            p.pos.y as f64,
+                            Span::styled(char_repr, Style::default().fg(color)),
                         );
                     }
                 });
@@ -126,10 +105,11 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
             f.render_widget(canvas, chunks[0]);
 
             let status = format!(
-                "Population: {} | 'r': Reset | 'q': Quit",
-                app.world.boids.len()
+                "Nodes: {} | Bonds: {} | 'r': Reset | 'q': Quit",
+                app.world.system.particles.len(),
+                app.world.bonds.len()
             );
-            let p = Paragraph::new(status).style(Style::default().fg(Color::Black).bg(Color::Blue));
+            let p = Paragraph::new(status).style(Style::default().fg(Color::Black).bg(Color::Cyan));
             f.render_widget(p, chunks[1]);
         })?;
 
