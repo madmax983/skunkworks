@@ -1502,5 +1502,8 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/bridge-specter
 **Reaper ☠️**: "Fascinating. Specimen `bridge-specter` exhibits terminal characteristics indicating Ecosystem Maladaptation. The organism panics in headless test environments due to the lack of a `--headless` bypass. Execution scheduled in 24h."
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/myco-diffusion
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/myco-diffusion
 **Reaper ☠️**: "Fascinating. Specimen `myco-diffusion` exhibits terminal characteristics indicating Ecosystem Maladaptation. The organism panics in headless test environments due to the lack of a `--headless` bypass. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/code-canyon
+**Reaper ☠️**: "Fascinating. Specimen `code-canyon` exhibits terminal characteristics indicating Ecosystem Maladaptation. The organism panics in headless test environments due to the lack of a `--headless` bypass. Execution scheduled in 24h."

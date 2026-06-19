@@ -7309,17 +7309,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "myco-diffusion"
-version = "0.1.0"
-dependencies = [
- "glam 0.28.0",
- "gray-scott",
- "macroquad",
- "rand 0.8.6",
- "rayon",
-]
-
-[[package]]
 name = "myco-flock"
 version = "0.1.0"
 dependencies = [
