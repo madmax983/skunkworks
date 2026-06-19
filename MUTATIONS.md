@@ -1080,7 +1080,7 @@ I have checked all previous hybrids in this list.
 - **Concept**: Pheromone-Guided Flocking. Boids leave a pheromone trail on a grid and sense it, clustering into paths rather than purely fluid swarms.
 - **Novel trait**: Structural Swarming. Flocks form stable "highways" based on positive feedback loops of pheromone deposition and sensing.
 - **Status**: experiments/myco-flock
-- **Evaluation**: Success. Compiled. Flocks form stable highways based on pheromone deposition.
+- **Evaluation**: Success. Compiled. Flocks form stable highways based on pheromone deposition. Headless bypass correctly implemented.
 
 ### git-hologram
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-hologram
@@ -1657,6 +1657,14 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An emergent codebase visualization where swarms of boids navigate the topography of a repository, naturally clustering and foraging around densely coupled structural nodes while avoiding sparse voids.
 - **Status**: experiments/miller-flock
 - **Evaluation**: Success. Compiled. Swarm logic efficiently responds to the structural attractors, creating a biological visualization of codebase hot-spots.
+
+### miller-physics
+- **Parents**: crates/miller-lattice + crates/physics-pbd
+- **Concept**: Codebase Physical Lattice Morphogenesis.
+- **Novel trait**: The discrete 3D crystalline lattice of a filesystem structure (`miller-lattice`) is subjected to continuous Position Based Dynamics constraints (`physics-pbd`). Directories are modeled as heavier nodes, files as lighter nodes, and hierarchical relationships as distance constraints.
+- **Predicted Phenotype**: A breathing, physical representation of the repository's architecture where the lattice acts as a soft-body organism dangling from its pinned root directory.
+- **Status**: experiments/miller-physics
+- **Evaluation**: Success. Compiled. The static crystal lattice nodes successfully translate into interacting physics particles connected by distance constraints. Headless bypass correctly implemented.
 
 ## 🔮 Proposed Crosses
 

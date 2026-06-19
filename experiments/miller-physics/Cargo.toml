@@ -1,0 +1,16 @@
+[package]
+name = "miller-physics"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+locus = { workspace = true }
+rand = { workspace = true }
+rustc-hash = "2.1.2"
+glam = "=0.28.0"
