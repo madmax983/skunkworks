@@ -43,7 +43,7 @@ impl World {
 
             // Add a pin constraint to the root to anchor the entire structure
             if atom.position.x == 0 && atom.position.y == 0 && atom.position.z == 0 {
-                 let _ = system.add_pin_constraint(id, pos);
+                let _ = system.add_pin_constraint(id, pos);
             }
         }
 

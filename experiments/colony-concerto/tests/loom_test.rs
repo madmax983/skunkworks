@@ -4,7 +4,7 @@ use loom::sync::Arc;
 use loom::sync::Mutex;
 use loom::thread;
 
-use colony_concerto::graph::{Node, NodeDynamicState};
+use colony_concerto::{Node, NodeDynamicState};
 
 #[test]
 #[should_panic]

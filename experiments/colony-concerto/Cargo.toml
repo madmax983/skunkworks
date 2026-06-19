@@ -19,3 +19,6 @@ loom = { version = "0.7.2", optional = true }
 default = []
 audio = ["cpal"]
 loom = ["dep:loom"]
+
+[dev-dependencies]
+proptest = "1.11.0"
