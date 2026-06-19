@@ -2753,6 +2753,8 @@ pub enum OpCode {
     Syncopation,
     /// Triggers the Choreography logic
     Choreography,
+    /// Triggers the Circuit Sigil logic
+    CircuitSigil,
     /// Triggers the Runes logic
     Runes,
 }
