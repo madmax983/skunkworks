@@ -3008,6 +3008,7 @@ dependencies = [
  "loom",
  "parking_lot",
  "petgraph",
+ "proptest",
  "rand 0.8.6",
  "ratatui",
 ]

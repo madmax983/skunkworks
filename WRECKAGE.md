@@ -104,3 +104,13 @@ thread 'havoc_test_contention' panicked at experiments/turbulent-rhythms/tests/h
 ```
 🧪 **Reproduction:** `cargo test -p turbulent-rhythms --test havoc_contention`
 😈 **Comment:** "10 concurrent musicians hammering a single beat_lock with zero rest duration. Total starvation. A cacophony of deadlocks."
+
+### 11. `colony-concerto`
+🧨 **The Trigger:** Provided `0` layers to `generate_layered_dag(0, 0, &mut rng)`.
+📉 **The Stack Trace:**
+```
+thread 'test_havoc_large_graph' panicked at experiments/colony-concerto/src/graph.rs:63:17:
+attempt to subtract with overflow
+```
+🧪 **Reproduction:** `cargo test -p colony-concerto --test havoc_proptest`
+😈 **Comment:** "You assumed music always has at least one layer. I gave you silence, and you gave me a panic due to `layers - 1` integer underflow."
