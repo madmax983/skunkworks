@@ -1,0 +1,11 @@
+[package]
+name = "git-neuro"
+version = "0.1.0"
+edition = "2021"
+description = "Spiking Neural Network sonification of git commit history"
+
+[dependencies]
+git-associates = { path = "../../crates/git-associates" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+anyhow = { workspace = true }
+rand = { workspace = true }

@@ -4764,6 +4764,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "git-neuro"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "git-associates",
+ "neuro-sim",
+ "rand 0.8.6",
+]
+
+[[package]]
 name = "git-origami"
 version = "0.1.0"
 dependencies = [
