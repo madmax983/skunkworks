@@ -5,6 +5,7 @@ members = [
     "experiments/*",
     "experiments/git-locus",
     "experiments/git-poincare",
+    "experiments/git-neuro",
 
 
 

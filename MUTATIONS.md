@@ -1666,12 +1666,27 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/miller-physics
 - **Evaluation**: Success. Compiled. The static crystal lattice nodes successfully translate into interacting physics particles connected by distance constraints. Headless bypass correctly implemented.
 
+### git-neuro
+- **Parents**: crates/git-associates + crates/neuro-sim
+- **Concept**: Cognitive Commit History.
+- **Novel trait**: The discrete chronological commit history of a repository (`git-associates`) is replayed as continuous electrical injection currents into a biological Spiking Neural Network (`neuro-sim`). The length and complexity of each commit acts as an electrical jolt to sensory neurons.
+- **Predicted Phenotype**: An emergent simulation where the repository history becomes a sequence of electrical storms in a synthetic brain. Spikes propagate through hidden synaptic connections, echoing the ripple effects of codebase modifications.
+- **Status**: experiments/git-neuro
+- **Evaluation**: Success. Compiled. The neural network successfully responds with cognitive storms based on commit injection currents. Headless bypass correctly implemented.
+
 ## 🔮 Proposed Crosses
 
+### poincare-fluid
+- **Parents**: crates/poincare-disk + crates/ferrous-fluid
+- **Concept**: Hyperbolic Fluid Dynamics.
+- **Predicted Phenotype**: A continuous fluid simulation where density and pressure exponentially increase as particles approach the boundary of the Poincaré disk.
 
+### miller-origami
+- **Parents**: crates/miller-lattice + crates/origami
+- **Concept**: Codebase Soft-Body Morphogenesis.
+- **Predicted Phenotype**: A breathing soft-body representation of the repository's directory tree.
 
-
-
-
-
-
+### git-origami
+- **Parents**: crates/git-associates + crates/origami
+- **Concept**: Version Control Foldable Mesh.
+- **Predicted Phenotype**: A continuous folding surface that bends and deforms based on Git activity.
