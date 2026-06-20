@@ -137,8 +137,14 @@ impl MatrixRain {
     }
 }
 
+/// Generates a random character for the matrix rain drop.
+///
+/// ⚡ Bolt Optimization: Uses a byte string literal (`b"..."`) instead of a regular
+/// string to allow O(1) zero-cost indexing via `chars[idx]`. This replaces the previous
+/// O(N) `chars().nth(idx)` traversal, eliminating iterator overhead and speeding up
+/// the tight rendering loop without unsafe code, since all candidates are ASCII.
 fn random_char() -> char {
-    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=<>^%&?@#";
+    let chars = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=<>^%&?@#";
     let idx = rand::thread_rng().gen_range(0..chars.len());
-    chars.chars().nth(idx).unwrap_or('?')
+    chars[idx] as char
 }
