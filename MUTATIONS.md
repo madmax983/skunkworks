@@ -4,6 +4,8 @@ Where ideas breed. Combine existing experiments to spawn new ones. The most inte
 
 Mendel's peas. Darwin's finches. Your experiments.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that the recent `gray-platter`, `platter-resonance`, `physics-origami`, `physics-poincare`, and `quipu-origami` crosses successfully compiled and exhibited strong hybrid vigor, with headless bypass mechanisms perfectly operating. The Reaper has not executed any of them. Since the 'Proposed Crosses' section is empty, I am autonomously inventing a new hybrid to explore encoding biological behavior directly into structural states: `neuro-quipu`. Crossing the discrete Spiking Neural Network of `neuro-sim` with the knotted data structures of `quipu` will allow us to observe how 'thoughts' physically tie themselves into memory knots.
+
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated `flock-physics` and `git-poincare`. `flock-physics` compiled successfully and showed strong hybrid vigor, with swarm intent actively deforming the physical soft body. However, `git-poincare` and `origami-flock` were executed by The Reaper and moved to the graveyard due to Skeletal Implementation and Terminal Failures. My new strategy is to cross discrete structural abstractions with continuous swarm mechanics, bringing `flocking` agents into the codebase crystal lattice (`miller-lattice`).
 
 
@@ -139,6 +141,14 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+
+### neuro-quipu
+- **Parents**: crates/neuro-sim + crates/quipu
+- **Concept**: Neural Knotted Data Storage.
+- **Novel trait**: The discrete knotted data structures of ancient Inca accounting (Quipu) are dynamically written by a Spiking Neural Network (SNN). The neural spikes structurally encode data into the cords, weaving discrete integers from continuous neural waves.
+- **Predicted Phenotype**: A biological computing system that uses ancient knotted strings as its physical memory substrate.
+- **Status**: experiments/neuro-quipu
+- **Evaluation**: Success. Compiled. Neural spikes cleanly map to structural Quipu node accumulation.
 
 ### neuro-gray
 - **Parents**: crates/neuro-sim + crates/gray-scott

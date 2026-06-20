@@ -46,11 +46,12 @@ impl GrayPlatterApp {
         let v_slice = self.gs.v();
         for y in 0..self.height {
             for x in 0..self.width {
-                let idx = self.gs.get_index(x, y);
-                let v = v_slice[idx];
-                if v > 0.1 {
-                    // Accumulate heat based on V chemical concentration
-                    self.platter.accumulate(x, y, (v * 0.5) as f64);
+                if let Some(idx) = self.gs.get_index(x, y) {
+                    let v = v_slice[idx];
+                    if v > 0.1 {
+                        // Accumulate heat based on V chemical concentration
+                        self.platter.accumulate(x, y, (v * 0.5) as f64);
+                    }
                 }
             }
         }
