@@ -6,21 +6,16 @@ use crate::{ChimeraParser, Rule};
 use anyhow::Result;
 use pest::Parser;
 
-enum PostEnterAction {
-    Cleanup,
-    KeepState,
-    KeepBufferOnly,
-}
-fn apply_grid_edit(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn apply_grid_edit(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     let val = parse_grid_value(&app_state.input_buffer);
     let (x, y) = app_state.grid_cursor;
     vm.grid[y][x] = val;
     app_state.status_msg = format!("Grid updated at {},{}", x, y);
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
 #[cfg(feature = "nova")]
-fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     let guide_tokens: Vec<&str> = app_state.crispr_guide.split_whitespace().collect();
     let replace_tokens: Vec<&str> = app_state.crispr_replace.split_whitespace().collect();
     use std::str::FromStr;
@@ -74,11 +69,11 @@ fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnte
             app_state.crispr_result = "Error: Invalid Strand".to_string();
         }
     }
-    PostEnterAction::KeepState
+    None
 }
 
 #[cfg(feature = "nova")]
-fn handle_paradox_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_paradox_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     if !app_state.paradox_editor_buffer.is_empty() {
         match vm.paradox.parse_rule(&app_state.paradox_editor_buffer) {
             Ok(_) => {
@@ -90,10 +85,10 @@ fn handle_paradox_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnt
             }
         }
     }
-    PostEnterAction::KeepBufferOnly
+    Some(false)
 }
 
-fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Genome Editing Logic
     match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
         Ok(mut pairs) => {
@@ -111,20 +106,20 @@ fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnte
                 }
                 Err(e) => {
                     app_state.status_msg = format!("Parse Error: {}", e);
-                    return PostEnterAction::KeepState;
+                    return None;
                 }
             }
         }
         Err(e) => {
             app_state.status_msg = format!("Parse Error: {}", e);
-            return PostEnterAction::KeepState;
+            return None;
         }
     }
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
 #[cfg(feature = "nova")]
-fn handle_logos_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_logos_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Enable editing grid from Logos view
     let (x, y) = app_state.grid_cursor;
     // Should parse as String usually for Atoms
@@ -137,11 +132,11 @@ fn handle_logos_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnter
     };
     vm.grid[y][x] = val;
     app_state.status_msg = format!("Grid updated at {},{}", x, y);
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
 #[cfg(feature = "nova")]
-fn handle_quipu_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_quipu_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Edit cord value?
     // Let's allow setting value of active cord
     let val = parse_grid_value(&app_state.input_buffer);
@@ -151,10 +146,10 @@ fn handle_quipu_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnter
             app_state.status_msg = format!("Cord {} set to {}", vm.quipu.active_cord, n);
         }
     }
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
-fn handle_biotic_chaos_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_biotic_chaos_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Allow editing Chaos Grid?
     // Parse buffer as float
     if let Ok(v) = app_state.input_buffer.parse::<f64>() {
@@ -162,11 +157,11 @@ fn handle_biotic_chaos_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Po
         vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
         app_state.status_msg = format!("Chaos Grid updated at {},{}", x, y);
     }
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
 #[cfg(feature = "nova")]
-fn handle_virology_enter(_vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_virology_enter(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     match app_state.virus_design_focus {
         0 => app_state.virus_design_name = app_state.input_buffer.clone(),
         1 => app_state.virus_design_pattern = app_state.input_buffer.clone(),
@@ -182,11 +177,11 @@ fn handle_virology_enter(_vm: &mut ChimeraVM, app_state: &mut AppState) -> PostE
         }
         _ => {}
     }
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
 #[cfg(feature = "nova")]
-fn handle_lexicon_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_lexicon_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     let val = if app_state.input_buffer.len() == 1 {
         crate::vm::Value::Str(app_state.input_buffer.clone())
     } else {
@@ -195,10 +190,10 @@ fn handle_lexicon_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnt
     let (x, y) = app_state.grid_cursor;
     vm.grid[y][x] = val;
     app_state.status_msg = format!("Grid updated at {},{}", x, y);
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
-fn handle_evolution_enter(_vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_evolution_enter(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     if let Ok(val) = app_state.input_buffer.parse::<i64>() {
         app_state.evolution_state.challenge = crate::vm::evolution::Challenge::Target(val);
         if let Some(engine) = &mut app_state.evolution_state.engine {
@@ -206,11 +201,11 @@ fn handle_evolution_enter(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Post
         }
         app_state.status_msg = format!("Target set to {}", val);
     }
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
 #[cfg(feature = "nova")]
-fn handle_ecology_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_ecology_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Inject Gene into Selected Organelle
     let gene_src = app_state.input_buffer.clone();
     if !gene_src.is_empty() {
@@ -258,11 +253,11 @@ fn handle_ecology_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnt
             }
         }
     }
-    PostEnterAction::Cleanup
+    Some(true)
 }
 
 #[cfg(feature = "nova")]
-fn handle_genesis_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_genesis_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Commit change based on focus
     if app_state.genesis_focus == 0 {
         // Compile Editor Code
@@ -299,18 +294,18 @@ fn handle_genesis_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnt
             }
             Err(e) => {
                 app_state.status_msg = format!("Lisp Error: {}", e);
-                return PostEnterAction::KeepState;
+                return None;
             }
         }
     } else {
         // Grid
         return apply_grid_edit(vm, app_state);
     }
-    PostEnterAction::KeepBufferOnly
+    Some(false)
 }
 
 #[cfg(feature = "nova")]
-fn handle_forge_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnterAction {
+fn handle_forge_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     if app_state.forge_focus == 1 {
         // Define Rule
         if !app_state.forge_selected_rule.is_empty() {
@@ -338,7 +333,7 @@ fn handle_forge_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> PostEnter
             }
         }
     }
-    PostEnterAction::KeepBufferOnly
+    Some(false)
 }
 
 pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
@@ -356,7 +351,7 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => apply_grid_edit(vm, app_state),
         #[cfg(feature = "nova")]
-        ViewMode::Babel | ViewMode::Weaver => PostEnterAction::KeepBufferOnly,
+        ViewMode::Babel | ViewMode::Weaver => Some(false),
         #[cfg(feature = "nova")]
         ViewMode::Crispr => {
             handle_crispr_enter(vm, app_state)
@@ -378,17 +373,13 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
         ViewMode::Genesis => handle_genesis_enter(vm, app_state),
         #[cfg(feature = "nova")]
         ViewMode::Forge => handle_forge_enter(vm, app_state),
-        _ => PostEnterAction::Cleanup,
+        _ => Some(true),
     };
-    match action {
-        PostEnterAction::Cleanup => {
-            app_state.input_mode = InputMode::Normal;
+    if let Some(clear_buffer) = action {
+        app_state.input_mode = InputMode::Normal;
+        if clear_buffer {
             app_state.input_buffer.clear();
         }
-        PostEnterAction::KeepBufferOnly => {
-            app_state.input_mode = InputMode::Normal;
-        }
-        PostEnterAction::KeepState => {}
     }
 
     Ok(true)
