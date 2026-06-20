@@ -1,3 +1,9 @@
+## Active Trails/Hotspots
+### [CRITICAL MASS] - Location: experiments/myco-reaper
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Condemned. Terminal Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
+
+
 ## 🧫 Current Pheromone Map
 
 ### [Concentration Level: RECOMBINATION PHEROMONE] - Location: `experiments/neuro-quipu`
@@ -1541,3 +1547,8 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chaos-hologram
 - **Scent Origin:** Havoc 👺
 - **Status:** Found a panic! Passing a mutated `width` to `Hologram` followed by `.reconstruct()` triggers an out-of-bounds panic inside `hologram.rs` due to the lack of dimensional metadata synchronization and encapsulation.
+
+## History/Decay
+### [EVAPORATING] - Location: graveyard/neuro-tank
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Biomass returned to the void. (Terminal Compilation Failure).
