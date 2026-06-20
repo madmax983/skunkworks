@@ -11,3 +11,7 @@
 **[String Slicing vs chars().take().collect::<String>()]**
 **Learning:** `chars().take(n).collect::<String>()` performs unnecessary heap allocations and iteration.
 **Action:** Use `&s[..n]` or similar slices where possible, provided UTF-8 character boundaries are respected, or `String::with_capacity()` to pre-allocate correctly.
+
+**[O(1) Byte Indexing for Random ASCII Characters]**
+**Learning:** `let chars = "ABC"; chars.chars().nth(idx)` does an $O(N)$ string traversal and iterator allocation on every call.
+**Action:** For simple ASCII random character generation, use byte literals `let chars = b"ABC"; (chars[idx] as char)` to achieve an $O(1)$ zero-cost abstraction.
