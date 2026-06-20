@@ -668,6 +668,10 @@ impl crate::vm::ChimeraVM {
                 self.output.push("Runes logic triggered.".to_string());
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
+            OpCode::Verge => {
+                self.output.push("Verge Computer logic triggered.".to_string());
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+            }
             OpCode::Hologram => {
                 self.output.push("Hologram logic triggered.".to_string());
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)

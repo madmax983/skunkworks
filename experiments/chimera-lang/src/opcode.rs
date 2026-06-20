@@ -2757,6 +2757,8 @@ pub enum OpCode {
     CircuitSigil,
     /// Triggers the Runes logic
     Runes,
+    /// Triggers the Verge Computer logic
+    Verge,
 }
 
 impl fmt::Display for OpCode {
