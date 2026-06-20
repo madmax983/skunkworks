@@ -10184,16 +10184,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sediment-flow"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "macroquad",
- "rand 0.8.6",
-]
-
-[[package]]
 name = "semver"
 version = "1.0.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
