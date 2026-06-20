@@ -49,8 +49,8 @@ fn main() -> anyhow::Result<()> {
     for &hn1 in &hidden_neurons {
         for &hn2 in &hidden_neurons {
             if hn1 != hn2 && rand::random::<f32>() < 0.3 {
-                 let weight = (rand::random::<f32>() * 20.0) - 5.0;
-                 net.add_synapse(hn1, hn2, weight);
+                let weight = (rand::random::<f32>() * 20.0) - 5.0;
+                net.add_synapse(hn1, hn2, weight);
             }
         }
     }
@@ -89,12 +89,12 @@ fn main() -> anyhow::Result<()> {
 
         let mut display_spikes = spikes_this_commit;
         for _ in 0..20 {
-           if display_spikes > 0 {
-               print!("⚡");
-               display_spikes = display_spikes.saturating_sub(2); // Scale down visually
-           } else {
-               print!("-");
-           }
+            if display_spikes > 0 {
+                print!("⚡");
+                display_spikes = display_spikes.saturating_sub(2); // Scale down visually
+            } else {
+                print!("-");
+            }
         }
 
         if spikes_this_commit > 10 {

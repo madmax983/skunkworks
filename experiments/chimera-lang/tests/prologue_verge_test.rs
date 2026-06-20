@@ -30,7 +30,9 @@ fn test_prologue_verge_integration() {
 
     // Check that the output contains the Verge dispatch message
     assert!(
-        vm.output.contains(&"Verge Computer logic triggered.".to_string()),
-        "VM output did not contain expected Verge message. Output: {:?}", vm.output
+        vm.output
+            .contains(&"Verge Computer logic triggered.".to_string()),
+        "VM output did not contain expected Verge message. Output: {:?}",
+        vm.output
     );
 }

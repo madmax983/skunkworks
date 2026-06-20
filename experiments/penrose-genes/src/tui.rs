@@ -10,7 +10,6 @@ use ratatui::{
     },
     Frame,
 };
-use std::io::Read;
 
 pub fn ui(f: &mut Frame, tiling: &PenroseTiling, stack: &[Value], output: &[String], energy: i64) {
     let chunks = Layout::default()
