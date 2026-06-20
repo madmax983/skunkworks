@@ -501,15 +501,15 @@ fn test_prologue_esolang_compiler_choreography() {
     assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(42));
     assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Choreography);
 }
-    #[test]
-    fn test_prologue_esolang_compiler_verge() {
-        let source = "verge { 42 simulate }";
-        let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
-        let genes = &dna.helix.strands[0].genes;
-        assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
-        assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(42));
-        assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Verge);
-    }
+#[test]
+fn test_prologue_esolang_compiler_verge() {
+    let source = "verge { 42 simulate }";
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
+    let genes = &dna.helix.strands[0].genes;
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(genes[0].args[0], chimera_lang::ast::Nucleotide::Number(42));
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Verge);
+}
 #[test]
 fn test_hologram_block() {
     let code = r#"

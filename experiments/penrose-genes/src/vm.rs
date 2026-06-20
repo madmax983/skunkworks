@@ -124,6 +124,28 @@ impl ChimeraVM {
 
     fn execute_gene(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
         match name {
+            "push" | "add" | "sub" | "mul" | "div" | "dup" | "swap" | "drop" | "print" => {
+                self.execute_basic_op(name, args)
+            }
+            "jump" | "brz" | "jump_s" | "brz_s" => self.execute_control_op(name, args),
+            "photosynthesize" | "consume" | "g_read" | "g_write" | "virus" => {
+                self.execute_env_op(name, args)
+            }
+            "transcribe" | "s_len" | "helix_len" | "gene_len" => {
+                self.execute_structural_op(name, args)
+            }
+            #[cfg(feature = "nova")]
+            "methylate" | "demethylate" | "telomerase" | "t_len" | "recombine" | "s_index"
+            | "mitosis" | "apoptosis" => self.execute_nova_op(name, args),
+            _ => {
+                self.output.push(format!("Unknown enzyme: {}", name));
+                None
+            }
+        }
+    }
+
+    fn execute_basic_op(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match name {
             "push" => {
                 if let Some(arg) = args.first() {
                     match arg {
@@ -136,7 +158,6 @@ impl ChimeraVM {
                 }
                 None
             }
-            // "incubate" removed in this hybrid as it relies on rectangular grid iteration
             "add" => {
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a + b);
                 None
@@ -196,6 +217,12 @@ impl ChimeraVM {
                 }
                 None
             }
+            _ => None,
+        }
+    }
+
+    fn execute_control_op(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match name {
             "jump" => {
                 if let Some(Nucleotide::Number(n)) = args.first() {
                     Some((*n as usize, 0))
@@ -223,6 +250,57 @@ impl ChimeraVM {
                 }
                 None
             }
+            "jump_s" => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(target) => {
+                            if target >= 0 {
+                                return Some((target as usize, 0));
+                            } else {
+                                self.output.push("Error: Negative jump target".to_string());
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for jump_s".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for jump_s".to_string());
+                }
+                None
+            }
+            "brz_s" => {
+                if self.stack.len() >= 2 {
+                    let target_val = self.stack.pop().unwrap();
+                    let cond_val = self.stack.pop().unwrap();
+
+                    match (target_val, cond_val) {
+                        (Value::Int(target), Value::Int(cond)) => {
+                            if cond == 0 {
+                                if target >= 0 {
+                                    return Some((target as usize, 0));
+                                } else {
+                                    self.output.push("Error: Negative jump target".to_string());
+                                }
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for brz_s".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for brz_s".to_string());
+                }
+                None
+            }
+            _ => None,
+        }
+    }
+
+    fn execute_env_op(&mut self, name: &str, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match name {
             "photosynthesize" => {
                 self.energy += 5;
                 None
@@ -318,7 +396,16 @@ impl ChimeraVM {
                 }
                 None
             }
-            // --- EVOLUTION ---
+            _ => None,
+        }
+    }
+
+    fn execute_structural_op(
+        &mut self,
+        name: &str,
+        _args: &[Nucleotide],
+    ) -> Option<(usize, usize)> {
+        match name {
             "transcribe" => {
                 // stack: value (top), arg_idx, gene_idx, strand_idx (bottom)
                 if self.stack.len() < 4 {
@@ -362,51 +449,6 @@ impl ChimeraVM {
                 }
                 None
             }
-            "jump_s" => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(target) => {
-                            if target >= 0 {
-                                return Some((target as usize, 0));
-                            } else {
-                                self.output.push("Error: Negative jump target".to_string());
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Type mismatch for jump_s".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for jump_s".to_string());
-                }
-                None
-            }
-            "brz_s" => {
-                if self.stack.len() >= 2 {
-                    let target_val = self.stack.pop().unwrap();
-                    let cond_val = self.stack.pop().unwrap();
-
-                    match (target_val, cond_val) {
-                        (Value::Int(target), Value::Int(cond)) => {
-                            if cond == 0 {
-                                if target >= 0 {
-                                    return Some((target as usize, 0));
-                                } else {
-                                    self.output.push("Error: Negative jump target".to_string());
-                                }
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Type mismatch for brz_s".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for brz_s".to_string());
-                }
-                None
-            }
             "s_len" => {
                 self.stack.push(Value::Int(self.stack.len() as i64));
                 None
@@ -438,7 +480,13 @@ impl ChimeraVM {
                 }
                 None
             }
-            #[cfg(feature = "nova")]
+            _ => None,
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn execute_nova_op(&mut self, name: &str, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match name {
             "methylate" => {
                 if self.stack.len() >= 2 {
                     let gene_val = self.stack.pop().unwrap();
@@ -456,7 +504,6 @@ impl ChimeraVM {
                 }
                 None
             }
-            #[cfg(feature = "nova")]
             "demethylate" => {
                 if self.stack.len() >= 2 {
                     let gene_val = self.stack.pop().unwrap();
@@ -475,7 +522,6 @@ impl ChimeraVM {
                 }
                 None
             }
-            #[cfg(feature = "nova")]
             "telomerase" => {
                 if let Some(val) = self.stack.pop() {
                     match val {
@@ -502,7 +548,6 @@ impl ChimeraVM {
                 }
                 None
             }
-            #[cfg(feature = "nova")]
             "t_len" => {
                 let idx = self.ip.0;
                 if idx < self.telomeres.len() {
@@ -512,7 +557,6 @@ impl ChimeraVM {
                 }
                 None
             }
-            #[cfg(feature = "nova")]
             "recombine" => {
                 // stack: split_point, strand_b, strand_a (bottom)
                 if self.stack.len() >= 3 {
@@ -566,9 +610,9 @@ impl ChimeraVM {
                                         strand_b.genes.append(&mut tail_a);
 
                                         self.output.push(format!(
-                                            "RECOMBINATION: Swapped tails of strand {} and {} at {}",
-                                            sa, sb, split
-                                        ));
+                                                        "RECOMBINATION: Swapped tails of strand {} and {} at {}",
+                                                        sa, sb, split
+                                                    ));
                                     }
                                 } else {
                                     self.output
@@ -589,12 +633,10 @@ impl ChimeraVM {
                 }
                 None
             }
-            #[cfg(feature = "nova")]
             "s_index" => {
                 self.stack.push(Value::Int(self.ip.0 as i64));
                 None
             }
-            #[cfg(feature = "nova")]
             "mitosis" => {
                 // stack: strand_idx (target to clone)
                 if let Some(val) = self.stack.pop() {
@@ -639,7 +681,6 @@ impl ChimeraVM {
                 }
                 None
             }
-            #[cfg(feature = "nova")]
             "apoptosis" => {
                 // stack: strand_idx
                 if let Some(val) = self.stack.pop() {
@@ -668,10 +709,7 @@ impl ChimeraVM {
                 }
                 None
             }
-            _ => {
-                self.output.push(format!("Unknown enzyme: {}", name));
-                None
-            }
+            _ => None,
         }
     }
 
