@@ -114,3 +114,20 @@ attempt to subtract with overflow
 ```
 🧪 **Reproduction:** `cargo test -p colony-concerto --test havoc_proptest`
 😈 **Comment:** "You assumed music always has at least one layer. I gave you silence, and you gave me a panic due to `layers - 1` integer underflow."
+
+## 👺 Havoc: Out-of-Bounds Panic in `Hologram` Reconstruction
+
+**Target:** `experiments/chaos-hologram` and `experiments/hologram-text` (specifically `hologram.rs`)
+**Trigger:** Mutating the `width` or `height` fields of a `Hologram` struct without resizing the internal `data` vector, then calling `.reconstruct()`.
+
+**The Wreckage:**
+The `Hologram::reconstruct` method recalculates flat array indices using the formulas `y * width + x` and `src_y * width + src_x` to map spatial frequency bins. It assumes `self.data.len() == width * height`. If an attacker (or chaotic mutation) artificially inflates the `width` field, the calculated index `src_y * width + src_x` will violently overshoot the actual length of `self.data`, resulting in a classic Rust `index out of bounds` panic.
+
+**The Fix (Not Mine!):**
+The underlying problem is that `width` and `height` are public `pub` fields, violating encapsulation. Any external code can desync the dimensional metadata from the backing allocation.
+
+**Reproduction:**
+```bash
+cargo test -p chaos-hologram --test havoc_proptest
+cargo test -p hologram-text --test havoc_proptest
+```

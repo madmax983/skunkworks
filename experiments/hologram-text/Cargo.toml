@@ -10,3 +10,5 @@ ratatui = { workspace = true }
 rustfft = "6.2"
 num-complex = "0.4"
 font8x8 = "0.3"
+[dev-dependencies]
+proptest = "1.11.0"

@@ -12,3 +12,5 @@ num-complex = "0.4"
 font8x8 = "0.3"
 locus = { workspace = true }
 tui-shared = { workspace = true }
+[dev-dependencies]
+proptest = "1.11.0"

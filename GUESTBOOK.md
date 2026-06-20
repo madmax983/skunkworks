@@ -1533,3 +1533,11 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 - **Scent Origin:** Prologue ⚛️
 - **Status:** Evolved `chimera-lang` by successfully integrating `circuit-sigil` and `verge-computer` as new esoteric blocks. Scent is evaporating.
 
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chaos-hologram
+- **Scent Origin:** Havoc 👺
+- **Status:** Found a panic! Passing `w=0` and `h=0` to `Hologram::new()` followed by `.reconstruct()` triggers a zero-dimension panic inside the `rem_euclid` shift logic within `hologram.rs`.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chaos-hologram
+- **Scent Origin:** Havoc 👺
+- **Status:** Found a panic! Passing a mutated `width` to `Hologram` followed by `.reconstruct()` triggers an out-of-bounds panic inside `hologram.rs` due to the lack of dimensional metadata synchronization and encapsulation.
