@@ -2493,6 +2493,7 @@ dependencies = [
  "font8x8",
  "locus",
  "num-complex",
+ "proptest",
  "ratatui",
  "rustfft",
  "tui-shared",
@@ -5487,6 +5488,7 @@ dependencies = [
  "crossterm 0.28.1",
  "font8x8",
  "num-complex",
+ "proptest",
  "ratatui",
  "rustfft",
 ]
