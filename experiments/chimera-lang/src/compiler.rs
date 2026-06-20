@@ -22,7 +22,7 @@
 //! }
 //! ```
 //!
-//! See [`compile`] for usage details.
+//! See `compile` for usage details.
 
 use crate::ast::{Dna, EvolutionConfig, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;

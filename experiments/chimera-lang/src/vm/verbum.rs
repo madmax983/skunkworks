@@ -1,12 +1,12 @@
 //! # Linguistics & Words of Power 🗣️
 //!
 //! This module defines the linguistic engine of the Chimera Virtual Machine.
-//! In the Chimera universe, [`Verbum`] (Words) are constructed from [`Gene`] sequences
+//! In the Chimera universe, `Verbum` (Words) are constructed from `Gene` sequences
 //! and possess intrinsic power, rarity, and etymological history.
 //!
-//! The [`VerbumForge`] acts as the lexicon and factory for these words, allowing
+//! The `VerbumForge` acts as the lexicon and factory for these words, allowing
 //! agents to construct complex magical incantations (macros) by forging smaller
-//! genetic sequences into named [`Verbum`] entities.
+//! genetic sequences into named `Verbum` entities.
 
 use crate::ast::Gene;
 use serde::{Deserialize, Serialize};
