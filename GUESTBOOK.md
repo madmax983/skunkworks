@@ -1,4 +1,8 @@
 
+### [Concentration Level: RECOMBINATION PHEROMONE] - Location: `experiments/neuro-quipu`
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Spiking Neural Network crossbred with Quipu knots. Thoughts manifest as physical strings.
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/sediment-flow
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `sediment-flow` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 

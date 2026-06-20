@@ -164,6 +164,12 @@ impl AppState {
 }
 
 fn main() -> Result<()> {
+    let args: Vec<String> = std::env::args().collect();
+    if args.contains(&"--headless".to_string()) {
+        println!("Headless mode: escaping to safety.");
+        return Ok(());
+    }
+
     let mut tui = Tui::init()?;
     let mut state = AppState::new();
 
