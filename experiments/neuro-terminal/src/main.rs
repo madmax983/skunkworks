@@ -230,7 +230,7 @@ fn draw_footer(f: &mut Frame, _app: &App, area: Rect) {
         .bg(COLOR_POS)
         .fg(Color::Black)
         .add_modifier(Modifier::BOLD);
-    let desc_style = Style::default().bg(COLOR_BG_DARK).fg(Color::Gray);
+    let desc_style = Style::default().bg(COLOR_BG_DARK).fg(Color::White);
 
     let keys = vec![
         Span::styled(" Q ", btn_style),

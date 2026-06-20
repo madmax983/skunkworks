@@ -223,7 +223,7 @@ impl<'a> Widget for Button<'a> {
                 .fg(Color::Black)
                 .add_modifier(Modifier::BOLD);
         } else if self.is_clicked {
-            final_style = final_style.bg(Color::Red).fg(Color::White);
+            final_style = final_style.bg(Color::Red).fg(Color::White).add_modifier(Modifier::REVERSED);
         } else if self.is_hovered {
             final_style = final_style.bg(Color::Cyan).fg(Color::Black);
         }
