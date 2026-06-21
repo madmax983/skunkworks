@@ -1,3 +1,4 @@
+#![allow(missing_docs)]
 //! # The Ribosome Compiler 🧬
 //!
 //! The `compiler` module acts as the cellular machinery that translates high-level

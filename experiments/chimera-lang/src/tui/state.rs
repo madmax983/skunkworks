@@ -1900,314 +1900,218 @@ impl ViewMode {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
-/// Enum for `ViewMode`.
+/// Determines the visual rendering context displayed in the terminal UI.
 pub enum ViewMode {
+    /// Provides the visualization context for the `Genome` state space.
     Genome,
+    /// Provides the visualization context for the `Grid` state space.
     Grid,
+    /// Provides the visualization context for the `Microscope` state space.
     Microscope,
     #[cfg(feature = "biophysics")]
+    /// Provides the visualization context for the `Cortex` state space.
     Cortex,
     #[cfg(feature = "resonance")]
+    /// Provides the visualization context for the `Resonance` state space.
     Resonance,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Grimoire` state space.
     Grimoire,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Laboratory` state space.
     Laboratory,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Topology` state space.
     Topology,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Graveyard` state space.
     Graveyard,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `PrologueEsolang` state space.
     PrologueEsolang,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `PianoRoll` state space.
     PianoRoll,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Retina` state space.
     Retina,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Quantum` state space.
     Quantum,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Dream` state space.
     Dream,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Phylogeny` state space.
     Phylogeny,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Alchemy` state space.
     Alchemy,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Memetics` state space.
     Memetics,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Egregore` state space.
     Egregore,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Bestiary` state space.
     Bestiary,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Kaleidoscope` state space.
     Kaleidoscope,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Void` state space.
     Void,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Signals` state space.
     Signals,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Sovereignty` state space.
     Sovereignty,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Spectrogram` state space.
     Spectrogram,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Market` state space.
     Market,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Ballistics` state space.
     Ballistics,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Scent` state space.
     Scent,
+    /// Provides the visualization context for the `Heatmap` state space.
     Heatmap,
     #[cfg(feature = "silicon")]
+    /// Provides the visualization context for the `Schematic` state space.
     Schematic,
     #[cfg(feature = "silicon")]
+    /// Provides the visualization context for the `Foundry` state space.
     Foundry,
     #[cfg(feature = "elektra")]
+    /// Provides the visualization context for the `Elektra` state space.
     Elektra,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Fishing` state space.
     Fishing,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Arena` state space.
     Arena,
     #[cfg(feature = "nova")]
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
-    /// Garden
+
+    /// Provides the visualization context for the `Garden` state space.
     Garden,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Orca` state space.
     Orca,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Babel` state space.
     Babel,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Strings` state space.
     Strings,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Quipu` state space.
     Quipu,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Hydra` state space.
     Hydra,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Chronos` state space.
     Chronos,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Logos` state space.
     Logos,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Pandemonium` state space.
     Pandemonium,
+    /// Provides the visualization context for the `BioticChaos` state space.
     BioticChaos,
+    /// Provides the visualization context for the `Catalyst` state space.
     Catalyst,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Hyperspace` state space.
     Hyperspace,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Hologram` state space.
     Hologram,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Weaver` state space.
     Weaver,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Terminal` state space.
     Terminal,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Attractor` state space.
     Attractor,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Virology` state space.
     Virology,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `BioMesh` state space.
     BioMesh,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Crispr` state space.
     Crispr,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Reactor` state space.
     Reactor,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Biolum` state space.
     Biolum,
+    /// Provides the visualization context for the `Evolution` state space.
     Evolution,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Ecology` state space.
     Ecology,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `LifeCycle` state space.
     LifeCycle,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Semiotics` state space.
     Semiotics,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Fractal` state space.
     Fractal,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Metazoa` state space.
     Metazoa,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Genesis` state space.
     Genesis,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Cambrian` state space.
     Cambrian,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Savant` state space.
     Savant,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Akashic` state space.
     Akashic,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Prologue` state space.
     Prologue,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Lexicon` state space.
     Lexicon,
     #[cfg(feature = "nova")]
+    /// Provides the visualization context for the `Narrative` state space.
     Narrative,
+    /// Provides the visualization context for the `Sequencer` state space.
     Sequencer,
+    /// Provides the visualization context for the `Mutagen` state space.
     Mutagen,
+    /// Provides the visualization context for the `Forge` state space.
     Forge,
+    /// Provides the visualization context for the `Tesseract` state space.
     Tesseract,
+    /// Provides the visualization context for the `Choir` state space.
     Choir,
+    /// Provides the visualization context for the `Paradox` state space.
     Paradox,
+    /// Provides the visualization context for the `Codex` state space.
     Codex,
+    /// Provides the visualization context for the `Verbum` state space.
     Verbum,
 }
 
@@ -3129,124 +3033,13 @@ impl ViewMode {
     }
 }
 
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
-/// Enum for `InputMode`.
+/// Determines the current keyboard interaction context (e.g., normal navigation vs. text editing).
 pub enum InputMode {
+    /// Denotes the `Normal` interaction context for keyboard processing.
     Normal,
+    /// Denotes the `Editing` interaction context for keyboard processing.
     Editing,
+    /// Denotes the `Injection` interaction context for keyboard processing.
     Injection,
 }
 

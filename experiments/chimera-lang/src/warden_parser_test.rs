@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use crate::ChimeraParser;
-    use crate::Rule;
+    use crate::parser::ChimeraParser;
+    use crate::parser::Rule;
     use pest::Parser;
 
     #[test]

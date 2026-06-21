@@ -4,7 +4,7 @@
 //! that make up a running Chimera organism.
 
 use crate::opcode::OpCode;
-use crate::Rule;
+use crate::parser::Rule;
 use pest::iterators::Pair;
 use serde::{Deserialize, Serialize};
 

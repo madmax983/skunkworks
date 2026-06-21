@@ -2,7 +2,7 @@
 
 use super::{ChimeraVM, Value};
 use crate::ast::{Nucleotide, Strand};
-use crate::{ChimeraParser, Rule};
+use crate::parser::{ChimeraParser, Rule};
 use pest::Parser;
 use rustc_hash::FxHasher;
 use std::hash::{Hash, Hasher};

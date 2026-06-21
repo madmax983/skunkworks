@@ -1,6 +1,6 @@
 use super::{ChimeraVM, Value, MAX_STRANDS};
+use crate::parser::{ChimeraParser, Rule};
 use crate::vm::nova_genetics;
-use crate::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::Rng;
 use rustc_hash::FxHasher;

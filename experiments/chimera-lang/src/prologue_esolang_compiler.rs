@@ -1,3 +1,4 @@
+#![allow(missing_docs)]
 //! Compilation pipeline for the PrologueEsolang esoteric language.
 //!
 //! Exposes parsers that translate multi-paradigm script blocks (e.g., Forth, Lisp, Orca)
@@ -1209,7 +1210,6 @@ fn compile_tui_mod_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
 
     Ok(genes)
 }
-
 
 fn compile_cymatic_ocean_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();

@@ -12,123 +12,12 @@ use std::str::FromStr;
 const MAX_LISP_DEPTH: usize = 256;
 
 #[derive(Debug, Clone)]
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
-/// Enum for `SExpr`.
+/// Represents an S-Expression node in the parsed Lisp-like AST.
 pub enum SExpr {
+    /// Represents an atomic symbol or a literal string in the S-Expression.
+    /// This is the fundamental building block for data and function names.
     Atom(String),
+    /// Represents a list of multiple S-Expressions, providing nested structures.
     List(Vec<SExpr>),
 }
 

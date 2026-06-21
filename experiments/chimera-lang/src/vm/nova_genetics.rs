@@ -3,7 +3,7 @@
 use super::{ChimeraVM, Value, MAX_GENES_PER_STRAND, MAX_STRANDS};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use crate::{ChimeraParser, Rule};
+use crate::parser::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::Rng;
 

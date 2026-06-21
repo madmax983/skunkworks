@@ -1,8 +1,8 @@
 use crate::ast::Gene;
+use crate::parser::{ChimeraParser, Rule};
 use crate::tui::parse_grid_value;
 use crate::tui::state::{AppState, InputMode, ViewMode};
 use crate::vm::ChimeraVM;
-use crate::{ChimeraParser, Rule};
 use anyhow::Result;
 use pest::Parser;
 

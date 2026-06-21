@@ -54,121 +54,6 @@ use strum_macros::{AsRefStr, EnumIter, EnumString};
     Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, EnumString, AsRefStr, EnumIter,
 )]
 #[strum(serialize_all = "snake_case")]
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
-/// Enum for `OpCode`.
 pub enum OpCode {
     /// Pushes a value onto the stack.
     ///
@@ -1072,64 +957,6 @@ pub enum OpCode {
     /// **`Nova`** Randomly corrupts the Grid or Stack.
     ///
     /// **Stack:** `[ ..., severity ] -> [ ... ]`
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
-    /// Glitch
     Glitch,
     /// **`Nova`** Shuffles the stack.
     ///
@@ -2477,6 +2304,7 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., tissue_id ]`
     Tissue,
 
+    /// Evaluates to a fluid dynamics computation block for continuous physics simulation.
     Fluid,
     // Weaving Features (The Loom)
     /// **`Nova`** Weaves two strands together based on a pattern.
@@ -2723,6 +2551,7 @@ pub enum OpCode {
     ///
     /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
     ZipWith,
+    /// Yields a flocking behavioral model block for swarm intelligence simulations.
     Flock,
     /// **`Nova`** Executes hyperbolic geometry operations.
     Poincare,

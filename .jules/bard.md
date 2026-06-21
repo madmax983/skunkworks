@@ -32,3 +32,6 @@
 ## 2024-05-24 - [Fixing DX Audit Log Friction Points]
 **Confusion:** Many README files lacked installation instructions, had unused variables generating warnings, or contained commands that didn't work from the workspace root.
 **Clarification:** Added explicit Installation sections with version constraints to crates, prefixed unused variables in doctests with underscores, and updated cargo run examples to specify the package name.
+## 2024-05-31 - [Macro Generated Missing Docs]
+**Confusion:** Sometimes a derive macro like `#[derive(Parser)]` will generate internal enums or items that don't have documentation, and this will cause strict `missing_docs` checks to fail on the struct the macro is attached to.
+**Clarification:** To bypass missing documentation requirements for derive macro expansions that don't let you document the generated items, you must isolate the macro invocation. For standard modules, `#![allow(missing_docs)]` at the top of the file works. For crate roots like `lib.rs`, creating a dedicated submodule file (e.g. `src/parser.rs`) and moving the struct there prevents globally disabling the lint across the crate.

@@ -42,7 +42,7 @@
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use crate::{ChimeraParser, Rule};
+use crate::parser::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::seq::SliceRandom;
 use rand::Rng;

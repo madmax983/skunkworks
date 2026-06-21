@@ -6,10 +6,11 @@ use std::fs;
 
 use chimera_lang::{
     ast::{Dna, Helix, JunctionType},
-    compiler, prologue_compiler, prologue_esolang_compiler,
+    compiler,
+    parser::{ChimeraParser, Rule},
+    prologue_compiler, prologue_esolang_compiler,
     tui::{run_tui, ViewMode},
     vm::{ChimeraVM, Value},
-    ChimeraParser, Rule,
 };
 use std::path::Path;
 

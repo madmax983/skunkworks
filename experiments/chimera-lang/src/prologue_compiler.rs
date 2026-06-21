@@ -1,3 +1,4 @@
+#![allow(missing_docs)]
 //! Compilation pipeline for the Prologue circuit language.
 //!
 //! Provides the parser and compiler to map 2D textual layout grids
