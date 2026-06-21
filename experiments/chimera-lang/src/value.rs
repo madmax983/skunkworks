@@ -647,6 +647,60 @@ mod tests {
     }
 
     #[test]
+    fn test_apply_binary_op_superposition_scalar() {
+        let a = Value::Superposition(vec![(Value::Int(10), 0.5), (Value::Int(20), 0.5)]);
+        let b = Value::Int(5);
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+
+        match res {
+            Value::Superposition(states) => {
+                assert_eq!(states.len(), 2);
+                assert!(states.contains(&(Value::Int(15), 0.5)));
+                assert!(states.contains(&(Value::Int(25), 0.5)));
+            }
+            _ => panic!("Expected Superposition"),
+        }
+    }
+
+    #[test]
+    fn test_apply_binary_op_scalar_superposition() {
+        let a = Value::Int(5);
+        let b = Value::Superposition(vec![(Value::Int(10), 0.5), (Value::Int(20), 0.5)]);
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+
+        match res {
+            Value::Superposition(states) => {
+                assert_eq!(states.len(), 2);
+                assert!(states.contains(&(Value::Int(15), 0.5)));
+                assert!(states.contains(&(Value::Int(25), 0.5)));
+            }
+            _ => panic!("Expected Superposition"),
+        }
+    }
+
+    #[test]
+    fn test_apply_binary_op_superposition_superposition() {
+        let a = Value::Superposition(vec![(Value::Int(10), 0.5), (Value::Int(20), 0.5)]);
+        let b = Value::Superposition(vec![(Value::Int(1), 0.6), (Value::Int(2), 0.4)]);
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+
+        match res {
+            Value::Superposition(states) => {
+                assert_eq!(states.len(), 4);
+                // 10+1 = 11, p=0.3
+                assert!(states.contains(&(Value::Int(11), 0.3)));
+                // 10+2 = 12, p=0.2
+                assert!(states.contains(&(Value::Int(12), 0.2)));
+                // 20+1 = 21, p=0.3
+                assert!(states.contains(&(Value::Int(21), 0.3)));
+                // 20+2 = 22, p=0.2
+                assert!(states.contains(&(Value::Int(22), 0.2)));
+            }
+            _ => panic!("Expected Superposition"),
+        }
+    }
+
+    #[test]
     fn test_limit_exceeded() {
         let a = Value::Junction(JunctionType::Any, vec![Value::Int(1); 10]);
         let b = Value::Junction(JunctionType::Any, vec![Value::Int(2); 10]);
