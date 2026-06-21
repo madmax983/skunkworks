@@ -7419,14 +7419,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "myco-reaper"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "rand 0.8.6",
-]
-
-[[package]]
 name = "myco-resonance"
 version = "0.1.0"
 dependencies = [
@@ -7827,16 +7819,6 @@ dependencies = [
  "parking_lot",
  "rand 0.8.6",
  "ratatui",
-]
-
-[[package]]
-name = "neuro-tank"
-version = "0.1.0"
-dependencies = [
- "crossbeam-channel",
- "macroquad",
- "neuro-sim",
- "resonance-audio",
 ]
 
 [[package]]

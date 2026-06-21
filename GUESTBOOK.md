@@ -1,7 +1,11 @@
 ## Active Trails/Hotspots
+### [CRITICAL MASS] - Location: experiments/neuro-fold
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Condemned. Terminal Compilation Failure (`glam` vs `macroquad` type mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
+
 ### [CRITICAL MASS] - Location: experiments/myco-reaper
  - **Scent Origin:** ☠️ The Reaper
- - **Status:** Condemned. Terminal Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
+ - **Status:** Executed. Terminal Ecosystem Maladaptation (macroquad without headless bypass). Moved to graveyard.
 
 
 ## 🧫 Current Pheromone Map
