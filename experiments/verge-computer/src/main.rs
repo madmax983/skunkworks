@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use verge_computer::{
-    cpu::{self, Instruction, Program},
-    mechanism,
-    view::ViewPlugin,
+use verge_computer::{CpuState, Instruction, Program, spawn_gear, spawn_anchor, ViewPlugin,
+
+
+
     EscapeWheel, VergeComputerPlugin,
 };
 
@@ -35,7 +35,7 @@ fn setup(mut commands: Commands) {
     let teeth = 12;
     let radius = 3.0;
 
-    let wheel = mechanism::spawn_gear(&mut commands, wheel_pos, teeth, radius, 0.5);
+    let wheel = spawn_gear(&mut commands, wheel_pos, teeth, radius, 0.5);
 
     commands
         .entity(wheel)
@@ -55,7 +55,7 @@ fn setup(mut commands: Commands) {
 
     // 2. Anchor
     let anchor_pos = Vec2::new(0.0, 5.0);
-    let anchor = mechanism::spawn_anchor(&mut commands, anchor_pos);
+    let anchor = spawn_anchor(&mut commands, anchor_pos);
 
     commands.entity(anchor).insert(ImpulseJoint::new(
         ground,
@@ -66,7 +66,7 @@ fn setup(mut commands: Commands) {
 
     // 3. CPU Visualization
     commands.spawn((
-        cpu::CpuState::default(),
+        CpuState::default(),
         TextBundle::from_section(
             "CPU State: HALTED",
             TextStyle {
@@ -103,8 +103,8 @@ fn apply_torque(mut query: Query<&mut ExternalForce, With<MainSpring>>) {
 }
 
 fn update_cpu_text(
-    cpu_query: Query<&cpu::CpuState>,
-    mut text_query: Query<&mut Text, With<cpu::CpuState>>,
+    cpu_query: Query<&CpuState>,
+    mut text_query: Query<&mut Text, With<CpuState>>,
 ) {
     if let Ok(state) = cpu_query.get_single() {
         if let Ok(mut text) = text_query.get_single_mut() {

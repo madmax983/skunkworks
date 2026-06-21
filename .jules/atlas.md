@@ -36,3 +36,6 @@
 **[Title] Encapsulate chimera-lang TUI, VM ops, VM systems, and Prologue submodules via Facade**
 **Tangle:** Internal modules within `experiments/chimera-lang/src/tui/views/mod.rs`, `experiments/chimera-lang/src/tui/mod.rs`, `experiments/chimera-lang/src/vm/ops/mod.rs`, `experiments/chimera-lang/src/vm/systems/mod.rs`, and `experiments/chimera-lang/src/vm/prologue/mod.rs` were exposed as `pub mod`, breaking the Facade pattern by leaking implementation details.
 **Blueprint:** Modified the module definitions to use `pub(crate) mod` and explicitly `pub use` only the intended types/structs to ensure high cohesion and strict encapsulation. Fixed broken integration tests by re-exporting `RealityMode`, `AstralState`, `GrammarRule`, `LogosEngine`, and `SirenState`.
+**[Title] Encapsulate verge-computer, chaos-hologram, and hologram-text submodules via Facade**
+**Tangle:** Several experimental crates (`verge-computer`, `chaos-hologram`, and `hologram-text`) leaked their internal submodules directly via `pub mod`, breaking the Facade pattern and exposing implementation details.
+**Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` in library `lib.rs` files. This enforces a strict structural boundary while preserving the external API.

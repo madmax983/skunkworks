@@ -1,1 +1,3 @@
-pub mod hologram;
+pub(crate) mod hologram;
+
+pub use hologram::*;

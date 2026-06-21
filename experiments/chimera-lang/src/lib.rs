@@ -320,7 +320,7 @@ pub struct ChimeraParser;
 /// The `acoustic_compiler` module.
 /// The `acoustic_compiler` module.
 /// The `acoustic_compiler` module.
-pub mod acoustic_compiler;
+pub(crate) mod acoustic_compiler;
 /// The `ast` module.
 /// The `ast` module.
 /// The `ast` module.
@@ -553,7 +553,7 @@ pub mod ast;
 /// The `audio_source` module.
 /// The `audio_source` module.
 /// The `audio_source` module.
-pub mod audio_source;
+pub(crate) mod audio_source;
 /// The `compiler` module.
 /// The `compiler` module.
 /// The `compiler` module.
@@ -785,7 +785,7 @@ pub mod compiler;
 /// The `constants` module.
 /// The `constants` module.
 /// The `constants` module.
-pub mod constants;
+pub(crate) mod constants;
 /// The `lisp` module.
 /// The `lisp` module.
 /// The `lisp` module.
@@ -1017,7 +1017,7 @@ pub mod lisp;
 /// The `matrix_rain` module.
 /// The `matrix_rain` module.
 /// The `matrix_rain` module.
-pub mod matrix_rain;
+pub(crate) mod matrix_rain;
 /// The `opcode` module.
 /// The `opcode` module.
 /// The `opcode` module.
@@ -2086,3 +2086,18 @@ mod warden_planes_dos_test;
 #[cfg(test)]
 mod critter_build_test;
 mod warden_resources_test;
+
+// Facade pattern
+pub use ast::*;
+pub use constants::*;
+pub use matrix_rain::*;
+pub use opcode::*;
+pub use tui::*;
+pub use value::*;
+pub use vm::*;
+#[cfg(feature = "resonance")]
+pub use acoustic_compiler::*;
+#[cfg(feature = "resonance")]
+pub use audio_source::*;
+pub use prologue_compiler::{PrologueProgram};
+pub use prologue_esolang_compiler::*;

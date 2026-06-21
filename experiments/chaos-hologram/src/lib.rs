@@ -1,2 +1,5 @@
-pub mod chaos;
-pub mod hologram;
+pub(crate) mod chaos;
+pub(crate) mod hologram;
+
+pub use chaos::*;
+pub use hologram::*;
