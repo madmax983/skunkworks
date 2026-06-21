@@ -377,7 +377,8 @@ impl Value {
         match (self, other) {
             (Value::Int(ia), Value::Int(ib)) => Some(Value::Int(op(ia, ib))),
             (Value::Junction(t, vals), scalar @ Value::Int(_)) => {
-                let mut res = Vec::new();
+                // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
+                let mut res = Vec::with_capacity(vals.len().min(max_size));
                 for v in vals {
                     if res.len() >= max_size {
                         return None;
@@ -397,7 +398,8 @@ impl Value {
                 Some(Value::Junction(t, res))
             }
             (scalar @ Value::Int(_), Value::Junction(t, vals)) => {
-                let mut res = Vec::new();
+                // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
+                let mut res = Vec::with_capacity(vals.len().min(max_size));
                 for v in vals {
                     if res.len() >= max_size {
                         return None;
@@ -418,7 +420,8 @@ impl Value {
             }
             (Value::Junction(ta, va), Value::Junction(_tb, vb)) => {
                 // Cross product, defaulting to type of A
-                let mut res = Vec::new();
+                // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
+                let mut res = Vec::with_capacity((va.len() * vb.len()).min(max_size));
                 for xa in va {
                     for xb in &vb {
                         if res.len() >= max_size {
@@ -438,7 +441,8 @@ impl Value {
                 Some(Value::Junction(ta, res))
             }
             (Value::Superposition(states), scalar @ Value::Int(_)) => {
-                let mut res = Vec::new();
+                // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
+                let mut res = Vec::with_capacity(states.len().min(max_size));
                 for (v, p) in states {
                     if let Some(r) = v.apply_binary_op_recursive(
                         scalar.clone(),
@@ -455,7 +459,8 @@ impl Value {
                 Some(Value::Superposition(res))
             }
             (scalar @ Value::Int(_), Value::Superposition(states)) => {
-                let mut res = Vec::new();
+                // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
+                let mut res = Vec::with_capacity(states.len().min(max_size));
                 for (v, p) in states {
                     if let Some(r) = scalar.clone().apply_binary_op_recursive(
                         v,
@@ -472,7 +477,8 @@ impl Value {
                 Some(Value::Superposition(res))
             }
             (Value::Superposition(states_a), Value::Superposition(states_b)) => {
-                let mut res = Vec::new();
+                // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
+                let mut res = Vec::with_capacity((states_a.len() * states_b.len()).min(max_size));
                 for (va, pa) in states_a {
                     for (vb, pb) in &states_b {
                         if res.len() >= max_size {
