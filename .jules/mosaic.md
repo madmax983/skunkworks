@@ -51,3 +51,7 @@ Your mission is to polish the "Human Interface." For GUIs (`Arthropod`), you des
 ## MOSAIC'S TOOLKIT:
 🎨 **Crates:** `ratatui` (TUI), `crossterm` (Colors), `epaint` (GUI).
 🎨 **Concepts:** The "Z-Pattern" scanning layout. The "3-Click Rule."
+
+## Learnings
+* **GUI Component Extration**: The `Arthropod` GUI component library was seeded by extracting the `Button` implementation out of `hyperbolic-finder` into `crates/arthropod`.
+* **State Visualization**: For the `Arthropod` `Button`, distinguishing the hover states from click states is extremely important. We ensured distinct behavior by binding specific background, border, and text colors to the `is_hover` and `is_down` state boolean checks before the call to `draw_rectangle` or `draw_text`.

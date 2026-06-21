@@ -1,9 +1,8 @@
 [package]
-name = "tidal-tactics"
+name = "arthropod"
 version = "0.1.0"
 edition = "2021"
+description = "A shared macroquad GUI widget library"
 
 [dependencies]
 macroquad = "0.4"
-rand = "0.8"
-arthropod = { workspace = true }

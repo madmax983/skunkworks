@@ -367,6 +367,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 
 [[package]]
+name = "arthropod"
+version = "0.1.0"
+dependencies = [
+ "macroquad",
+]
+
+[[package]]
 name = "as-raw-xcb-connection"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5710,6 +5717,7 @@ name = "hyperbolic-finder"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "arthropod",
  "git2",
  "macroquad",
  "num-complex",
@@ -7696,16 +7704,6 @@ dependencies = [
  "rand 0.8.6",
  "ratatui",
  "tui-shared",
-]
-
-[[package]]
-name = "neuro-fold"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "neuro-sim",
- "physics-pbd",
- "rand 0.8.6",
 ]
 
 [[package]]
@@ -10958,6 +10956,7 @@ dependencies = [
 name = "tidal-tactics"
 version = "0.1.0"
 dependencies = [
+ "arthropod",
  "macroquad",
  "rand 0.8.6",
 ]

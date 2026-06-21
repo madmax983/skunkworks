@@ -44,7 +44,21 @@ impl Button {
             self.normal_color
         };
 
-        let border_color = if is_hover { WHITE } else { self.border_color };
+        let border_color = if is_down {
+            YELLOW
+        } else if is_hover {
+            WHITE
+        } else {
+            self.border_color
+        };
+
+        let text_color = if is_down {
+            YELLOW
+        } else if is_hover {
+            WHITE
+        } else {
+            self.text_color
+        };
 
         // Background
         draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, bg_color);
@@ -66,7 +80,7 @@ impl Button {
         let text_x = self.rect.x + (self.rect.w - text_dims.width) / 2.0;
         let text_y = self.rect.y + (self.rect.h + text_dims.height) / 2.0;
 
-        draw_text(&self.text, text_x, text_y, font_size, self.text_color);
+        draw_text(&self.text, text_x, text_y, font_size, text_color);
 
         is_clicked
     }
