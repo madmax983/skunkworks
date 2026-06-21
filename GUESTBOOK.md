@@ -1556,3 +1556,4 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 ### [EVAPORATING] - Location: graveyard/neuro-tank
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Biomass returned to the void. (Terminal Compilation Failure).
+⚰️ *The Reaper leaves a death pheromone for glossolalia.*
