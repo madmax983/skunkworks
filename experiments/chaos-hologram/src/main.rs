@@ -181,14 +181,14 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
     // Spectrum View (Left)
     let mag_data = app.hologram.get_magnitude();
-    let width = app.hologram.width as f64;
-    let height = app.hologram.height as f64;
+    let width = app.hologram.width() as f64;
+    let height = app.hologram.height() as f64;
 
     let mut spectrum_points = vec![];
     for (i, &val) in mag_data.iter().enumerate() {
         if val > 1.0 {
-            let x = (i % app.hologram.width) as f64;
-            let y = (i / app.hologram.width) as f64;
+            let x = (i % app.hologram.width()) as f64;
+            let y = (i / app.hologram.width()) as f64;
 
             // Map FFT indices to viewable coords (centered)
             let shifted_x = if x < width / 2.0 {
@@ -258,8 +258,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
     for (i, &val) in app.reconstruction_data.iter().enumerate() {
         if val > threshold {
-            let x = (i % app.hologram.width) as f64;
-            let y = (i / app.hologram.width) as f64;
+            let x = (i % app.hologram.width()) as f64;
+            let y = (i / app.hologram.width()) as f64;
             recon_points.push((x, y));
         }
     }

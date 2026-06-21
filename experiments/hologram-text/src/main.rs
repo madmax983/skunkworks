@@ -154,8 +154,8 @@ impl App {
                     .title(" Hologram (Frequency Domain) "),
             )
             .marker(ratatui::symbols::Marker::Braille)
-            .x_bounds([0.0, self.hologram.width as f64])
-            .y_bounds([0.0, self.hologram.height as f64])
+            .x_bounds([0.0, self.hologram.width() as f64])
+            .y_bounds([0.0, self.hologram.height() as f64])
             .paint(|ctx| {
                 // Determine threshold based on max
                 let threshold = max_mag * 0.5; // Only show peaks
@@ -164,12 +164,12 @@ impl App {
                 let mut points = Vec::new();
                 for (i, &val) in hologram_mag.iter().enumerate() {
                     if val > threshold {
-                        let x = (i % self.hologram.width) as f64;
-                        let y = (i / self.hologram.width) as f64;
+                        let x = (i % self.hologram.width()) as f64;
+                        let y = (i / self.hologram.width()) as f64;
                         // Flip Y because Canvas coordinates are bottom-up usually?
                         // Or just draw as is. text/hologram logic is top-down usually.
                         // Let's flip Y to match screen coords.
-                        let y_flipped = self.hologram.height as f64 - y;
+                        let y_flipped = self.hologram.height() as f64 - y;
                         points.push((x, y_flipped));
                     }
                 }
@@ -193,16 +193,16 @@ impl App {
                     .title(" Reconstruction (Spatial Domain) "),
             )
             .marker(ratatui::symbols::Marker::Braille)
-            .x_bounds([0.0, self.hologram.width as f64])
-            .y_bounds([0.0, self.hologram.height as f64])
+            .x_bounds([0.0, self.hologram.width() as f64])
+            .y_bounds([0.0, self.hologram.height() as f64])
             .paint(|ctx| {
                 let threshold = max_recon * 0.2; // Lower threshold for text
                 let mut points = Vec::new();
                 for (i, &val) in recon_mag.iter().enumerate() {
                     if val > threshold {
-                        let x = (i % self.hologram.width) as f64;
-                        let y = (i / self.hologram.width) as f64;
-                        let y_flipped = self.hologram.height as f64 - y;
+                        let x = (i % self.hologram.width()) as f64;
+                        let y = (i / self.hologram.width()) as f64;
+                        let y_flipped = self.hologram.height() as f64 - y;
                         points.push((x, y_flipped));
                     }
                 }

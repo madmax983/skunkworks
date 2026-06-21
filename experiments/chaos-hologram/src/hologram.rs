@@ -4,12 +4,25 @@ use rustfft::FftPlanner;
 use std::f64::consts::PI;
 
 pub struct Hologram {
-    pub width: usize,
-    pub height: usize,
-    pub data: Vec<Complex<f64>>,
+    width: usize,
+    height: usize,
+    data: Vec<Complex<f64>>,
 }
 
 impl Hologram {
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    pub fn height(&self) -> usize {
+        self.height
+    }
+
+    #[allow(dead_code)]
+    pub fn data(&self) -> &[Complex<f64>] {
+        &self.data
+    }
+
     #[allow(dead_code)]
     pub fn new(width: usize, height: usize) -> Self {
         Self {
@@ -101,6 +114,12 @@ impl Hologram {
     }
 
     pub fn reconstruct(&self, shift_x_bins: isize, shift_y_bins: isize) -> Vec<f64> {
+        assert_eq!(
+            self.width * self.height,
+            self.data.len(),
+            "Hologram dimensions do not match data length"
+        );
+
         let width = self.width;
         let height = self.height;
 
@@ -152,6 +171,7 @@ impl Hologram {
         // Log-scale magnitude for better visualization of spectrum
         self.data.iter().map(|c| (c.norm() + 1.0).ln()).collect()
     }
+
 }
 
 fn transpose(data: &mut [Complex<f64>], width: usize, height: usize) {
@@ -169,6 +189,7 @@ fn transpose(data: &mut [Complex<f64>], width: usize, height: usize) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use proptest::prelude::*;
 
     #[test]
     fn test_hologram_roundtrip() {
@@ -181,5 +202,23 @@ mod tests {
         // Check if we have peaks
         let max_val = recon.iter().cloned().fold(0.0_f64, f64::max);
         assert!(max_val > 0.1, "Max value too low: {}", max_val);
+    }
+
+    proptest! {
+        #[test]
+        #[should_panic(expected = "Hologram dimensions do not match data length")]
+        fn test_havoc_hologram_reconstruct_oob(w in 1000usize..2000usize) {
+            let mut h = Hologram::from_text("AB");
+            h.width = w;
+            let _recon = h.reconstruct(-20, -10);
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "Hologram dimensions do not match data length")]
+    fn test_havoc_hologram_reconstruct_zero() {
+        let mut h = Hologram::from_text("AB");
+        h.width = 10000;
+        let _recon = h.reconstruct(-20, -10);
     }
 }
