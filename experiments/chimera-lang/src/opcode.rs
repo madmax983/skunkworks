@@ -2759,6 +2759,8 @@ pub enum OpCode {
     Runes,
     /// Triggers the Verge Computer logic
     Verge,
+    /// Triggers the Cymatic Ocean logic
+    CymaticOcean,
 }
 
 impl fmt::Display for OpCode {
