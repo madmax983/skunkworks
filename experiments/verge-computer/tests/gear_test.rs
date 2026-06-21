@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use verge_computer::{mechanism, EscapeWheel, VergeComputerPlugin};
+use verge_computer::{spawn_gear, EscapeWheel, VergeComputerPlugin};
 
 #[test]
 fn test_gear_rotation() {
@@ -36,7 +36,7 @@ fn test_gear_rotation() {
 }
 
 fn setup_test_scene(mut commands: Commands) {
-    let wheel = mechanism::spawn_gear(&mut commands, Vec2::ZERO, 12, 3.0, 1.0);
+    let wheel = spawn_gear(&mut commands, Vec2::ZERO, 12, 3.0, 1.0);
     commands
         .entity(wheel)
         .insert(ExternalForce {

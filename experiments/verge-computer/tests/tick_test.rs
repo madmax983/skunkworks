@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use verge_computer::{
-    cpu,
-    cpu::{Instruction, Program, TickEvent},
-    mechanism, EscapeWheel, VergeComputerPlugin,
+use verge_computer::{CpuState, spawn_gear, spawn_anchor,
+
+    Instruction, Program, TickEvent,
+     EscapeWheel, VergeComputerPlugin,
 };
 
 #[test]
@@ -37,7 +37,7 @@ fn test_tick_mechanism_and_cpu() {
     assert!(final_ticks > 0, "Mechanism failed to tick!");
 
     // Check CPU State
-    let mut cpu_query = app.world_mut().query::<&cpu::CpuState>();
+    let mut cpu_query = app.world_mut().query::<&CpuState>();
     let cpu_state = cpu_query.single(app.world());
 
     println!("CPU Registers: {:?}", cpu_state.registers);
@@ -76,7 +76,7 @@ fn setup_test_scene(mut commands: Commands) {
     let wheel_pos = Vec2::new(0.0, 0.0);
     let teeth = 12;
     let radius = 3.0;
-    let wheel = mechanism::spawn_gear(&mut commands, wheel_pos, teeth, radius, 0.5);
+    let wheel = spawn_gear(&mut commands, wheel_pos, teeth, radius, 0.5);
 
     commands
         .entity(wheel)
@@ -96,7 +96,7 @@ fn setup_test_scene(mut commands: Commands) {
 
     // 2. Anchor
     let anchor_pos = Vec2::new(0.0, 5.0);
-    let anchor = mechanism::spawn_anchor(&mut commands, anchor_pos);
+    let anchor = spawn_anchor(&mut commands, anchor_pos);
 
     commands.entity(anchor).insert(ImpulseJoint::new(
         ground,
@@ -106,7 +106,7 @@ fn setup_test_scene(mut commands: Commands) {
     ));
 
     // CPU State
-    commands.spawn(cpu::CpuState::default());
+    commands.spawn(CpuState::default());
 
     // Program (Fibonacci)
     // 0: LOAD R0, 0

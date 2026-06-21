@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
-pub mod cpu;
+pub(crate) mod cpu;
 pub use cpu::*;
-pub mod mechanism;
+pub(crate) mod mechanism;
 pub use mechanism::*;
-pub mod view;
+pub(crate) mod view;
 pub use view::*;
 
 pub struct VergeComputerPlugin;
