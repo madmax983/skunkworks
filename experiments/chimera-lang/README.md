@@ -11,6 +11,7 @@ Chimera is a bio-inspired, stack-based esoteric programming language. It simulat
 *   **[src/lib.rs](src/lib.rs)**: The architectural overview of the Rust codebase (The "Book of Chimera").
 
 ## 🚀 Quick Start
+> **🚨 REQUIRES FEATURE NOVA 🚨**
 
 Run the Story Demo to see the engine in action. This demo initializes a VM, compiles a sample ChimeraScript, and runs a TUI (Text User Interface) simulation where you can observe the organism's lifecycle.
 

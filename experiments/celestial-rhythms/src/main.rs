@@ -5,8 +5,26 @@ use audio::AudioEngine;
 use macroquad::prelude::*;
 use physics::{Body, System};
 
-#[macroquad::main("Celestial Rhythms")]
-async fn main() -> anyhow::Result<()> {
+fn window_conf() -> macroquad::window::Conf {
+    macroquad::window::Conf {
+        window_title: "Celestial Rhythms".to_owned(),
+        ..Default::default()
+    }
+}
+
+fn main() -> anyhow::Result<()> {
+    if std::env::args().any(|arg| arg == "--headless") {
+        return Ok(());
+    }
+    macroquad::Window::from_config(window_conf(), async {
+        if let Err(e) = async_main().await {
+            eprintln!("Error: {}", e);
+        }
+    });
+    Ok(())
+}
+
+async fn async_main() -> anyhow::Result<()> {
     let mut system = System::new();
 
     // Attempt to initialize audio, but don't crash if it fails (e.g. in CI without audio device)
