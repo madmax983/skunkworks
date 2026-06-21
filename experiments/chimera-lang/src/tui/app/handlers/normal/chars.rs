@@ -170,30 +170,30 @@ fn handle_char_k_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<b
 
 fn handle_char_a(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    {
-        if let ViewMode::Evolution = app_state.view_mode {
+    match app_state.view_mode {
+        ViewMode::Evolution => {
             app_state.evolution_state.auto_run = !app_state.evolution_state.auto_run;
-        } else if let ViewMode::Alchemy = app_state.view_mode {
-            match app_state.alchemy_selection {
-                0 => {
-                    let elements = [
-                        "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy",
-                    ];
-                    if app_state.alchemy_shelf_idx < elements.len() {
-                        vm.crucible.add(crate::vm::Value::Str(
-                            elements[app_state.alchemy_shelf_idx].to_string(),
-                        ));
-                    }
-                }
-                1 => {
-                    if app_state.alchemy_strand_idx < vm.dna.helix.strands.len() {
-                        vm.crucible
-                            .add(crate::vm::Value::Int(app_state.alchemy_strand_idx as i64));
-                    }
-                }
-                _ => {}
-            }
         }
+        ViewMode::Alchemy => match app_state.alchemy_selection {
+            0 => {
+                let elements = [
+                    "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy",
+                ];
+                if app_state.alchemy_shelf_idx < elements.len() {
+                    vm.crucible.add(crate::vm::Value::Str(
+                        elements[app_state.alchemy_shelf_idx].to_string(),
+                    ));
+                }
+            }
+            1 => {
+                if app_state.alchemy_strand_idx < vm.dna.helix.strands.len() {
+                    vm.crucible
+                        .add(crate::vm::Value::Int(app_state.alchemy_strand_idx as i64));
+                }
+            }
+            _ => {}
+        },
+        _ => {}
     }
     #[cfg(not(feature = "nova"))]
     {
@@ -508,26 +508,28 @@ fn handle_char_brackets_numbers(
 }
 
 fn handle_char_s_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    if let ViewMode::Arena = app_state.view_mode {
-        if let Some(arena) = &mut vm.arena {
-            // Add random gladiators if empty
-            if arena.combatants.is_empty() {
-                // Use some existing strands or random
-                let mut rng = rand::thread_rng();
-                use rand::Rng;
-                if !vm.dna.helix.strands.is_empty() {
-                    let s1 =
-                        vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
-                    let s2 =
-                        vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
-                    arena.add_gladiator(s1, rng.gen());
-                    arena.add_gladiator(s2, rng.gen());
-                }
-            }
-            arena.start();
-            app_state.status_msg = "Arena Started!".to_string();
+    let ViewMode::Arena = app_state.view_mode else {
+        return Ok(false);
+    };
+
+    let Some(arena) = &mut vm.arena else {
+        return Ok(false);
+    };
+
+    // Add random gladiators if empty
+    if arena.combatants.is_empty() {
+        // Use some existing strands or random
+        let mut rng = rand::thread_rng();
+        use rand::Rng;
+        if !vm.dna.helix.strands.is_empty() {
+            let s1 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
+            let s2 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
+            arena.add_gladiator(s1, rng.gen());
+            arena.add_gladiator(s2, rng.gen());
         }
     }
+    arena.start();
+    app_state.status_msg = "Arena Started!".to_string();
     Ok(false)
 }
 
@@ -570,57 +572,66 @@ fn handle_char_m_upper(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<
 
 #[cfg(feature = "nova")]
 fn handle_char_r_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    if let ViewMode::Kaleidoscope = app_state.view_mode {
-        vm.piet_state = None;
-        app_state.status_msg = "Piet State Reset".to_string();
-    } else if let ViewMode::Arena = app_state.view_mode {
-        if let Some(arena) = &mut vm.arena {
-            arena.reset();
-            app_state.status_msg = "Arena Reset".to_string();
+    match app_state.view_mode {
+        ViewMode::Kaleidoscope => {
+            vm.piet_state = None;
+            app_state.status_msg = "Piet State Reset".to_string();
         }
-    } else if let ViewMode::Babel = app_state.view_mode {
-        // Seed
-        app_state.babel_ast = Some(crate::vm::Value::Junction(
-            crate::ast::JunctionType::Any,
-            vec![
-                crate::vm::Value::Str("Seq".to_string()),
-                crate::vm::Value::Junction(
-                    crate::ast::JunctionType::Any,
-                    vec![
-                        crate::vm::Value::Str("Match".to_string()),
-                        crate::vm::Value::Str("Hello".to_string()),
-                    ],
-                ),
-                crate::vm::Value::Junction(
-                    crate::ast::JunctionType::Any,
-                    vec![
-                        crate::vm::Value::Str("Match".to_string()),
-                        crate::vm::Value::Str("World".to_string()),
-                    ],
-                ),
-            ],
-        ));
-        app_state.status_msg = "Grammar Reset".to_string();
+        ViewMode::Arena => {
+            if let Some(arena) = &mut vm.arena {
+                arena.reset();
+                app_state.status_msg = "Arena Reset".to_string();
+            }
+        }
+        ViewMode::Babel => {
+            // Seed
+            app_state.babel_ast = Some(crate::vm::Value::Junction(
+                crate::ast::JunctionType::Any,
+                vec![
+                    crate::vm::Value::Str("Seq".to_string()),
+                    crate::vm::Value::Junction(
+                        crate::ast::JunctionType::Any,
+                        vec![
+                            crate::vm::Value::Str("Match".to_string()),
+                            crate::vm::Value::Str("Hello".to_string()),
+                        ],
+                    ),
+                    crate::vm::Value::Junction(
+                        crate::ast::JunctionType::Any,
+                        vec![
+                            crate::vm::Value::Str("Match".to_string()),
+                            crate::vm::Value::Str("World".to_string()),
+                        ],
+                    ),
+                ],
+            ));
+            app_state.status_msg = "Grammar Reset".to_string();
+        }
+        _ => {}
     }
     Ok(false)
 }
 
 fn handle_char_s(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    if let ViewMode::Ecology = app_state.view_mode {
-        crate::vm::nova_ecology::spawn_random_ecology(vm, 10);
-        app_state.status_msg = "Spawned 10 organisms.".to_string();
-        return Ok(true);
-    } else if let ViewMode::Kaleidoscope = app_state.view_mode {
-        // Step Piet
-        if vm.piet_state.is_none() {
-            vm.piet_state = Some(crate::vm::piet::init_piet(vm));
+    match app_state.view_mode {
+        ViewMode::Ecology => {
+            crate::vm::nova_ecology::spawn_random_ecology(vm, 10);
+            app_state.status_msg = "Spawned 10 organisms.".to_string();
+            return Ok(true);
         }
-        if let Some(mut state) = vm.piet_state.take() {
-            crate::vm::piet::step_piet_once(vm, &mut state);
-            vm.piet_state = Some(state);
+        ViewMode::Kaleidoscope => {
+            // Step Piet
+            if vm.piet_state.is_none() {
+                vm.piet_state = Some(crate::vm::piet::init_piet(vm));
+            }
+            if let Some(mut state) = vm.piet_state.take() {
+                crate::vm::piet::step_piet_once(vm, &mut state);
+                vm.piet_state = Some(state);
+            }
+            return Ok(true);
         }
-        return Ok(true);
+        _ => {}
     }
 
     #[cfg(feature = "silicon")]
