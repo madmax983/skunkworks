@@ -7147,6 +7147,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "miller-origami"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "macroquad",
+ "miller-lattice",
+ "origami",
+ "rand 0.8.6",
+ "rustc-hash 2.1.2",
+]
+
+[[package]]
 name = "miller-physics"
 version = "0.1.0"
 dependencies = [

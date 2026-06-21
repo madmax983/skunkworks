@@ -1,0 +1,12 @@
+[package]
+name = "miller-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
+origami = { path = "../../crates/origami" }
+macroquad = "0.4"
+rand = { workspace = true }
+anyhow = { workspace = true }
+rustc-hash = "2.1.2"
