@@ -45,7 +45,10 @@ async fn main() -> anyhow::Result<()> {
     // Add particles for each vertex
     for vertex in &base_mesh.vertices {
         let mass = 1.0;
-        let id = pbd.add_particle(::physics_pbd::glam::Vec3::new(vertex.pos.x, vertex.pos.y, vertex.pos.z), mass);
+        let id = pbd.add_particle(
+            ::physics_pbd::glam::Vec3::new(vertex.pos.x, vertex.pos.y, vertex.pos.z),
+            mass,
+        );
         particle_ids.push(id);
     }
 
@@ -54,8 +57,16 @@ async fn main() -> anyhow::Result<()> {
         for i in 0..3 {
             let p1 = particle_ids[chunk[i] as usize];
             let p2 = particle_ids[chunk[(i + 1) % 3] as usize];
-            let v1 = vec3(pbd.particles[p1].pos.x, pbd.particles[p1].pos.y, pbd.particles[p1].pos.z);
-            let v2 = vec3(pbd.particles[p2].pos.x, pbd.particles[p2].pos.y, pbd.particles[p2].pos.z);
+            let v1 = vec3(
+                pbd.particles[p1].pos.x,
+                pbd.particles[p1].pos.y,
+                pbd.particles[p1].pos.z,
+            );
+            let v2 = vec3(
+                pbd.particles[p2].pos.x,
+                pbd.particles[p2].pos.y,
+                pbd.particles[p2].pos.z,
+            );
             let dist = v1.distance(v2);
             pbd.add_distance_constraint(p1, p2, dist);
         }
@@ -99,9 +110,21 @@ async fn main() -> anyhow::Result<()> {
             let p2 = particle_ids[chunk[1] as usize];
             let p3 = particle_ids[chunk[2] as usize];
 
-            let v1 = vec3(pbd.particles[p1].pos.x, pbd.particles[p1].pos.y, pbd.particles[p1].pos.z);
-            let v2 = vec3(pbd.particles[p2].pos.x, pbd.particles[p2].pos.y, pbd.particles[p2].pos.z);
-            let v3 = vec3(pbd.particles[p3].pos.x, pbd.particles[p3].pos.y, pbd.particles[p3].pos.z);
+            let v1 = vec3(
+                pbd.particles[p1].pos.x,
+                pbd.particles[p1].pos.y,
+                pbd.particles[p1].pos.z,
+            );
+            let v2 = vec3(
+                pbd.particles[p2].pos.x,
+                pbd.particles[p2].pos.y,
+                pbd.particles[p2].pos.z,
+            );
+            let v3 = vec3(
+                pbd.particles[p3].pos.x,
+                pbd.particles[p3].pos.y,
+                pbd.particles[p3].pos.z,
+            );
 
             // Draw lines for the mesh
             draw_line_3d(v1, v2, GREEN);
@@ -147,7 +170,10 @@ async fn main() -> anyhow::Result<()> {
                         let force_mag = (total_changes as f32).sqrt().clamp(0.5, 10.0);
 
                         let mut current_pos = pbd.particles[p_id].pos;
-                        current_pos += ::physics_pbd::glam::Vec3::new(force_dir.x, force_dir.y, force_dir.z) * force_mag * 0.1;
+                        current_pos +=
+                            ::physics_pbd::glam::Vec3::new(force_dir.x, force_dir.y, force_dir.z)
+                                * force_mag
+                                * 0.1;
                         pbd.particles[p_id].pos = current_pos;
                     }
                 }
