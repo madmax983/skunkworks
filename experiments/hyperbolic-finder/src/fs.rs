@@ -160,23 +160,21 @@ pub fn scan_dir<P: AsRef<Path>>(
         // Read directory entries
         match fs::read_dir(path) {
             Ok(entries) => {
-                for entry in entries {
-                    if let Ok(entry) = entry {
-                        let child_path = entry.path();
-                        // Ignore hidden files
-                        if child_path
-                            .file_name()
-                            .and_then(|s| s.to_str())
-                            .map(|s| s.starts_with('.'))
-                            .unwrap_or(false)
-                        {
-                            continue;
-                        }
+                for entry in entries.flatten() {
+                    let child_path = entry.path();
+                    // Ignore hidden files
+                    if child_path
+                        .file_name()
+                        .and_then(|s| s.to_str())
+                        .map(|s| s.starts_with('.'))
+                        .unwrap_or(false)
+                    {
+                        continue;
+                    }
 
-                        // Recursively scan children
-                        if let Ok(child) = scan_dir(&child_path, max_depth - 1, git_map) {
-                            node.children.push(child);
-                        }
+                    // Recursively scan children
+                    if let Ok(child) = scan_dir(&child_path, max_depth - 1, git_map) {
+                        node.children.push(child);
                     }
                 }
             }

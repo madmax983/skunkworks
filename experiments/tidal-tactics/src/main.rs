@@ -65,11 +65,7 @@ async fn main() {
                         }
                     } else {
                         // Clicked on UI?
-                        // End Turn button? (Rect is at 80, 30 height)
-                        if mx > map_w + 10.0 && mx < map_w + 110.0 && my > 80.0 && my < 110.0 {
-                            game.end_turn();
-                            flow_timer = 5.0; // 5 seconds of flow
-                        }
+                        // Handled by Button below
                     }
                 }
 
@@ -214,7 +210,7 @@ async fn main() {
         };
         draw_text(phase_text, map_w + 10.0, 60.0, 20.0, WHITE);
         draw_text(
-            &format!("Turn: {}", game.turn),
+            format!("Turn: {}", game.turn),
             map_w + 10.0,
             45.0,
             20.0,
@@ -222,22 +218,24 @@ async fn main() {
         );
 
         if game.phase == TurnPhase::PlayerInput {
-            draw_rectangle(map_w + 10.0, 80.0, 100.0, 30.0, DARKGRAY);
-            draw_text("End Turn", map_w + 20.0, 100.0, 20.0, WHITE);
+            if arthropod::Button::new("End Turn", map_w + 10.0, 80.0, 100.0, 30.0).draw() {
+                game.end_turn();
+                flow_timer = 5.0;
+            }
             draw_text("(Space)", map_w + 20.0, 125.0, 15.0, GRAY);
         }
 
         if let Some(idx) = game.selected_unit {
             let u = &game.units[idx];
             draw_text(
-                &format!("Unit: {:?}", u.unit_type),
+                format!("Unit: {:?}", u.unit_type),
                 map_w + 10.0,
                 150.0,
                 20.0,
                 WHITE,
             );
             draw_text(
-                &format!("Moves: {}", u.moves_left),
+                format!("Moves: {}", u.moves_left),
                 map_w + 10.0,
                 170.0,
                 20.0,
@@ -248,7 +246,7 @@ async fn main() {
             let idx = u.y * WIDTH + u.x;
             let depth = game.map.water[idx];
             draw_text(
-                &format!("Depth: {:.1}", depth),
+                format!("Depth: {:.1}", depth),
                 map_w + 10.0,
                 190.0,
                 20.0,

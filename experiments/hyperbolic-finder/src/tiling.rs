@@ -76,7 +76,7 @@ pub fn draw_tiling(view_center: Point, screen_center: Vec2, disk_radius: f32) {
         draw_tile_edges(&m, &consts, view_center, screen_center, disk_radius);
 
         // Expand to neighbors
-        for (_i, gen) in generators.iter().enumerate() {
+        for gen in generators.iter() {
             // New transform: M_next = M * Gen
             let m_next = m.then(gen);
             let center_next = m_next.apply(Point::new(0.0, 0.0));
@@ -114,7 +114,7 @@ fn draw_tile_edges(
     // Distance = consts.vertex_offset
 
     let mut local_vertices = [Point::default(); 4];
-    for i in 0..4 {
+    for (i, _) in local_vertices.clone().iter().enumerate() {
         let angle = (i as f64 * 2.0 * PI / 4.0) + (PI / 4.0);
         use num_complex::Complex;
         local_vertices[i] = Complex::from_polar(consts.vertex_offset, angle);
@@ -123,7 +123,7 @@ fn draw_tile_edges(
     // Transform vertices to World Space, then to Screen Space
     let world_vertices: Vec<Point> = local_vertices.iter().map(|&p| m.apply(p)).collect();
 
-    for i in 0..4 {
+    for (i, _) in local_vertices.clone().iter().enumerate() {
         let p1 = world_vertices[i];
         let p2 = world_vertices[(i + 1) % 4];
 

@@ -1,15 +1,12 @@
 mod fs;
 mod layout;
 mod tiling;
-mod ui;
 
 use fs::{get_repo_statuses, get_view_root, FileType, GitStatus};
 use layout::{layout_tree, LayoutNode};
 use macroquad::prelude::*;
 use poincare_disk::{mobius_add, mobius_sub, Point};
-use std::io::Read;
 use std::path::PathBuf;
-use ui::Button;
 
 const DISK_SCALE: f32 = 0.45;
 
@@ -188,7 +185,7 @@ async fn main() -> anyhow::Result<()> {
         // UI Overlay
         draw_text("Hyperbolic Finder", 20.0, 30.0, 30.0, WHITE);
         draw_text(
-            &format!("Path: {}", current_path.display()),
+            format!("Path: {}", current_path.display()),
             20.0,
             60.0,
             20.0,
@@ -223,11 +220,11 @@ async fn main() -> anyhow::Result<()> {
         let btn_h = 30.0;
         let btn_y = h - 50.0;
 
-        if Button::new("Reset View", 20.0, btn_y, btn_w, btn_h).draw() {
+        if arthropod::Button::new("Reset View", 20.0, btn_y, btn_w, btn_h).draw() {
             target_center = Point::new(0.0, 0.0);
         }
 
-        if Button::new("Up (..)", 160.0, btn_y, btn_w, btn_h).draw() {
+        if arthropod::Button::new("Up (..)", 160.0, btn_y, btn_w, btn_h).draw() {
             if let Some(parent) = current_path.parent() {
                 let parent_buf = parent.to_path_buf();
                 // Re-scan from parent
@@ -284,12 +281,12 @@ async fn main() -> anyhow::Result<()> {
     }
 }
 
-fn find_closest_node<'a>(
-    node: &'a LayoutNode,
+fn find_closest_node(
+    node: &LayoutNode,
     view_center: Point,
     click_z: Point, // point in transformed space (screen)
     hit_radius: f64,
-) -> Option<(Point, &'a LayoutNode)> {
+) -> Option<(Point, &LayoutNode)> {
     let z_prime = mobius_sub(node.pos, view_center);
     let dist = (z_prime - click_z).norm();
 

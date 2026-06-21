@@ -9,6 +9,7 @@ num-complex = "0.4"
 anyhow = { workspace = true }
 poincare-disk = { workspace = true }
 git2 = { workspace = true }
+arthropod = { workspace = true }
 
 [dev-dependencies]
 tempfile = "3"

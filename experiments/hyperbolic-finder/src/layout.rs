@@ -28,7 +28,7 @@ fn build_layout_node(mut node: DirNode) -> LayoutNode {
 
     let children_layout: Vec<LayoutNode> = children
         .into_iter()
-        .map(|child| build_layout_node(child))
+        .map(build_layout_node)
         .collect();
 
     LayoutNode {
