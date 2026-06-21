@@ -1210,7 +1210,6 @@ fn compile_tui_mod_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
     Ok(genes)
 }
 
-
 fn compile_cymatic_ocean_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let inner = pair.into_inner().next().unwrap();

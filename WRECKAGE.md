@@ -131,3 +131,13 @@ The underlying problem is that `width` and `height` are public `pub` fields, vio
 cargo test -p chaos-hologram --test havoc_proptest
 cargo test -p hologram-text --test havoc_proptest
 ```
+
+### 12. `heap-arena`
+🧨 **The Trigger:** Provided a deeply nested AST (15,000 deep `if true { ... }`) during terrain generation.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_ast_stack_overflow_inner' has overflowed its stack
+fatal runtime error: stack overflow, aborting
+```
+🧪 **Reproduction:** `cargo test -p heap-arena --test havoc`
+😈 **Comment:** "You relied on recursion to parse syntax trees. I handed you an abyss. Your stack shattered."

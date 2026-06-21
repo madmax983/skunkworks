@@ -16,6 +16,7 @@ pub struct Heap {
 }
 
 impl Heap {
+    #[allow(dead_code)]
     pub fn new(total_size: usize) -> Self {
         // Fallback for empty init
         Self {
@@ -70,6 +71,7 @@ impl Heap {
     }
 
     /// "Frees" a block (makes it non-solid/hole)
+    #[allow(dead_code)]
     pub fn free(&mut self, index: usize) {
         if index < self.blocks.len() {
             self.blocks[index].is_solid = false;
@@ -77,6 +79,7 @@ impl Heap {
     }
 
     /// "Allocates" a block (makes it solid)
+    #[allow(dead_code)]
     pub fn allocate_at(&mut self, index: usize) {
         if index < self.blocks.len() {
             self.blocks[index].is_solid = true;
