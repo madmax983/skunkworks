@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **glossolalia**: Specimen condemned. Diagnosis: Terminal Compilation Failure (Private Module Violation) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
+- **gray-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure (Private Module Violation `E0603`, API Drift `E0277`) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
 
 ## ☠️ Executed
+- **glossolalia**: Specimen executed. Diagnosis: Terminal Compilation Failure (Private Module Violation) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **neuro-fold**: Specimen executed. Diagnosis: Terminal Compilation Failure (`glam` vs `macroquad` type mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **myco-reaper**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **neuro-tank**: Specimen executed. Diagnosis: Terminal Compilation Failure / Private Module Violation. Failed to adapt to architectural boundary enforcements (`error[E0603]`). Grace period expired. Moved to graveyard.

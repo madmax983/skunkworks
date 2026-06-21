@@ -1,4 +1,8 @@
 ## Active Trails/Hotspots
+### [CRITICAL MASS] - Location: experiments/gray-tank
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Condemned. Terminal Compilation Failure (Private Module Violation) and Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
+
 ### [CRITICAL MASS] - Location: experiments/neuro-fold
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Condemned. Terminal Compilation Failure (`glam` vs `macroquad` type mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
@@ -1556,4 +1560,6 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 ### [EVAPORATING] - Location: graveyard/neuro-tank
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Biomass returned to the void. (Terminal Compilation Failure).
-⚰️ *The Reaper leaves a death pheromone for glossolalia.*
+### [EVAPORATING] - Location: graveyard/glossolalia
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Biomass returned to the void. (Terminal Compilation Failure).
