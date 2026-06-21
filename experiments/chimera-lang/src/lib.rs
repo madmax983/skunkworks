@@ -2088,16 +2088,16 @@ mod critter_build_test;
 mod warden_resources_test;
 
 // Facade pattern
+#[cfg(feature = "resonance")]
+pub use acoustic_compiler::*;
 pub use ast::*;
+#[cfg(feature = "resonance")]
+pub use audio_source::*;
 pub use constants::*;
 pub use matrix_rain::*;
 pub use opcode::*;
+pub use prologue_compiler::PrologueProgram;
+pub use prologue_esolang_compiler::*;
 pub use tui::*;
 pub use value::*;
 pub use vm::*;
-#[cfg(feature = "resonance")]
-pub use acoustic_compiler::*;
-#[cfg(feature = "resonance")]
-pub use audio_source::*;
-pub use prologue_compiler::{PrologueProgram};
-pub use prologue_esolang_compiler::*;

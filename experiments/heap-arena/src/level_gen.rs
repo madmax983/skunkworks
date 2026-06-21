@@ -14,6 +14,7 @@ pub enum BlockType {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct LevelSegment {
     pub width: usize,
     pub block_type: BlockType,
@@ -21,8 +22,10 @@ pub struct LevelSegment {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct BossStats {
     pub name: String,
+    #[allow(dead_code)]
     pub hp: i32,
     pub max_hp: i32,
     pub attack: i32,
@@ -31,6 +34,7 @@ pub struct BossStats {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct LevelProfile {
     pub segments: Vec<LevelSegment>,
     pub boss: BossStats,
