@@ -171,7 +171,6 @@ impl Hologram {
         // Log-scale magnitude for better visualization of spectrum
         self.data.iter().map(|c| (c.norm() + 1.0).ln()).collect()
     }
-
 }
 
 fn transpose(data: &mut [Complex<f64>], width: usize, height: usize) {
