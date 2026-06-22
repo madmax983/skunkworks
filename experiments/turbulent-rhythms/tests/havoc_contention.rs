@@ -1,5 +1,5 @@
 #[path = "../src/audio.rs"]
-pub mod audio;
+pub(crate) mod audio;
 #[path = "../src/rhythm.rs"]
 mod rhythm;
 

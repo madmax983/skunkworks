@@ -126,7 +126,8 @@ pub fn exec_lens(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```text
 /// // Example usage of exec_optics_op
 /// ```
-pub fn exec_optics_op(
+#[allow(dead_code)]
+pub(crate) fn exec_optics_op(
     vm: &mut ChimeraVM,
     op: OpCode,
     _args: &[Nucleotide],

@@ -304,7 +304,8 @@ pub fn exec_tissue(
 /// ```text
 /// // Example usage of cleanup_tissues
 /// ```
-pub fn cleanup_tissues(vm: &mut ChimeraVM) {
+#[allow(dead_code)]
+pub(crate) fn cleanup_tissues(vm: &mut ChimeraVM) {
     let active_ids: HashSet<u64> = vm.organelles.iter().map(|o| o.id).collect();
     let mut empty_tissues = Vec::new();
 

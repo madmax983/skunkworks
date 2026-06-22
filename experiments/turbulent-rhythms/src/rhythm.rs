@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::audio::AudioEvent;
 use crossbeam::channel::Sender;
 use std::sync::{

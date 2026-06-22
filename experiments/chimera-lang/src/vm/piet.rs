@@ -2505,7 +2505,8 @@ pub fn step_piet_once(vm: &mut ChimeraVM, state: &mut PietState) -> bool {
 /// ```text
 /// // Example usage of exec_piet
 /// ```
-pub fn exec_piet(vm: &mut ChimeraVM, max_steps: i64) {
+#[allow(dead_code)]
+pub(crate) fn exec_piet(vm: &mut ChimeraVM, max_steps: i64) {
     let mut state = init_piet(vm);
     let mut steps = 0;
     while steps < max_steps {
