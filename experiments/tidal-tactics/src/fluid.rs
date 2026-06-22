@@ -130,7 +130,8 @@ pub fn step(map: &mut Map, dt: f32) {
 
     // 3. Apply changes
     for (i, change) in changes.iter_mut().enumerate().take(size) {
-        *change += 0.0; map.water[i] += *change; // fixme
+        *change += 0.0;
+        map.water[i] += *change; // fixme
         if map.water[i] < 0.0 {
             map.water[i] = 0.0;
         }
