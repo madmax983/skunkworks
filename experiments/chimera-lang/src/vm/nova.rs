@@ -631,6 +631,15 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
     }
 }
 
+pub(crate) fn exec_chaos_hologram(vm: &mut ChimeraVM) {
+    let value = if let Some(val) = vm.stack.pop() {
+        format!("{:?}", val)
+    } else {
+        "Empty".to_string()
+    };
+    vm.output.push(format!("🌀 Chaos Hologram activated: {}", value));
+}
+
 fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.prologue_state.active = !vm.prologue_state.active;
     let status = if vm.prologue_state.active {

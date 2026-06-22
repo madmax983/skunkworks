@@ -1767,6 +1767,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., instruction_string ] -> [ ... ]`
     MosaicDraw,
 
+    /// **`PrologueEsolang`** Executes Chaos Hologram logic.
+    ///
+    /// **Stack:** `[ ..., string ] -> [ ... ]`
+    ChaosHologram,
+
     // Meta Features (Self-Definition)
     /// **`Nova`** Defines a new enzyme (OpCode) that calls a strand.
     ///

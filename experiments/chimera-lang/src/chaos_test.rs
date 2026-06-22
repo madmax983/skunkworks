@@ -15,6 +15,34 @@ mod tests {
     }
 
     #[test]
+    fn test_chaos_hologram() {
+        use crate::prologue_esolang_compiler::compile;
+        let source = r#"
+            chaos_hologram {
+                "Test"
+                run
+            }
+        "#;
+        let program = compile(source).unwrap();
+        let mut vm = ChimeraVM::new(program);
+
+        // Execute block genes
+        vm.step(); // Main thread
+        vm.step(); // Main thread
+        vm.step(); // Main thread
+        vm.step(); // Main thread
+        vm.step(); // Main thread
+
+        let output_contains = vm.output.iter().any(|out| out.contains("Chaos Hologram activated: Str(\"Test\")"));
+        if !output_contains {
+            println!("VM Output: {:?}", vm.output);
+            println!("VM Stack: {:?}", vm.stack);
+            println!("VM genes: {:?}", vm.dna.helix.strands[0].genes);
+        }
+        assert!(output_contains);
+    }
+
+    #[test]
     fn test_scramble() {
         // [ push(1) push(2) push(3) push(4) push(5) scramble() ]
         let mut genes = Vec::new();
