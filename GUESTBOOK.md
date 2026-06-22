@@ -1,8 +1,12 @@
-### [CRITICAL MASS] - Location: experiments/chimera-automaton
+### [DEATH PHEROMONE] - Location: graveyard/chimera-automaton
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve headless bypass during grace period. Biomass returned to the void.
+
+## Active Trails/Hotspots
+### [DEATH PHEROMONE] - Location: experiments/chaotic-conservatory
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Condemned. Terminal Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
 
-## Active Trails/Hotspots
 ### [EVAPORATING] - Location: graveyard/gray-tank ☠️
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Executed. Terminal Compilation Failure (Private Module Violation) and Ecosystem Maladaptation (macroquad without headless bypass). Moved to graveyard.

@@ -2556,16 +2556,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chimera-automaton"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "macroquad",
- "nalgebra",
- "rapier2d 0.21.0",
-]
-
-[[package]]
 name = "chimera-chaos"
 version = "0.1.0"
 dependencies = [
@@ -5228,19 +5218,6 @@ dependencies = [
  "gray-scott",
  "macroquad",
  "rand 0.8.6",
-]
-
-[[package]]
-name = "gray-tank"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "cpal",
- "crossbeam-channel",
- "gray-scott",
- "macroquad",
- "rayon",
- "resonance-audio",
 ]
 
 [[package]]
