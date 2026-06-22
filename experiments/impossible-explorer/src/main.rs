@@ -5,7 +5,6 @@ mod world;
 use fs_system::scan_dir;
 use macroquad::prelude::*;
 use safe_gl::{clear_depth_buffer, ScopedScissor};
-use std::io::Read;
 use world::Room;
 
 const MOVE_SPEED: f32 = 0.2;
@@ -232,9 +231,9 @@ async fn main() {
         );
 
         draw_text("WASD to Move, Mouse to Look", 10.0, 20.0, 30.0, BLACK);
-        draw_text(&format!("Pos: {}", camera.pos), 10.0, 50.0, 20.0, BLACK);
+        draw_text(format!("Pos: {}", camera.pos), 10.0, 50.0, 20.0, BLACK);
         draw_text(
-            &format!("Current: {:?}", root_room.path),
+            format!("Current: {:?}", root_room.path),
             10.0,
             80.0,
             20.0,

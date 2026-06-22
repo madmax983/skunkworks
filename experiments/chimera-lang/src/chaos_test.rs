@@ -33,7 +33,10 @@ mod tests {
         vm.step(); // Main thread
         vm.step(); // Main thread
 
-        let output_contains = vm.output.iter().any(|out| out.contains("Chaos Hologram activated: Str(\"Test\")"));
+        let output_contains = vm
+            .output
+            .iter()
+            .any(|out| out.contains("Chaos Hologram activated: Str(\"Test\")"));
         if !output_contains {
             println!("VM Output: {:?}", vm.output);
             println!("VM Stack: {:?}", vm.stack);

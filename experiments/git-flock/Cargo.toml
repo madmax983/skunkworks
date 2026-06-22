@@ -11,5 +11,5 @@ crossterm = { workspace = true }
 rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
-git2 = "0.20"
+git2 = "0.21.0"
 chrono = "0.4"

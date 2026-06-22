@@ -69,6 +69,9 @@ impl Drop for ScopedScissor {
 ///
 /// This function wraps the unsafe `gl::glClear(gl::GL_DEPTH_BUFFER_BIT)` call.
 pub fn clear_depth_buffer() {
+    // Attempting to invoke GL functions without an active context will panic
+    // due to missing function pointers. We let it panic because `glClear`
+    // relies on a valid context.
     unsafe {
         gl::glClear(gl::GL_DEPTH_BUFFER_BIT);
     }
