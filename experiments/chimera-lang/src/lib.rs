@@ -2089,7 +2089,7 @@ mod warden_resources_test;
 
 // Facade pattern
 #[cfg(feature = "resonance")]
-pub use acoustic_compiler::{AcousticParser, compile as compile_acoustic};
+pub use acoustic_compiler::{compile as compile_acoustic, AcousticParser};
 pub use ast::*;
 #[cfg(feature = "resonance")]
 pub use audio_source::*;

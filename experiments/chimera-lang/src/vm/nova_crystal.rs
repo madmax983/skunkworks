@@ -104,7 +104,7 @@ fn exec_shatter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 let (ny, nx) = (
                     (cy as i64 + dy).rem_euclid(crate::vm::GRID_SIZE as i64) as usize,
-                    (cx as i64 + dx).rem_euclid(crate::vm::GRID_SIZE as i64) as usize
+                    (cx as i64 + dx).rem_euclid(crate::vm::GRID_SIZE as i64) as usize,
                 );
                 if let Value::Int(ref mut n) = &mut vm.grid[ny][nx] {
                     *n = n.saturating_add(fragments);

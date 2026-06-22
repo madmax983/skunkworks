@@ -92,7 +92,10 @@ fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<b
     // Genome Editing Logic
     match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
         Ok(mut pairs) => {
-            let pair = pairs.next().unwrap();
+            let Some(pair) = pairs.next() else {
+                app_state.status_msg = "Parse Error: Empty input".to_string();
+                return None;
+            };
             match Gene::try_from_pair(pair) {
                 Ok(gene) => {
                     if app_state.selected_strand < vm.dna.helix.strands.len()
@@ -383,4 +386,50 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
     }
 
     Ok(true)
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast::{Dna, Helix};
+
+    #[test]
+    fn test_handle_genome_enter_empty_input_no_panic() {
+        // Initialize an empty VM and AppState
+        let mut vm = ChimeraVM::new(Dna {
+            evolution_config: None,
+            helix: Helix { strands: vec![] },
+        });
+
+        let mut app_state = AppState::new(None, None);
+        app_state.view_mode = ViewMode::Genome;
+        app_state.input_buffer = "".to_string(); // Empty string!
+
+        // Attempt to handle the enter key with the empty string
+        let result = handle_genome_enter(&mut vm, &mut app_state);
+
+        // Should return None due to our new guard, and set an error status
+        assert_eq!(result, None);
+        // Sometimes pest returns a Parse Error right away instead of empty iter, either way it shouldn't panic
+        assert!(app_state.status_msg.starts_with("Parse Error: "));
+    }
+
+    #[test]
+    fn test_handle_genome_enter_invalid_input_no_panic() {
+        // Initialize an empty VM and AppState
+        let mut vm = ChimeraVM::new(Dna {
+            evolution_config: None,
+            helix: Helix { strands: vec![] },
+        });
+
+        let mut app_state = AppState::new(None, None);
+        app_state.view_mode = ViewMode::Genome;
+        app_state.input_buffer = "invalid_gene".to_string(); // Invalid!
+
+        // Attempt to handle the enter key
+        let result = handle_genome_enter(&mut vm, &mut app_state);
+
+        // Should return None due to parse failure without panicking
+        assert_eq!(result, None);
+        assert!(app_state.status_msg.starts_with("Parse Error: "));
+    }
 }

@@ -26,10 +26,7 @@ fn build_layout_node(mut node: DirNode) -> LayoutNode {
     // Take children to process them
     let children = std::mem::take(&mut node.children);
 
-    let children_layout: Vec<LayoutNode> = children
-        .into_iter()
-        .map(build_layout_node)
-        .collect();
+    let children_layout: Vec<LayoutNode> = children.into_iter().map(build_layout_node).collect();
 
     LayoutNode {
         pos: Point::new(0.0, 0.0), // Placeholder, set by update_layout_positions

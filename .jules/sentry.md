@@ -1,9 +1,5 @@
-**Mitigating Missing Quantum System State Panics**
-**Learning:** `quantum-rogue` tracks `QubitSystem` objects in a `HashMap` mapping IDs to systems, and uses an `entity_map` linking entities to `sys_id`. During the `entangle` operation, the lookup attempts to `remove` the underlying systems and simply calls `.unwrap()`. If a system was destroyed but the `entity_map` was not properly updated, this causes a fatal DoS panic.
-**Action:** When removing entities from HashMaps in quantum logic blocks, always use safe error propagation like `.ok_or(anyhow!("System not found"))?` rather than `.unwrap()`, to ensure game engines recover gracefully when a state desync occurs.
-**Graceful OOB Handling vs Panics**
-**Learning:** `get_index` style manual memory mapping (like `y * w + x`) implementations are vulnerable to DoS attacks via index out-of-bounds panics if they just `panic!("coordinate out of bounds")` internally. Tests originally explicitly expected this panic via `#[should_panic]` which led to false positives on security.
-**Action:** Instead of `panic!` on out-of-bounds, `get_index` and similar bounds-checking logic should return `Option<usize>`. Fallible methods should map out-of-bounds to `None` and upstream API consumers should use `if let Some(idx) = ...` or similar safe recovery options rather than allowing out of bound access.
-**[Bounds Check Vulnerabilities in Fabric Limb Inverse Kinematics]**
-**Learning:** `Vec::[i]` indexing and unchecked `unwrap()` assumptions inside deeply nested solver loops (`Arm::solve` using FABRIK) can panic when the external data structure (`self.joints`) is publicly mutable or when input constraints are mismatched (e.g. `self.lengths` size vs `self.joints` size).
-**Action:** When iterating over arrays/slices that map to lengths, manually bound iterations using `std::cmp::min` and verify index bounds using `Vec::get(i)` instead of direct indexing if arrays can decouple.
+# Sentry's Journal
+
+**[Unwrap Panics in TUI Enter Handlers]**
+**Learning:** We found a panic risk in `handle_genome_enter` where `pairs.next().unwrap()` is called without first checking if the parser output actually has a next element. Even if it parses successfully, it might return an empty sequence depending on the grammar, leading to an index out of bounds or `unwrap()` crash on empty strings or comment-only strings.
+**Action:** Replace `unwrap()` with a safe `.next()` guard or pattern matching, and write tests to handle edge cases like empty strings.
