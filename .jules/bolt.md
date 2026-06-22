@@ -15,3 +15,6 @@
 **[O(1) Byte Indexing for Random ASCII Characters]**
 **Learning:** `let chars = "ABC"; chars.chars().nth(idx)` does an $O(N)$ string traversal and iterator allocation on every call.
 **Action:** For simple ASCII random character generation, use byte literals `let chars = b"ABC"; (chars[idx] as char)` to achieve an $O(1)$ zero-cost abstraction.
+**[TUI Grid Pre-allocation]**
+**Learning:** Rendering dense UI grids on every frame creates significant vector allocations. Pre-allocating the known grid size (`Vec::with_capacity(16)`) instead of using `Vec::new()` avoids repeated heap reallocations. Replacing `ListItem::new(s.clone())` with `.as_str()` or references causes borrow checker complaints due to state lifetimes without invasive refactoring.
+**Action:** Use `.with_capacity()` for collections with known bounds, especially in render loops. Avoid deep lifetime refactoring if it contradicts the goal of safe, small improvements.

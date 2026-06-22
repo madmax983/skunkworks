@@ -289,9 +289,9 @@ pub(crate) fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .split(app_state.get_render_area(f.area()));
 
     // 2. Render Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let cell = &vm.chroma_grid[y][x];
             let mut style = Style::default();

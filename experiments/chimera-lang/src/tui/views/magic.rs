@@ -709,9 +709,9 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(app_state.get_render_area(f.area()));
 
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let mut style = Style::default();
             let val = &vm.grid[y][x];
@@ -1271,9 +1271,9 @@ pub(crate) fn render_kaleidoscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: 
         .split(app_state.get_render_area(f.area()));
 
     // Left: Grid (Piet Canvas)
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let mut style = Style::default();
 

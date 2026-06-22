@@ -137,10 +137,10 @@ pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_stat
     f.render_widget(genome_list, left_chunks[0]);
 
     // Petri Dish (Grid)
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
 
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
 
@@ -653,9 +653,9 @@ pub(crate) fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         .split(app_state.get_render_area(f.area()));
 
     // Void Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let entropy = vm.entropy_grid[y][x];
             let mut style = Style::default();
