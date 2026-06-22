@@ -10,8 +10,19 @@ use std::collections::HashMap;
 use std::path::Path;
 
 use crate::ast::Dna;
+#[cfg(feature = "nova")]
 use crate::vm::prologue::AlchemyRule;
 use crate::vm::{Value, GRID_SIZE};
+
+#[cfg(not(feature = "nova"))]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct AlchemyRule {
+    pub pattern: Vec<Vec<Option<crate::vm::Value>>>,
+    pub result: crate::vm::Value,
+    pub wildcard: bool,
+    pub ingredients: Vec<crate::vm::Value>,
+    pub is_radial: bool,
+}
 
 /// The parser for the Prologue circuit language.
 ///
@@ -1837,6 +1848,12 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
                                 alchemy_book.push(AlchemyRule {
                                     ingredients,
                                     result,
+                                    #[cfg(not(feature = "nova"))]
+                                    pattern: vec![],
+                                    #[cfg(not(feature = "nova"))]
+                                    wildcard: false,
+                                    #[cfg(not(feature = "nova"))]
+                                    is_radial: false,
                                 });
                             }
                         }

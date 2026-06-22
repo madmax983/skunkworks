@@ -57,7 +57,10 @@ fn main() {
     ];
 
     let mut vm = ChimeraVM::new(make_dna(main_strand, effect_strand));
-    vm.metamorphism_enabled = false;
+    #[cfg(feature = "nova")]
+    {
+        vm.metamorphism_enabled = false;
+    }
     vm.energy = 1000;
 
     for i in 0..12 {
@@ -72,8 +75,11 @@ fn main() {
         );
         vm.step();
         println!("  Output: {:?}", vm.output.last());
-        println!("  Chorus Buffer: {:?}", vm.chorus_buffer);
-        println!("  Organelles: {}", vm.organelles.len());
+        #[cfg(feature = "nova")]
+        {
+            println!("  Chorus Buffer: {:?}", vm.chorus_buffer);
+            println!("  Organelles: {}", vm.organelles.len());
+        }
         println!("  Stack: {:?}", vm.stack);
     }
 }

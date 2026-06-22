@@ -1204,7 +1204,6 @@ pub const GRID_SIZE: usize = 16;
 /// Constant `INITIAL_ENERGY`.
 /// Constant `INITIAL_ENERGY`.
 pub const INITIAL_ENERGY: i64 = 50;
-#[cfg(feature = "nova")]
 /// Constant `MAX_STRANDS`.
 /// Constant `MAX_STRANDS`.
 /// Constant `MAX_STRANDS`.
@@ -48091,7 +48090,6 @@ impl ChimeraVM {
         false
     }
 
-    #[cfg(feature = "nova")]
     fn pre_tick_updates(&mut self) -> bool {
         if self.halted {
             return false;

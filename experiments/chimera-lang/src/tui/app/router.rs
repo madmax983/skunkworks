@@ -390,6 +390,8 @@ pub(crate) fn route_view(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppS
             render_semiotics(f, vm, app_state);
             false
         }
+        #[cfg(not(feature = "nova"))]
+        _ => false,
     };
 
     if bypasses_glitch {
