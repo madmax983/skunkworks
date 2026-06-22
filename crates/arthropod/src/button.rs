@@ -1,5 +1,33 @@
 use macroquad::prelude::*;
 
+/// An interactive, immediate-mode button widget for `macroquad`.
+///
+/// The `Button` encapsulates its bounding box, styling colors, and text.
+/// It detects mouse hover and clicks automatically when drawn, using
+/// `macroquad`'s input systems.
+///
+/// ## Examples
+///
+/// ```no_run
+/// use arthropod::Button;
+/// use macroquad::prelude::*;
+///
+/// #[macroquad::main("Button Example")]
+/// async fn main() {
+///     let my_button = Button::new("Click Me", 50.0, 50.0, 150.0, 40.0)
+///         .with_colors(RED, ORANGE, YELLOW);
+///
+///     loop {
+///         clear_background(BLACK);
+///
+///         if my_button.draw() {
+///             println!("Button clicked!");
+///         }
+///
+///         next_frame().await;
+///     }
+/// }
+/// ```
 pub struct Button {
     text: String,
     rect: Rect,
@@ -11,6 +39,18 @@ pub struct Button {
 }
 
 impl Button {
+    /// Constructs a new `Button` with the specified text and bounding rectangle.
+    ///
+    /// By default, the button is styled with grayscale colors for normal, hover,
+    /// and active states, with a light gray border and white text.
+    ///
+    /// # Arguments
+    ///
+    /// * `text` - The label displayed in the center of the button.
+    /// * `x` - The X coordinate of the top-left corner.
+    /// * `y` - The Y coordinate of the top-left corner.
+    /// * `w` - The width of the button.
+    /// * `h` - The height of the button.
     pub fn new(text: &str, x: f32, y: f32, w: f32, h: f32) -> Self {
         Self {
             text: text.to_string(),
@@ -23,6 +63,15 @@ impl Button {
         }
     }
 
+    /// Overrides the default grayscale background colors with a custom palette.
+    ///
+    /// This method allows chaining (the builder pattern) during initialization.
+    ///
+    /// # Arguments
+    ///
+    /// * `normal` - The background color when the mouse is not interacting.
+    /// * `hover` - The background color when the mouse cursor is over the button.
+    /// * `active` - The background color when the mouse button is pressed down.
     pub fn with_colors(mut self, normal: Color, hover: Color, active: Color) -> Self {
         self.normal_color = normal;
         self.hover_color = hover;
@@ -30,6 +79,16 @@ impl Button {
         self
     }
 
+    /// Renders the button to the screen and evaluates mouse interactions.
+    ///
+    /// This method performs immediate-mode drawing logic:
+    /// 1. Queries the current `macroquad` mouse position.
+    /// 2. Checks intersection with the button's bounding rectangle.
+    /// 3. Evaluates mouse button state (down vs released).
+    /// 4. Draws the background, border, and text dynamically based on interaction state.
+    ///
+    /// Evaluates to `true` on the exact frame the user releases the left mouse button
+    /// over the widget (a complete "click").
     pub fn draw(&self) -> bool {
         let (mx, my) = mouse_position();
         let is_hover = self.rect.contains(vec2(mx, my));
