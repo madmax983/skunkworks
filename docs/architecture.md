@@ -3377,3 +3377,21 @@ classDiagram
     VmMod ..> VmSystems : encapsulates
     VmMod ..> VmPrologue : encapsulates
 ```
+
+### Nova Feature: Esoteric Blocks (ADR 128)
+
+The `chaos_hologram`, `cymatic_ocean`, and `verge` blocks allow native invocation of specialized esoteric computing paradigms directly from `chimera-lang` scripts. The compiler translates these syntax blocks into specific OpCodes, triggering their respective subsystems during VM execution via `nova_dispatch.rs`.
+
+```mermaid
+sequenceDiagram
+    participant Script as Script Source
+    participant Compiler as PrologueCompiler
+    participant VM as ChimeraVM
+
+    Note over Script: chaos_hologram { ... }<br/>cymatic_ocean { ... }<br/>verge { ... }
+    Script->>Compiler: parse_esoteric_blocks()
+    Compiler-->>VM: push(OpCode::ChaosHologram / CymaticOcean / Verge)
+
+    Note over VM: Execution Phase (nova_dispatch)
+    VM->>VM: execute_gene(OpCode)
+```
