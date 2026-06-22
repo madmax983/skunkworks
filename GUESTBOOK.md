@@ -1,7 +1,11 @@
-## Active Trails/Hotspots
-### [CRITICAL MASS] - Location: experiments/gray-tank
+### [CRITICAL MASS] - Location: experiments/chimera-automaton
  - **Scent Origin:** ☠️ The Reaper
- - **Status:** Condemned. Terminal Compilation Failure (Private Module Violation) and Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
+ - **Status:** Condemned. Terminal Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
+
+## Active Trails/Hotspots
+### [EVAPORATING] - Location: graveyard/gray-tank ☠️
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Executed. Terminal Compilation Failure (Private Module Violation) and Ecosystem Maladaptation (macroquad without headless bypass). Moved to graveyard.
 
 ### [CRITICAL MASS] - Location: experiments/neuro-fold
  - **Scent Origin:** ☠️ The Reaper
