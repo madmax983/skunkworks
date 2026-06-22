@@ -1,6 +1,8 @@
 use crate::tui::panel_block;
 use crate::tui::state::AppState;
-use crate::tui::{layout_tree_node, InputMode};
+#[cfg(feature = "nova")]
+use crate::tui::layout_tree_node;
+use crate::tui::InputMode;
 use crate::vm::ChimeraVM;
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{

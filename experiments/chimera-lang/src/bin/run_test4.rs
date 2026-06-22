@@ -40,6 +40,7 @@ fn main() {
     vm.step(); // push
     vm.step(); // luciferin
 
+    #[cfg(feature = "nova")]
     println!("Light grid at (8,8): {}", vm.light_grid[8][8]);
     println!("Output: {:?}", vm.output);
 }

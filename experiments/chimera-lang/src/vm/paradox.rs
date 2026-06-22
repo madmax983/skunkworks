@@ -1439,12 +1439,12 @@ impl Paradox {
                                     c
                                 };
                                 #[cfg(not(feature = "nova"))]
-                                let c = (
+                                let c = Some((
                                     (cy as i64 + dy).rem_euclid(crate::vm::GRID_SIZE as i64)
                                         as usize,
                                     (cx as i64 + dx).rem_euclid(crate::vm::GRID_SIZE as i64)
                                         as usize,
-                                );
+                                ));
                                 c
                             } {
                                 vm.grid[ny][nx] = val.clone();

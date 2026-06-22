@@ -37,7 +37,7 @@ Press `Space` to step the simulation, or `C` to toggle Chaos Mode.
 *   **Gene**: An instruction (enzyme) with arguments (nucleotides).
 *   **Enzymes**: Operations like `push`, `add`, `jump`, `transcribe`.
 *   **Metabolism**: Executing instructions consumes **Energy**. If energy reaches 0, the VM halts (Death by Starvation).
-*   **Petri Dish**: A 16x16 grid of memory cells for spatial interaction.
+*   **Petri Dish**: (2D Memory Grid) A 16x16 grid of memory cells for spatial interaction.
 *   **Chaos Mode**: A runtime mode where random mutations (radiation) occur automatically.
 
 ## Enzymes
@@ -53,8 +53,8 @@ Press `Space` to step the simulation, or `C` to toggle Chaos Mode.
 *   `add()`, `sub()`, `mul()`, `div()`: Standard math operations.
 
 ### Control Flow
-*   `jump(strand_idx)`: Jump to the start of a strand.
-*   `brz(strand_idx)`: Pop value; if 0, jump to strand.
+*   `jump(strand_idx)`: Jump to the start of a strand (instruction list).
+*   `brz(strand_idx)`: Pop value; if 0, jump to strand (instruction list).
 
 ### Biology
 *   `photosynthesize()`: Gain 5 Energy.
@@ -131,7 +131,7 @@ Links the Holographic genetics with the physical Grid.
 *   `gravitate(radius)`: Pulls all objects within `radius` towards the center. Cost: Variable.
 *   `lumine(intensity, radius)`: Emits light. Chloroplasts harvest energy from this.
 *   `sense_light()`: Pushes local light level.
-*   `osmosis(dy, dx)`: Moves through membranes/walls. High energy cost.
+*   `osmosis(dy, dx)`: (move through walls) Moves through membranes/walls. High energy cost.
 *   `membrane(mask)`: Toggles wall boundaries (1=N, 2=S, 4=E, 8=W).
 *   `broadcast(channel, value)`: Sends value to global ether channel.
 *   `tune(channel)`: Receives value from global ether channel.
@@ -167,7 +167,7 @@ Links the Holographic genetics with the physical Grid.
 *   `integrase(strand, gene_idx, name, arg)`: Inserts a new gene.
 *   `excision(strand, gene_idx)`: Removes a gene.
 *   `conjugate(strand, y, x, dir)`: Writes DNA sequence onto the grid.
-*   `incubate(len, y, x)`: Reads grid sequence into new DNA.
+*   `incubate(len, y, x)`: (read memory into new strand) Reads grid sequence into new DNA.
 *   `compile(string)`: Compiles string to DNA.
 *   `decompile(strand)`: Decompiles DNA to string.
 
@@ -381,6 +381,8 @@ See `examples/story_demo.rs` for a full example of an interactive TUI usage. Not
 
 > 🚨 **REQUIRES FEATURE NOVA** 🚨
 > Advanced features (including the compiler, `incubate`, and `story_demo`) require the `nova` feature flag.
+
+**⚠️ Note: This is an interactive TUI demo.** It will launch a blank screen and say 'Incubating narrative...' -- press Space to step through the story!
 
 ```bash
 cargo run -p chimera-lang --features nova --example story_demo

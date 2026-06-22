@@ -508,29 +508,38 @@ fn handle_char_brackets_numbers(
 }
 
 fn handle_char_s_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    let ViewMode::Arena = app_state.view_mode else {
-        return Ok(false);
-    };
+    #[cfg(feature = "nova")]
+    {
+        let ViewMode::Arena = app_state.view_mode else {
+            return Ok(false);
+        };
 
-    let Some(arena) = &mut vm.arena else {
-        return Ok(false);
-    };
+        let Some(arena) = &mut vm.arena else {
+            return Ok(false);
+        };
 
-    // Add random gladiators if empty
-    if arena.combatants.is_empty() {
-        // Use some existing strands or random
-        let mut rng = rand::thread_rng();
-        use rand::Rng;
-        if !vm.dna.helix.strands.is_empty() {
-            let s1 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
-            let s2 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
-            arena.add_gladiator(s1, rng.gen());
-            arena.add_gladiator(s2, rng.gen());
+        // Add random gladiators if empty
+        if arena.combatants.is_empty() {
+            // Use some existing strands or random
+            let mut rng = rand::thread_rng();
+            use rand::Rng;
+            if !vm.dna.helix.strands.is_empty() {
+                let s1 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
+                let s2 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
+                arena.add_gladiator(s1, rng.gen());
+                arena.add_gladiator(s2, rng.gen());
+            }
         }
+        arena.start();
+        app_state.status_msg = "Arena Started!".to_string();
+        Ok(false)
     }
-    arena.start();
-    app_state.status_msg = "Arena Started!".to_string();
-    Ok(false)
+    #[cfg(not(feature = "nova"))]
+    {
+        let _ = vm;
+        let _ = app_state;
+        Ok(false)
+    }
 }
 
 #[cfg(feature = "nova")]
