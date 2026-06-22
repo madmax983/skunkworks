@@ -637,7 +637,8 @@ pub(crate) fn exec_chaos_hologram(vm: &mut ChimeraVM) {
     } else {
         "Empty".to_string()
     };
-    vm.output.push(format!("🌀 Chaos Hologram activated: {}", value));
+    vm.output
+        .push(format!("🌀 Chaos Hologram activated: {}", value));
 }
 
 fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {

@@ -49999,20 +49999,10 @@ impl ChimeraVM {
         args: &[Nucleotide],
     ) -> Option<(usize, usize)> {
         #[cfg(feature = "nova")]
-        #[cfg(feature = "nova")]
         match self.exec_core_op(op.clone(), args) {
             crate::vm::ops::Dispatch::Handled => return None,
             crate::vm::ops::Dispatch::Jump(i, j) => return Some((i, j)),
             crate::vm::ops::Dispatch::Unhandled => {}
-        }
-
-        #[cfg(feature = "cortex")]
-        if matches!(
-            op,
-            OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate
-        ) {
-            cortex::exec_cortex_op(self, op, args);
-            return None;
         }
 
         #[cfg(feature = "nova")]
@@ -50022,9 +50012,17 @@ impl ChimeraVM {
             crate::vm::ops::Dispatch::Unhandled => {}
         }
 
-        #[cfg(feature = "oracle")]
         match op {
-            OpCode::FindAll => return self.exec_findall_op(),
+            #[cfg(feature = "cortex")]
+            OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate => {
+                cortex::exec_cortex_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "oracle")]
+            OpCode::FindAll => self.exec_findall_op(),
+
+            #[cfg(feature = "oracle")]
             OpCode::Assert
             | OpCode::Rule
             | OpCode::Retract
@@ -50035,142 +50033,125 @@ impl ChimeraVM {
             | OpCode::Manifest
             | OpCode::Unify
             | OpCode::PrologCall
-            | OpCode::Censor => return oracle::exec_oracle_op(self, op, args),
-            _ => {}
-        }
+            | OpCode::Censor => oracle::exec_oracle_op(self, op, args),
 
-        #[cfg(feature = "resonance")]
-        if matches!(
-            op,
-            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream
-        ) {
-            resonance::exec_resonance_op(self, op, args);
-            return None;
-        }
+            #[cfg(feature = "resonance")]
+            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream => {
+                resonance::exec_resonance_op(self, op, args);
+                None
+            }
 
-        #[cfg(all(feature = "nova", feature = "resonance"))]
-        match op {
+            #[cfg(all(feature = "nova", feature = "resonance"))]
             OpCode::Sift => {
                 nova_cymatics::exec_sift(self, op, args);
-                return None;
+                None
             }
+
+            #[cfg(all(feature = "nova", feature = "resonance"))]
             OpCode::Reshape => {
                 nova_cymatics::exec_reshape(self, op, args);
-                return None;
+                None
             }
-            _ => {}
-        }
 
-        #[cfg(feature = "biophysics")]
-        if matches!(
-            op,
+            #[cfg(feature = "biophysics")]
             OpCode::NeuroGenesis
-                | OpCode::Stimulate
-                | OpCode::Dendrite
-                | OpCode::Axon
-                | OpCode::Receptor
-                | OpCode::NeuroCoupling
-                | OpCode::NeuroSynapse
-        ) {
-            neuron::exec_biophysics_op(self, op, args);
-            return None;
-        }
+            | OpCode::Stimulate
+            | OpCode::Dendrite
+            | OpCode::Axon
+            | OpCode::Receptor
+            | OpCode::NeuroCoupling
+            | OpCode::NeuroSynapse => {
+                neuron::exec_biophysics_op(self, op, args);
+                None
+            }
 
-        #[cfg(feature = "silicon")]
-        if matches!(
-            op,
+            #[cfg(feature = "silicon")]
             OpCode::Conduct
-                | OpCode::Wire
-                | OpCode::Pulse
-                | OpCode::Silicon
-                | OpCode::Construct
-                | OpCode::LogicGate
-                | OpCode::PinIn
-                | OpCode::PinOut
-                | OpCode::Emitter
-                | OpCode::Receiver
-                | OpCode::Latch
-                | OpCode::DAC
-                | OpCode::ADC
-                | OpCode::Trace
-                | OpCode::Fabricate
-        ) {
-            silicon::exec_silicon_op(self, op, args);
-            return None;
-        }
+            | OpCode::Wire
+            | OpCode::Pulse
+            | OpCode::Silicon
+            | OpCode::Construct
+            | OpCode::LogicGate
+            | OpCode::PinIn
+            | OpCode::PinOut
+            | OpCode::Emitter
+            | OpCode::Receiver
+            | OpCode::Latch
+            | OpCode::DAC
+            | OpCode::ADC
+            | OpCode::Trace
+            | OpCode::Fabricate => {
+                silicon::exec_silicon_op(self, op, args);
+                None
+            }
 
-        #[cfg(feature = "elektra")]
-        if matches!(
-            op,
+            #[cfg(feature = "elektra")]
             OpCode::Electrogenesis
-                | OpCode::Induction
-                | OpCode::WireGrowth
-                | OpCode::CircuitBreaker
-                | OpCode::Battery
-                | OpCode::Ground
-                | OpCode::SenseVolt
-                | OpCode::Shock
-                | OpCode::TeslaCoil
-                | OpCode::Diode
-                | OpCode::Transistor
-                | OpCode::Muscle
-                | OpCode::Sensor
-                | OpCode::Patch
-                | OpCode::Electrophoresis
-                | OpCode::Modulate
-                | OpCode::Lightning
-        ) {
-            return elektra::exec_elektra_op(self, op, args);
-        }
+            | OpCode::Induction
+            | OpCode::WireGrowth
+            | OpCode::CircuitBreaker
+            | OpCode::Battery
+            | OpCode::Ground
+            | OpCode::SenseVolt
+            | OpCode::Shock
+            | OpCode::TeslaCoil
+            | OpCode::Diode
+            | OpCode::Transistor
+            | OpCode::Muscle
+            | OpCode::Sensor
+            | OpCode::Patch
+            | OpCode::Electrophoresis
+            | OpCode::Modulate
+            | OpCode::Lightning => elektra::exec_elektra_op(self, op, args),
 
-        #[cfg(all(feature = "elektra", feature = "nova"))]
-        if matches!(op, OpCode::Galvanize | OpCode::Railgun) {
-            return elektra::exec_elektra_op(self, op, args);
-        }
+            #[cfg(all(feature = "elektra", feature = "nova"))]
+            OpCode::Galvanize | OpCode::Railgun => elektra::exec_elektra_op(self, op, args),
 
-        #[cfg(feature = "hive")]
-        if matches!(
-            op,
-            OpCode::HiveBind | OpCode::HiveSend | OpCode::HiveRecv | OpCode::HiveClose
-        ) {
-            hive::exec_hive_op(self, op, args);
-            return None;
-        }
+            #[cfg(feature = "hive")]
+            OpCode::HiveBind | OpCode::HiveSend | OpCode::HiveRecv | OpCode::HiveClose => {
+                hive::exec_hive_op(self, op, args);
+                None
+            }
 
-        #[cfg(feature = "git")]
-        if matches!(op, OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution) {
-            return git::exec_git_op(self, op, args);
-        }
+            #[cfg(feature = "git")]
+            OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution => {
+                git::exec_git_op(self, op, args)
+            }
 
-        #[cfg(feature = "git")]
-        if matches!(op, OpCode::GitHistory | OpCode::GitDiffWorkspace) {
-            return git_associates::exec_git_associates_op(self, op, args);
-        }
+            #[cfg(feature = "git")]
+            OpCode::GitHistory | OpCode::GitDiffWorkspace => {
+                git_associates::exec_git_associates_op(self, op, args)
+            }
 
-        #[cfg(feature = "phylogeny")]
-        if matches!(
-            op,
+            #[cfg(feature = "phylogeny")]
             OpCode::Crawl
-                | OpCode::Sequencing
-                | OpCode::PhyloSynthesize
-                | OpCode::PhyloInfect
-                | OpCode::Shell
-        ) {
-            phylogeny::exec_phylogeny_op(self, op, args);
-            return None;
-        }
+            | OpCode::Sequencing
+            | OpCode::PhyloSynthesize
+            | OpCode::PhyloInfect
+            | OpCode::Shell => {
+                phylogeny::exec_phylogeny_op(self, op, args);
+                None
+            }
 
-        if let OpCode::Nop = op {
-            return None;
-        }
+            OpCode::Nop => None,
 
-        if let OpCode::Unknown(name) = op {
-            return self.handle_unknown_opcode(&name);
-        }
+            OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
 
-        self.output
-            .push(format!("Error: Unimplemented OpCode {}", op));
-        None
+            _ => {
+                #[cfg(not(feature = "nova"))]
+                {
+                    match self.exec_core_op(op.clone(), args) {
+                        crate::vm::ops::Dispatch::Handled => return None,
+                        crate::vm::ops::Dispatch::Jump(i, j) => return Some((i, j)),
+                        crate::vm::ops::Dispatch::Unhandled => {}
+                    }
+                }
+
+                self.output
+                    .push(format!("Error: Unimplemented OpCode {}", op));
+                None
+            }
+        }
     }
 
     /// Performs the `mutate` operation.
