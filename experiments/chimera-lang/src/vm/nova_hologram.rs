@@ -95,7 +95,8 @@ pub fn exec_interfere(
 /// ```text
 /// // Example usage of exec_diffract
 /// ```
-pub fn exec_diffract(
+#[allow(dead_code)]
+pub(crate) fn exec_diffract(
     vm: &mut ChimeraVM,
     _op: OpCode,
     args: &[Nucleotide],
@@ -353,7 +354,8 @@ pub fn exec_project(
 /// ```text
 /// // Example usage of exec_hologram
 /// ```
-pub fn exec_hologram(
+#[allow(dead_code)]
+pub(crate) fn exec_hologram(
     vm: &mut ChimeraVM,
     _op: OpCode,
     _args: &[Nucleotide],
@@ -373,7 +375,8 @@ pub fn exec_hologram(
 /// ```text
 /// // Example usage of exec_phase_mutate
 /// ```
-pub fn exec_phase_mutate(
+#[allow(dead_code)]
+pub(crate) fn exec_phase_mutate(
     vm: &mut ChimeraVM,
     _op: OpCode,
     _args: &[Nucleotide],
@@ -618,7 +621,8 @@ fn get_opcode_index(op: &OpCode) -> usize {
 /// ```text
 /// // Example usage of exec_holo_sonify
 /// ```
-pub fn exec_holo_sonify(
+#[allow(dead_code)]
+pub(crate) fn exec_holo_sonify(
     vm: &mut ChimeraVM,
     _op: OpCode,
     _args: &[Nucleotide],
@@ -678,7 +682,8 @@ pub fn exec_holo_sonify(
 /// ```text
 /// // Example usage of exec_cymatic_scan
 /// ```
-pub fn exec_cymatic_scan(
+#[allow(dead_code)]
+pub(crate) fn exec_cymatic_scan(
     vm: &mut ChimeraVM,
     _op: OpCode,
     _args: &[Nucleotide],

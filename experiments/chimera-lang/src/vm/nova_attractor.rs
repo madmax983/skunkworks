@@ -115,7 +115,8 @@ impl AttractorState {
 /// ```text
 /// // Example usage of exec_attractor_op
 /// ```
-pub fn exec_attractor_op(
+#[allow(dead_code)]
+pub(crate) fn exec_attractor_op(
     vm: &mut ChimeraVM,
     op: OpCode,
     _args: &[Nucleotide],

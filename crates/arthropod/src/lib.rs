@@ -30,5 +30,5 @@
 //! ```
 
 /// Provides the interactive button widget for the `macroquad` framework.
-pub mod button;
+pub(crate) mod button;
 pub use button::Button;

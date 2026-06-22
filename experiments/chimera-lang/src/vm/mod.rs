@@ -6941,7 +6941,7 @@ pub(crate) mod nova_arena;
 /// The `nova_attractor` module.
 /// The `nova_attractor` module.
 /// The `nova_attractor` module.
-pub mod nova_attractor;
+pub(crate) mod nova_attractor;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_attractor_test;
@@ -9542,7 +9542,7 @@ mod nova_flux_test;
 /// The `nova_fractal` module.
 /// The `nova_fractal` module.
 /// The `nova_fractal` module.
-pub mod nova_fractal;
+pub(crate) mod nova_fractal;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_fractal_test;
@@ -9662,7 +9662,7 @@ mod nova_fractal_test;
 /// The `nova_functional` module.
 /// The `nova_functional` module.
 /// The `nova_functional` module.
-pub mod nova_functional;
+pub(crate) mod nova_functional;
 #[cfg(feature = "nova")]
 /// The `nova_garden` module.
 /// The `nova_garden` module.
@@ -10250,7 +10250,7 @@ mod nova_harvest_test;
 /// The `nova_hologram` module.
 /// The `nova_hologram` module.
 /// The `nova_hologram` module.
-pub mod nova_hologram;
+pub(crate) mod nova_hologram;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_hologram_grammar_test;
@@ -11192,7 +11192,7 @@ pub(crate) mod nova_metamorphosis;
 /// The `nova_metazoa` module.
 /// The `nova_metazoa` module.
 /// The `nova_metazoa` module.
-pub mod nova_metazoa;
+pub(crate) mod nova_metazoa;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_mirrors_test;
@@ -11429,7 +11429,7 @@ pub(crate) mod nova_morphogenesis;
 /// The `nova_optics` module.
 /// The `nova_optics` module.
 /// The `nova_optics` module.
-pub mod nova_optics;
+pub(crate) mod nova_optics;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_optics_test;
@@ -11557,7 +11557,7 @@ mod nova_orca_test;
 /// The `nova_origami` module.
 /// The `nova_origami` module.
 /// The `nova_origami` module.
-pub mod nova_origami;
+pub(crate) mod nova_origami;
 #[cfg(feature = "nova")]
 /// The `nova_paleontology` module.
 /// The `nova_paleontology` module.
@@ -11797,7 +11797,7 @@ mod nova_phage_test;
 /// The `nova_physics` module.
 /// The `nova_physics` module.
 /// The `nova_physics` module.
-pub mod nova_physics;
+pub(crate) mod nova_physics;
 #[cfg(feature = "nova")]
 /// The `nova_planes` module.
 /// The `nova_planes` module.
@@ -12271,7 +12271,7 @@ mod nova_quantum_scribe_test;
 /// The `nova_quipu` module.
 /// The `nova_quipu` module.
 /// The `nova_quipu` module.
-pub mod nova_quipu;
+pub(crate) mod nova_quipu;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_quipu_test;
@@ -12391,7 +12391,7 @@ mod nova_quipu_test;
 /// The `nova_raku` module.
 /// The `nova_raku` module.
 /// The `nova_raku` module.
-pub mod nova_raku;
+pub(crate) mod nova_raku;
 #[cfg(all(test, feature = "nova"))]
 mod nova_raku_test;
 #[cfg(feature = "nova")]
@@ -12750,7 +12750,7 @@ pub(crate) mod nova_relativity;
 /// The `nova_resonance_war` module.
 /// The `nova_resonance_war` module.
 /// The `nova_resonance_war` module.
-pub mod nova_resonance_war;
+pub(crate) mod nova_resonance_war;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_retina_test;
@@ -13104,7 +13104,7 @@ pub(crate) mod nova_scent;
 /// The `nova_security` module.
 /// The `nova_security` module.
 /// The `nova_security` module.
-pub mod nova_security;
+pub(crate) mod nova_security;
 #[cfg(feature = "nova")]
 /// The `nova_semiotics` module.
 /// The `nova_semiotics` module.
@@ -13221,7 +13221,7 @@ pub mod nova_security;
 /// The `nova_semiotics` module.
 /// The `nova_semiotics` module.
 /// The `nova_semiotics` module.
-pub mod nova_semiotics;
+pub(crate) mod nova_semiotics;
 #[cfg(feature = "nova")]
 /// The `nova_sigil` module.
 /// The `nova_sigil` module.
@@ -13575,7 +13575,7 @@ pub mod nova_signals;
 /// The `nova_simulation` module.
 /// The `nova_simulation` module.
 /// The `nova_simulation` module.
-pub mod nova_simulation;
+pub(crate) mod nova_simulation;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_siren_test;
@@ -13815,7 +13815,7 @@ mod nova_sovereignty_test;
 /// The `nova_strings` module.
 /// The `nova_strings` module.
 /// The `nova_strings` module.
-pub mod nova_strings;
+pub(crate) mod nova_strings;
 #[cfg(feature = "nova")]
 /// The `nova_void` module.
 /// The `nova_void` module.
@@ -13932,7 +13932,7 @@ pub mod nova_strings;
 /// The `nova_void` module.
 /// The `nova_void` module.
 /// The `nova_void` module.
-pub mod nova_void;
+pub(crate) mod nova_void;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_void_test;
@@ -14637,7 +14637,7 @@ pub mod paradox;
 /// The `phylogeny` module.
 /// The `phylogeny` module.
 /// The `phylogeny` module.
-pub mod phylogeny;
+pub(crate) mod phylogeny;
 #[cfg(feature = "nova")]
 /// The `piet` module.
 /// The `piet` module.
@@ -14754,7 +14754,7 @@ pub mod phylogeny;
 /// The `piet` module.
 /// The `piet` module.
 /// The `piet` module.
-pub mod piet;
+pub(crate) mod piet;
 #[cfg(feature = "nova")]
 /// The `prologue` module.
 /// The `prologue` module.
@@ -15224,7 +15224,7 @@ mod savant_execution_test;
 /// The `silicon` module.
 /// The `silicon` module.
 /// The `silicon` module.
-pub mod silicon;
+pub(crate) mod silicon;
 #[cfg(feature = "nova")]
 /// The `verbum` module.
 /// The `verbum` module.

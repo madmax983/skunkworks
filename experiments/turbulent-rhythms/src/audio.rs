@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use crossbeam::channel::Receiver;
 use std::collections::HashMap;
