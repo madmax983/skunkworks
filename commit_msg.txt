@@ -1,0 +1,6 @@
+⚒️ Forge: [Refactor execute_gene_inner and handle_unknown_opcode]
+
+🚮 Smell: execute_gene_inner was an overgrown 180-line 'Pyramid of Doom' composed entirely of sequential, feature-gated 'if matches!(...)' blocks. handle_unknown_opcode also suffered from boolean blindness with redundant 'if matches!' condition mapping.
+✨ Solution: Flattened execute_gene_inner into a single, clean 'match op' statement with '#[cfg]' gates directly on the match arms. Consolidated the string hints mapping in handle_unknown_opcode into a single 'match name' expression.
+🧼 Benefit: Drastically improves code density, removes redundant syntax, completely eliminates rightward drift, and enforces mutual exclusivity without altering runtime behavior.
+🛡️ Verification: All tests passed. No logic was altered.

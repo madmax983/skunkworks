@@ -444,57 +444,20 @@ impl crate::vm::ChimeraVM {
             return Some((strand_idx, 0));
         }
 
-        let mut hint = "";
-        let n = name;
-
-        // Nova Features
-        if matches!(
-            n,
-            "mitosis"
-                | "apoptosis"
-                | "spawn"
-                | "incubate"
-                | "telomerase"
-                | "splice"
-                | "crispr"
-                | "conjugate"
-                | "virulence"
-        ) {
-            hint = " - Try enabling 'nova' feature flag.";
-        }
-        if matches!(
-            n,
-            "remap"
-                | "restore"
-                | "mirror"
-                | "spore"
-                | "spore_wake"
-                | "spore_decay"
-                | "spore_map"
-                | "timeline"
-                | "quantum_read"
-                | "quantum_write"
-                | "quantum_entangle"
-        ) {
-            hint = " - Try enabling 'nova' feature flag.";
-        }
-        if matches!(n, "singularity") {
-            hint = " - Try enabling 'nova' feature flag.";
-        }
-        if matches!(
-            n,
-            "akashic_write"
-                | "akashic_read"
-                | "akashic_save"
-                | "akashic_load"
-                | "karma"
-                | "miracle"
-        ) {
-            hint = " - Try enabling 'nova' feature flag.";
-        }
+        let hint = match name {
+            "mitosis" | "apoptosis" | "spawn" | "incubate" | "telomerase" | "splice" | "crispr"
+            | "conjugate" | "virulence" | "remap" | "restore" | "mirror" | "spore"
+            | "spore_wake" | "spore_decay" | "spore_map" | "timeline" | "quantum_read"
+            | "quantum_write" | "quantum_entangle" | "singularity" | "akashic_write"
+            | "akashic_read" | "akashic_save" | "akashic_load" | "karma" | "miracle" => {
+                " - Try enabling 'nova' feature flag."
+            }
+            _ => "",
+        };
 
         self.output
             .push(format!("Error: Unknown OpCode '{}'{}", name, hint));
+
         // Fallback exact error for test
         if name == "foo" {
             self.output.push("Error: Unknown enzyme: foo".to_string());
