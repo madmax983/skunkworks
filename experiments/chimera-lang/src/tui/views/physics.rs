@@ -457,9 +457,9 @@ pub(crate) fn render_hologram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         .split(app_state.get_render_area(f.area()));
 
     // Hologram Grid Visualization
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let (re, im) = vm.hologram_grid[y][x];
             let magnitude = (re * re + im * im).sqrt();
@@ -650,9 +650,9 @@ pub(crate) fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .split(app_state.get_render_area(f.area()));
 
     // Left: Time Grid (Dilation Factors)
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let factor = vm.time_grid[y][x];
             let mut style = Style::default();
@@ -772,9 +772,9 @@ pub(crate) fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: 
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(app_state.get_render_area(f.area()));
 
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = vm.chaos_struct.grid[y][x];
             let r = vm.chaos_struct.r_grid[y][x];

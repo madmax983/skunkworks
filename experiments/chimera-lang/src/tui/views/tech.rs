@@ -17,9 +17,9 @@ pub(crate) fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .split(app_state.get_render_area(f.area()));
 
     // Left: Schematic Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             // Reuse schematic styling logic
@@ -176,9 +176,9 @@ pub(crate) fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .split(app_state.get_render_area(f.area()));
 
     // Signal Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..crate::vm::GRID_SIZE {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..crate::vm::GRID_SIZE {
             let signal = vm.signal_grid[y][x];
             let trail = vm.execution_trail[y * crate::vm::GRID_SIZE + x];
@@ -278,9 +278,9 @@ pub(crate) fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &
         .split(app_state.get_render_area(f.area()));
 
     // Left: Sovereignty Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let owner = vm.sovereignty_grid[y][x];
             let mut style = Style::default();
@@ -383,9 +383,9 @@ pub(crate) fn render_spectrogram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &
         .split(app_state.get_render_area(f.area()));
 
     // Frequency/Amp Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let (freq, amp) = vm.resonance_grid[y][x];
             let mut style = Style::default();
@@ -728,9 +728,9 @@ pub(crate) fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
         .split(app_state.get_render_area(f.area()));
 
     // Schematic Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let (ch, style) = match val {
@@ -858,9 +858,9 @@ pub(crate) fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .split(app_state.get_render_area(f.area()));
 
     // Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let flash = vm.reactor_flash[y][x];
@@ -1063,9 +1063,9 @@ pub(crate) fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     }
 
     // Voltage Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let v = vm.voltage_grid[y][x];
             let r = vm.resistance_grid[y][x];
@@ -1315,9 +1315,9 @@ pub(crate) fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
         .split(app_state.get_render_area(f.area()));
 
     // Fluid Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let wind = vm.wind_grid[y][x];
@@ -1429,9 +1429,9 @@ pub(crate) fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(app_state.get_render_area(f.area()));
 
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let mut style = Style::default();
@@ -1586,9 +1586,9 @@ pub(crate) fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         .split(app_state.get_render_area(f.area()));
 
     // Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let signal = vm.signal_grid[y][x];

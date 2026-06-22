@@ -320,7 +320,7 @@ pub struct ChimeraParser;
 /// The `acoustic_compiler` module.
 /// The `acoustic_compiler` module.
 /// The `acoustic_compiler` module.
-pub(crate) mod acoustic_compiler;
+pub mod acoustic_compiler;
 /// The `ast` module.
 /// The `ast` module.
 /// The `ast` module.
@@ -553,7 +553,7 @@ pub mod ast;
 /// The `audio_source` module.
 /// The `audio_source` module.
 /// The `audio_source` module.
-pub(crate) mod audio_source;
+pub mod audio_source;
 /// The `compiler` module.
 /// The `compiler` module.
 /// The `compiler` module.
@@ -2089,7 +2089,7 @@ mod warden_resources_test;
 
 // Facade pattern
 #[cfg(feature = "resonance")]
-pub use acoustic_compiler::*;
+pub use acoustic_compiler::{AcousticParser, compile as compile_acoustic};
 pub use ast::*;
 #[cfg(feature = "resonance")]
 pub use audio_source::*;

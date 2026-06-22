@@ -349,9 +349,9 @@ pub(crate) fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         .split(app_state.get_render_area(f.area()));
 
     // Left: Viral Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let mut style = Style::default();
             let mut ch = "·".to_string();
@@ -647,9 +647,9 @@ pub(crate) fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .split(app_state.get_render_area(f.area()));
 
     // Grid Visualization
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let mut style = Style::default();
@@ -1105,9 +1105,9 @@ pub(crate) fn render_biolum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
         .split(app_state.get_render_area(f.area()));
 
     // Biolum Grid
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let intensity = vm.light_grid[y][x];
             let (r, g, b) = vm.light_color_grid[y][x];
@@ -1204,9 +1204,9 @@ pub(crate) fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(app_state.get_render_area(f.area()));
 
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let hormone = vm.hormone_grid[y][x]; // [i64; 3]
                                                  // Normalize 0-1000 -> 0-255
@@ -1290,9 +1290,9 @@ pub(crate) fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
         .split(app_state.get_render_area(f.area()));
 
     // Garden Grid (Rainbow CA)
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let mut style = Style::default();
@@ -1401,9 +1401,9 @@ pub(crate) fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .split(app_state.get_render_area(f.area()));
 
     // Left: Grid with connections
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let mut style = Style::default();
             let mut ch = "·".to_string();
@@ -1570,9 +1570,9 @@ pub(crate) fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
         .split(chunks[2]);
 
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let mut style = Style::default();
@@ -1768,9 +1768,9 @@ pub(crate) fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
     f.render_widget(dialect_list, top_chunks[1]);
 
     // Bottom: Infection Map (Viral Grid)
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let mut style = Style::default();
             let mut ch = "·".to_string();

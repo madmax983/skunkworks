@@ -424,9 +424,9 @@ pub(crate) fn render_lexicon(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(app_state.get_render_area(f.area()));
 
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let mut style = Style::default();
             let val = &vm.grid[y][x];
@@ -523,9 +523,9 @@ pub(crate) fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
     f.render_widget(ast_widget, top_chunks[0]);
 
     // 2. Grid Trace (Top Right)
-    let mut grid_lines = Vec::new();
+    let mut grid_lines = Vec::with_capacity(16);
     for y in 0..16 {
-        let mut line_spans = Vec::new();
+        let mut line_spans = Vec::with_capacity(16);
         for x in 0..16 {
             let val = &vm.grid[y][x];
             let mut style = Style::default();
