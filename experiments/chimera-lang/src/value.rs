@@ -357,12 +357,14 @@ impl Value {
     where
         F: Fn(i64, i64) -> i64 + Copy,
     {
-        self.apply_binary_op_recursive(other, op, 0, max_depth, max_size)
+        self.apply_binary_op_recursive_ref(&other, op, 0, max_depth, max_size)
     }
 
-    fn apply_binary_op_recursive<F>(
-        self,
-        other: Value,
+    /// ⚡ Bolt Optimization: Uses references to traverse AST nodes instead of consuming them,
+    /// eliminating expensive `.clone()` operations on nested Junctions and Superpositions during evaluation.
+    fn apply_binary_op_recursive_ref<F>(
+        &self,
+        other: &Value,
         op: F,
         depth: usize,
         max_depth: usize,
@@ -375,7 +377,7 @@ impl Value {
             return None;
         }
         match (self, other) {
-            (Value::Int(ia), Value::Int(ib)) => Some(Value::Int(op(ia, ib))),
+            (Value::Int(ia), Value::Int(ib)) => Some(Value::Int(op(*ia, *ib))),
             (Value::Junction(t, vals), scalar @ Value::Int(_)) => {
                 // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
                 let mut res = Vec::with_capacity(vals.len().min(max_size));
@@ -383,19 +385,15 @@ impl Value {
                     if res.len() >= max_size {
                         return None;
                     }
-                    if let Some(r) = v.apply_binary_op_recursive(
-                        scalar.clone(),
-                        op,
-                        depth + 1,
-                        max_depth,
-                        max_size,
-                    ) {
+                    if let Some(r) =
+                        v.apply_binary_op_recursive_ref(scalar, op, depth + 1, max_depth, max_size)
+                    {
                         res.push(r);
                     } else {
                         return None;
                     }
                 }
-                Some(Value::Junction(t, res))
+                Some(Value::Junction(*t, res))
             }
             (scalar @ Value::Int(_), Value::Junction(t, vals)) => {
                 // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
@@ -404,54 +402,42 @@ impl Value {
                     if res.len() >= max_size {
                         return None;
                     }
-                    if let Some(r) = scalar.clone().apply_binary_op_recursive(
-                        v,
-                        op,
-                        depth + 1,
-                        max_depth,
-                        max_size,
-                    ) {
+                    if let Some(r) =
+                        scalar.apply_binary_op_recursive_ref(v, op, depth + 1, max_depth, max_size)
+                    {
                         res.push(r);
                     } else {
                         return None;
                     }
                 }
-                Some(Value::Junction(t, res))
+                Some(Value::Junction(*t, res))
             }
             (Value::Junction(ta, va), Value::Junction(_tb, vb)) => {
                 // Cross product, defaulting to type of A
                 // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
                 let mut res = Vec::with_capacity((va.len() * vb.len()).min(max_size));
                 for xa in va {
-                    for xb in &vb {
+                    for xb in vb {
                         if res.len() >= max_size {
                             return None;
                         }
-                        if let Some(r) = xa.clone().apply_binary_op_recursive(
-                            xb.clone(),
-                            op,
-                            depth + 1,
-                            max_depth,
-                            max_size,
-                        ) {
+                        if let Some(r) =
+                            xa.apply_binary_op_recursive_ref(xb, op, depth + 1, max_depth, max_size)
+                        {
                             res.push(r);
                         }
                     }
                 }
-                Some(Value::Junction(ta, res))
+                Some(Value::Junction(*ta, res))
             }
             (Value::Superposition(states), scalar @ Value::Int(_)) => {
                 // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
                 let mut res = Vec::with_capacity(states.len().min(max_size));
                 for (v, p) in states {
-                    if let Some(r) = v.apply_binary_op_recursive(
-                        scalar.clone(),
-                        op,
-                        depth + 1,
-                        max_depth,
-                        max_size,
-                    ) {
-                        res.push((r, p));
+                    if let Some(r) =
+                        v.apply_binary_op_recursive_ref(scalar, op, depth + 1, max_depth, max_size)
+                    {
+                        res.push((r, *p));
                     } else {
                         return None;
                     }
@@ -462,14 +448,10 @@ impl Value {
                 // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
                 let mut res = Vec::with_capacity(states.len().min(max_size));
                 for (v, p) in states {
-                    if let Some(r) = scalar.clone().apply_binary_op_recursive(
-                        v,
-                        op,
-                        depth + 1,
-                        max_depth,
-                        max_size,
-                    ) {
-                        res.push((r, p));
+                    if let Some(r) =
+                        scalar.apply_binary_op_recursive_ref(v, op, depth + 1, max_depth, max_size)
+                    {
+                        res.push((r, *p));
                     } else {
                         return None;
                     }
@@ -480,17 +462,13 @@ impl Value {
                 // ⚡ Bolt Optimization: Pre-allocate capacity for mapped operations to avoid O(log N) heap reallocations during tree evaluation.
                 let mut res = Vec::with_capacity((states_a.len() * states_b.len()).min(max_size));
                 for (va, pa) in states_a {
-                    for (vb, pb) in &states_b {
+                    for (vb, pb) in states_b {
                         if res.len() >= max_size {
                             return None;
                         }
-                        if let Some(r) = va.clone().apply_binary_op_recursive(
-                            vb.clone(),
-                            op,
-                            depth + 1,
-                            max_depth,
-                            max_size,
-                        ) {
+                        if let Some(r) =
+                            va.apply_binary_op_recursive_ref(vb, op, depth + 1, max_depth, max_size)
+                        {
                             res.push((r, pa * pb));
                         }
                     }
