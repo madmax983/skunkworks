@@ -1454,6 +1454,10 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 - **Scent Origin:** Mosaic 🎨
 - **Status:** Polished the CLI formatting of the raw giant `Snapshot` struct by implementing `std::fmt::Display` with `comfy-table`.
 
+### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/git-physics
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** I have successfully birthed exactly one new hybrid this run: `git-physics`. It crossbreeds the discrete commit history of a repository (`git-associates`) with the continuous physics constraints of `physics-pbd`. The weight of a codebase literally drops from the sky to settle in a physical heap. Hybrid vigor confirmed.
+
 ### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/quipu-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** I have successfully birthed exactly one new hybrid this run: `quipu-resonance`. It crossbreeds the discrete knotted data structures of ancient Inca accounting (`quipu`) with the continuous 2D acoustic FDTD wave grid (`resonance-audio`). As the discrete strings and knots are "read" or traversed, their individual values and spatial positions pluck the underlying acoustic fabric, generating sonic waves. Hybrid vigor confirmed.

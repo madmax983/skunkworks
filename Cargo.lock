@@ -2548,14 +2548,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chaotic-conservatory"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "rand 0.8.6",
-]
-
-[[package]]
 name = "chimera-chaos"
 version = "0.1.0"
 dependencies = [
@@ -4780,6 +4772,18 @@ dependencies = [
  "macroquad",
  "origami",
  "physics-pbd",
+]
+
+[[package]]
+name = "git-physics"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "git-associates",
+ "glam 0.27.0",
+ "macroquad",
+ "physics-pbd",
+ "rand 0.8.6",
 ]
 
 [[package]]

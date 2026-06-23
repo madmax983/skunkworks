@@ -1,0 +1,12 @@
+[package]
+name = "git-physics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+git-associates = { path = "../../crates/git-associates" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+macroquad = "0.4"
+glam = "0.27.0"
+rand = { workspace = true }
+anyhow = "1.0"
