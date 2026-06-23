@@ -77,14 +77,16 @@
 //!
 //! See [`opcode::OpCode`] for the complete list of enzymes available to the organism.
 
-use pest_derive::Parser;
 
 /// The base parser for the Chimera language.
 ///
 /// This parser defines the core grammatical rules for the language
 /// via the `grammar.pest` file, mapping the physical layout of instructions
 /// into their structured counterparts.
-#[derive(Parser)]
+#[allow(missing_docs)]
+pub mod chimeraparser_mod {
+    use pest_derive::Parser;
+    #[derive(Parser)]
 #[allow(missing_docs)]
 #[grammar = "grammar.pest"]
 /// Represents a `ChimeraParser`.
@@ -203,6 +205,9 @@ use pest_derive::Parser;
 /// Represents a `ChimeraParser`.
 /// Represents a `ChimeraParser`.
 pub struct ChimeraParser;
+}
+pub use chimeraparser_mod::ChimeraParser;
+pub use chimeraparser_mod::Rule;
 
 #[cfg(feature = "resonance")]
 /// The `acoustic_compiler` module.

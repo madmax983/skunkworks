@@ -72,7 +72,8 @@ async fn amain() {
             current_y += rest_length;
 
             let mass = 1.0 + (knot_count as f32 * 0.5);
-            let particle_id = pbd.add_particle(::physics_pbd::glam::Vec3::new(x, current_y, 0.0), mass);
+            let particle_id =
+                pbd.add_particle(::physics_pbd::glam::Vec3::new(x, current_y, 0.0), mass);
 
             let _ = pbd.add_distance_constraint(prev_id, particle_id, rest_length);
 
@@ -119,13 +120,7 @@ async fn amain() {
             draw_circle(root_p.x, root_p.y, 8.0, RED);
         }
 
-        draw_text(
-            "🧬 quipu-physics: Gravity Knots",
-            10.0,
-            20.0,
-            30.0,
-            WHITE,
-        );
+        draw_text("🧬 quipu-physics: Gravity Knots", 10.0, 20.0, 30.0, WHITE);
 
         next_frame().await;
     }

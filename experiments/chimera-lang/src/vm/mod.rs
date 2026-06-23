@@ -15484,15 +15484,24 @@ use self::nova_chronos::Spore;
 /// Enum for `MidiEvent`.
 /// Enum for `MidiEvent`.
 pub enum MidiEvent {
+    /// Represents a NoteOn MIDI event.
     NoteOn {
+        /// The MIDI channel.
         channel: u8,
+        /// The MIDI note.
         note: u8,
+        /// The velocity of the note.
         velocity: u8,
+        /// Duration in ticks.
         duration: u8,
     },
+    /// Represents a ControlChange MIDI event.
     ControlChange {
+        /// The MIDI channel.
         channel: u8,
+        /// The controller number.
         controller: u8,
+        /// The control value.
         value: u8,
     },
 }
@@ -15968,7 +15977,9 @@ pub struct ChromaCell {
 /// Enum for `Chirality`.
 pub enum Chirality {
     #[default]
+    /// Levo (Normal) orientation.
     Left, // Levo (Normal)
+    /// Dextro (Inverted) orientation.
     Right, // Dextro (Inverted)
 }
 
@@ -16441,15 +16452,24 @@ pub struct EvoState {
 /// Enum for `VisualEffect`.
 /// Enum for `VisualEffect`.
 pub enum VisualEffect {
+    /// A lightning visual effect.
     Lightning {
+        /// Starting grid coordinates.
         from: (usize, usize),
+        /// Ending grid coordinates.
         to: (usize, usize),
+        /// RGB color of the effect.
         color: (u8, u8, u8),
+        /// Time-to-live in frames.
         ttl: usize,
     },
+    /// A single spark visual effect.
     Spark {
+        /// Grid coordinates.
         loc: (usize, usize),
+        /// RGB color of the effect.
         color: (u8, u8, u8),
+        /// Time-to-live in frames.
         ttl: usize,
     },
 }
@@ -16630,7 +16650,9 @@ pub enum TuiEvent {
     /// Glitch
     /// Glitch
     Glitch(f32),
+    /// Screen shake effect with intensity.
     Shake(f32),
+    /// Display a global message.
     Message(String),
 }
 
@@ -16751,7 +16773,9 @@ pub enum TuiEvent {
 /// Enum for `PatchTarget`.
 /// Enum for `PatchTarget`.
 pub enum PatchTarget {
+    /// Patch target for energy regeneration.
     EnergyRegen,
+    /// Patch target for mutation rate.
     MutationRate,
 }
 

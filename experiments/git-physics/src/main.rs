@@ -42,14 +42,14 @@ async fn async_main() {
 }
 
 async fn run_sim() -> Result<()> {
-
     // Load Git history
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
     let repo_path = std::path::Path::new(manifest_dir).join("../../");
     let mut commits = Vec::new();
 
     if let Ok(model) = GitModel::open(&repo_path) {
-        if let Ok(history) = model.history_with_diffs(50) { // Limit to 50 for performance
+        if let Ok(history) = model.history_with_diffs(50) {
+            // Limit to 50 for performance
             commits = history;
         }
     }
@@ -81,7 +81,10 @@ async fn run_sim() -> Result<()> {
 
         // Input
         let mouse_pos = mouse_position();
-        let delta = vec2(mouse_pos.0 - last_mouse_pos.0, mouse_pos.1 - last_mouse_pos.1);
+        let delta = vec2(
+            mouse_pos.0 - last_mouse_pos.0,
+            mouse_pos.1 - last_mouse_pos.1,
+        );
         last_mouse_pos = mouse_pos;
 
         if is_mouse_button_down(MouseButton::Left) {
@@ -112,13 +115,21 @@ async fn run_sim() -> Result<()> {
             let spawn_z = rand::gen_range(-5.0, 5.0);
 
             // Use component-wise creation to avoid glam version mismatches
-            let p_idx = system.add_particle(physics_pbd::glam::Vec3::new(spawn_x, 20.0, spawn_z), 1.0 / mass);
+            let p_idx = system.add_particle(
+                physics_pbd::glam::Vec3::new(spawn_x, 20.0, spawn_z),
+                1.0 / mass,
+            );
 
             commit_bodies.push(CommitBody {
                 particle_index: p_idx,
                 commit_hash: commit.short_hash.clone(),
                 size,
-                color: Color::new(rand::gen_range(0.3, 1.0), rand::gen_range(0.3, 1.0), rand::gen_range(0.3, 1.0), 1.0),
+                color: Color::new(
+                    rand::gen_range(0.3, 1.0),
+                    rand::gen_range(0.3, 1.0),
+                    rand::gen_range(0.3, 1.0),
+                    1.0,
+                ),
             });
 
             commit_index += 1;
@@ -133,7 +144,8 @@ async fn run_sim() -> Result<()> {
 
         // Collision detection and response (simple spheres)
         let num_bodies = commit_bodies.len();
-        for _ in 0..3 { // Solve iterations
+        for _ in 0..3 {
+            // Solve iterations
             // Ground collision
             for body in &commit_bodies {
                 let p = &mut system.particles[body.particle_index];
@@ -183,10 +195,18 @@ async fn run_sim() -> Result<()> {
         // Manual bounds check to keep particles contained
         for body in &commit_bodies {
             let p = &mut system.particles[body.particle_index];
-            if p.pos.x > 10.0 { p.pos.x = 10.0; }
-            if p.pos.x < -10.0 { p.pos.x = -10.0; }
-            if p.pos.z > 10.0 { p.pos.z = 10.0; }
-            if p.pos.z < -10.0 { p.pos.z = -10.0; }
+            if p.pos.x > 10.0 {
+                p.pos.x = 10.0;
+            }
+            if p.pos.x < -10.0 {
+                p.pos.x = -10.0;
+            }
+            if p.pos.z > 10.0 {
+                p.pos.z = 10.0;
+            }
+            if p.pos.z < -10.0 {
+                p.pos.z = -10.0;
+            }
         }
 
         clear_background(BLACK);
@@ -206,8 +226,16 @@ async fn run_sim() -> Result<()> {
 
         // Draw ground grid
         for i in -10..=10 {
-            draw_line_3d(vec3(i as f32, 0.0, -10.0), vec3(i as f32, 0.0, 10.0), Color::new(0.3, 0.3, 0.3, 1.0));
-            draw_line_3d(vec3(-10.0, 0.0, i as f32), vec3(10.0, 0.0, i as f32), Color::new(0.3, 0.3, 0.3, 1.0));
+            draw_line_3d(
+                vec3(i as f32, 0.0, -10.0),
+                vec3(i as f32, 0.0, 10.0),
+                Color::new(0.3, 0.3, 0.3, 1.0),
+            );
+            draw_line_3d(
+                vec3(-10.0, 0.0, i as f32),
+                vec3(10.0, 0.0, i as f32),
+                Color::new(0.3, 0.3, 0.3, 1.0),
+            );
         }
 
         // Draw commit particles
@@ -221,12 +249,24 @@ async fn run_sim() -> Result<()> {
         set_default_camera();
 
         draw_text("Git Physics", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Commits dropped: {}/{}", commit_index, commits.len()), 10.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Commits dropped: {}/{}", commit_index, commits.len()),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
 
         // Draw a small 2D overlay text for the last dropped commit
         if commit_index > 0 {
             let last = &commit_bodies[commit_index - 1];
-            draw_text(&format!("Latest: {}", last.commit_hash), 10.0, 90.0, 20.0, last.color);
+            draw_text(
+                &format!("Latest: {}", last.commit_hash),
+                10.0,
+                90.0,
+                20.0,
+                last.color,
+            );
         }
 
         next_frame().await

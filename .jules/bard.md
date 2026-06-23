@@ -32,3 +32,7 @@
 ## 2024-05-24 - [Fixing DX Audit Log Friction Points]
 **Confusion:** Many README files lacked installation instructions, had unused variables generating warnings, or contained commands that didn't work from the workspace root.
 **Clarification:** Added explicit Installation sections with version constraints to crates, prefixed unused variables in doctests with underscores, and updated cargo run examples to specify the package name.
+
+## 2025-06-23 - [Strict Missing Docs and Macro Generated Code]
+**Confusion:** Strict `missing_docs` lints (`RUSTDOCFLAGS="-W missing_docs"`) apply to macro-generated code, including `#[derive(Parser)]` from both `clap` and `pest_derive`.
+**Clarification:** To resolve `missing_docs` errors for `pest_derive` generated code, wrap the struct in an inline submodule and apply `#![allow(missing_docs)]` at the top of the inner module file, then `pub use` the items. For `clap`, applying `#[allow(missing_docs)]` directly on the struct also helps, or adding regular `///` doc comments directly inside the `enum` variants in the Rust code!

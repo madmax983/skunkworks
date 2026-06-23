@@ -431,6 +431,7 @@ impl ViewMode {
         views[(current_idx + 1) % views.len()].0
     }
 
+    /// Returns true if the grid is navigable in the current mode.
     pub fn is_grid_navigable(&self) -> bool {
         match self {
             ViewMode::Grid | ViewMode::BioticChaos => true,
@@ -578,67 +579,98 @@ impl ViewMode {
 /// Enum for `ViewMode`.
 /// Enum for `ViewMode`.
 pub enum ViewMode {
+    /// View the raw underlying genome grid.
     Genome,
+    /// Standard grid view.
     Grid,
+    /// Zoomed-in microscopic inspection of a cell.
     Microscope,
     #[cfg(feature = "biophysics")]
+    /// Biophysical cortex view.
     Cortex,
     #[cfg(feature = "resonance")]
+    /// Visualizes resonance properties.
     Resonance,
     #[cfg(feature = "nova")]
+    /// View the Grimoire (spellbook/history).
     Grimoire,
     #[cfg(feature = "nova")]
+    /// Experimental lab view for testing.
     Laboratory,
     #[cfg(feature = "nova")]
+    /// Topological structural view.
     Topology,
     #[cfg(feature = "nova")]
+    /// View condemned/dead cells.
     Graveyard,
     #[cfg(feature = "nova")]
+    /// Specific view for the Prologue Esoteric language.
     PrologueEsolang,
     #[cfg(feature = "nova")]
+    /// Synthesizer piano roll visualization.
     PianoRoll,
     #[cfg(feature = "nova")]
+    /// Retina visualization mode.
     Retina,
     #[cfg(feature = "nova")]
+    /// Quantum state visualization.
     Quantum,
     #[cfg(feature = "nova")]
+    /// Dream state visualization.
     Dream,
     #[cfg(feature = "nova")]
+    /// Phylogeny trees view.
     Phylogeny,
     #[cfg(feature = "nova")]
+    /// Alchemy combination rules view.
     Alchemy,
     #[cfg(feature = "nova")]
+    /// Memetics propagation view.
     Memetics,
     #[cfg(feature = "nova")]
+    /// Egregore collective view.
     Egregore,
     #[cfg(feature = "nova")]
+    /// Encyclopedia of creatures.
     Bestiary,
     #[cfg(feature = "nova")]
+    /// Kaleidoscope visualization.
     Kaleidoscope,
     #[cfg(feature = "nova")]
+    /// The Void state.
     Void,
     #[cfg(feature = "nova")]
+    /// Signals and network view.
     Signals,
     #[cfg(feature = "nova")]
+    /// Sovereignty/control domains view.
     Sovereignty,
     #[cfg(feature = "nova")]
+    /// Audio spectrogram view.
     Spectrogram,
     #[cfg(feature = "nova")]
+    /// Resource market view.
     Market,
     #[cfg(feature = "nova")]
+    /// Ballistics and physical trajectories.
     Ballistics,
     #[cfg(feature = "nova")]
+    /// Pheromone/scent paths.
     Scent,
+    /// Value heatmap.
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
     #[cfg(feature = "silicon")]
     Foundry,
     #[cfg(feature = "elektra")]
+    /// Elektra logic circuits view.
     Elektra,
     #[cfg(feature = "nova")]
+    /// Resource extraction view.
     Fishing,
     #[cfg(feature = "nova")]
+    /// PvP combat arena view.
     Arena,
     #[cfg(feature = "nova")]
     /// Garden
@@ -701,75 +733,116 @@ pub enum ViewMode {
     /// Garden
     Garden,
     #[cfg(feature = "nova")]
+    /// Orca esolang grid view.
     Orca,
     #[cfg(feature = "nova")]
+    /// Babel tower of languages view.
     Babel,
     #[cfg(feature = "nova")]
+    /// Cosmic strings and vibrations.
     Strings,
     #[cfg(feature = "nova")]
+    /// Quipu knot recording view.
     Quipu,
     #[cfg(feature = "nova")]
+    /// Hydra multi-head synchronization.
     Hydra,
     #[cfg(feature = "nova")]
+    /// Time manipulation and history.
     Chronos,
     #[cfg(feature = "nova")]
+    /// Formal logic rule view.
     Logos,
     #[cfg(feature = "nova")]
+    /// Chaos and pandemonium states.
     Pandemonium,
+    /// Biotic chaotic interactions.
     BioticChaos,
+    /// Catalyst agents view.
     Catalyst,
     #[cfg(feature = "nova")]
+    /// Multi-dimensional projection.
     Hyperspace,
     #[cfg(feature = "nova")]
+    /// Holographic 3D projections.
     Hologram,
     #[cfg(feature = "nova")]
+    /// Weaver loom structures.
     Weaver,
     #[cfg(feature = "nova")]
+    /// Classic text terminal fallback.
     Terminal,
     #[cfg(feature = "nova")]
+    /// View chaos/strange attractors.
     Attractor,
     #[cfg(feature = "nova")]
+    /// Inspect viral memetics.
     Virology,
     #[cfg(feature = "nova")]
+    /// Render the biophysical mesh.
     BioMesh,
     #[cfg(feature = "nova")]
+    /// Gene editing view.
     Crispr,
     #[cfg(feature = "nova")]
+    /// Energy dynamics reactor view.
     Reactor,
     #[cfg(feature = "nova")]
+    /// Bioluminescence renderer.
     Biolum,
+    /// View evolutionary trees and history.
     Evolution,
     #[cfg(feature = "nova")]
+    /// Ecological interaction view.
     Ecology,
     #[cfg(feature = "nova")]
+    /// Cell lifecycle states.
     LifeCycle,
     #[cfg(feature = "nova")]
+    /// Semiotic token rendering.
     Semiotics,
     #[cfg(feature = "nova")]
+    /// Fractal dimension renderer.
     Fractal,
     #[cfg(feature = "nova")]
+    /// High-level multi-cellular organism view.
     Metazoa,
     #[cfg(feature = "nova")]
+    /// Original seed genesis view.
     Genesis,
     #[cfg(feature = "nova")]
+    /// Cambrian explosion (high-mutation) view.
     Cambrian,
     #[cfg(feature = "nova")]
+    /// Advanced omniscient stats.
     Savant,
     #[cfg(feature = "nova")]
+    /// Akashic records (global event log).
     Akashic,
     #[cfg(feature = "nova")]
+    /// Core Prologue language view.
     Prologue,
     #[cfg(feature = "nova")]
+    /// Language definitions and rules.
     Lexicon,
     #[cfg(feature = "nova")]
+    /// Story/Narrative progression.
     Narrative,
+    /// Step-by-step sequencing view.
     Sequencer,
+    /// View active mutagens.
     Mutagen,
+    /// Blacksmith/Forge creation view.
     Forge,
+    /// 4D/Tesseract projection.
     Tesseract,
+    /// Multi-agent acoustic choir.
     Choir,
+    /// Contradictions and paradoxes.
     Paradox,
+    /// Documentation and codex.
     Codex,
+    /// The word/Verbum visualizer.
     Verbum,
 }
 
@@ -1807,8 +1880,11 @@ impl ViewMode {
 /// Enum for `InputMode`.
 /// Enum for `InputMode`.
 pub enum InputMode {
+    /// Normal interaction mode.
     Normal,
+    /// Active grid editing mode.
     Editing,
+    /// Injecting external sequences mode.
     Injection,
 }
 

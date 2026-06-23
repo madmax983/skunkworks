@@ -2482,6 +2482,7 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., tissue_id ]`
     Tissue,
 
+    /// Fluid dynamics simulation step.
     Fluid,
     // Weaving Features (The Loom)
     /// **`Nova`** Weaves two strands together based on a pattern.
@@ -2728,6 +2729,7 @@ pub enum OpCode {
     ///
     /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
     ZipWith,
+    /// Boids flocking step.
     Flock,
     /// **`Nova`** Executes hyperbolic geometry operations.
     Poincare,

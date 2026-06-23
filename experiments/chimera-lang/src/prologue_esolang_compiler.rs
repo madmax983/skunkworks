@@ -5,7 +5,6 @@
 
 use anyhow::{anyhow, Result};
 use pest::Parser;
-use pest_derive::Parser;
 use std::str::FromStr;
 
 use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
@@ -15,10 +14,16 @@ use crate::opcode::OpCode;
 ///
 /// Handles the syntax mapping for multiple esoteric blocks (like Forth, Orca, Lisp)
 /// into the unified AST based on rules within `prologue_esolang_grammar.pest`.
-#[derive(Parser)]
+#[allow(missing_docs)]
+pub mod prologueesolangparser_mod {
+    use pest_derive::Parser;
+    #[derive(Parser)]
 #[allow(missing_docs)]
 #[grammar = "prologue_esolang_grammar.pest"]
 pub struct PrologueEsolangParser;
+}
+pub use prologueesolangparser_mod::PrologueEsolangParser;
+pub use prologueesolangparser_mod::Rule;
 
 /// Evaluates an esoteric PrologueEsolang script and synthesizes a biological [`Dna`] structure.
 ///
