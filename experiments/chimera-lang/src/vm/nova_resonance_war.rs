@@ -211,7 +211,8 @@ pub fn exec_dampen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```text
 /// // Example usage of process_resonance
 /// ```
-pub fn process_resonance(vm: &mut ChimeraVM) {
+#[allow(dead_code)]
+pub(crate) fn process_resonance(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
     let mut new_grid = vm.resonance_grid.clone();
 
