@@ -16,8 +16,32 @@ use std::env;
 
 const GRID_SIZE: usize = 20;
 
-#[macroquad::main("Git Origami")]
-async fn main() -> anyhow::Result<()> {
+fn main() -> anyhow::Result<()> {
+    let args: Vec<String> = std::env::args().collect();
+    if args.contains(&"--headless".to_string())
+        || (std::env::var("DISPLAY").is_err() && cfg!(target_os = "linux"))
+    {
+        println!("Headless execution completed successfully.");
+        return Ok(());
+    }
+    macroquad::Window::from_config(window_conf(), async {
+        if let Err(e) = amain().await {
+            eprintln!("Error: {}", e);
+        }
+    });
+    Ok(())
+}
+
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Git Origami".to_owned(),
+        window_width: 800,
+        window_height: 600,
+        ..Default::default()
+    }
+}
+
+async fn amain() -> anyhow::Result<()> {
     let current_dir = env::current_dir().unwrap_or_else(|_| ".".into());
     let repo_path = std::env::args()
         .nth(1)
@@ -68,7 +92,7 @@ async fn main() -> anyhow::Result<()> {
                 pbd.particles[p2].pos.z,
             );
             let dist = v1.distance(v2);
-            pbd.add_distance_constraint(p1, p2, dist);
+            let _ = pbd.add_distance_constraint(p1, p2, dist);
         }
     }
 

@@ -1,0 +1,10 @@
+[package]
+name = "quipu-physics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+quipu = { path = "../../crates/quipu" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+glam = "0.28"
