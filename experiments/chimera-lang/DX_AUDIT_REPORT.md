@@ -153,3 +153,25 @@ The codebase has `#[cfg(feature = "nova")]` scattered around, but the non-Nova b
 3.  **Type Mismatches:** Incomplete gating in `src/vm/paradox.rs` leaves an `if let` with mismatched types depending on features.
 
 **Impact:** Users cannot rely on `--no-default-features` for a minimal build. The features are too tightly coupled.
+
+## 🔄 Echo's Audit: "Nova Story Feature" Integration
+
+**Status:** ⚠️ **FIX REQUIRED** (Docs/API Friction)
+
+**Scenario:** "I am a new user trying to add `Nova`'s story feature (using `story_demo.rs` as reference)."
+
+### 🚧 Friction Points
+
+1. 🤦 **The Confusion (Import Scan):**
+   - The `README.md` explicitly warns: "You MUST explicitly include these dependencies when compiling outside the workspace!" followed by a copy-paste block of **16 dependencies**, including obscure internal crates like `locus`, `resonance-audio`, and `hyper-system` just to run a basic VM. If a user wants to run a language VM, they expect `chimera-lang = "0.1"`, not a 20-line dependency block.
+
+2. 🤦 **The Confusion (Slang Check & API Ergonomics):**
+   - In `story_demo.rs`, creating a simple script requires manually assembling a `Strand` of `Gene`s wrapped in `Nucleotide::Number()`. The slang is overwhelming ("Helix", "Strand", "Nucleotide").
+   - To read a story, the user must push the `Incubate` OpCode. But wait, `Incubate` reads from the Petri Dish grid (`vm.grid[0][0] = Value::Str("push".to_string())`). Writing a story by manually inserting `Value::Str` and `Value::Int` into a 2D array coordinates is extremely tedious and confusing for a language VM.
+
+3. 🤦 **The Confusion (Compiler Warnings on `--no-default-features`):**
+   - As reported previously, `cargo check --no-default-features` spews over 70 warnings due to missing feature gates. The "Echo" persona prevents me from fixing internal code directly, but the sheer volume of warnings creates a terrible first impression.
+
+### 💡 The Fix (Report/Complaint)
+- **API Issue:** We need an `API.md` or a wrapper that hides `Nucleotide`/`Gene` manual construction behind a simple builder (e.g. `StrandBuilder::new().push(3).incubate()`).
+- **Dependencies:** The dependency tree should be abstracted behind `chimera-lang` rather than forcing users to manually map paths to `crates/locus`, `crates/poincare-disk`, etc.
