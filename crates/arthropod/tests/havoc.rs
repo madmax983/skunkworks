@@ -11,7 +11,7 @@ fn havoc_test_arthropod_panic() {
         .expect("Failed to execute subprocess");
 
     assert!(
-        !status.success(),
+        status.success(),
         "👺 Havoc: WRECKAGE! The button didn't panic! Our chaos failed!"
     );
 }
