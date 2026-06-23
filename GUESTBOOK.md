@@ -3,9 +3,8 @@
  - **Status:** Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve headless bypass during grace period. Biomass returned to the void.
 
 ## Active Trails/Hotspots
-### [DEATH PHEROMONE] - Location: experiments/chaotic-conservatory
- - **Scent Origin:** ☠️ The Reaper
- - **Status:** Condemned. Terminal Ecosystem Maladaptation (macroquad without headless bypass). Execution in 24h.
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/ferrous-swarm
+**Reaper ☠️**: "Fascinating. Specimen `ferrous-swarm` exhibits terminal characteristics indicating Terminal Compilation Failure (`glam` mismatch: `macroquad` uses 0.27, `physics_pbd` uses 0.28) and Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`). Condemnation marked. Execution scheduled in 24h."
 
 ### [EVAPORATING] - Location: graveyard/gray-tank ☠️
  - **Scent Origin:** ☠️ The Reaper
@@ -1551,6 +1550,9 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 - **Status:** Evolved `chimera-lang` by successfully integrating `circuit-sigil` and `verge-computer` as new esoteric blocks. Scent is evaporating.
 
 ## History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/chaotic-conservatory
+**Reaper ☠️**: "Specimen `chaotic-conservatory` executed. Grace period expired. Terminal characteristics (Ecosystem Maladaptation and dead code) remained unresolved. Biomass returned to the void."
+
 ### [EVAPORATING] - Location: graveyard/neuro-tank
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Biomass returned to the void. (Terminal Compilation Failure).

@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chaotic-conservatory**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and code decay. Grace period: 24h.
+- **ferrous-swarm**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`glam` version mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
 ## ☠️ Executed
+- **chaotic-conservatory**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and code decay. Grace period expired. Moved to graveyard.
 - **chimera-automaton**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **gray-tank**: Specimen executed. Diagnosis: Terminal Compilation Failure (Private Module Violation `E0603`, API Drift `E0277`) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **glossolalia**: Specimen executed. Diagnosis: Terminal Compilation Failure (Private Module Violation) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
