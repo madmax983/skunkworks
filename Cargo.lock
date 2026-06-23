@@ -4146,18 +4146,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ferrous-swarm"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "flocking",
- "locus",
- "macroquad",
- "physics-pbd",
- "rand 0.8.6",
-]
-
-[[package]]
 name = "ferrous-tank"
 version = "0.1.0"
 dependencies = [

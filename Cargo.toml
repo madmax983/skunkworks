@@ -43,6 +43,7 @@ members = [
 
 ]
 exclude = [
+    "graveyard/ferrous-swarm",
     "graveyard/myco-reaper",
     "experiments/clockwork-chimera",
 

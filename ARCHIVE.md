@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-swarm**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`glam` version mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
+- **origami-ddos**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`glam` version mismatch: `macroquad` uses 0.27, `physics_pbd` uses 0.28) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
 ## ☠️ Executed
+- **ferrous-swarm**: Specimen executed. Diagnosis: Terminal Compilation Failure (`glam` version mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **chaotic-conservatory**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and code decay. Grace period expired. Moved to graveyard.
 - **chimera-automaton**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **gray-tank**: Specimen executed. Diagnosis: Terminal Compilation Failure (Private Module Violation `E0603`, API Drift `E0277`) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
