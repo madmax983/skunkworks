@@ -2766,6 +2766,8 @@ pub enum OpCode {
     Verge,
     /// Triggers the Cymatic Ocean logic
     CymaticOcean,
+    /// Triggers the Quantum Garden logic
+    QuantumGarden,
 }
 
 impl fmt::Display for OpCode {

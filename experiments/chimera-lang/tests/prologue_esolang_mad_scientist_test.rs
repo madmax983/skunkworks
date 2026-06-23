@@ -433,6 +433,17 @@ fn test_prologue_esolang_compiler_madness() {
 }
 
 #[test]
+fn test_prologue_esolang_compiler_quantum_garden() {
+    let source = "quantum_garden { 42 simulate }";
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).expect("Compilation failed");
+
+    let genes = &dna.helix.strands[0].genes;
+    assert_eq!(genes.len(), 2);
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::QuantumGarden);
+}
+
+#[test]
 fn test_prologue_esolang_compiler_miller() {
     let source = "miller { 42 simulate }";
     let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
