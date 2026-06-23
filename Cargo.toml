@@ -39,6 +39,7 @@ members = [
     "experiments/origami-poincare",
     "experiments/flock-market",
     "experiments/neuro-quipu",
+    "experiments/quipu-physics",
 
 ]
 exclude = [

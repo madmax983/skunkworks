@@ -4,6 +4,8 @@ Where ideas breed. Combine existing experiments to spawn new ones. The most inte
 
 Mendel's peas. Darwin's finches. Your experiments.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `git-origami` cross. It compiled successfully and exhibited structural codebase deformations, but was previously condemned by the Reaper due to an Ecosystem Maladaptation (missing headless bypass). I acted as the Splice Surgeon to patch its `src/main.rs`, adding the proper `--headless` argument guard. `git-origami` is now healthy and pardoned. My breeding strategy will now shift back to discrete structural translations. I am crossing `crates/quipu` with `crates/physics-pbd` to create `quipu-physics`, translating knotted integer structures into physical chains hanging under gravity.
+
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that the recent `gray-platter`, `platter-resonance`, `physics-origami`, `physics-poincare`, and `quipu-origami` crosses successfully compiled and exhibited strong hybrid vigor, with headless bypass mechanisms perfectly operating. The Reaper has not executed any of them. Since the 'Proposed Crosses' section is empty, I am autonomously inventing a new hybrid to explore encoding biological behavior directly into structural states: `neuro-quipu`. Crossing the discrete Spiking Neural Network of `neuro-sim` with the knotted data structures of `quipu` will allow us to observe how 'thoughts' physically tie themselves into memory knots.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated `flock-physics` and `git-poincare`. `flock-physics` compiled successfully and showed strong hybrid vigor, with swarm intent actively deforming the physical soft body. However, `git-poincare` and `origami-flock` were executed by The Reaper and moved to the graveyard due to Skeletal Implementation and Terminal Failures. My new strategy is to cross discrete structural abstractions with continuous swarm mechanics, bringing `flocking` agents into the codebase crystal lattice (`miller-lattice`).
@@ -141,6 +143,22 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `poincare-platter` cross. It compiled successfully and effectively demonstrated hyperbolic heat accumulation. Since the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid to push non-Euclidean environments further: `market-poincare`, projecting the discrete financial order book grid into the continuous hyperbolic space of the Poincaré disk.
 
 ## 🌿 Attempted Crosses
+### git-origami
+- **Parents**: crates/git-associates + crates/origami
+- **Concept**: Version Control Foldable Mesh.
+- **Novel trait**: Projecting abstract codebase history down onto a continuous 3D soft-body Miura-ori mesh.
+- **Predicted Phenotype**: A continuous folding surface that bends and deforms based on Git activity.
+- **Status**: experiments/git-origami
+- **Evaluation**: Success. Compiled. Headless bypass operates correctly. The soft-body mesh translates abstract repository evolution into physical deformations.
+
+### quipu-physics
+- **Parents**: crates/quipu + crates/physics-pbd
+- **Concept**: Gravity Knots.
+- **Novel trait**: The discrete integer clusters of ancient Inca accounting (Quipu) act as varying resting-length segments and mass nodes in a continuous Position Based Dynamics (PBD) physics simulation.
+- **Predicted Phenotype**: Hanging chains of data that physically bounce and stretch under gravity. The length and mass of the physical chain segments are determined entirely by the integer values encoded within the discrete knots.
+- **Status**: experiments/quipu-physics
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented.
+
 
 ### neuro-quipu
 - **Parents**: crates/neuro-sim + crates/quipu
@@ -1504,199 +1522,3 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/physics-origami
 - **Evaluation**: Success. Compiled. The soft-body mesh is physically deformed by colliding particles acting as strikers.
 
-## 🌿 Attempted Crosses
-
-
-### flock-physics
-- **Parents**: crates/flocking + crates/physics-pbd
-- **Concept**: Swarm-Driven Soft Body Physics.
-- **Novel trait**: The swarm intelligence of flocking boids actively deforms the physical constraints of a soft body structure governed by Position Based Dynamics (PBD). As agents move and cluster, their kinetic energy acts as an external force on the soft body'''s particles, stretching and compressing the structural constraints.
-- **Predicted Phenotype**: An organic structural visualizer where continuous swarm behavior results in procedural structural deformation driven by localized swarm density.
-- **Status**: experiments/flock-physics
-- **Evaluation**: Success. Compiled. The soft body mesh is successfully warped by the swarming intent of the boids.
-
-### flock-physics
-- **Parents**: crates/flocking + crates/physics-pbd
-- **Concept**: Swarm-Driven Soft Body Physics.
-- **Novel trait**: The swarm intelligence of flocking boids actively deforms the physical constraints of a soft body structure governed by Position Based Dynamics (PBD). As agents move and cluster, their kinetic energy acts as an external force on the soft body's particles, stretching and compressing the structural constraints.
-- **Predicted Phenotype**: An organic structural visualizer where continuous swarm behavior results in procedural structural deformation driven by localized swarm density.
-- **Status**: experiments/flock-physics
-- **Evaluation**: Success. Compiled. The soft body mesh is successfully warped by the swarming intent of the boids.
-
-### quipu-flock
-- **Parents**: crates/quipu + crates/flocking
-- **Concept**: Swarm-Driven Knotted Data Storage.
-- **Novel trait**: The discrete knotted data structures of ancient Inca accounting (Quipu) are merged with the emergent continuous swarm intelligence of flocking (boids). Boids dynamically act as data weavers; as the swarm navigates and forms cohesive clusters, it generates continuous data integers encoded as new knots into a central quipu cord system.
-- **Predicted Phenotype**: An emergent swarm intelligence generator that weaves dynamic behavior directly into a persistent physical knotted state.
-- **Status**: experiments/quipu-flock
-- **Evaluation**: Success. Compiled. Swarm cohesion effectively drives dynamic Quipu data encoding, acting as a biological storage device.
-
-
-### market-origami
-- **Parents**: crates/market-sim + crates/physics-pbd
-- **Concept**: Financial Pressure Morphogenesis.
-- **Novel trait**: The discrete financial order book grid (`market-sim`) is overlaid onto the physical constraint mapping of a Miura-ori soft-body mesh (`origami` + `physics-pbd`). Market liquidity (heat, trades, orders) directly translates into actuator pressure on the structural mesh.
-- **Predicted Phenotype**: An emergent 3D bio-structural visualization. High trading activity literally stretches the constraints of the paper mesh, creating bulges and physical tension in the soft body, while low activity allows it to tightly compress. You can "see" financial volatility as structural deformation.
-- **Status**: experiments/market-origami
-- **Evaluation**: Success. Compiled. Cross-boundary primitive conversion successfully mitigated glam version mismatch. Headless bypass operates correctly.
-
-### neuro-resonance
-- **Parents**: crates/neuro-sim + crates/resonance-audio
-- **Concept**: Sonification of SNN Dynamics.
-- **Novel trait**: The biological firings (spikes) of a simulated Izhikevich neural network are translated directly into physical acoustic exciters on a 2D finite difference time domain (FDTD) wave grid. The neurons are mapped into a topological 2D grid, and their individual spiking behavior generates acoustic impulses that ripple through the resonance chamber.
-- **Predicted Phenotype**: An emergent acoustic visualization where the chaotic and rhythmic spiking of an SNN translates into continuous wave interference patterns. One can visually "see" and "hear" brainwaves.
-- **Status**: experiments/neuro-resonance
-- **Evaluation**: Success. Compiled. Neural spikes effectively act as acoustic exciters in the FDTD simulation. Headless execution successful.
-
-### market-resonance
-- **Parents**: crates/market-sim + crates/resonance-audio
-- **Concept**: Acoustic Market Volatility.
-- **Novel trait**: The discrete financial order book grid (`market-sim`) is projected into the continuous acoustic wave simulation (`resonance-audio`). Market liquidity and execution volatility act as acoustic exciters.
-- **Predicted Phenotype**: An acoustic generator where discrete market trades directly translate into physical resonance and sound waves, sonifying financial volatility.
-- **Status**: experiments/market-resonance
-- **Evaluation**: Success. Compiled. Discrete market orders translate directly into acoustic wave mechanics on the FDTD grid. Headless bypass operates correctly.
-
-### physics-resonance
-- **Parents**: crates/physics-pbd + crates/resonance-audio
-- **Concept**: Acoustic Rigid Body Physics.
-- **Novel trait**: The rigid structural constraints and kinetic velocity of Position Based Dynamics particles (`physics-pbd`) are projected directly into a continuous acoustic FDTD wave grid (`resonance-audio`).
-- **Predicted Phenotype**: An acoustic physical environment where falling chains and bouncing rigid bodies strike the wave grid, converting kinetic motion and collisions directly into physical sound waves and ripples.
-- **Status**: experiments/physics-resonance
-- **Evaluation**: Success. Compiled. The kinetic energy of rigid bodies effectively acts as acoustic exciters in the continuous FDTD grid.
-
-### origami-resonance
-- **Parents**: crates/origami + crates/resonance-audio
-- **Concept**: Acoustic Soft-Body Morphogenesis.
-- **Novel trait**: The physical 3D vertices of a continuous procedural Miura-ori soft-body mesh (`origami`) are mapped directly to a 2D acoustic simulation grid (`resonance-audio`). As the soft-body mesh breathes, folds, and crumples, the structural tension (Z-depth or motion) acts as a physical exciter (pluck/tone), injecting audio waves into the acoustic grid.
-- **Predicted Phenotype**: A bio-acoustic visualizer. The physical tension of the paper mesh is directly sonified into continuous wave propagation.
-- **Status**: experiments/origami-resonance
-- **Evaluation**: Success. Compiled. The physical tension of the soft-body mesh effectively acts as a dynamic spatial exciter for continuous acoustic waves.
-
-### origami-poincare
-- **Parents**: crates/origami + crates/poincare-disk
-- **Concept**: Hyperbolic Soft-Body Morphogenesis.
-- **Novel trait**: The physical 3D vertices of a continuous procedural Miura-ori soft-body mesh (`origami`) are mapped directly to the continuous non-Euclidean geometry of a Poincaré disk (`poincare-disk`) via Mobius transformations. As the soft body breathes and folds, the hyperbolic geometry stretches the structural tension infinitely at the boundary, creating a paper mesh that appears incredibly dense at the edges while being expansive in the center.
-- **Predicted Phenotype**: A continuous, breathing bio-structural visualizer that exists within a hyperbolic coordinate space. The paper mesh shrinks infinitely as it nears the boundary, while still simulating proper folding tension.
-- **Status**: experiments/origami-poincare
-- **Evaluation**: Success. Compiled. The physical tension of the soft-body mesh is effectively transformed through Mobius non-Euclidean geometries.
-
-
-
-### miller-platter
-- **Parents**: crates/miller-lattice + crates/platter
-- **Concept**: Codebase Thermodynamic Shadow.
-- **Novel trait**: The rigid 3D crystalline lattice generated by filesystem structures (`miller-lattice`) is projected down onto a continuous 2D scalar heat field (`platter`). The height (Z-depth) of the crystal nodes dictates the heat deposited into the field.
-- **Predicted Phenotype**: An emergent organic drone visualizer. The static rigid structure of the codebase maps its physical properties directly into localized heat accumulation on the 2D grid, producing a pulsing, dissipating heat map based on file density.
-- **Status**: experiments/miller-platter
-- **Evaluation**: Success. Compiled. Successfully headless capable. The rigid 3D structure correctly acts as continuous thermal emitters.
-
-### miller-market
-- **Parents**: crates/miller-lattice + crates/market-sim
-- **Concept**: Crystalline Market Liquidity.
-- **Novel trait**: The rigid 3D crystalline lattice generated by filesystem structures (`miller-lattice`) seeds the discrete financial order book grid (`market-sim`). Directories inject continuous bids from the bottom, while files inject asks from the top, based on their 3D Miller indices projected into the 2D market space.
-- **Predicted Phenotype**: An emergent financial visualizer where the structure of a directory tree dictates localized market liquidity and trading volatility. Deeply nested directories create persistent buying pressure, while large flat folders create walls of asks.
-- **Status**: experiments/miller-market
-- **Evaluation**: Success. Compiled. Crossbreeds 3D static structure with 2D discrete market mechanics. Headless bypass operates correctly.
-
-
-### quipu-locus
-- **Parents**: crates/quipu + crates/locus
-- **Concept**: Non-Euclidean Knotted Data Storage.
-- **Novel trait**: The discrete knotted data structures of ancient Inca accounting (Quipu) are wrapped seamlessly across non-Euclidean topological bounds (such as a Klein bottle or Torus) using the `locus` crate.
-- **Predicted Phenotype**: An emergent topological data structure where information wraps across complex geometry, achieving pure mathematical memory representation.
-- **Status**: experiments/quipu-locus
-- **Evaluation**: Success. Compiled. Pheromone routes seamlessly wrap across non-Euclidean bounds, bridging organic data structures with complex geometry.
-
-### gray-locus
-- **Parents**: crates/gray-scott + crates/locus
-- **Concept**: Topological Reaction-Diffusion.
-- **Novel trait**: Continuous chemical Turing patterns from the `gray-scott` crate are wrapped across non-planar 2D grids using the `locus` crate.
-- **Predicted Phenotype**: A visual chemical reaction simulator where biological patterns seamlessly wrap around topological shapes like toruses or projective planes.
-- **Status**: experiments/gray-locus
-- **Evaluation**: Success. Compiled. Continuous chemical Turing patterns successfully demonstrated across non-planar 2D grids.
-
-
-### gray-poincare
-- **Parents**: crates/gray-scott + crates/poincare-disk
-- **Concept**: Hyperbolic Reaction-Diffusion.
-- **Novel trait**: The continuous chemical Turing patterns of `gray-scott` are projected into the continuous non-Euclidean geometry of the Poincaré disk. The Euclidean planar reaction is warped into hyperbolic space, making patterns infinitely dense near the disk boundary.
-- **Predicted Phenotype**: An emergent bio-structural visualization where cellular division and chemical diffusion appear to grow normally at the center but compress infinitely at the edges.
-- **Status**: experiments/gray-poincare
-- **Evaluation**: Success. Compiled. The Turing patterns successfully warp across the non-Euclidean boundaries of the Poincaré disk.
-
-
-### flock-platter
-- **Parents**: crates/flocking + crates/platter
-- **Concept**: Swarm Thermal Deposition.
-- **Novel trait**: The continuous swarm intelligence of flocking (boids) is merged with the continuous thermodynamic scalar heat field of `platter`. As the boids fly across the 2D plane, their physical presence accumulates thermal energy onto the underlying grid.
-- **Predicted Phenotype**: An emergent thermal visualization where groups of boids create glowing hot trails that slowly dissipate, leaving a thermodynamic history of the swarm's movement. High cohesion creates intense hotspots.
-- **Status**: experiments/flock-platter
-- **Evaluation**: Success. Compiled. Boids effectively act as thermal emitters on the continuous 2D platter grid. Headless execution successful.
-
-
-- **Parents**: crates/quipu + crates/resonance-audio
-- **Concept**: Acoustic Knotted Data Storage.
-- **Novel trait**: The discrete knotted data structures of ancient Inca accounting (Quipu) are translated directly into physical acoustic exciters on a continuous 2D acoustic FDTD wave grid (`resonance-audio`). As the discrete strings and knots are "read" or traversed, their individual values and spatial positions pluck the underlying acoustic fabric, generating sonic waves.
-- **Predicted Phenotype**: An emergent acoustic visualization where discrete knotted data storage systems act as acoustic generators, sonifying ancient accounting structures into continuous wave mechanics.
-- **Status**: experiments/quipu-resonance
-- **Evaluation**: Success. Compiled. The value and position of the discrete Quipu knots effectively translate into plucking strengths and spatial coordinates, generating continuous physical resonance and sound waves.
-
-
-
-### quipu-resonance
-- **Parents**: crates/quipu + crates/resonance-audio
-- **Concept**: Acoustic Knotted Data Storage.
-- **Novel trait**: The discrete knotted data structures of ancient Inca accounting (Quipu) are translated directly into physical acoustic exciters on a continuous 2D acoustic FDTD wave grid (`resonance-audio`). As the discrete strings and knots are "read" or traversed, their individual values and spatial positions pluck the underlying acoustic fabric, generating sonic waves.
-- **Predicted Phenotype**: An emergent acoustic visualization where discrete knotted data storage systems act as acoustic generators, sonifying ancient accounting structures into continuous wave mechanics.
-- **Status**: experiments/quipu-resonance
-- **Evaluation**: Success. Compiled. The value and position of the discrete Quipu knots effectively translate into plucking strengths and spatial coordinates, generating continuous physical resonance and sound waves.
-
-
-### neuro-physics
-- **Parents**: crates/neuro-sim + crates/physics-pbd
-- **Concept**: Neural Musculoskeletal Physics.
-- **Novel trait**: A Spiking Neural Network (SNN) acts as a Central Pattern Generator (CPG) to physically modulate `Actuator` constraints in a Position Based Dynamics simulation. Neural spikes dynamically shorten and elongate the resting lengths of physical constraints, simulating muscle contraction and relaxation.
-- **Predicted Phenotype**: An emergent biomechanical simulation where an articulated physics-based body twitches, crawls, and structurally reacts to the electrical impulses generated by a chaotic spiking neural network.
-- **Status**: experiments/neuro-physics
-- **Evaluation**: Success. Compiled. The Spiking Neural Network accurately modulates physical actuator constraints, causing realistic biomechanical locomotion. Headless execution successful.
-
-### miller-flock
-- **Parents**: crates/miller-lattice + crates/flocking
-- **Concept**: Swarm-Navigated Codebase Crystal.
-- **Novel trait**: The structural crystal nodes of a codebase (miller-lattice) are flattened and act as intense spatial attractors for emergent swarm intelligence (flocking).
-- **Predicted Phenotype**: An emergent codebase visualization where swarms of boids navigate the topography of a repository, naturally clustering and foraging around densely coupled structural nodes while avoiding sparse voids.
-- **Status**: experiments/miller-flock
-- **Evaluation**: Success. Compiled. Swarm logic efficiently responds to the structural attractors, creating a biological visualization of codebase hot-spots.
-
-### miller-physics
-- **Parents**: crates/miller-lattice + crates/physics-pbd
-- **Concept**: Codebase Physical Lattice Morphogenesis.
-- **Novel trait**: The discrete 3D crystalline lattice of a filesystem structure (`miller-lattice`) is subjected to continuous Position Based Dynamics constraints (`physics-pbd`). Directories are modeled as heavier nodes, files as lighter nodes, and hierarchical relationships as distance constraints.
-- **Predicted Phenotype**: A breathing, physical representation of the repository's architecture where the lattice acts as a soft-body organism dangling from its pinned root directory.
-- **Status**: experiments/miller-physics
-- **Evaluation**: Success. Compiled. The static crystal lattice nodes successfully translate into interacting physics particles connected by distance constraints. Headless bypass correctly implemented.
-
-### git-neuro
-- **Parents**: crates/git-associates + crates/neuro-sim
-- **Concept**: Cognitive Commit History.
-- **Novel trait**: The discrete chronological commit history of a repository (`git-associates`) is replayed as continuous electrical injection currents into a biological Spiking Neural Network (`neuro-sim`). The length and complexity of each commit acts as an electrical jolt to sensory neurons.
-- **Predicted Phenotype**: An emergent simulation where the repository history becomes a sequence of electrical storms in a synthetic brain. Spikes propagate through hidden synaptic connections, echoing the ripple effects of codebase modifications.
-- **Status**: experiments/git-neuro
-- **Evaluation**: Success. Compiled. The neural network successfully responds with cognitive storms based on commit injection currents. Headless bypass correctly implemented.
-
-## 🔮 Proposed Crosses
-
-### poincare-fluid
-- **Parents**: crates/poincare-disk + crates/ferrous-fluid
-- **Concept**: Hyperbolic Fluid Dynamics.
-- **Predicted Phenotype**: A continuous fluid simulation where density and pressure exponentially increase as particles approach the boundary of the Poincaré disk.
-
-### miller-origami
-- **Parents**: crates/miller-lattice + crates/origami
-- **Concept**: Codebase Soft-Body Morphogenesis.
-- **Predicted Phenotype**: A breathing soft-body representation of the repository's directory tree.
-
-### git-origami
-- **Parents**: crates/git-associates + crates/origami
-- **Concept**: Version Control Foldable Mesh.
-- **Predicted Phenotype**: A continuous folding surface that bends and deforms based on Git activity.

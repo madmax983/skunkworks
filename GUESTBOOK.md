@@ -1571,3 +1571,4 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 ### [Concentration Level: EVAPORATING] - Location: experiments/colony-concerto
 - **Scent Origin:** Havoc 👹
 - **Status:** Integer underflow panic discovered in `generate_layered_dag` when `layers=0`. Sentry reinforcement required to validate boundaries.
+- [STABLE TRAIL] 🧬 Splice Surgeon: Cross quipu × physics-pbd (Gravity Knots)
