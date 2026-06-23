@@ -90,6 +90,18 @@ impl Button {
     /// Evaluates to `true` on the exact frame the user releases the left mouse button
     /// over the widget (a complete "click").
     pub fn draw(&self) -> bool {
+        if !self.rect.x.is_finite()
+            || !self.rect.y.is_finite()
+            || !self.rect.w.is_finite()
+            || !self.rect.h.is_finite()
+            || self.rect.w <= 0.0
+            || self.rect.h <= 0.0
+            || self.rect.x > 100_000.0 // Arbitrary reasonable bound to prevent geometry explosion
+            || self.rect.y > 100_000.0
+        {
+            return false;
+        }
+
         let (mx, my) = mouse_position();
         let is_hover = self.rect.contains(vec2(mx, my));
         let is_clicked = is_hover && is_mouse_button_released(MouseButton::Left);
