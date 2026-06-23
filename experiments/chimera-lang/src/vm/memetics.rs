@@ -705,8 +705,11 @@ pub struct Meme {
 /// Enum for `VirusMode`.
 /// Enum for `VirusMode`.
 pub enum VirusMode {
+    /// Replace cell with new content completely.
     Overwrite,   // Current behavior: Replace cell with new content
+    /// Parse cell content, mutate, and write back.
     RewriteGrid, // Parse cell content -> Mutate -> Write back
+    /// Parse Organelle DNA, mutate, compile, and replace.
     RewriteDNA,  // Parse Organelle DNA -> Mutate -> Compile -> Replace
 }
 
@@ -4321,6 +4324,10 @@ fn handle_outbreak_quorum(
     }
 }
 
+/// Executes memetics operations and handles side effects.
+///
+/// Takes the active `ChimeraVM`, an `OpCode`, and corresponding `Nucleotide` arguments.
+/// Dispatcher for virus injection and mutation mechanics.
 pub fn exec_memetics_op(
     vm: &mut ChimeraVM,
     op: OpCode,

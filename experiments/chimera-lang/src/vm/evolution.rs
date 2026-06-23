@@ -120,10 +120,15 @@ use rand::Rng;
 /// Enum for `Challenge`.
 /// Enum for `Challenge`.
 pub enum Challenge {
+    /// Reach a specific target number.
     Target(i64),
+    /// Create an entity that doubles values.
     Doubler,
+    /// Create an entity that adds values.
     Adder,
+    /// Generate a Fibonacci sequence.
     Fibonacci,
+    /// Custom challenge with full configuration.
     Custom(EvolutionConfig),
 }
 

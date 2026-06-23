@@ -5,7 +5,6 @@
 
 use anyhow::{anyhow, Result};
 use pest::Parser;
-use pest_derive::Parser;
 use std::collections::HashMap;
 use std::path::Path;
 
@@ -28,125 +27,16 @@ pub struct AlchemyRule {
 ///
 /// Responsible for reading the hybrid text/grid representations used by
 /// the Prologue system via the rules defined in `prologue_grammar.pest`.
-#[derive(Parser)]
+#[allow(missing_docs)]
+pub mod prologueparser_mod {
+    use pest_derive::Parser;
+    #[derive(Parser)]
 #[allow(missing_docs)]
 #[grammar = "prologue_grammar.pest"]
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
-/// Represents a `PrologueParser`.
 pub struct PrologueParser;
+}
+pub use prologueparser_mod::PrologueParser;
+pub use prologueparser_mod::Rule;
 
 /// Represents the parsed structure of a Prologue circuit script.
 ///

@@ -28,7 +28,6 @@ use crate::ast::{Dna, EvolutionConfig, Gene, Helix, JunctionType, Nucleotide, St
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use pest::Parser;
-use pest_derive::Parser;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::io::Read;
@@ -40,7 +39,10 @@ use strum::IntoEnumIterator;
 ///
 /// Derived from `script_grammar.pest`. This handles the lexical analysis and parsing
 /// of the source text into a CST (Concrete Syntax Tree).
-#[derive(Parser)]
+#[allow(missing_docs)]
+pub mod scriptparser_mod {
+    use pest_derive::Parser;
+    #[derive(Parser)]
 #[grammar = "script_grammar.pest"]
 /// Represents a `ScriptParser`.
 /// Represents a `ScriptParser`.
@@ -158,6 +160,9 @@ use strum::IntoEnumIterator;
 /// Represents a `ScriptParser`.
 /// Represents a `ScriptParser`.
 pub struct ScriptParser;
+}
+pub use scriptparser_mod::ScriptParser;
+pub use scriptparser_mod::Rule;
 
 /// Maximum depth of `#include` directives to prevent stack overflow.
 const MAX_INCLUDE_DEPTH: usize = 32;
