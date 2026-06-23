@@ -3342,6 +3342,75 @@ classDiagram
     MillerOrigami --> MiuraParams : Miura Mesh Folding
 ```
 
+
+## Experiment: Git-Physics (ADR 129)
+
+**Git-Physics** crosses the discrete, chronological commit history of a repository (`git-associates`) with the continuous Position-Based Dynamics rigid body simulation (`physics-pbd`).
+
+### Hybrid Architecture
+
+The hybrid translates discrete repository modifications (commits) directly into physical particles dropping into a rigid body simulation. Each commit's mass and size scale proportionally with its codebase impact. These commit-particles are subject to gravitational forces and undergo continuous physical collision detection as they settle.
+
+```mermaid
+classDiagram
+    direction TB
+    class GitPhysics {
+        +CommitHistory history
+        +PbdSystem soft_body
+        +run()
+    }
+
+    class CommitHistory {
+        <<Library: git-associates>>
+        +Vec~Commit~ commits
+        +parse_metadata()
+    }
+
+    class PbdSystem {
+        <<Library: physics-pbd>>
+        +Vec~Particle~ particles
+        +Vec~Constraint~ distance_constraints
+        +solve()
+    }
+
+    GitPhysics --> CommitHistory : Codebase Impact
+    GitPhysics --> PbdSystem : Rigid Body Collision
+```
+
+## Experiment: Quipu-Physics (ADR 130)
+
+**Quipu-Physics** explores "Gravity Knots" by crossing the discrete, hierarchical knotted integer cord structures of `quipu` with the continuous Position-Based Dynamics simulations of `physics-pbd`.
+
+### Hybrid Architecture
+
+The discrete knotted data structures are mapped into a continuous physical chain simulation. The base-10 numerical data encoded in Quipu cords acts directly as the structural blueprint for a physics constraint mesh. The powers of 10 clusters dictate the resting-length of chain segments, and the knot counts define the physical mass of the points acting as nodes within a gravity-affected soft body chain.
+
+```mermaid
+classDiagram
+    direction TB
+    class QuipuPhysics {
+        +Quipu data_knots
+        +PbdSystem soft_body
+        +run()
+    }
+
+    class Quipu {
+        <<Library: quipu>>
+        +Vec~Cord~ cords
+        +parse()
+    }
+
+    class PbdSystem {
+        <<Library: physics-pbd>>
+        +Vec~Particle~ particles
+        +Vec~Constraint~ distance_constraints
+        +solve()
+    }
+
+    QuipuPhysics --> Quipu : Knotted Data
+    QuipuPhysics --> PbdSystem : Physical Constraints
+```
+
 ## Chimera Lang TUI & VM Facade (ADR 124)
 
 Enforcing the Facade pattern in `chimera-lang` prevents the leakage of its internal TUI and VM structures, ensuring consumers rely only on the exported API.
@@ -3378,9 +3447,9 @@ classDiagram
     VmMod ..> VmPrologue : encapsulates
 ```
 
-### Nova Feature: Esoteric Blocks (ADR 128)
+### Nova Feature: Esoteric Blocks (ADR 128 & ADR 131)
 
-The `chaos_hologram`, `cymatic_ocean`, and `verge` blocks allow native invocation of specialized esoteric computing paradigms directly from `chimera-lang` scripts. The compiler translates these syntax blocks into specific OpCodes, triggering their respective subsystems during VM execution via `nova_dispatch.rs`.
+The `chaos_hologram`, `cymatic_ocean`, `verge`, and `quantum_garden` blocks allow native invocation of specialized esoteric computing paradigms directly from `chimera-lang` scripts. The compiler translates these syntax blocks into specific OpCodes, triggering their respective subsystems during VM execution via `nova_dispatch.rs`.
 
 ```mermaid
 sequenceDiagram
@@ -3388,9 +3457,9 @@ sequenceDiagram
     participant Compiler as PrologueCompiler
     participant VM as ChimeraVM
 
-    Note over Script: chaos_hologram { ... }<br/>cymatic_ocean { ... }<br/>verge { ... }
+    Note over Script: chaos_hologram { ... }<br/>cymatic_ocean { ... }<br/>verge { ... }<br/>quantum_garden { ... }
     Script->>Compiler: parse_esoteric_blocks()
-    Compiler-->>VM: push(OpCode::ChaosHologram / CymaticOcean / Verge)
+    Compiler-->>VM: push(OpCode::ChaosHologram / CymaticOcean / Verge / QuantumGarden)
 
     Note over VM: Execution Phase (nova_dispatch)
     VM->>VM: execute_gene(OpCode)
