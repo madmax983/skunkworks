@@ -678,6 +678,11 @@ impl crate::vm::ChimeraVM {
                     .push("Cymatic Ocean simulation triggered.".to_string());
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
+            OpCode::QuantumGarden => {
+                self.output
+                    .push("Quantum Garden simulation triggered.".to_string());
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+            }
             OpCode::ChaosHologram => {
                 crate::vm::nova::exec_chaos_hologram(self);
                 crate::vm::ops::Dispatch::Handled
