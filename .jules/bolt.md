@@ -1,20 +1,3 @@
-# Bolt's Journal
-
-**[Cloned vs Copied on Primitive Types]**
-**Learning:** Using `.cloned()` on a reference to a type that implements `Copy` (like `bool`) works, but `.copied()` is strictly more semantically correct for primitive values, expressing a zero-cost bitwise copy rather than implying a potentially expensive `.clone()` operation. While identical after compiler optimization, replacing `.cloned()` with `.copied()` clarifies intent and aligns with idiomatic zero-cost abstraction principles.
-**Action:** Always prefer `.copied()` over `.cloned()` when dealing with references to simple primitive/`Copy` types.
-
-**[HashMap vs FxHashMap in State Structs]**
-**Learning:** Blindly upgrading `HashMap` to `rustc_hash::FxHashMap` in large state structs can lead to painful type mismatches in function signatures that expect standard `HashMap` references.
-**Action:** Verify external trait/function signature boundaries before replacing default HashMaps.
-
-**[String Slicing vs chars().take().collect::<String>()]**
-**Learning:** `chars().take(n).collect::<String>()` performs unnecessary heap allocations and iteration.
-**Action:** Use `&s[..n]` or similar slices where possible, provided UTF-8 character boundaries are respected, or `String::with_capacity()` to pre-allocate correctly.
-
-**[O(1) Byte Indexing for Random ASCII Characters]**
-**Learning:** `let chars = "ABC"; chars.chars().nth(idx)` does an $O(N)$ string traversal and iterator allocation on every call.
-**Action:** For simple ASCII random character generation, use byte literals `let chars = b"ABC"; (chars[idx] as char)` to achieve an $O(1)$ zero-cost abstraction.
-**[TUI Grid Pre-allocation]**
-**Learning:** Rendering dense UI grids on every frame creates significant vector allocations. Pre-allocating the known grid size (`Vec::with_capacity(16)`) instead of using `Vec::new()` avoids repeated heap reallocations. Replacing `ListItem::new(s.clone())` with `.as_str()` or references causes borrow checker complaints due to state lifetimes without invasive refactoring.
-**Action:** Use `.with_capacity()` for collections with known bounds, especially in render loops. Avoid deep lifetime refactoring if it contradicts the goal of safe, small improvements.
+**[Optimizing AST Node Evaluation in chimera-lang]**
+**Learning:** `Value` methods for processing tree node structures natively perform deep `.clone()` operations continuously which is extremely expensive, resulting in repeated heap reallocations.
+**Action:** Used `&Value` references when evaluating AST trees (`apply_binary_op_recursive_ref`) instead of consuming `Value` during AST mapping operations, saving exponential heap allocations.
