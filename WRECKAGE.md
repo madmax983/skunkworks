@@ -141,3 +141,13 @@ fatal runtime error: stack overflow, aborting
 ```
 🧪 **Reproduction:** `cargo test -p heap-arena --test havoc`
 😈 **Comment:** "You relied on recursion to parse syntax trees. I handed you an abyss. Your stack shattered."
+
+### 13. `arthropod`
+🧨 **The Trigger:** Provided extremely large coordinates (`f32::MAX`) to `Button::new`.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_arthropod_panic_inner' panicked at ...
+👺 Havoc: WRECKAGE! The Sentry patch is missing or broken!
+```
+🧪 **Reproduction:** `cargo test -p arthropod --test havoc`
+😈 **Comment:** "A macroquad uninitialized context isn't an excuse to panic. Your geometry calculations can explode before drawing."
