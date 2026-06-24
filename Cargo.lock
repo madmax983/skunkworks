@@ -8369,17 +8369,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "origami-ddos"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "origami",
- "physics-pbd",
- "rand 0.8.6",
- "rayon",
-]
-
-[[package]]
 name = "origami-history"
 version = "0.1.0"
 dependencies = [
