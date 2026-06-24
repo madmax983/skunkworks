@@ -49,13 +49,13 @@ pub fn exec_babel_op(
             }
         }
         OpCode::Generate => {
-            if let Some(grammar) = vm.stack.pop() {
-                let generated = generate_string(&grammar);
-                vm.stack.push(Value::Str(generated));
-            } else {
+            let Some(grammar) = vm.stack.pop() else {
                 vm.output
                     .push("Error: Stack underflow for Generate".to_string());
-            }
+                return None;
+            };
+            let generated = generate_string(&grammar);
+            vm.stack.push(Value::Str(generated));
         }
         OpCode::Tongue => {
             // [ grammar, input ] -> [ corrupted ]
