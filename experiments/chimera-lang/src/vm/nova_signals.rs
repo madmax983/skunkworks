@@ -33,32 +33,26 @@ fn val_to_char(v: i64) -> char {
 }
 
 fn peek(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64) -> Option<i64> {
-    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-        match &vm.grid[ny][nx] {
-            Value::Int(n) => Some(*n),
-            Value::Str(s) => {
-                if s.len() == 1 {
-                    char_to_val(s.chars().next().unwrap())
-                } else {
-                    None
-                }
+    let (ny, nx) = vm.normalize_coords(y as i64 + dy, x as i64 + dx)?;
+    match &vm.grid[ny][nx] {
+        Value::Int(n) => Some(*n),
+        Value::Str(s) => {
+            if s.len() == 1 {
+                char_to_val(s.chars().next().unwrap())
+            } else {
+                None
             }
-            _ => None,
         }
-    } else {
-        None
+        _ => None,
     }
 }
 
 fn peek_char(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64) -> Option<char> {
-    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-        match &vm.grid[ny][nx] {
-            Value::Str(s) => s.chars().next(),
-            Value::Int(n) => Some(val_to_char(*n)),
-            _ => None,
-        }
-    } else {
-        None
+    let (ny, nx) = vm.normalize_coords(y as i64 + dy, x as i64 + dx)?;
+    match &vm.grid[ny][nx] {
+        Value::Str(s) => s.chars().next(),
+        Value::Int(n) => Some(val_to_char(*n)),
+        _ => None,
     }
 }
 
@@ -286,10 +280,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             #[cfg(feature = "nova")]
             if signal > 0 {
                 if let Some(node) = vm.biomesh.nodes.get(&(y, x)) {
-                    for (ny, nx) in &node.connections {
-                        if *ny < size && *nx < size {
-                            ctx.next_signals[*ny][*nx] =
-                                ctx.next_signals[*ny][*nx].saturating_add(signal);
+                    for &(ny, nx) in &node.connections {
+                        if ny < size && nx < size {
+                            ctx.next_signals[ny][nx] =
+                                ctx.next_signals[ny][nx].saturating_add(signal);
                         }
                     }
                 }

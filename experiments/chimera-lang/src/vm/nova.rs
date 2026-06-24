@@ -724,20 +724,19 @@ fn exec_prologue_esolang(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_rune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 3 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        let c_val = vm.stack.pop().unwrap();
-        if let (Value::Int(c), Value::Int(y), Value::Int(x)) = (c_val, y_val, x_val) {
-            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                if let Some(ch) = char::from_u32(c as u32) {
-                    vm.grid[ny][nx] = Value::Str(ch.to_string());
-                    vm.output
-                        .push(format!("RUNE: Placed '{}' at {},{}", ch, nx, ny));
-                }
-            }
-        }
+    if vm.stack.len() < 3 {
+        return None;
     }
+    let Value::Int(x) = vm.stack.pop().unwrap() else { return None; };
+    let Value::Int(y) = vm.stack.pop().unwrap() else { return None; };
+    let Value::Int(c) = vm.stack.pop().unwrap() else { return None; };
+
+    let (ny, nx) = vm.normalize_coords(y, x)?;
+    let ch = char::from_u32(c as u32)?;
+
+    vm.grid[ny][nx] = Value::Str(ch.to_string());
+    vm.output
+        .push(format!("RUNE: Placed '{}' at {},{}", ch, nx, ny));
     None
 }
 

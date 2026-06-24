@@ -101,15 +101,16 @@ fn exec_memristor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_modulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if let Some(Value::Int(res)) = vm.stack.pop() {
-        let (y, x) = vm.context_loc;
-        let r = res.max(0) as f32;
-        vm.resistance_grid[y][x] = r;
-        vm.output.push(format!(
-            "MODULATE: Resistance set to {:.2} at {},{}",
-            r, x, y
-        ));
-    }
+    let Some(Value::Int(res)) = vm.stack.pop() else {
+        return None;
+    };
+    let (y, x) = vm.context_loc;
+    let r = res.max(0) as f32;
+    vm.resistance_grid[y][x] = r;
+    vm.output.push(format!(
+        "MODULATE: Resistance set to {:.2} at {},{}",
+        r, x, y
+    ));
     None
 }
 

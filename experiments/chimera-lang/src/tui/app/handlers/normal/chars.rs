@@ -152,12 +152,15 @@ fn handle_view_switch_chars(c: char, app_state: &mut AppState) -> Result<bool> {
 fn handle_char_k_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
     {
-        if let ViewMode::Ecology = app_state.view_mode {
-            vm.organelles.clear();
-            app_state.status_msg = "Extinction Event.".to_string();
-        } else {
-            app_state.view_mode = ViewMode::Choir;
-            app_state.status_msg = "Switched to Choir View".to_string();
+        match app_state.view_mode {
+            ViewMode::Ecology => {
+                vm.organelles.clear();
+                app_state.status_msg = "Extinction Event.".to_string();
+            }
+            _ => {
+                app_state.view_mode = ViewMode::Choir;
+                app_state.status_msg = "Switched to Choir View".to_string();
+            }
         }
     }
     #[cfg(not(feature = "nova"))]
@@ -206,19 +209,23 @@ fn handle_char_a(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
 fn handle_char_x(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
     {
-        if let ViewMode::Graveyard = app_state.view_mode {
-            if app_state.selected_graveyard_strand < vm.graveyard.len() {
-                vm.graveyard.remove(app_state.selected_graveyard_strand);
-                app_state.status_msg = "Exterminated strand.".to_string();
-                if app_state.selected_graveyard_strand >= vm.graveyard.len()
-                    && !vm.graveyard.is_empty()
-                {
-                    app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
+        match app_state.view_mode {
+            ViewMode::Graveyard => {
+                if app_state.selected_graveyard_strand < vm.graveyard.len() {
+                    vm.graveyard.remove(app_state.selected_graveyard_strand);
+                    app_state.status_msg = "Exterminated strand.".to_string();
+                    if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                        && !vm.graveyard.is_empty()
+                    {
+                        app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
+                    }
                 }
             }
-        } else if let ViewMode::Alchemy = app_state.view_mode {
-            vm.crucible.clear();
-            app_state.status_msg = "Crucible emptied.".to_string();
+            ViewMode::Alchemy => {
+                vm.crucible.clear();
+                app_state.status_msg = "Crucible emptied.".to_string();
+            }
+            _ => {}
         }
     }
     #[cfg(not(feature = "nova"))]
@@ -231,7 +238,7 @@ fn handle_char_x(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
 
 fn handle_char_t(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    if let ViewMode::Alchemy = app_state.view_mode {
+    if matches!(app_state.view_mode, ViewMode::Alchemy) {
         crate::vm::alchemy::transmute_crucible(vm);
     }
     #[cfg(not(feature = "nova"))]
@@ -243,7 +250,7 @@ fn handle_char_t(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
 }
 
 fn handle_char_e(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    if let ViewMode::Genome = app_state.view_mode {
+    if matches!(app_state.view_mode, ViewMode::Genome) {
         if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
             let engine = crate::vm::evolution::EvolutionEngine::new(
                 strand.clone(),
@@ -261,15 +268,18 @@ fn handle_char_e(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
 fn handle_char_g_upper(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
     {
-        if let ViewMode::Babel = app_state.view_mode {
-            if let Some(ast) = &app_state.babel_ast {
-                let s = crate::vm::babel::generate_string(ast);
-                app_state.babel_result = s;
-            } else {
-                app_state.status_msg = "No Grammar to Generate from".to_string();
+        match app_state.view_mode {
+            ViewMode::Babel => {
+                if let Some(ast) = &app_state.babel_ast {
+                    let s = crate::vm::babel::generate_string(ast);
+                    app_state.babel_result = s;
+                } else {
+                    app_state.status_msg = "No Grammar to Generate from".to_string();
+                }
             }
-        } else {
-            app_state.view_mode = ViewMode::Garden;
+            _ => {
+                app_state.view_mode = ViewMode::Garden;
+            }
         }
     }
     #[cfg(not(feature = "nova"))]
@@ -283,18 +293,21 @@ fn handle_char_g_upper(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<
 fn handle_char_t_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
     {
-        if let ViewMode::Babel = app_state.view_mode {
-            if let Some(ast) = &app_state.babel_ast {
-                vm.stack.push(ast.clone());
-                vm.stack
-                    .push(crate::vm::Value::Str(app_state.babel_input.clone()));
-                crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Tongue, &[]);
-                if let Some(res) = vm.stack.pop() {
-                    app_state.babel_result = format!("{}", res);
+        match app_state.view_mode {
+            ViewMode::Babel => {
+                if let Some(ast) = &app_state.babel_ast {
+                    vm.stack.push(ast.clone());
+                    vm.stack
+                        .push(crate::vm::Value::Str(app_state.babel_input.clone()));
+                    crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Tongue, &[]);
+                    if let Some(res) = vm.stack.pop() {
+                        app_state.babel_result = format!("{}", res);
+                    }
                 }
             }
-        } else {
-            app_state.view_mode = ViewMode::Chronos;
+            _ => {
+                app_state.view_mode = ViewMode::Chronos;
+            }
         }
     }
     #[cfg(not(feature = "nova"))]
@@ -308,17 +321,21 @@ fn handle_char_t_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<b
 fn handle_char_i_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
     {
-        if let ViewMode::Hologram = app_state.view_mode {
-            let idx = app_state.selected_strand;
-            vm.stack.push(crate::vm::Value::Int(idx as i64));
-            crate::vm::nova_hologram::exec_interfere(vm, crate::opcode::OpCode::Interfere, &[]);
-            app_state.status_msg = format!("Interfered strand {}", idx);
-        } else if let ViewMode::Ecology = app_state.view_mode {
-            app_state.input_mode = InputMode::Editing;
-            app_state.input_buffer.clear();
-            app_state.status_msg = "Injecting Gene... (Type & Enter)".to_string();
-        } else {
-            app_state.view_mode = ViewMode::Hologram;
+        match app_state.view_mode {
+            ViewMode::Hologram => {
+                let idx = app_state.selected_strand;
+                vm.stack.push(crate::vm::Value::Int(idx as i64));
+                crate::vm::nova_hologram::exec_interfere(vm, crate::opcode::OpCode::Interfere, &[]);
+                app_state.status_msg = format!("Interfered strand {}", idx);
+            }
+            ViewMode::Ecology => {
+                app_state.input_mode = InputMode::Editing;
+                app_state.input_buffer.clear();
+                app_state.status_msg = "Injecting Gene... (Type & Enter)".to_string();
+            }
+            _ => {
+                app_state.view_mode = ViewMode::Hologram;
+            }
         }
     }
     #[cfg(not(feature = "nova"))]
@@ -332,10 +349,13 @@ fn handle_char_i_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<b
 fn handle_char_o_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
     {
-        if let ViewMode::Hologram = app_state.view_mode {
-            crate::vm::nova_hologram::exec_refract(vm, crate::opcode::OpCode::Refract, &[]);
-        } else {
-            app_state.view_mode = ViewMode::Orca;
+        match app_state.view_mode {
+            ViewMode::Hologram => {
+                crate::vm::nova_hologram::exec_refract(vm, crate::opcode::OpCode::Refract, &[]);
+            }
+            _ => {
+                app_state.view_mode = ViewMode::Orca;
+            }
         }
     }
     #[cfg(not(feature = "nova"))]
@@ -348,7 +368,7 @@ fn handle_char_o_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<b
 
 fn handle_char_plus(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    if let ViewMode::Hologram = app_state.view_mode {
+    if matches!(app_state.view_mode, ViewMode::Hologram) {
         let (x, y) = app_state.grid_cursor;
         vm.hologram_grid[y][x].0 += 0.1;
         vm.hologram_grid[y][x].1 += 0.1;
@@ -363,7 +383,7 @@ fn handle_char_plus(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool
 
 fn handle_char_minus(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    if let ViewMode::Hologram = app_state.view_mode {
+    if matches!(app_state.view_mode, ViewMode::Hologram) {
         let (x, y) = app_state.grid_cursor;
         vm.hologram_grid[y][x].0 -= 0.1;
         vm.hologram_grid[y][x].1 -= 0.1;
@@ -379,7 +399,7 @@ fn handle_char_minus(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<boo
 fn handle_char_r(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
     {
-        if let ViewMode::Graveyard = app_state.view_mode {
+        if matches!(app_state.view_mode, ViewMode::Graveyard) {
             match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
                 Ok(idx) => {
                     app_state.status_msg = format!("Resurrected strand {}!", idx);
@@ -402,12 +422,15 @@ fn handle_char_r(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
 }
 
 fn handle_char_p(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    if let ViewMode::Grid = app_state.view_mode {
-        app_state.palette_open = !app_state.palette_open;
-    } else {
-        #[cfg(feature = "nova")]
-        {
-            app_state.view_mode = ViewMode::PianoRoll;
+    match app_state.view_mode {
+        ViewMode::Grid => {
+            app_state.palette_open = !app_state.palette_open;
+        }
+        _ => {
+            #[cfg(feature = "nova")]
+            {
+                app_state.view_mode = ViewMode::PianoRoll;
+            }
         }
     }
     Ok(false)
@@ -416,7 +439,7 @@ fn handle_char_p(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> 
 fn handle_char_slash(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(all(feature = "oracle", feature = "nova"))]
     {
-        if let ViewMode::Grimoire = app_state.view_mode {
+        if matches!(app_state.view_mode, ViewMode::Grimoire) {
             app_state.query_mode = true;
             app_state.query_input.clear();
             app_state.query_results.clear();
@@ -439,50 +462,54 @@ fn handle_char_brackets_numbers(
     {
         match c {
             '1' => {
-                if let ViewMode::Pandemonium = app_state.view_mode {
+                if matches!(app_state.view_mode, ViewMode::Pandemonium) {
                     app_state.pandemonium_selected_tool = 0;
                 }
             }
             '2' => {
-                if let ViewMode::Pandemonium = app_state.view_mode {
+                if matches!(app_state.view_mode, ViewMode::Pandemonium) {
                     app_state.pandemonium_selected_tool = 1;
                 }
             }
             '3' => {
-                if let ViewMode::Pandemonium = app_state.view_mode {
+                if matches!(app_state.view_mode, ViewMode::Pandemonium) {
                     app_state.pandemonium_selected_tool = 2;
                 }
             }
             '4' => {
-                if let ViewMode::Pandemonium = app_state.view_mode {
+                if matches!(app_state.view_mode, ViewMode::Pandemonium) {
                     app_state.pandemonium_selected_tool = 3;
                 }
             }
             '5' => {
-                if let ViewMode::Pandemonium = app_state.view_mode {
+                if matches!(app_state.view_mode, ViewMode::Pandemonium) {
                     app_state.pandemonium_selected_tool = 4;
                 }
             }
-            '[' => {
-                if let ViewMode::Kaleidoscope = app_state.view_mode {
+            '[' => match app_state.view_mode {
+                ViewMode::Kaleidoscope => {
                     if app_state.kaleidoscope_hue_idx > 0 {
                         app_state.kaleidoscope_hue_idx -= 1;
                     } else {
                         app_state.kaleidoscope_hue_idx = 5;
                     }
-                } else if let ViewMode::Pandemonium = app_state.view_mode {
+                }
+                ViewMode::Pandemonium => {
                     app_state.pandemonium_radius = (app_state.pandemonium_radius - 1.0).max(1.0);
                 }
-            }
-            ']' => {
-                if let ViewMode::Kaleidoscope = app_state.view_mode {
+                _ => {}
+            },
+            ']' => match app_state.view_mode {
+                ViewMode::Kaleidoscope => {
                     app_state.kaleidoscope_hue_idx = (app_state.kaleidoscope_hue_idx + 1) % 6;
-                } else if let ViewMode::Pandemonium = app_state.view_mode {
+                }
+                ViewMode::Pandemonium => {
                     app_state.pandemonium_radius += 1.0;
                 }
-            }
+                _ => {}
+            },
             '{' => {
-                if let ViewMode::Kaleidoscope = app_state.view_mode {
+                if matches!(app_state.view_mode, ViewMode::Kaleidoscope) {
                     if app_state.kaleidoscope_light_idx > 0 {
                         app_state.kaleidoscope_light_idx -= 1;
                     } else {
@@ -491,7 +518,7 @@ fn handle_char_brackets_numbers(
                 }
             }
             '}' => {
-                if let ViewMode::Kaleidoscope = app_state.view_mode {
+                if matches!(app_state.view_mode, ViewMode::Kaleidoscope) {
                     app_state.kaleidoscope_light_idx = (app_state.kaleidoscope_light_idx + 1) % 3;
                 }
             }
@@ -544,7 +571,7 @@ fn handle_char_s_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<b
 
 #[cfg(feature = "nova")]
 fn handle_char_m_upper(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    if let ViewMode::Babel = app_state.view_mode {
+    if matches!(app_state.view_mode, ViewMode::Babel) {
         // Initialize if needed
         if app_state.babel_ast.is_none() {
             // Seed: Seq(Match("A"), Match("B"))
@@ -843,14 +870,14 @@ fn handle_char_space(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<boo
 }
 fn handle_char_f(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    if let ViewMode::Ecology = app_state.view_mode {
+    if matches!(app_state.view_mode, ViewMode::Ecology) {
         crate::vm::nova_ecology::spawn_food(vm);
         app_state.status_msg = "Food spawned.".to_string();
         return Ok(true);
     }
 
     #[cfg(feature = "silicon")]
-    if let ViewMode::Foundry = app_state.view_mode {
+    if matches!(app_state.view_mode, ViewMode::Foundry) {
         // Fabricate current strand
         let (x, y) = app_state.grid_cursor;
         let s_idx = app_state.selected_strand;
