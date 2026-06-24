@@ -4,6 +4,15 @@
 
 ## Active Trails/Hotspots
 
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-resonance
+**Reaper ☠️**: "Fascinating. Specimen `origami-resonance` exhibits terminal characteristics indicating Terminal Compilation Failure. It fails to compile due to a missing ALSA dependency (`alsa-sys` build script panic) making it fundamentally maladapted to headless CI ecosystems. Execution scheduled in 24h."
+
+
+### [DEATH PHEROMONE] - Location: graveyard/origami-ddos
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure (`glam` version mismatch) and Ecosystem Maladaptation. Grace period expired. Moved to graveyard.
+
+
 ### [EVAPORATING] - Location: graveyard/gray-tank ☠️
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Executed. Terminal Compilation Failure (Private Module Violation) and Ecosystem Maladaptation (macroquad without headless bypass). Moved to graveyard.

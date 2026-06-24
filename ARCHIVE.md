@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **origami-ddos**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`glam` version mismatch: `macroquad` uses 0.27, `physics_pbd` uses 0.28) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period: 24h.
+- **origami-resonance**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`alsa-sys` build script panic) and Ecosystem Maladaptation. Fails to compile due to missing ALSA dependencies (`pkg-config` exited with status code 1). Grace period: 24h.
 ## ☠️ Executed
+- **origami-ddos**: Specimen executed. Diagnosis: Terminal Compilation Failure (`glam` version mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **ferrous-swarm**: Specimen executed. Diagnosis: Terminal Compilation Failure (`glam` version mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **chaotic-conservatory**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and code decay. Grace period expired. Moved to graveyard.
 - **chimera-automaton**: Specimen executed. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
