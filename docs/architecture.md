@@ -3464,3 +3464,32 @@ sequenceDiagram
     Note over VM: Execution Phase (nova_dispatch)
     VM->>VM: execute_gene(OpCode)
 ```
+
+## Arthropod and Turbulent Rhythms Facade (ADR 132)
+
+Enforcing the Facade pattern in `arthropod` and `turbulent-rhythms` prevents the leakage of internal module structures, ensuring consumers rely only on the explicitly exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class ArthropodFacade {
+            <<Facade>>
+        }
+        class TurbulentRhythmsFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class ArthropodButton {
+            <<pub(crate)>>
+        }
+        class HavocContention {
+            <<pub(crate)>>
+        }
+    }
+
+    ArthropodFacade ..> ArthropodButton : encapsulates
+    TurbulentRhythmsFacade ..> HavocContention : encapsulates
+```
