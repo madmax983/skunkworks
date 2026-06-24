@@ -1798,6 +1798,13 @@ fn exec_singularity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         merged_genes.append(&mut strand.genes);
     }
 
+    // OOM fix: limit the size of merged_genes to prevent unbounded memory growth during loops
+    // using MAX_STRING_LEN as a proxy or just hardcoding a safe cap like 65536.
+    let max_genes = 65536;
+    if merged_genes.len() > max_genes {
+        merged_genes.truncate(max_genes);
+    }
+
     vm.dna.helix.strands.push(crate::ast::Strand {
         genes: merged_genes,
     });
@@ -1810,6 +1817,9 @@ fn exec_singularity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     vm.epigenome.clear();
     vm.market.clear();
+
+    // Also reset cladistics so it doesn't leak memory over repeated singularities!
+    vm.cladistics = crate::vm::cladistics::Cladistics::new();
 
     vm.ip = (0, 0);
 
