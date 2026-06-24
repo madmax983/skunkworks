@@ -596,14 +596,14 @@ pub(crate) fn render_savant(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
     f.render_widget(savant_list, right_chunks[0]);
 
     // Bottom Right: Logic Logs (Filtered Output)
-    let log_items: Vec<ListItem> = vm
+    // ⚡ Bolt: Removed intermediate `.collect::<Vec<_>>()` allocation. `List::new` accepts an iterator, eliminating heap allocation per frame.
+    let log_items = vm
         .output
         .iter()
         .filter(|s| s.starts_with("SAVANT") || s.starts_with("ORACLE"))
         .rev()
         .take(20)
-        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Green)))
-        .collect();
+        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Green)));
 
     let log_list = List::new(log_items).block(
         Block::default()
@@ -1247,11 +1247,11 @@ pub(crate) fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
         f.render_widget(info, right_chunks[0]);
 
         // Output Log
-        let log_items: Vec<ListItem> = trace
+        // ⚡ Bolt: Removed intermediate `.collect::<Vec<_>>()` allocation. `List::new` accepts an iterator, eliminating heap allocation per frame.
+        let log_items = trace
             .output_log
             .iter()
-            .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::DarkGray)))
-            .collect();
+            .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::DarkGray)));
 
         let log_list = List::new(log_items)
             .block(Block::default().borders(Borders::ALL).title("Dream Output"));
