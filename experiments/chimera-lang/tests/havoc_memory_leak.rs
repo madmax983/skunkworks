@@ -15,7 +15,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "👺 HAVOC: OOM is expected behavior in fuzzing"]
+
     fn test_cladistics_memory_leak() {
         // 👺 HAVOC: Triggering Memory Leak via Singularity Cycle
 
