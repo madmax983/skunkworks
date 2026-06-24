@@ -620,12 +620,12 @@ pub(crate) fn render_terminal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
 
     // Show last N lines, oldest first (standard terminal log)
     let log_start = vm.output.len().saturating_sub(30);
-    let log_items: Vec<ListItem> = vm
+    // ⚡ Bolt: Removed intermediate `.collect::<Vec<_>>()` allocation. `List::new` accepts an iterator, eliminating heap allocation per frame.
+    let log_items = vm
         .output
         .iter()
         .skip(log_start)
-        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Green)))
-        .collect();
+        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Green)));
 
     let log_list = List::new(log_items).block(
         Block::default()

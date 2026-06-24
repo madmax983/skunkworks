@@ -1,3 +1,3 @@
-**[Optimizing AST Node Evaluation in chimera-lang]**
-**Learning:** `Value` methods for processing tree node structures natively perform deep `.clone()` operations continuously which is extremely expensive, resulting in repeated heap reallocations.
-**Action:** Used `&Value` references when evaluating AST trees (`apply_binary_op_recursive_ref`) instead of consuming `Value` during AST mapping operations, saving exponential heap allocations.
+**Remove intermediate allocations when constructing TUI ListItems**
+**Learning:** Ratatui's `List::new()` accepts any `IntoIterator`. When generating lists of `ListItem`s from an iterator (e.g., parsing logs or outputs), it is unnecessary to use `.collect::<Vec<_>>()` to create an intermediate heap-allocated `Vec`. You can directly pass the iterator into `List::new(iterator)`.
+**Action:** Always check if Ratatui widgets accept iterators directly before collecting into a vector. This provides a zero-cost abstraction and eliminates heap allocations on hot paths.

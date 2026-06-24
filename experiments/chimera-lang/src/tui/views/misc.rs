@@ -699,12 +699,8 @@ pub(crate) fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
     }
 
     // Bottom: Logs
-    let log_items: Vec<ListItem> = arena
-        .logs
-        .iter()
-        .rev()
-        .map(|s| ListItem::new(s.clone()))
-        .collect();
+    // ⚡ Bolt: Removed intermediate `.collect::<Vec<_>>()` allocation. `List::new` accepts an iterator, eliminating heap allocation per frame.
+    let log_items = arena.logs.iter().rev().map(|s| ListItem::new(s.clone()));
     let logs_list = List::new(log_items).block(
         Block::default()
             .borders(Borders::ALL)
