@@ -54,25 +54,44 @@ pub fn compile(source: &str) -> Result<Dna> {
 
     for item in score_pair.into_inner() {
         if item.as_rule() == Rule::item {
-            let inner = item.into_inner().next().unwrap();
+            let inner = item
+                .into_inner()
+                .next()
+                .ok_or_else(|| anyhow!("Expected item content"))?;
             match inner.as_rule() {
                 Rule::track_def => {
                     let mut parts = inner.into_inner();
-                    let name = parts.next().unwrap().as_str().to_string();
-                    let block = parts.next().unwrap();
+                    let name = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected track name"))?
+                        .as_str()
+                        .to_string();
+                    let block = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected track block"))?;
                     symbol_table.insert(name.clone(), strand_counter);
                     pending_tracks.push((name, block));
                     strand_counter += 1;
                 }
                 Rule::instrument_def => {
                     let mut parts = inner.into_inner();
-                    let inst_name = parts.next().unwrap().as_str().to_string();
+                    let inst_name = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected instrument name"))?
+                        .as_str()
+                        .to_string();
                     // Methods
                     for method in parts {
                         if method.as_rule() == Rule::method_def {
                             let mut m_parts = method.into_inner();
-                            let m_name = m_parts.next().unwrap().as_str().to_string();
-                            let block = m_parts.next().unwrap();
+                            let m_name = m_parts
+                                .next()
+                                .ok_or_else(|| anyhow!("Expected method name"))?
+                                .as_str()
+                                .to_string();
+                            let block = m_parts
+                                .next()
+                                .ok_or_else(|| anyhow!("Expected method block"))?;
                             let full_name = format!("{}.{}", inst_name, m_name);
                             symbol_table.insert(full_name.clone(), strand_counter);
                             pending_tracks.push((full_name, block));
@@ -106,12 +125,18 @@ fn compile_block(
 
     for stmt in block_pair.into_inner() {
         if stmt.as_rule() == Rule::stmt {
-            let inner = stmt.into_inner().next().unwrap();
+            let inner = stmt
+                .into_inner()
+                .next()
+                .ok_or_else(|| anyhow!("Expected statement content"))?;
             match inner.as_rule() {
                 Rule::call_stmt => {
                     // call Name(Args)
                     let mut parts = inner.into_inner();
-                    let target_name = parts.next().unwrap().as_str();
+                    let target_name = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected call target"))?
+                        .as_str();
 
                     // Push Args first (if any)
                     if let Some(args_pair) = parts.next() {
@@ -138,7 +163,10 @@ fn compile_block(
                 Rule::op_stmt => {
                     // op(Name, Args...)
                     let mut parts = inner.into_inner();
-                    let op_name = parts.next().unwrap().as_str();
+                    let op_name = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected op name"))?
+                        .as_str();
                     let mut op_code = OpCode::from_str(op_name)
                         .map_err(|_| anyhow!("Failed to parse OpCode: {}", op_name))?;
 
@@ -188,7 +216,10 @@ fn compile_block(
                     // Generic command: name(args)
                     // Treat as OpCode if valid, else error
                     let mut parts = inner.into_inner();
-                    let cmd_name = parts.next().unwrap().as_str();
+                    let cmd_name = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected cmd name"))?
+                        .as_str();
 
                     // Try parsing as OpCode (Case insensitive or sensitive?)
                     // OpCode::from_str expects PascalCase usually (e.g. "Push").
@@ -278,13 +309,17 @@ fn compile_block(
                 Rule::repeat_stmt => {
                     // repeat(N) { block }
                     let mut parts = inner.into_inner();
-                    let count_pair = parts.next().unwrap();
+                    let count_pair = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected repeat count"))?;
                     let count_str = count_pair.as_str(); // "repeat" ~ "(" ~ int ~ ")"
                                                          // Wait, parse tree structure for repeat_stmt is: "repeat", "(", int, ")", block.
                                                          // Pest structure: repeat_stmt -> [int, block].
 
                     let count: usize = count_str.parse()?;
-                    let block_pair = parts.next().unwrap();
+                    let block_pair = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected repeat block"))?;
 
                     let block_genes = compile_block(block_pair, symbols, current_strand_name)?;
 
@@ -300,7 +335,10 @@ fn compile_block(
                     // But we can't jump to SelfStart easily without knowing our own index.
                     // We DO know our own index from `symbols` and `current_strand_name`.
 
-                    let block_pair = inner.into_inner().next().unwrap();
+                    let block_pair = inner
+                        .into_inner()
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected loop block"))?;
                     let block_genes = compile_block(block_pair, symbols, current_strand_name)?;
                     genes.extend(block_genes);
 
@@ -324,7 +362,10 @@ fn compile_block(
 fn compile_arg(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
     match pair.as_rule() {
         Rule::arg => {
-            let inner = pair.into_inner().next().unwrap();
+            let inner = pair
+                .into_inner()
+                .next()
+                .ok_or_else(|| anyhow!("Expected argument value"))?;
             match inner.as_rule() {
                 Rule::int => {
                     let v: i64 = inner.as_str().parse()?;
@@ -375,4 +416,45 @@ fn compile_arg_push(
         op: OpCode::Push,
         args: vec![n],
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_compile_error_instead_of_panic() {
+        // Provide partial, invalid grammar to trigger what used to be a panic.
+        // It's hard to make Pest yield incomplete parse pairs because the parser
+        // will usually reject invalid grammar earlier. However, we can at least
+        // prove that valid grammars don't panic and an intentionally bad input
+        // fails gracefully at parse or compile time.
+
+        // This is invalid pest input for score (missing identifier).
+        let result = compile("score { }");
+        assert!(result.is_err(), "Expected error on invalid score input");
+
+        let result = compile("score my_score { track { play(60) } }");
+        assert!(
+            result.is_err(),
+            "Expected error on invalid track input without name"
+        );
+
+        let result = compile("score my_score { track t1 { loop { repeat } } }");
+        assert!(
+            result.is_err(),
+            "Expected error on invalid repeat statement missing count"
+        );
+
+        // Ensure valid compiles correctly
+        let valid = "score main { track tr { play(60) } }";
+        let compiled = compile(valid);
+        assert!(compiled.is_ok(), "Valid score should compile without error");
+    }
+
+    #[test]
+    fn test_empty_input_handled_gracefully() {
+        let result = compile("");
+        assert!(result.is_err());
+    }
 }

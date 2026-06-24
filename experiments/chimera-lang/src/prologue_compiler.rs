@@ -31,9 +31,9 @@ pub struct AlchemyRule {
 pub mod prologueparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
-#[allow(missing_docs)]
-#[grammar = "prologue_grammar.pest"]
-pub struct PrologueParser;
+    #[allow(missing_docs)]
+    #[grammar = "prologue_grammar.pest"]
+    pub struct PrologueParser;
 }
 pub use prologueparser_mod::PrologueParser;
 pub use prologueparser_mod::Rule;

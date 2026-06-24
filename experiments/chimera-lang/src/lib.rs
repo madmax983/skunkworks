@@ -77,7 +77,6 @@
 //!
 //! See [`opcode::OpCode`] for the complete list of enzymes available to the organism.
 
-
 /// The base parser for the Chimera language.
 ///
 /// This parser defines the core grammatical rules for the language
@@ -87,124 +86,124 @@
 pub mod chimeraparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
-#[allow(missing_docs)]
-#[grammar = "grammar.pest"]
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-/// Represents a `ChimeraParser`.
-pub struct ChimeraParser;
+    #[allow(missing_docs)]
+    #[grammar = "grammar.pest"]
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    /// Represents a `ChimeraParser`.
+    pub struct ChimeraParser;
 }
 pub use chimeraparser_mod::ChimeraParser;
 pub use chimeraparser_mod::Rule;

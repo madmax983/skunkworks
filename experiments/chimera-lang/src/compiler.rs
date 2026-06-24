@@ -43,126 +43,126 @@ use strum::IntoEnumIterator;
 pub mod scriptparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
-#[grammar = "script_grammar.pest"]
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-/// Represents a `ScriptParser`.
-pub struct ScriptParser;
+    #[grammar = "script_grammar.pest"]
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    /// Represents a `ScriptParser`.
+    pub struct ScriptParser;
 }
-pub use scriptparser_mod::ScriptParser;
 pub use scriptparser_mod::Rule;
+pub use scriptparser_mod::ScriptParser;
 
 /// Maximum depth of `#include` directives to prevent stack overflow.
 const MAX_INCLUDE_DEPTH: usize = 32;

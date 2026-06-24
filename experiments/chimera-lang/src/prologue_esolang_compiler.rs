@@ -18,9 +18,9 @@ use crate::opcode::OpCode;
 pub mod prologueesolangparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
-#[allow(missing_docs)]
-#[grammar = "prologue_esolang_grammar.pest"]
-pub struct PrologueEsolangParser;
+    #[allow(missing_docs)]
+    #[grammar = "prologue_esolang_grammar.pest"]
+    pub struct PrologueEsolangParser;
 }
 pub use prologueesolangparser_mod::PrologueEsolangParser;
 pub use prologueesolangparser_mod::Rule;

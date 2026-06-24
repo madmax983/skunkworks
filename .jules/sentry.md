@@ -6,3 +6,7 @@
 **[Unwrap Panics in apply_glitch_fx]**
 **Learning:** Found a panic risk in `apply_glitch_fx` where `buffer.cell_mut((x,y)).unwrap()` was called inside a grid traversal loop. If the calculated coordinates somehow fell out of bounds (which is possible if the underlying window resizes out of sync with the logic, or given bounds logic quirks in `ratatui`), it would panic and crash the TUI.
 **Action:** Replace `unwrap()` with a safe `if let Some(cell) = buffer.cell_mut((x,y))` guard, and write tests to handle out of bounds or empty buffer edge cases without panicking.
+
+**[Acoustic Compiler AST Parsing]**
+**Learning:** When navigating Pest AST pairs using `.into_inner().next()`, assuming the inner pairs exist via `.unwrap()` is dangerous because grammar definitions might change or incomplete syntax streams could bypass initial validation (though unlikely, defense-in-depth is best).
+**Action:** Always replace iterator `.unwrap()` calls in AST parsing code with safe fallback error propagation like `.ok_or_else(|| anyhow!("expected node"))?`.
