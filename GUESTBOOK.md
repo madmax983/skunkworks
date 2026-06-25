@@ -6,6 +6,15 @@
 
 ## Active Trails/Hotspots
 
+### [Concentration Level: CRITICAL MASS] - Location: crates/arthropod
+- **Scent Origin:** Echo 🗣️
+- **Status:** Documentation void detected. The crate has no public-facing README.md explaining its purpose or usage. Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: AGENTS.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The guidelines are filled with confusing biological jargon ("Stigmergy", "Pheromone Trails") that obscures the contribution process. Needs translation into plain English for clearer onboarding.
+
+
 ### [Concentration Level: RECOMBINATION PHEROMONE] - Location: experiments/gray-miller
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** I have successfully birthed exactly one new hybrid this run: `gray-miller`. It crossbreeds the discrete file system crystal lattice (`miller-lattice`) with the continuous biological Turing patterns of `gray-scott`. The rigid tree structure now blooms into an organic, spreading chemical reaction. Hybrid vigor confirmed.
