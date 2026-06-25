@@ -1,4 +1,3 @@
-use anyhow::Result;
 use rand::Rng;
 use std::io::Read;
 use std::path::Path;
@@ -75,7 +74,7 @@ impl<'ast> Visit<'ast> for ComplexityVisitor {
     }
 }
 
-pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
+pub fn generate_level(path: &Path) -> Option<LevelProfile> {
     // 1. Collect all functions in the path
 
     // If path is a file, just use it. If dir, walk it.
@@ -99,7 +98,7 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
         .collect();
 
     if rs_files.is_empty() {
-        return Ok(None);
+        return None;
     }
 
     let mut rng = rand::thread_rng();
@@ -108,115 +107,118 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
         let file_entry = rs_files[rng.gen_range(0..rs_files.len())];
 
         // Prevent OOM DoS by capping the file read to 1MB
-        let file = std::fs::File::open(file_entry.path())?;
-        let mut content = String::new();
-        let limit = 1024 * 1024;
-        let bytes_read = file.take(limit + 1).read_to_string(&mut content)?;
-        if bytes_read > limit as usize {
-            continue; // Ignore large files, try another one
-        }
-
-        if let Ok(ast) = syn::parse_file(&content) {
-            struct FnCollector<'a> {
-                funcs: Vec<&'a ItemFn>,
-            }
-            impl<'a> Visit<'a> for FnCollector<'a> {
-                fn visit_item_fn(&mut self, i: &'a ItemFn) {
-                    self.funcs.push(i);
-                    syn::visit::visit_item_fn(self, i);
-                }
-            }
-
-            let mut collector = FnCollector { funcs: Vec::new() };
-            collector.visit_file(&ast);
-
-            if !collector.funcs.is_empty() {
-                let func = collector.funcs[rng.gen_range(0..collector.funcs.len())];
-
-                // Analyze this function
-                let start = func.span().start().line - 1; // 0-indexed
-                let end = func.span().end().line;
-
-                let file_lines: Vec<&str> = content.lines().collect();
-                if start >= file_lines.len() {
-                    continue;
+        if let Ok(file) = std::fs::File::open(file_entry.path()) {
+            let mut content = String::new();
+            let limit = 1024 * 1024;
+            if let Ok(bytes_read) = file.take(limit + 1).read_to_string(&mut content) {
+                if bytes_read > limit as usize {
+                    continue; // Ignore large files, try another one
                 }
 
-                // Extract lines for level generation
-                let body_lines = &file_lines[start..end.min(file_lines.len())];
-
-                // Calculate Stats
-                let lines_count = body_lines.len() as i32;
-                let max_hp = lines_count * 5 + 50;
-                let args = func.sig.inputs.len() as i32;
-                let defense = args * 2;
-
-                let mut comp_visitor = ComplexityVisitor { score: 1 };
-                comp_visitor.visit_item_fn(func);
-                let attack = comp_visitor.score * 2;
-
-                let name = func.sig.ident.to_string();
-                let speed = (40 - name.len() as i32).clamp(1, 30);
-
-                let boss = BossStats {
-                    name,
-                    hp: max_hp,
-                    max_hp,
-                    attack,
-                    defense,
-                    speed,
-                };
-
-                // Generate Segments from lines
-                let mut segments = Vec::new();
-                for line in body_lines {
-                    let trim = line.trim();
-                    if trim.is_empty() {
-                        segments.push(LevelSegment {
-                            width: 5, // Small gap
-                            block_type: BlockType::Gap,
-                            code: "".to_string(),
-                        });
-                        continue;
+                if let Ok(ast) = syn::parse_file(&content) {
+                    struct FnCollector<'a> {
+                        funcs: Vec<&'a ItemFn>,
+                    }
+                    impl<'a> Visit<'a> for FnCollector<'a> {
+                        fn visit_item_fn(&mut self, i: &'a ItemFn) {
+                            self.funcs.push(i);
+                            syn::visit::visit_item_fn(self, i);
+                        }
                     }
 
-                    let width = (line.len() / 2).clamp(4, 30); // Width proportional to line length
+                    let mut collector = FnCollector { funcs: Vec::new() };
+                    collector.visit_file(&ast);
 
-                    let block_type = if trim.starts_with("unsafe") || trim.contains("panic!") {
-                        BlockType::Hazard
-                    } else if trim.starts_with("if") || trim.starts_with("match") {
-                        BlockType::Solid // Normal
-                    } else if trim.starts_with("loop")
-                        || trim.starts_with("for")
-                        || trim.starts_with("while")
-                    {
-                        BlockType::Bouncy
-                    } else {
-                        BlockType::Solid
-                    };
+                    if !collector.funcs.is_empty() {
+                        let func = collector.funcs[rng.gen_range(0..collector.funcs.len())];
 
-                    segments.push(LevelSegment {
-                        width,
-                        block_type,
-                        code: line.to_string(),
-                    });
+                        // Analyze this function
+                        let start = func.span().start().line - 1; // 0-indexed
+                        let end = func.span().end().line;
+
+                        let file_lines: Vec<&str> = content.lines().collect();
+                        if start >= file_lines.len() {
+                            continue;
+                        }
+
+                        // Extract lines for level generation
+                        let body_lines = &file_lines[start..end.min(file_lines.len())];
+
+                        // Calculate Stats
+                        let lines_count = body_lines.len() as i32;
+                        let max_hp = lines_count * 5 + 50;
+                        let args = func.sig.inputs.len() as i32;
+                        let defense = args * 2;
+
+                        let mut comp_visitor = ComplexityVisitor { score: 1 };
+                        comp_visitor.visit_item_fn(func);
+                        let attack = comp_visitor.score * 2;
+
+                        let name = func.sig.ident.to_string();
+                        let speed = (40 - name.len() as i32).clamp(1, 30);
+
+                        let boss = BossStats {
+                            name,
+                            hp: max_hp,
+                            max_hp,
+                            attack,
+                            defense,
+                            speed,
+                        };
+
+                        // Generate Segments from lines
+                        let mut segments = Vec::new();
+                        for line in body_lines {
+                            let trim = line.trim();
+                            if trim.is_empty() {
+                                segments.push(LevelSegment {
+                                    width: 5, // Small gap
+                                    block_type: BlockType::Gap,
+                                    code: "".to_string(),
+                                });
+                                continue;
+                            }
+
+                            let width = (line.len() / 2).clamp(4, 30); // Width proportional to line length
+
+                            let block_type =
+                                if trim.starts_with("unsafe") || trim.contains("panic!") {
+                                    BlockType::Hazard
+                                } else if trim.starts_with("if") || trim.starts_with("match") {
+                                    BlockType::Solid // Normal
+                                } else if trim.starts_with("loop")
+                                    || trim.starts_with("for")
+                                    || trim.starts_with("while")
+                                {
+                                    BlockType::Bouncy
+                                } else {
+                                    BlockType::Solid
+                                };
+
+                            segments.push(LevelSegment {
+                                width,
+                                block_type,
+                                code: line.to_string(),
+                            });
+                        }
+
+                        // Ensure there's a start and end platform
+                        if segments.is_empty() {
+                            segments.push(LevelSegment {
+                                width: 20,
+                                block_type: BlockType::Solid,
+                                code: "// Empty function".to_string(),
+                            });
+                        }
+
+                        return Some(LevelProfile { segments, boss });
+                    }
                 }
-
-                // Ensure there's a start and end platform
-                if segments.is_empty() {
-                    segments.push(LevelSegment {
-                        width: 20,
-                        block_type: BlockType::Solid,
-                        code: "// Empty function".to_string(),
-                    });
-                }
-
-                return Ok(Some(LevelProfile { segments, boss }));
             }
         }
     }
 
-    Ok(None)
+    None
 }
 
 #[cfg(test)]
@@ -239,9 +241,8 @@ mod tests {
         fs::write(&file_path, large_content).unwrap();
 
         // Ensure generate_level doesn't panic or OOM.
-        // It might return Ok(Some) if it parses successfully, or Ok(None) if truncation
+        // It might return Some if it parses successfully, or None if truncation
         // breaks the syntax, but it must not crash or read unbounded memory.
-        let result = generate_level(dir.path());
-        assert!(result.is_ok());
+        let _ = generate_level(dir.path());
     }
 }
