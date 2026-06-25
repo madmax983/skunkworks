@@ -1016,3 +1016,55 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found."
 *   🕵️ **The Reality:** "Turns out I needed to enable feature `nova`."
 *   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES FEATURE NOVA'."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/arthropod/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to figure out what the `arthropod` crate does."
+**Action:** Look for a `README.md` in `crates/arthropod/` to read the documentation and getting started guide.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing README:** There is absolutely no `README.md` file in the `crates/arthropod/` directory.
+    - *Impact:* Complete lack of documentation. I have no idea what this crate does, how to install it, or how to use its API.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing README for arthropod crate
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to read the documentation for `arthropod` to see what it does. There is no README.md file."
+*   🕵️ **The Reality:** "Turns out the crate has no public-facing documentation file explaining its purpose or usage."
+*   💡 **The Fix:** "Create a `README.md` for `crates/arthropod/` with a brief description, installation instructions, and a 'Getting Started' example."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `AGENTS.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to understand how to contribute or use the agent guidelines."
+**Action:** Read `AGENTS.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Excessive Jargon:** The document uses terms like "Stigmergy", "Pheromone Trails", and "Emergent Standards". This "Slang Check" fails.
+    - *Impact:* Confusion. A new user might not understand what "Stigmergy" is or how to leave "Pheromone Trails" in a markdown file.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: AGENTS.md is full of confusing jargon
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to read `AGENTS.md` to understand how to contribute. It started talking about 'Stigmergy' and 'Pheromone Trails'."
+*   🕵️ **The Reality:** "Turns out 'Stigmergy' is just a fancy biological term for 'indirect coordination' and 'Pheromone Trails' just means 'leave notes in GUESTBOOK.md'."
+*   💡 **The Fix:** "Simplify the language in `AGENTS.md`. Replace 'Stigmergy' with 'Indirect Coordination' or explain it clearly right away. Replace 'Pheromone Trails' with 'Status Updates' or 'Notes'."
