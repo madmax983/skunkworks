@@ -1,6 +1,6 @@
 use gray_scott::GrayScott;
-use miller_lattice::Crystal;
 use macroquad::prelude::*;
+use miller_lattice::Crystal;
 use std::env;
 
 fn window_conf() -> Conf {

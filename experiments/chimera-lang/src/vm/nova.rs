@@ -737,9 +737,15 @@ fn exec_rune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 3 {
         return None;
     }
-    let Value::Int(x) = vm.stack.pop().unwrap() else { return None; };
-    let Value::Int(y) = vm.stack.pop().unwrap() else { return None; };
-    let Value::Int(c) = vm.stack.pop().unwrap() else { return None; };
+    let Value::Int(x) = vm.stack.pop().unwrap() else {
+        return None;
+    };
+    let Value::Int(y) = vm.stack.pop().unwrap() else {
+        return None;
+    };
+    let Value::Int(c) = vm.stack.pop().unwrap() else {
+        return None;
+    };
 
     let (ny, nx) = vm.normalize_coords(y, x)?;
     let ch = char::from_u32(c as u32)?;
