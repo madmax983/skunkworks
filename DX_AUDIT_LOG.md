@@ -1068,3 +1068,31 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to read `AGENTS.md` to understand how to contribute. It started talking about 'Stigmergy' and 'Pheromone Trails'."
 *   🕵️ **The Reality:** "Turns out 'Stigmergy' is just a fancy biological term for 'indirect coordination' and 'Pheromone Trails' just means 'leave notes in GUESTBOOK.md'."
 *   💡 **The Fix:** "Simplify the language in `AGENTS.md`. Replace 'Stigmergy' with 'Indirect Coordination' or explain it clearly right away. Replace 'Pheromone Trails' with 'Status Updates' or 'Notes'."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/chimera-lang/examples/story_demo.rs`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to add `Nova`'s story feature."
+**Action:** Try to use the API based *only* on the public docs/examples by reading `story_demo.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Massive Dependency Boilerplate:** The README mentions needing to import `16` workspace dependencies manually when using this outside the workspace, making it incredibly tedious for a new user just to run a demo.
+2.  **Manual Grid Manipulation:** Instead of a clean API like `vm.write_story("Once upon...")`, I have to manually assign values to coordinates: `vm.grid[0][0] = Value::Str(...)`. This is tedious and low-level.
+3.  **Esoteric Jargon:** The API requires me to construct an AST manually using weird terms like `Nucleotide::Number(3)` inside `Gene` structs, rather than using intuitive builders or plain macros.
+4.  **Reverse Argument Pushing:** The example pushes arguments in reverse order because of a stack structure (`len, y, x`), which is highly counter-intuitive for narrative generation.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Story feature API is too low-level and jargon-heavy
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to understand how to use the `story_demo` programmatically. It requires manually building abstract syntax trees, pushing stack arguments backwards, and assigning memory directly to grid coordinates using terms like `Nucleotide`."
+*   🕵️ **The Reality:** "Turns out the API is not designed for storytelling. It's designed for mad scientists manually splicing genes at memory addresses."
+*   💡 **The Fix:** "Create a high-level `NarrativeBuilder` or wrapper API that hides the AST/Nucleotide jargon and lets users just write a story without worrying about stack ordering or grid memory."
