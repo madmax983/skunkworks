@@ -16,18 +16,18 @@ fn apply_grid_edit(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool>
 
 #[cfg(feature = "nova")]
 fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
-    let guide_tokens: Vec<&str> = app_state.crispr_guide.split_whitespace().collect();
-    let replace_tokens: Vec<&str> = app_state.crispr_replace.split_whitespace().collect();
     use std::str::FromStr;
 
+    // ⚡ Bolt: Removed intermediate `.collect::<Vec<_>>()` allocations for tokens.
+    // Iterating directly over `split_whitespace()` avoids O(N) heap allocations for temporary string slices.
     let mut guide_ops = Vec::new();
-    for t in &guide_tokens {
+    for t in app_state.crispr_guide.split_whitespace() {
         if let Ok(op) = crate::opcode::OpCode::from_str(t) {
             guide_ops.push(op);
         }
     }
     let mut replace_genes = Vec::new();
-    for t in &replace_tokens {
+    for t in app_state.crispr_replace.split_whitespace() {
         if let Ok(op) = crate::opcode::OpCode::from_str(t) {
             replace_genes.push(crate::ast::Gene { op, args: vec![] });
         }
