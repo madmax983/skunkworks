@@ -1240,15 +1240,14 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let _name = inner.next().unwrap(); // skip name
                 let mut genes = Vec::new();
 
-                let mut ctx = CompilerContext {
-                    strand_map: &strand_map,
-                    macro_map: &macro_map,
-                    grammar_map: &grammar_map,
-                    organelle_map: &organelle_map,
-                    grid_maps: &grid_maps,
-                    anonymous_strands: &mut anonymous_strands,
-                    depth: 0,
-                };
+                let mut ctx = CompilerContext::new(
+                    &strand_map,
+                    &macro_map,
+                    &grammar_map,
+                    &organelle_map,
+                    &grid_maps,
+                    &mut anonymous_strands,
+                );
 
                 for instr in inner {
                     let generated = ctx.parse_instruction(instr)?;
@@ -1261,15 +1260,14 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let _name = inner.next().unwrap(); // skip name
                 let mut genes = Vec::new();
 
-                let mut ctx = CompilerContext {
-                    strand_map: &strand_map,
-                    macro_map: &macro_map,
-                    grammar_map: &grammar_map,
-                    organelle_map: &organelle_map,
-                    grid_maps: &grid_maps,
-                    anonymous_strands: &mut anonymous_strands,
-                    depth: 0,
-                };
+                let mut ctx = CompilerContext::new(
+                    &strand_map,
+                    &macro_map,
+                    &grammar_map,
+                    &organelle_map,
+                    &grid_maps,
+                    &mut anonymous_strands,
+                );
 
                 for instr in inner {
                     let generated = ctx.parse_instruction(instr)?;
@@ -1291,15 +1289,14 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                     args: vec![grammar_val],
                 }];
 
-                let mut ctx = CompilerContext {
-                    strand_map: &strand_map,
-                    macro_map: &macro_map,
-                    grammar_map: &grammar_map,
-                    organelle_map: &organelle_map,
-                    grid_maps: &grid_maps,
-                    anonymous_strands: &mut anonymous_strands,
-                    depth: 0,
-                };
+                let mut ctx = CompilerContext::new(
+                    &strand_map,
+                    &macro_map,
+                    &grammar_map,
+                    &organelle_map,
+                    &grid_maps,
+                    &mut anonymous_strands,
+                );
 
                 // Compile block instructions
                 for instr in boot_block_pair.into_inner() {
@@ -1345,15 +1342,14 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                             // "fitness" ~ block
                             let mut parts = child.into_inner();
                             let block_pair = parts.next().unwrap();
-                            let mut ctx = CompilerContext {
-                                strand_map: &strand_map,
-                                macro_map: &macro_map,
-                                grammar_map: &grammar_map,
-                                organelle_map: &organelle_map,
-                                grid_maps: &grid_maps,
-                                anonymous_strands: &mut anonymous_strands,
-                                depth: 0,
-                            };
+                            let mut ctx = CompilerContext::new(
+                                &strand_map,
+                                &macro_map,
+                                &grammar_map,
+                                &organelle_map,
+                                &grid_maps,
+                                &mut anonymous_strands,
+                            );
 
                             let genes = ctx.parse_block(block_pair)?;
                             if let Some(Gene {
@@ -1370,15 +1366,14 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                             // "strategy" ~ block
                             let mut parts = child.into_inner();
                             let block_pair = parts.next().unwrap();
-                            let mut ctx = CompilerContext {
-                                strand_map: &strand_map,
-                                macro_map: &macro_map,
-                                grammar_map: &grammar_map,
-                                organelle_map: &organelle_map,
-                                grid_maps: &grid_maps,
-                                anonymous_strands: &mut anonymous_strands,
-                                depth: 0,
-                            };
+                            let mut ctx = CompilerContext::new(
+                                &strand_map,
+                                &macro_map,
+                                &grammar_map,
+                                &organelle_map,
+                                &grid_maps,
+                                &mut anonymous_strands,
+                            );
 
                             let genes = ctx.parse_block(block_pair)?;
                             if let Some(Gene {
@@ -1609,6 +1604,25 @@ struct CompilerContext<'a, 'i> {
 }
 
 impl<'a, 'i> CompilerContext<'a, 'i> {
+    fn new(
+        strand_map: &'a HashMap<String, usize>,
+        macro_map: &'a HashMap<String, pest::iterators::Pairs<'i, Rule>>,
+        grammar_map: &'a HashMap<String, DefinedGrammar>,
+        organelle_map: &'a HashMap<String, usize>,
+        grid_maps: &'a HashMap<String, Vec<String>>,
+        anonymous_strands: &'a mut Vec<Strand>,
+    ) -> Self {
+        Self {
+            strand_map,
+            macro_map,
+            grammar_map,
+            organelle_map,
+            grid_maps,
+            anonymous_strands,
+            depth: 0,
+        }
+    }
+
     fn parse_instruction(&mut self, pair: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         if self.depth > 50 {
             return Err(anyhow!("Macro recursion depth exceeded"));

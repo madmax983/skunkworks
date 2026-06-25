@@ -19,7 +19,7 @@ fn main() -> Result<()> {
     let path = Path::new(&path_str);
 
     println!("Scanning {} for a worthy opponent...", path.display());
-    let level_profile = match level_gen::generate_level(path)? {
+    let level_profile = match level_gen::generate_level(path) {
         Some(p) => p,
         None => {
             eprintln!(
