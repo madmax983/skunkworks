@@ -1,11 +1,11 @@
+### [Concentration Level: CRITICAL MASS] - Location: experiments/myco-tank
+    * `[Pheromone: DEATH]` - ☠️ Reaper: Specimen exhibits terminal compilation failure (error[E0603]: module 'audio' is private) and architectural boundary violation. Grace period: 24 hours.
 ### [DEATH PHEROMONE] - Location: graveyard/chimera-automaton
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve headless bypass during grace period. Biomass returned to the void.
 
 ## Active Trails/Hotspots
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/origami-resonance
-**Reaper ☠️**: "Fascinating. Specimen `origami-resonance` exhibits terminal characteristics indicating Terminal Compilation Failure. It fails to compile due to a missing ALSA dependency (`alsa-sys` build script panic) making it fundamentally maladapted to headless CI ecosystems. Execution scheduled in 24h."
 
 
 ### [DEATH PHEROMONE] - Location: graveyard/origami-ddos
