@@ -4,8 +4,8 @@ use macroquad::prelude::*;
 use std::f32::consts::PI;
 
 #[cfg(feature = "audio")]
-use resonance_audio::audio::AudioSnapshot;
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::AudioSnapshot;
+use resonance_audio::{AudioCommand, AudioModel};
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -163,8 +163,7 @@ fn init_audio(
     Ok(stream)
 }
 
-#[macroquad::main("Myco-Tank")]
-async fn main() {
+async fn async_main() {
     let (cmd_tx, cmd_rx) = bounded(1024);
     let (snap_tx, snap_rx) = bounded(2);
 
@@ -267,4 +266,22 @@ async fn main() {
 
         next_frame().await;
     }
+}
+
+
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Myco-Tank".to_owned(),
+        ..Default::default()
+    }
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.contains(&"--headless".to_string()) || std::env::var("WAYLAND_DISPLAY").is_err() && std::env::var("DISPLAY").is_err() {
+        println!("Running in headless mode (skipping macroquad window initialization)");
+        return;
+    }
+
+    macroquad::Window::from_config(window_conf(), async_main());
 }
