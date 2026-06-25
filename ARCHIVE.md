@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **myco-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`error[E0603]: module 'audio' is private`) and Ecosystem Maladaptation. Attempts to access a private module `audio` from the `resonance-audio` crate, causing an architectural boundary violation. Grace period: 24h.
+- **hyper-flock**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`E0603`: module `math` is private, `E0599`: no method named `scale` found for struct `macroquad::math::Vec4`). The specimen attempts to access a private module and relies on missing `Vec4` methods (`scale`, `zero`, `rotate_xw_fast`, etc.) after the `flock` and `locus` refactorings. Ecosystem Maladaptation (missing headless bypass). Grace period: 24h.
 ## ☠️ Executed
 - **origami-ddos**: Specimen executed. Diagnosis: Terminal Compilation Failure (`glam` version mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
 - **ferrous-swarm**: Specimen executed. Diagnosis: Terminal Compilation Failure (`glam` version mismatch) and Ecosystem Maladaptation (macroquad without headless bypass). Grace period expired. Moved to graveyard.
