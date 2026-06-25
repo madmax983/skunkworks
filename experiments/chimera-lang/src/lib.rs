@@ -1882,8 +1882,6 @@ mod microscope_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_akashic_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_hologram_text_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_arcana_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_atmosphere_test;
@@ -1937,6 +1935,8 @@ mod nova_garden_test;
 mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_guild_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_hologram_text_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]

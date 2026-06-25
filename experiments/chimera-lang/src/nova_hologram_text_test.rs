@@ -25,7 +25,10 @@ mod tests {
         }
 
         // Output should contain the expected reconstructed string log.
-        let has_log = vm.output.iter().any(|line| line.contains("🌟 Hologram Text reconstructed: Str(\"Secret Data\")"));
+        let has_log = vm
+            .output
+            .iter()
+            .any(|line| line.contains("🌟 Hologram Text reconstructed: Str(\"Secret Data\")"));
         assert!(
             has_log,
             "Expected '🌟 Hologram Text reconstructed: Str(\"Secret Data\")' in output. Found: {:?}",
