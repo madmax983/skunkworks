@@ -1772,6 +1772,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., string ] -> [ ... ]`
     ChaosHologram,
 
+    /// **`Prologue`** Reconstructs text from the Hologram Buffer.
+    ///
+    /// **Stack:** `[ ..., string ] -> [ ... ]`
+    HologramText,
+
     // Meta Features (Self-Definition)
     /// **`Nova`** Defines a new enzyme (OpCode) that calls a strand.
     ///

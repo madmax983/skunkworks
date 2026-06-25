@@ -687,6 +687,10 @@ impl crate::vm::ChimeraVM {
                 crate::vm::nova::exec_chaos_hologram(self);
                 crate::vm::ops::Dispatch::Handled
             }
+            OpCode::HologramText => {
+                crate::vm::nova::exec_hologram_text(self);
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+            }
             OpCode::Hologram => {
                 self.output.push("Hologram logic triggered.".to_string());
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)

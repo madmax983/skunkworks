@@ -641,6 +641,16 @@ pub(crate) fn exec_chaos_hologram(vm: &mut ChimeraVM) {
         .push(format!("🌀 Chaos Hologram activated: {}", value));
 }
 
+pub(crate) fn exec_hologram_text(vm: &mut ChimeraVM) {
+    let value = if let Some(val) = vm.stack.pop() {
+        format!("{:?}", val)
+    } else {
+        "Empty".to_string()
+    };
+    vm.output
+        .push(format!("🌟 Hologram Text reconstructed: {}", value));
+}
+
 fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.prologue_state.active = !vm.prologue_state.active;
     let status = if vm.prologue_state.active {
