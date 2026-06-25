@@ -5131,6 +5131,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "gray-miller"
+version = "0.1.0"
+dependencies = [
+ "gray-scott",
+ "macroquad",
+ "miller-lattice",
+]
+
+[[package]]
 name = "gray-origami"
 version = "0.1.0"
 dependencies = [
