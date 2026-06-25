@@ -1,14 +1,22 @@
-1. **Analyze existing documentation for missing examples**:
-    - Iterate over `crates/locus/src/vec3.rs` and `crates/locus/src/vec4.rs` to locate any `pub fn` methods lacking an `## Examples` block.
-    - Specifically, `locus::Vec3::new` and `locus::Vec4::project_to_3d` have examples. I will look for other methods like `Vec4::length_squared`, `Vec4::distance_squared`, `Vec4::rotate_xw`, etc, and add examples if missing.
-2. **Implement Doc Tests**:
-    - I will add doc tests for `locus::Vec4` methods to ensure every public function has an `## Examples` block and a "Why" explanation.
-    - I will add doc tests for `locus::Vec2` and `Topology` if I find missing doc examples for public methods.
-    - Add intra-doc links `[`Vec4`]` where appropriate.
-3. **Verify and Execute**:
-    - Run `RUSTDOCFLAGS="-W missing_docs -W rustdoc::missing_crate_level_docs -D warnings" cargo doc --no-deps -p locus`.
-    - Run `cargo clippy -p locus --all-targets --all-features -- -D warnings`.
-    - Run `cargo test -p locus` and `cargo fmt -p locus`.
-4. **Pre-commit and PR**:
-    - Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
-    - Submit PR prefixed with "🎻 Bard: [documentation update]".
+1. **Phase 1: Evaluate Previous Hybrids**
+   - Use `run_in_bash_session` to compile and evaluate `git-locus` via `cargo check -p git-locus`.
+   - Update `MUTATIONS.md` using python scripts to move `git-locus` from `Proposed Crosses` to `Attempted Crosses` and document the evaluation results.
+
+2. **Phase 2: Create One New Hybrid**
+   - Read `MUTATIONS.md` proposed crosses (it is empty, so we must invent a new one autonomously, or find one from proposed section).
+   - *Since `Proposed Crosses` only contains `git-locus` which is being evaluated, we will invent a new hybrid*: `gray-miller` (`crates/gray-scott` + `crates/miller-lattice`).
+   - Create the directory `experiments/gray-miller`.
+   - Implement the hybrid by having the discrete hierarchical crystal structure from `miller-lattice` act as a static barrier or feed rate modifier on the continuous Turing pattern of `gray-scott`.
+   - Update `Cargo.toml` in `experiments/gray-miller` with the correct dependencies (`gray-scott`, `miller-lattice`, `macroquad`, etc.).
+   - Make sure to add `gray-miller` to the workspace `Cargo.toml` members.
+   - Ensure the hybrid compiles and passes `cargo check -p gray-miller`. Include a `--headless` bypass.
+
+3. **Update Tracking Files**
+   - Update `MUTATIONS.md` to add `gray-miller` to `Attempted Crosses`. Include the parents, concept, novel trait, predicted phenotype, status, and evaluation.
+   - Leave a recombination pheromone for `gray-miller` in `GUESTBOOK.md`.
+
+4. **Run Pre-Commit Checks**
+   - Call `pre_commit_instructions` to ensure proper testing, verifications, reviews and reflections are done.
+
+5. **Submit**
+   - Commit and push changes via `submit`.

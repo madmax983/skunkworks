@@ -1,0 +1,10 @@
+[package]
+name = "gray-miller"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+miller-lattice = { path = "../../crates/miller-lattice" }
+macroquad = "0.4"
