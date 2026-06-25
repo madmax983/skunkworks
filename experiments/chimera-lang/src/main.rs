@@ -99,6 +99,19 @@ fn format_oracle_result(val: &Value) -> String {
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
+    // 🎨 Mosaic: Clearer onboarding when no arguments are provided
+    if std::env::args().len() <= 1 {
+        use crossterm::style::{Color, Stylize};
+        println!("
+{}", "🧬 Welcome to Chimera Lang!".with(Color::Green).bold());
+        println!("{}
+", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━".with(Color::DarkGrey));
+        println!("{} {}", "ℹ️".with(Color::Cyan), "No input file provided. Booting up an empty Petri dish...".with(Color::Grey));
+        println!("{} {}
+", "💡".with(Color::Yellow), "Tip: Run `chimera-lang --help` to see available options, or provide an input file.");
+        std::thread::sleep(std::time::Duration::from_millis(1500));
+    }
+
     // Set a panic hook to restore the terminal if we panic
     let original_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |panic_info| {
