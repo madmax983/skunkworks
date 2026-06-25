@@ -238,7 +238,10 @@ fn handle_char_x(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
 
 fn handle_char_t(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    if matches!(app_state.view_mode, ViewMode::Alchemy) {
+    {
+        let ViewMode::Alchemy = app_state.view_mode else {
+            return Ok(false);
+        };
         crate::vm::alchemy::transmute_crucible(vm);
     }
     #[cfg(not(feature = "nova"))]
@@ -250,17 +253,18 @@ fn handle_char_t(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
 }
 
 fn handle_char_e(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    if matches!(app_state.view_mode, ViewMode::Genome) {
-        if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
-            let engine = crate::vm::evolution::EvolutionEngine::new(
-                strand.clone(),
-                20,
-                app_state.evolution_state.challenge.clone(),
-            );
-            app_state.evolution_state.engine = Some(engine);
-            app_state.view_mode = ViewMode::Evolution;
-            app_state.status_msg = "Evolution Initialized".to_string();
-        }
+    let ViewMode::Genome = app_state.view_mode else {
+        return Ok(false);
+    };
+    if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
+        let engine = crate::vm::evolution::EvolutionEngine::new(
+            strand.clone(),
+            20,
+            app_state.evolution_state.challenge.clone(),
+        );
+        app_state.evolution_state.engine = Some(engine);
+        app_state.view_mode = ViewMode::Evolution;
+        app_state.status_msg = "Evolution Initialized".to_string();
     }
     Ok(false)
 }
@@ -368,7 +372,10 @@ fn handle_char_o_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<b
 
 fn handle_char_plus(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    if matches!(app_state.view_mode, ViewMode::Hologram) {
+    {
+        let ViewMode::Hologram = app_state.view_mode else {
+            return Ok(false);
+        };
         let (x, y) = app_state.grid_cursor;
         vm.hologram_grid[y][x].0 += 0.1;
         vm.hologram_grid[y][x].1 += 0.1;
@@ -383,7 +390,10 @@ fn handle_char_plus(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool
 
 fn handle_char_minus(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(feature = "nova")]
-    if matches!(app_state.view_mode, ViewMode::Hologram) {
+    {
+        let ViewMode::Hologram = app_state.view_mode else {
+            return Ok(false);
+        };
         let (x, y) = app_state.grid_cursor;
         vm.hologram_grid[y][x].0 -= 0.1;
         vm.hologram_grid[y][x].1 -= 0.1;
@@ -439,11 +449,12 @@ fn handle_char_p(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> 
 fn handle_char_slash(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     #[cfg(all(feature = "oracle", feature = "nova"))]
     {
-        if matches!(app_state.view_mode, ViewMode::Grimoire) {
-            app_state.query_mode = true;
-            app_state.query_input.clear();
-            app_state.query_results.clear();
-        }
+        let ViewMode::Grimoire = app_state.view_mode else {
+            return Ok(false);
+        };
+        app_state.query_mode = true;
+        app_state.query_input.clear();
+        app_state.query_results.clear();
     }
     #[cfg(not(all(feature = "oracle", feature = "nova")))]
     {

@@ -13,3 +13,4 @@
 **[Flattening VM Pyramids of Doom]**
 **Learning:** Stack manipulation in VM operations often involved deep nesting `if vm.stack.len() >= N { let val = ...; if let Value::Int(...) = val { ... } }`.
 **Action:** Refactored VM operations in `nova.rs`, `babel.rs`, and `elektra.rs` to use guard clauses: `let Some(Value::Int(c_val)) = vm.stack.pop() else { return None; };` to flatten the execution flow and improve readability.
+**[Flattening ViewMode Checks in Handlers]**\n**Learning:** In TUI handler functions that only apply to a specific `ViewMode` and do nothing otherwise, using `if matches!(app_state.view_mode, ViewMode::X) { ... }` creates unnecessary rightward drift and nesting.\n**Action:** Replaced these blocks with early return guard clauses: `let ViewMode::X = app_state.view_mode else { return Ok(false); };`, flattening the function body and adhering strictly to Forge's guard clause preference.
