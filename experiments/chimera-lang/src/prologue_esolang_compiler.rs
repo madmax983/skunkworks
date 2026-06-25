@@ -890,7 +890,10 @@ pub fn compile(source: &str) -> Result<Dna> {
             continue;
         }
 
-        let inner_block = section.into_inner().next().unwrap();
+        let inner_block = section
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
         match inner_block.as_rule() {
             #[cfg(feature = "git")]
             Rule::git_associates_block => {
@@ -1190,7 +1193,10 @@ pub fn compile(source: &str) -> Result<Dna> {
 
 fn compile_tui_mod_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1232,7 +1238,10 @@ fn compile_tui_mod_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
 
 fn compile_hologram_text_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1246,7 +1255,7 @@ fn compile_hologram_text_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<
             }
         }
         Rule::number => {
-            let num = inner.as_str().parse::<i64>().unwrap();
+            let num = inner.as_str().parse::<i64>()?;
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(num)]));
         }
         Rule::string => {
@@ -1261,7 +1270,10 @@ fn compile_hologram_text_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<
 
 fn compile_quantum_garden_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1291,7 +1303,10 @@ fn compile_quantum_garden_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec
 
 fn compile_cymatic_ocean_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1321,7 +1336,10 @@ fn compile_cymatic_ocean_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<
 
 fn compile_verge_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1353,7 +1371,10 @@ fn compile_verge_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_chaos_hologram_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1367,7 +1388,7 @@ fn compile_chaos_hologram_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec
             }
         }
         Rule::number => {
-            let num = inner.as_str().parse::<i64>().unwrap();
+            let num = inner.as_str().parse::<i64>()?;
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(num)]));
         }
         Rule::string => {
@@ -1382,7 +1403,10 @@ fn compile_chaos_hologram_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec
 
 fn compile_hologram_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1396,7 +1420,7 @@ fn compile_hologram_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
             }
         }
         Rule::number => {
-            let num = inner.as_str().parse::<i64>().unwrap();
+            let num = inner.as_str().parse::<i64>()?;
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(num)]));
         }
         Rule::string => {
@@ -1411,7 +1435,10 @@ fn compile_hologram_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
 
 fn compile_circuit_sigil_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1425,7 +1452,7 @@ fn compile_circuit_sigil_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<
             }
         }
         Rule::number => {
-            let num = inner.as_str().parse::<i64>().unwrap();
+            let num = inner.as_str().parse::<i64>()?;
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(num)]));
         }
         Rule::string => {
@@ -1440,7 +1467,10 @@ fn compile_circuit_sigil_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<
 
 fn compile_choreography_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1454,7 +1484,7 @@ fn compile_choreography_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<G
             }
         }
         Rule::number => {
-            let num = inner.as_str().parse::<i64>().unwrap();
+            let num = inner.as_str().parse::<i64>()?;
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(num)]));
         }
         Rule::string => {
@@ -1469,7 +1499,10 @@ fn compile_choreography_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<G
 
 fn compile_runes_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1483,7 +1516,7 @@ fn compile_runes_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
             }
         }
         Rule::number => {
-            let num = inner.as_str().parse::<i64>().unwrap();
+            let num = inner.as_str().parse::<i64>()?;
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(num)]));
         }
         Rule::string => {
@@ -1498,7 +1531,10 @@ fn compile_runes_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_syncopation_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1531,7 +1567,10 @@ fn compile_syncopation_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Ge
 
 fn compile_pachinko_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1564,7 +1603,10 @@ fn compile_pachinko_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
 #[cfg(feature = "git")]
 fn compile_git_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1601,7 +1643,10 @@ fn compile_git_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::number => {
@@ -1637,7 +1682,10 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_automaton_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1666,7 +1714,10 @@ fn compile_automaton_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene
 
 fn compile_fluid_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1698,7 +1749,10 @@ fn compile_fluid_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_ferrous_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1730,7 +1784,10 @@ fn compile_ferrous_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
 
 fn compile_tardis_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1762,7 +1819,10 @@ fn compile_tardis_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> 
 
 fn compile_miller_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1794,7 +1854,10 @@ fn compile_miller_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> 
 
 fn compile_hyper_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1826,7 +1889,10 @@ fn compile_hyper_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_physics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1858,7 +1924,10 @@ fn compile_physics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
 
 fn compile_weave_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1892,7 +1961,10 @@ fn compile_weave_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_poincare_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1921,7 +1993,10 @@ fn compile_poincare_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
 
 fn compile_market_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1966,7 +2041,10 @@ fn compile_market_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> 
 
 fn compile_flocking_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -1995,7 +2073,10 @@ fn compile_flocking_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
 
 fn compile_origami_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -2024,7 +2105,10 @@ fn compile_origami_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
 
 fn compile_quipu_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::number => {
@@ -2062,7 +2146,10 @@ fn compile_quipu_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_chaos_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -2101,7 +2188,10 @@ fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     if s.starts_with(">>") && s.ends_with("<<") {
         // Find inner
         let mut inner = pair.into_inner();
-        let id = inner.next().unwrap().as_str();
+        let id = inner
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+            .as_str();
         if id == "+" || id == "add" {
             genes.push(Gene::new(OpCode::HyperAdd, vec![]));
         } else if id == "-" || id == "sub" {
@@ -2120,7 +2210,10 @@ fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
         }
     } else {
         // Just normal instruction parse
-        let inner = pair.into_inner().next().unwrap();
+        let inner = pair
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
         match inner.as_rule() {
             Rule::number => {
                 let n: i64 = inner.as_str().parse()?;
@@ -2146,9 +2239,20 @@ fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 fn compile_orca_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let mut inner = pair.into_inner();
-    let op = inner.next().unwrap().as_str();
-    let y: i64 = inner.next().unwrap().as_str().parse()?;
-    let x: i64 = inner.next().unwrap().as_str().parse()?;
+    let op = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str();
+    let y: i64 = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str()
+        .parse()?;
+    let x: i64 = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str()
+        .parse()?;
 
     // Push args and call Orca or related
     genes.push(Gene::new(
@@ -2165,9 +2269,20 @@ fn compile_orca_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 fn compile_elektra_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let mut inner = pair.into_inner();
-    let kind = inner.next().unwrap().as_str();
-    let y: i64 = inner.next().unwrap().as_str().parse()?;
-    let x: i64 = inner.next().unwrap().as_str().parse()?;
+    let kind = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str();
+    let y: i64 = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str()
+        .parse()?;
+    let x: i64 = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str()
+        .parse()?;
 
     if kind == "battery" {
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(9)])); // 9V default
@@ -2199,8 +2314,14 @@ fn compile_elektra_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
 fn compile_prolog_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let mut inner = pair.into_inner();
-    let name = inner.next().unwrap().as_str();
-    let arg = inner.next().unwrap().as_str();
+    let name = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str();
+    let arg = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str();
 
     let fact = Nucleotide::Junction(
         JunctionType::Any,
@@ -2220,9 +2341,18 @@ fn compile_prolog_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> 
 fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let mut inner = pair.into_inner();
-    let op = inner.next().unwrap().as_str();
-    let arg1 = inner.next().unwrap().as_str();
-    let arg2 = inner.next().unwrap().as_str();
+    let op = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str();
+    let arg1 = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str();
+    let arg2 = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str();
 
     genes.push(Gene::new(
         OpCode::Push,
@@ -2252,15 +2382,31 @@ fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
 fn compile_acoustic_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let mut inner = pair.into_inner();
-    let op = inner.next().unwrap().as_str().to_ascii_lowercase();
+    let op = inner
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+        .as_str()
+        .to_ascii_lowercase();
 
     if op == "pluck" {
-        let strength: i64 = inner.next().unwrap().as_str().parse()?;
+        let strength: i64 = inner
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+            .as_str()
+            .parse()?;
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
         genes.push(Gene::new(OpCode::Pluck, vec![]));
     } else if op == "oscillate" {
-        let freq: i64 = inner.next().unwrap().as_str().parse()?;
-        let strength: i64 = inner.next().unwrap().as_str().parse()?;
+        let freq: i64 = inner
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+            .as_str()
+            .parse()?;
+        let strength: i64 = inner
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?
+            .as_str()
+            .parse()?;
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(freq)]));
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
         genes.push(Gene::new(OpCode::Oscillate, vec![]));
@@ -2275,7 +2421,10 @@ fn compile_acoustic_instr(_pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene
 
 fn compile_gray_scott_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -2307,7 +2456,10 @@ fn compile_gray_scott_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gen
 
 fn compile_locus_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -2339,7 +2491,10 @@ fn compile_locus_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_neuro_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -2371,7 +2526,10 @@ fn compile_neuro_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
 
 fn compile_platter_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
@@ -2404,7 +2562,10 @@ fn compile_platter_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
 #[cfg(feature = "git")]
 fn compile_git_associates_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
 
     match inner.as_rule() {
         Rule::identifier => {
