@@ -1156,8 +1156,11 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
         match pair.as_rule() {
             Rule::map_def => {
                 let mut inner = pair.into_inner();
-                let name = inner.next().unwrap().as_str();
-                let content_pair = inner.next().unwrap();
+                let name = inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Expected name"))?
+                    .as_str();
+                let content_pair = inner.next().ok_or_else(|| anyhow!("Expected content"))?;
                 let content = content_pair.as_str();
 
                 let trimmed = content.trim_matches(|c| c == '\n' || c == '\r');
@@ -1185,7 +1188,10 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             }
             Rule::strand_def => {
                 let mut inner = pair.into_inner();
-                let name = inner.next().unwrap().as_str();
+                let name = inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Expected name"))?
+                    .as_str();
                 let idx = strand_map.len();
                 if strand_map.insert(name.to_string(), idx).is_some() {
                     return Err(anyhow!("Duplicate strand name: {}", name));
@@ -1193,7 +1199,10 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             }
             Rule::organelle_def => {
                 let mut inner = pair.into_inner();
-                let name = inner.next().unwrap().as_str();
+                let name = inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Expected name"))?
+                    .as_str();
                 let strand_name = format!("{}_DNA", name);
                 let idx = strand_map.len();
                 if strand_map.insert(strand_name, idx).is_some() {
@@ -1203,7 +1212,10 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             }
             Rule::chimera_def => {
                 let mut inner = pair.into_inner();
-                let name = inner.next().unwrap().as_str();
+                let name = inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Expected name"))?
+                    .as_str();
                 let strand_name = format!("{}_DNA", name);
                 let idx = strand_map.len();
                 if strand_map.insert(strand_name, idx).is_some() {
@@ -1213,7 +1225,10 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             }
             Rule::macro_def => {
                 let mut inner = pair.into_inner();
-                let name = inner.next().unwrap().as_str();
+                let name = inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Expected name"))?
+                    .as_str();
                 macro_map.insert(name.to_string(), inner);
             }
             Rule::grammar_def => {
@@ -1237,7 +1252,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
         match pair.as_rule() {
             Rule::strand_def => {
                 let mut inner = pair.into_inner();
-                let _name = inner.next().unwrap(); // skip name
+                let _name = inner.next().ok_or_else(|| anyhow!("Expected name"))?; // skip name
                 let mut genes = Vec::new();
 
                 let mut ctx = CompilerContext::new(
@@ -1257,7 +1272,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             }
             Rule::organelle_def => {
                 let mut inner = pair.into_inner();
-                let _name = inner.next().unwrap(); // skip name
+                let _name = inner.next().ok_or_else(|| anyhow!("Expected name"))?; // skip name
                 let mut genes = Vec::new();
 
                 let mut ctx = CompilerContext::new(
@@ -1277,9 +1292,11 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             }
             Rule::chimera_def => {
                 let mut inner = pair.into_inner();
-                let _name = inner.next().unwrap(); // skip name
-                let grammar_arg_pair = inner.next().unwrap(); // grammar argument
-                let boot_block_pair = inner.next().unwrap(); // block
+                let _name = inner.next().ok_or_else(|| anyhow!("Expected name"))?; // skip name
+                let grammar_arg_pair = inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Expected grammar argument"))?; // grammar argument
+                let boot_block_pair = inner.next().ok_or_else(|| anyhow!("Expected boot block"))?; // block
 
                 let grammar_val = parse_argument(grammar_arg_pair, &strand_map, 0)?;
 
@@ -1307,7 +1324,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             }
             Rule::evolution_def => {
                 let mut inner = pair.into_inner();
-                let _name = inner.next().unwrap(); // skip identifier
+                let _name = inner.next().ok_or_else(|| anyhow!("Expected identifier"))?; // skip identifier
 
                 let mut pop_size = 50;
                 let mut mut_rate = "0.1".to_string();
@@ -1318,30 +1335,43 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 for prop in inner {
                     // prop is evolution_prop
                     // Its only child is one of the specific property rules
-                    let child = prop.into_inner().next().unwrap();
+                    let child = prop
+                        .into_inner()
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected inner property"))?;
                     match child.as_rule() {
                         Rule::evo_population => {
                             // "population" ~ ":" ~ number
                             let mut parts = child.into_inner();
-                            let val_str = parts.next().unwrap().as_str(); // number
+                            let val_str = parts
+                                .next()
+                                .ok_or_else(|| anyhow!("Expected number string"))?
+                                .as_str(); // number
                             pop_size = val_str.parse().unwrap_or(50);
                         }
                         Rule::evo_mutation_rate => {
                             // "mutation_rate" ~ ":" ~ float
                             let mut parts = child.into_inner();
-                            let val_str = parts.next().unwrap().as_str(); // float
+                            let val_str = parts
+                                .next()
+                                .ok_or_else(|| anyhow!("Expected float string"))?
+                                .as_str(); // float
                             mut_rate = val_str.to_string();
                         }
                         Rule::evo_target => {
                             // "target" ~ ":" ~ number
                             let mut parts = child.into_inner();
-                            let val_str = parts.next().unwrap().as_str(); // number
+                            let val_str = parts
+                                .next()
+                                .ok_or_else(|| anyhow!("Expected number string"))?
+                                .as_str(); // number
                             target = val_str.parse().ok();
                         }
                         Rule::evo_fitness => {
                             // "fitness" ~ block
                             let mut parts = child.into_inner();
-                            let block_pair = parts.next().unwrap();
+                            let block_pair =
+                                parts.next().ok_or_else(|| anyhow!("Expected block"))?;
                             let mut ctx = CompilerContext::new(
                                 &strand_map,
                                 &macro_map,
@@ -1365,7 +1395,8 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                         Rule::evo_strategy => {
                             // "strategy" ~ block
                             let mut parts = child.into_inner();
-                            let block_pair = parts.next().unwrap();
+                            let block_pair =
+                                parts.next().ok_or_else(|| anyhow!("Expected block"))?;
                             let mut ctx = CompilerContext::new(
                                 &strand_map,
                                 &macro_map,
@@ -1504,7 +1535,10 @@ fn parse_rule_expr(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
     // rule_expr = { rule_choice }
     // rule_choice = { rule_seq ~ ( "|" ~ rule_seq )* }
 
-    let choice_pair = pair.into_inner().next().unwrap(); // rule_choice
+    let choice_pair = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow!("Expected rule choice"))?; // rule_choice
     let mut choices = Vec::new();
 
     for seq_pair in choice_pair.into_inner() {
@@ -1537,7 +1571,10 @@ fn parse_rule_seq(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
 }
 
 fn parse_rule_term(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow!("Expected inner pair"))?;
     match inner.as_rule() {
         Rule::string => {
             let s = inner.as_str();
@@ -1572,7 +1609,10 @@ fn parse_rule_term(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
             ))
         }
         Rule::group => {
-            let expr = inner.into_inner().next().unwrap();
+            let expr = inner
+                .into_inner()
+                .next()
+                .ok_or_else(|| anyhow!("Expected inner expression"))?;
             parse_rule_expr(expr)
         }
         Rule::action_block => {
@@ -1628,7 +1668,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             return Err(anyhow!("Macro recursion depth exceeded"));
         }
 
-        let inner = pair.into_inner().next().unwrap();
+        let inner = pair
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow!("Expected inner pair"))?;
         match inner.as_rule() {
             Rule::block => self.parse_block(inner),
             Rule::literal => self.parse_literal_instruction(inner),
@@ -1701,7 +1744,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
     #[cfg(feature = "nova")]
     fn parse_hyper_op(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
-        let op_symbol = parts.next().unwrap().as_str();
+        let op_symbol = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected op symbol"))?
+            .as_str();
         let op = match op_symbol {
             "+" => OpCode::HyperAdd,
             "-" => OpCode::HyperSub,
@@ -1718,7 +1764,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         opcode: OpCode,
     ) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
-        let op_symbol = parts.next().unwrap().as_str();
+        let op_symbol = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected op symbol"))?
+            .as_str();
         Ok(vec![
             Gene {
                 op: OpCode::Push,
@@ -1733,9 +1782,19 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
 
     fn parse_apply_map(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
-        let map_name = parts.next().unwrap().as_str().trim_matches('"');
-        let x_val_str = parts.next().unwrap().as_str();
-        let y_val_str = parts.next().unwrap().as_str();
+        let map_name = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected map name"))?
+            .as_str()
+            .trim_matches('"');
+        let x_val_str = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected x value"))?
+            .as_str();
+        let y_val_str = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected y value"))?
+            .as_str();
 
         let base_x: i64 = x_val_str.parse()?;
         let base_y: i64 = y_val_str.parse()?;
@@ -1784,7 +1843,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
     }
 
     fn parse_fluid_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
-        let block = inner.into_inner().next().unwrap();
+        let block = inner
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow!("Expected block"))?;
         let mut genes = Vec::new();
 
         for stmt in block.into_inner() {
@@ -1805,7 +1867,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
     }
 
     fn parse_weave_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
-        let block = inner.into_inner().next().unwrap();
+        let block = inner
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow!("Expected block"))?;
         let mut genes = Vec::new();
 
         for stmt in block.into_inner() {
@@ -1883,7 +1948,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         &mut self,
         inner: pest::iterators::Pair<'i, Rule>,
     ) -> Result<Vec<Gene>> {
-        let block = inner.into_inner().next().unwrap();
+        let block = inner
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow!("Expected block"))?;
         let mut genes = Vec::new();
 
         for stmt in block.into_inner() {
@@ -1908,7 +1976,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
     }
 
     fn parse_chaos_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
-        let block = inner.into_inner().next().unwrap();
+        let block = inner
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow!("Expected block"))?;
         let mut genes = Vec::new();
 
         genes.push(Gene {
@@ -1943,10 +2014,16 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
     fn parse_oracle_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut genes = Vec::new();
         for stmt in inner.into_inner() {
-            let def = stmt.into_inner().next().unwrap();
+            let def = stmt
+                .into_inner()
+                .next()
+                .ok_or_else(|| anyhow!("Expected statement inner"))?;
             match def.as_rule() {
                 Rule::fact_def => {
-                    let arg_list = def.into_inner().next().unwrap();
+                    let arg_list = def
+                        .into_inner()
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected argument list"))?;
                     let mut fact_terms = Vec::new();
                     for arg in arg_list.into_inner() {
                         fact_terms.push(parse_argument(arg, self.strand_map, 0)?);
@@ -1963,8 +2040,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
                 }
                 Rule::rule_def => {
                     let mut parts = def.into_inner();
-                    let head_args = parts.next().unwrap();
-                    let query_expr = parts.next().unwrap();
+                    let head_args = parts.next().ok_or_else(|| anyhow!("Expected head args"))?;
+                    let query_expr = parts
+                        .next()
+                        .ok_or_else(|| anyhow!("Expected query expression"))?;
 
                     let mut head_terms = Vec::new();
                     for arg in head_args.into_inner() {
@@ -1975,8 +2054,13 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
                     let mut body_goals = Vec::new();
                     for pred in query_expr.into_inner() {
                         let mut pred_parts = pred.into_inner();
-                        let pred_name = pred_parts.next().unwrap().as_str();
-                        let pred_args = pred_parts.next().unwrap();
+                        let pred_name = pred_parts
+                            .next()
+                            .ok_or_else(|| anyhow!("Expected predicate name"))?
+                            .as_str();
+                        let pred_args = pred_parts
+                            .next()
+                            .ok_or_else(|| anyhow!("Expected predicate arguments"))?;
 
                         let mut term_args = vec![Nucleotide::String(pred_name.to_string())];
                         for arg in pred_args.into_inner() {
@@ -2043,7 +2127,12 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
     }
 
     fn parse_simple_op(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
-        let name = inner.clone().into_inner().next().unwrap().as_str();
+        let name = inner
+            .clone()
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow!("Expected name"))?
+            .as_str();
         if let Some(body) = self.macro_map.get(name) {
             let mut macro_genes = Vec::new();
             self.depth += 1;
@@ -2096,7 +2185,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
 
     fn parse_arrow_jump(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
-        let target_name = parts.next().unwrap().as_str();
+        let target_name = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected target name"))?
+            .as_str();
         let arg = resolve_target(target_name, self.strand_map);
         Ok(vec![Gene {
             op: OpCode::Jump,
@@ -2106,7 +2198,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
 
     fn parse_question_branch(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
-        let target_name = parts.next().unwrap().as_str();
+        let target_name = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected target name"))?
+            .as_str();
         let arg = resolve_target(target_name, self.strand_map);
         Ok(vec![Gene {
             op: OpCode::Brz,
@@ -2116,8 +2211,11 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
 
     fn parse_call(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
-        let name = parts.next().unwrap().as_str();
-        let args_pair = parts.next().unwrap();
+        let name = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected name"))?
+            .as_str();
+        let args_pair = parts.next().ok_or_else(|| anyhow!("Expected args pair"))?;
 
         let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
         if let OpCode::Unknown(_) = &op {
@@ -2171,8 +2269,11 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         inner: pest::iterators::Pair<'i, Rule>,
     ) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
-        let grammar_name = parts.next().unwrap().as_str();
-        let content_pair = parts.next().unwrap();
+        let grammar_name = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected grammar name"))?
+            .as_str();
+        let content_pair = parts.next().ok_or_else(|| anyhow!("Expected content"))?;
         let content = content_pair.as_str();
 
         let grammar = self
@@ -2209,9 +2310,14 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
     #[cfg(feature = "nova")]
     fn parse_crispr_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
-        let target_name = parts.next().unwrap().as_str();
+        let target_name = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected target name"))?
+            .as_str();
 
-        let pattern_pair = parts.next().unwrap();
+        let pattern_pair = parts
+            .next()
+            .ok_or_else(|| anyhow!("Expected pattern pair"))?;
         let mut pattern_genes = Vec::new();
         for op_pair in pattern_pair.into_inner() {
             if op_pair.as_rule() == Rule::identifier {
@@ -2268,7 +2374,10 @@ fn parse_literal(
     pair: pest::iterators::Pair<Rule>,
     _strand_map: &HashMap<String, usize>,
 ) -> Result<Nucleotide> {
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow!("Expected inner pair"))?;
     match inner.as_rule() {
         Rule::number => Ok(Nucleotide::Number(inner.as_str().parse()?)),
         Rule::string => {
@@ -2287,7 +2396,10 @@ fn parse_argument(
     if depth > MAX_PARSE_DEPTH {
         return Err(anyhow!("Recursion depth exceeded"));
     }
-    let inner = pair.into_inner().next().unwrap();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow!("Expected inner pair"))?;
     match inner.as_rule() {
         Rule::literal => parse_literal(inner, strand_map),
         Rule::identifier | Rule::variable => {
@@ -2306,8 +2418,11 @@ fn parse_argument(
         Rule::junction => parse_junction(inner, strand_map, depth + 1),
         Rule::data_call => {
             let mut parts = inner.into_inner();
-            let name = parts.next().unwrap().as_str();
-            let args_pair = parts.next().unwrap();
+            let name = parts
+                .next()
+                .ok_or_else(|| anyhow!("Expected name"))?
+                .as_str();
+            let args_pair = parts.next().ok_or_else(|| anyhow!("Expected args pair"))?;
             let mut args = vec![Nucleotide::String(name.to_string())];
             for arg in args_pair.into_inner() {
                 args.push(parse_argument(arg, strand_map, depth + 1)?);
@@ -2327,8 +2442,11 @@ fn parse_junction(
         return Err(anyhow!("Recursion depth exceeded"));
     }
     let mut parts = pair.into_inner();
-    let type_str = parts.next().unwrap().as_str();
-    let args_pair = parts.next().unwrap();
+    let type_str = parts
+        .next()
+        .ok_or_else(|| anyhow!("Expected type string"))?
+        .as_str();
+    let args_pair = parts.next().ok_or_else(|| anyhow!("Expected args pair"))?;
 
     let t = match type_str {
         "any" => crate::ast::JunctionType::Any,
