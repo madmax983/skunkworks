@@ -78,3 +78,61 @@ fn havoc_quipu_huge_cord_equality_inner() {
     }
 }
 //
+
+// 👺 Havoc: Prove that cloning an extremely deep Cord blows the stack due to the derived Clone.
+#[test]
+fn havoc_quipu_huge_cord_clone() {
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .arg("--exact")
+        .arg("havoc_quipu_huge_cord_clone_inner")
+        .arg("--nocapture")
+        .status();
+
+    if let Ok(status) = status {
+        assert!(!status.success(), "👺 Havoc: System safely handled 100k depth Clone! We failed to break it.");
+    }
+}
+
+#[test]
+fn havoc_quipu_huge_cord_clone_inner() {
+    if std::env::args().any(|arg| arg == "havoc_quipu_huge_cord_clone_inner") {
+        let mut cord = Cord::from(10);
+        for _ in 0..100000 {
+            let mut child = Cord::from(1);
+            child.subsidiaries.push(cord);
+            cord = child;
+        }
+
+        let _cloned = cord.clone();
+        std::process::exit(0);
+    }
+}
+
+// 👺 Havoc: Prove that Debug formatting an extremely deep Cord blows the stack due to the derived Debug.
+#[test]
+fn havoc_quipu_huge_cord_debug() {
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .arg("--exact")
+        .arg("havoc_quipu_huge_cord_debug_inner")
+        .arg("--nocapture")
+        .status();
+
+    if let Ok(status) = status {
+        assert!(!status.success(), "👺 Havoc: System safely handled 100k depth Debug! We failed to break it.");
+    }
+}
+
+#[test]
+fn havoc_quipu_huge_cord_debug_inner() {
+    if std::env::args().any(|arg| arg == "havoc_quipu_huge_cord_debug_inner") {
+        let mut cord = Cord::from(10);
+        for _ in 0..100000 {
+            let mut child = Cord::from(1);
+            child.subsidiaries.push(cord);
+            cord = child;
+        }
+
+        let _s = format!("{:?}", cord);
+        std::process::exit(0);
+    }
+}

@@ -151,3 +151,16 @@ thread 'havoc_test_arthropod_panic_inner' panicked at ...
 ```
 🧪 **Reproduction:** `cargo test -p arthropod --test havoc`
 😈 **Comment:** "A macroquad uninitialized context isn't an excuse to panic. Your geometry calculations can explode before drawing."
+
+### 14. `quipu` (The Sequel)
+🧨 **The Trigger:** Created an extremely deep, nested Cord structure and used `Clone` and `Debug` derived traits on it.
+📉 **The Stack Trace:**
+```
+thread 'havoc_quipu_huge_cord_clone_inner' has overflowed its stack
+fatal runtime error: stack overflow, aborting
+
+thread 'havoc_quipu_huge_cord_debug_inner' has overflowed its stack
+fatal runtime error: stack overflow, aborting
+```
+🧪 **Reproduction:** `cargo test -p quipu --test havoc`
+😈 **Comment:** "You thought making `PartialEq` and `Drop` iterative was enough to save you. But you left `Clone` and `Debug` to default derivation, making them implicitly recursive. Now any user cloning or debug printing a deep Cord instantly crashes the program. The stack is mine once again."
