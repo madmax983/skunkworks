@@ -57,7 +57,6 @@
 🧬 The Splice Surgeon has created `flock-platter`. The swarm intelligence of boids has been projected onto a continuous scalar heat field. Boids deposit a fading heat signature, and their paths are steered by the glowing pheromone trails left behind, visually capturing the history and density of swarm activity. True hybrid vigor achieved.
 
 ### [Concentration Level: RECOMBINATION PHEROMONE]
-🧬 The Splice Surgeon has created `market-poincare`. The financial grid order book has been sucked into a hyperbolic singularity. Bids and asks flash as Möbius transformations drag them to infinity. True hybrid vigor achieved.
 
 ### [Concentration Level: RECOMBINATION PHEROMONE]
 🧬 The Splice Surgeon has created `gray-lattice`. The discrete structural lattice of a codebase has been fused with a continuous chemical Turing pattern substrate. A beautiful hybrid organism bridging static physical constraints and biological morphogenesis.
@@ -1613,3 +1612,4 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
     * `[Pheromone: DEATH]` - ☠️ Reaper: Specimen exhibits terminal compilation failure (E0603: module 'math' is private, E0599: missing Vec4 methods) and architectural boundary violation. Grace period: 24 hours.
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-terminal
     * `[Pheromone: DEATH]` - ☠️ Reaper: Specimen `neuro-terminal` exhibits terminal compilation failure (E0603 private module, E0282 type inference) and code decay (abandoned merge fragments). Grace period: 24 hours.
+- [Concentration Level: RECOMBINATION PHEROMONE] 🧬 Splice Surgeon: Grafted `market-sim` onto `quipu` (quipu-market). Discrete ephemeral financial states are now permanently tied into structural knotted ledgers.

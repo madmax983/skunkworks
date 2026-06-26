@@ -1,0 +1,13 @@
+[package]
+name = "quipu-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+market-sim = { path = "../../crates/market-sim" }
+quipu = { path = "../../crates/quipu" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = "0.30"
+crossterm = "0.28"
+anyhow = "1.0"
+rand = { workspace = true }
