@@ -117,12 +117,7 @@ fn main() -> Result<()> {
             "ℹ️".with(Color::Cyan),
             "No input file provided. Booting up an empty Petri dish...".with(Color::Grey)
         );
-        println!(
-            "{} {}
-",
-            "💡".with(Color::Yellow),
-            "Tip: Run `chimera-lang --help` to see available options, or provide an input file."
-        );
+        println!("{} Tip: Run `chimera-lang --help` to see available options, or provide an input file.\n", "💡".with(Color::Yellow));
         std::thread::sleep(std::time::Duration::from_millis(1500));
     }
 
