@@ -6,8 +6,8 @@ use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
-    widgets::{Block, Borders, Paragraph},
     text::Span,
+    widgets::{Block, Borders, Paragraph},
 };
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
@@ -39,7 +39,8 @@ impl QuipuMarketApp {
         for _ in 0..8 {
             let x = rng.gen_range(0..self.width);
             if rng.gen_bool(0.5) {
-                self.market.set(x, self.height - 1, Particle::Bid(rng.gen_range(1..100)));
+                self.market
+                    .set(x, self.height - 1, Particle::Bid(rng.gen_range(1..100)));
             } else {
                 self.market.set(x, 0, Particle::Ask(rng.gen_range(1..100)));
             }
@@ -49,7 +50,6 @@ impl QuipuMarketApp {
 
         // Each trade gets tied as a knot on the Quipu cord
         for event in events {
-
             let price_value = event.price as usize;
 
             // To simulate building a ledger, we append a new cord for every N trades,
@@ -105,7 +105,12 @@ fn run_app(tui: &mut Tui) -> Result<()> {
             f.render_widget(market_block, chunks[0]);
 
             // Render market cells manually within the block
-            let inner_market = Rect::new(chunks[0].x + 1, chunks[0].y + 1, chunks[0].width - 2, chunks[0].height - 2);
+            let inner_market = Rect::new(
+                chunks[0].x + 1,
+                chunks[0].y + 1,
+                chunks[0].width - 2,
+                chunks[0].height - 2,
+            );
             for y in 0..app.height {
                 for x in 0..app.width {
                     let screen_x = inner_market.x + x as u16;
@@ -115,20 +120,34 @@ fn run_app(tui: &mut Tui) -> Result<()> {
                         let particle = app.market.get(x, y);
                         match particle {
                             Particle::Bid(_) => {
-                                let widget = Paragraph::new(Span::styled("▲", Style::default().fg(Color::Green)));
+                                let widget = Paragraph::new(Span::styled(
+                                    "▲",
+                                    Style::default().fg(Color::Green),
+                                ));
                                 f.render_widget(widget, Rect::new(screen_x, screen_y, 1, 1));
                             }
                             Particle::Ask(_) => {
-                                let widget = Paragraph::new(Span::styled("▼", Style::default().fg(Color::Red)));
+                                let widget = Paragraph::new(Span::styled(
+                                    "▼",
+                                    Style::default().fg(Color::Red),
+                                ));
                                 f.render_widget(widget, Rect::new(screen_x, screen_y, 1, 1));
                             }
                             Particle::Trade { age } => {
-                                let color = if age > 5 { Color::Yellow } else { Color::DarkGray };
-                                let widget = Paragraph::new(Span::styled("✸", Style::default().fg(color)));
+                                let color = if age > 5 {
+                                    Color::Yellow
+                                } else {
+                                    Color::DarkGray
+                                };
+                                let widget =
+                                    Paragraph::new(Span::styled("✸", Style::default().fg(color)));
                                 f.render_widget(widget, Rect::new(screen_x, screen_y, 1, 1));
                             }
                             Particle::Empty => {
-                                let widget = Paragraph::new(Span::styled(".", Style::default().fg(Color::Rgb(30, 30, 30))));
+                                let widget = Paragraph::new(Span::styled(
+                                    ".",
+                                    Style::default().fg(Color::Rgb(30, 30, 30)),
+                                ));
                                 f.render_widget(widget, Rect::new(screen_x, screen_y, 1, 1));
                             }
                             Particle::Wall => {}
@@ -143,7 +162,12 @@ fn run_app(tui: &mut Tui) -> Result<()> {
                 .title(" Quipu Ledger (Knotted Trades) ");
             f.render_widget(quipu_block.clone(), chunks[1]);
 
-            let inner_quipu = Rect::new(chunks[1].x + 1, chunks[1].y + 1, chunks[1].width - 2, chunks[1].height - 2);
+            let inner_quipu = Rect::new(
+                chunks[1].x + 1,
+                chunks[1].y + 1,
+                chunks[1].width - 2,
+                chunks[1].height - 2,
+            );
 
             let mut cursor_y = inner_quipu.y;
             for (i, cord) in app.quipu.cords.iter().enumerate() {
@@ -163,12 +187,15 @@ fn run_app(tui: &mut Tui) -> Result<()> {
                 let display = format!("Trade {}: [{}] => {} knots", i, cord_str, price_val);
 
                 if cursor_y < inner_quipu.bottom() {
-                    let widget = Paragraph::new(Span::styled(display, Style::default().fg(Color::Yellow)));
-                    f.render_widget(widget, Rect::new(inner_quipu.x, cursor_y, inner_quipu.width, 1));
+                    let widget =
+                        Paragraph::new(Span::styled(display, Style::default().fg(Color::Yellow)));
+                    f.render_widget(
+                        widget,
+                        Rect::new(inner_quipu.x, cursor_y, inner_quipu.width, 1),
+                    );
                     cursor_y += 2;
                 }
             }
-
         })?;
 
         let timeout = tick_rate

@@ -36,3 +36,6 @@
 ## 2025-06-23 - [Strict Missing Docs and Macro Generated Code]
 **Confusion:** Strict `missing_docs` lints (`RUSTDOCFLAGS="-W missing_docs"`) apply to macro-generated code, including `#[derive(Parser)]` from both `clap` and `pest_derive`.
 **Clarification:** To resolve `missing_docs` errors for `pest_derive` generated code, wrap the struct in an inline submodule and apply `#![allow(missing_docs)]` at the top of the inner module file, then `pub use` the items. For `clap`, applying `#[allow(missing_docs)]` directly on the struct also helps, or adding regular `///` doc comments directly inside the `enum` variants in the Rust code!
+## 2024-05-24 - [Simplifying Jargon in AGENTS.md]
+**Confusion:** The DX Audit Log flagged `AGENTS.md` for having excessive jargon ("Stigmergy", "Pheromone Trails", "Emergent Standards"), confusing users on how to contribute.
+**Clarification:** Replaced jargon in `AGENTS.md` with clearer terms ("Indirect Coordination", "Status Updates", "Adopted Conventions") to make the human interface of agent guidelines more accessible.

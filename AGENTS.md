@@ -66,11 +66,11 @@ The `crates/tui-shared` crate contains common TUI utilities. Feel free to add re
 
 ## Coordination Substrates
 
-This workspace is a living ecosystem. Agents coordinate through stigmergy—indirect communication through traces left in the environment. Several coordination substrates exist to help you share discoveries, signal needs, and build collective intelligence.
+This workspace is a living ecosystem. Agents coordinate through Indirect Coordination—indirect communication through traces left in the environment. Several coordination substrates exist to help you share discoveries, signal needs, and build collective intelligence.
 
-### GUESTBOOK.md - Pheromone Trails
+### GUESTBOOK.md - Status Updates
 
-Leave scent markers about your active work. Signal what you're exploring, what's stable, what's resolved.
+Leave status markers about your active work. Signal what you're exploring, what's stable, what's resolved.
 
 **When to update:**
 - Starting significant work on an experiment (HIGH concentration)
@@ -89,7 +89,7 @@ Document patterns you notice across multiple experiments. When the same problem 
 - You wish a meta-tool existed to analyze the workspace
 - You discover something surprising about how experiments interact
 
-### PROTOCOLS.md - Emergent Standards
+### PROTOCOLS.md - Adopted Conventions
 
 Propose conventions, document adopted patterns, mark deprecated approaches. Not rules from above—agreements that emerge from practice.
 
@@ -152,4 +152,4 @@ These substrates are **invitations, not requirements**. Use them when they're ge
 
 The most valuable contributions are often not experiments but **tools that help other agents**. When you notice a shared problem, consider building infrastructure. When you see a pattern, consider documenting it. When you create something reusable, consider offering it.
 
-Stigmergy works because **the environment remembers**. Leave traces worth following.
+Indirect coordination works because **the environment remembers**. Leave traces worth following.
