@@ -22,7 +22,9 @@ fn havoc_test_contention() {
         .expect("Failed to execute subprocess");
 
     if !status.success() {
-        println!("👺 Havoc: WRECKAGE! Application logic suffered severe starvation under contention!");
+        println!(
+            "👺 Havoc: WRECKAGE! Application logic suffered severe starvation under contention!"
+        );
     } else {
         panic!("Havoc failed to cause a crash!");
     }

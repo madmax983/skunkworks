@@ -89,6 +89,13 @@ impl Button {
     ///
     /// Evaluates to `true` on the exact frame the user releases the left mouse button
     /// over the widget (a complete "click").
+    ///
+    /// ## Panics
+    ///
+    /// This function does not panic. If the button's bounding rectangle has non-finite
+    /// dimensions (e.g. `NaN`, `Infinity`) or the coordinates exceed the arbitrary
+    /// limit of `100_000.0`, the function will return `false` early and not draw anything.
+    /// This mitigates crashes in headless CI environments when extreme coordinates are supplied.
     pub fn draw(&self) -> bool {
         if !self.rect.x.is_finite()
             || !self.rect.y.is_finite()

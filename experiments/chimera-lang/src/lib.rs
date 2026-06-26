@@ -1926,6 +1926,8 @@ mod nova_dream_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_dream_trace_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_entropic_rain_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_fluid_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_fungi_test;
@@ -1937,8 +1939,6 @@ mod nova_gravity_test;
 mod nova_guild_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hologram_text_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_entropic_rain_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]

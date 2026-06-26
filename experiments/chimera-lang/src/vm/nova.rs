@@ -652,7 +652,8 @@ pub(crate) fn exec_hologram_text(vm: &mut ChimeraVM) {
 }
 
 pub(crate) fn exec_entropic_rain(vm: &mut ChimeraVM) {
-    vm.output.push("🌧️ Entropic Rain simulation complete.".to_string());
+    vm.output
+        .push("🌧️ Entropic Rain simulation complete.".to_string());
 }
 
 fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {

@@ -246,7 +246,6 @@ mod tests {
     }
 }
 
-
 fn window_conf() -> Conf {
     Conf {
         window_title: "Git Tank".to_owned(),
@@ -256,7 +255,9 @@ fn window_conf() -> Conf {
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    if args.contains(&"--headless".to_string()) || std::env::var("WAYLAND_DISPLAY").is_err() && std::env::var("DISPLAY").is_err() {
+    if args.contains(&"--headless".to_string())
+        || std::env::var("WAYLAND_DISPLAY").is_err() && std::env::var("DISPLAY").is_err()
+    {
         println!("Running in headless mode (skipping macroquad window initialization)");
         return;
     }
