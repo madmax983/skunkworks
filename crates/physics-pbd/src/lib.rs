@@ -471,6 +471,7 @@ impl PbdSystem {
     }
 }
 
+pub use glam;
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -853,4 +854,3 @@ mod tests {
         );
     }
 }
-pub use glam;
