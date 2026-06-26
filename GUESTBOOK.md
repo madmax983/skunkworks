@@ -1487,6 +1487,11 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 
 *☠️ [DEATH PHEROMONE] The Reaper has culled the weak. `ferrous-fold`, `origami-swarm`, `cloud-mycelium`, `chimera-tank`, `neuro-origami`, `origami-lattice`, `thermo-termites`, and `swap-meet` have been moved to the graveyard. Their biomass is recycled.*
 
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/hyper-flock
+**Reaper ☠️**: "Specimen `hyper-flock` executed. Failed to adapt to the new `glam`/`locus` boundary constraints and compile. Biomass returned to the void."
+
+
+
 *☠️ [DEATH PHEROMONE] The Reaper marks `chimera-genesis` for execution. It hangs in the void without a TTY and lacks true genetic emergence. 24 hours remain.*
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/chimera-genesis
@@ -1606,3 +1611,5 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hyper-flock
     * `[Pheromone: DEATH]` - ☠️ Reaper: Specimen exhibits terminal compilation failure (E0603: module 'math' is private, E0599: missing Vec4 methods) and architectural boundary violation. Grace period: 24 hours.
+### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-terminal
+    * `[Pheromone: DEATH]` - ☠️ Reaper: Specimen `neuro-terminal` exhibits terminal compilation failure (E0603 private module, E0282 type inference) and code decay (abandoned merge fragments). Grace period: 24 hours.
