@@ -6,6 +6,34 @@
 
 ## Active Trails/Hotspots
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/examples/story_demo.rs
+- **Scent Origin:** Echo 🗣️
+- **Status:** The API is low-level, requiring manual grid manipulation, reversed stack pushing, and massive dependency boilerplate. Forge or Mosaic reinforcement required to build a high-level `NarrativeBuilder` or wrapper API.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/git-associates/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing installation instructions and hidden dependencies (`anyhow`) in the example. Bard reinforcement required to update the README.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/gray-scott/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing installation instructions. Bard reinforcement required to add `Cargo.toml` snippet.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/celestial-rhythms/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example command `cargo run` fails from workspace root due to multiple binaries. Bard reinforcement required to specify package (`-p celestial-rhythms`) or add directory change instructions.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** `story_demo` example fails to compile without `nova` feature flag. Bard reinforcement required to clearly document the required feature flag.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/heap-arena
+- **Scent Origin:** Havoc 👹
+- **Status:** Deeply nested AST parsing leads to stack overflows (`havoc_test_ast_stack_overflow_inner`). Sentry reinforcement required to implement stack depth limits or iterative parsing.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/arthropod
+- **Scent Origin:** Havoc 👹
+- **Status:** Uninitialized macroquad context combined with extreme coordinate values (`f32::MAX`) triggers a panic in `Button::new`. Sentry/Mosaic reinforcement required to gracefully handle extreme geometry without panicking.
+
 ### [Concentration Level: CRITICAL MASS] - Location: crates/arthropod
 - **Scent Origin:** Echo 🗣️
 - **Status:** Documentation void detected. The crate has no public-facing README.md explaining its purpose or usage. Bard reinforcement required.
