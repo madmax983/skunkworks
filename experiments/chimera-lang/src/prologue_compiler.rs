@@ -1610,14 +1610,23 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
     for pair in program.into_inner() {
         match pair.as_rule() {
             Rule::section => {
-                let inner = pair.into_inner().next().unwrap();
+                let inner = pair
+                    .into_inner()
+                    .next()
+                    .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
                 match inner.as_rule() {
                     Rule::config_section => {
                         // "config" ~ "{" ~ config_entry* ~ "}"
                         for entry in inner.into_inner() {
                             let mut entry_inner = entry.into_inner();
-                            let key = entry_inner.next().unwrap().as_str();
-                            let val = entry_inner.next().unwrap().as_str();
+                            let key = entry_inner
+                                .next()
+                                .ok_or_else(|| anyhow::anyhow!("Expected key"))?
+                                .as_str();
+                            let val = entry_inner
+                                .next()
+                                .ok_or_else(|| anyhow::anyhow!("Expected value"))?
+                                .as_str();
                             if key == "mode" {
                                 if val == "Orca" {
                                     orca_mode = Some(true);
@@ -1628,7 +1637,11 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
                         }
                     }
                     Rule::grid_section => {
-                        let content = inner.into_inner().next().unwrap().as_str();
+                        let content = inner
+                            .into_inner()
+                            .next()
+                            .ok_or_else(|| anyhow::anyhow!("Expected inner content"))?
+                            .as_str();
                         let mut new_grid = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
 
                         // Trim leading/trailing newlines to handle brace placement
@@ -1650,7 +1663,11 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
                         grid = Some(new_grid);
                     }
                     Rule::dna_section => {
-                        let content = inner.into_inner().next().unwrap().as_str();
+                        let content = inner
+                            .into_inner()
+                            .next()
+                            .ok_or_else(|| anyhow::anyhow!("Expected inner content"))?
+                            .as_str();
                         let compiled_dna = crate::compiler::compile(content, base_path)?;
                         if let Some(existing_dna) = dna.as_mut() {
                             existing_dna
@@ -1667,11 +1684,20 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
                     Rule::definitions_section => {
                         for entry in inner.into_inner() {
                             let mut entry_inner = entry.into_inner();
-                            let rune_char = entry_inner.next().unwrap().as_str();
-                            let definition_body = entry_inner.next().unwrap();
+                            let rune_char = entry_inner
+                                .next()
+                                .ok_or_else(|| anyhow::anyhow!("Expected rune char"))?
+                                .as_str();
+                            let definition_body = entry_inner
+                                .next()
+                                .ok_or_else(|| anyhow::anyhow!("Expected definition body"))?;
                             // definition_body -> nested_text -> str
                             // We need the string content inside the braces
-                            let content = definition_body.into_inner().next().unwrap().as_str();
+                            let content = definition_body
+                                .into_inner()
+                                .next()
+                                .ok_or_else(|| anyhow::anyhow!("Expected definition content"))?
+                                .as_str();
 
                             // The content already defines a strand (e.g., `strand alpha { ... }`)
                             let compiled_def = crate::compiler::compile(content, base_path)?;
@@ -1696,12 +1722,19 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
                         for rule in inner.into_inner() {
                             if let Rule::alchemy_rule = rule.as_rule() {
                                 let mut rule_inner = rule.into_inner();
-                                let ingredients_pair = rule_inner.next().unwrap();
-                                let result_pair = rule_inner.next().unwrap();
+                                let ingredients_pair = rule_inner
+                                    .next()
+                                    .ok_or_else(|| anyhow::anyhow!("Expected ingredients pair"))?;
+                                let result_pair = rule_inner
+                                    .next()
+                                    .ok_or_else(|| anyhow::anyhow!("Expected result pair"))?;
 
                                 let mut ingredients = Vec::new();
                                 for term in ingredients_pair.into_inner() {
-                                    let inner = term.into_inner().next().unwrap();
+                                    let inner = term
+                                        .into_inner()
+                                        .next()
+                                        .ok_or_else(|| anyhow::anyhow!("Expected inner term"))?;
                                     match inner.as_rule() {
                                         Rule::string_literal => {
                                             let s = inner.as_str();
@@ -1718,7 +1751,10 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
                                 }
 
                                 let result = {
-                                    let inner = result_pair.into_inner().next().unwrap();
+                                    let inner = result_pair
+                                        .into_inner()
+                                        .next()
+                                        .ok_or_else(|| anyhow::anyhow!("Expected inner result"))?;
                                     match inner.as_rule() {
                                         Rule::string_literal => {
                                             let s = inner.as_str();
