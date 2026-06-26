@@ -33,7 +33,7 @@ pub fn get_commit_history() -> anyhow::Result<Vec<Commit>> {
                 hash: id.to_string(),
                 author: author.name().unwrap_or("Unknown").to_string(),
                 date,
-                message: commit.summary().unwrap_or("").to_string(),
+                message: commit.summary().unwrap_or(None).unwrap_or("").to_string(),
             });
 
             count += 1;

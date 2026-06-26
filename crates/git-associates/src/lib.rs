@@ -242,7 +242,7 @@ impl GitModel {
                 .author()
                 .name()
                 .map(|s| s.to_string())
-                .unwrap_or_else(|| "Unknown".to_string());
+                .unwrap_or_else(|_| "Unknown".to_string());
             let message = commit
                 .message()
                 .map(|s| s.trim().to_string())
