@@ -9332,6 +9332,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "quipu-market"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "market-sim",
+ "quipu",
+ "rand 0.8.6",
+ "ratatui",
+ "tui-shared",
+]
+
+[[package]]
 name = "quipu-origami"
 version = "0.1.0"
 dependencies = [
