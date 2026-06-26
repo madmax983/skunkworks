@@ -3493,3 +3493,55 @@ classDiagram
     ArthropodFacade ..> ArthropodButton : encapsulates
     TurbulentRhythmsFacade ..> HavocContention : encapsulates
 ```
+
+## Chimera Lang Public Modules (ADR 133)
+
+While `chimera-lang` encapsulates many of its VM components (ADR 108) and TUI internals (ADR 124), several core modules (`ast`, `vm`, `opcode`, `tui`, and `value`) are intentionally exposed as `pub mod`. This breaks a strict Facade pattern but is required because numerous integration tests and the main binary are heavily coupled to this specific internal structure.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace ChimeraLang {
+        class Lib {
+            <<Entrypoint>>
+        }
+        class AstMod {
+            <<pub mod>>
+        }
+        class VmMod {
+            <<pub mod>>
+        }
+        class OpcodeMod {
+            <<pub mod>>
+        }
+        class TuiMod {
+            <<pub mod>>
+        }
+        class ValueMod {
+            <<pub mod>>
+        }
+    }
+
+    namespace Consumers {
+        class IntegrationTests
+        class MainBinary
+    }
+
+    Lib --> AstMod : exposes
+    Lib --> VmMod : exposes
+    Lib --> OpcodeMod : exposes
+    Lib --> TuiMod : exposes
+    Lib --> ValueMod : exposes
+
+    IntegrationTests --> AstMod : uses directly
+    IntegrationTests --> VmMod : uses directly
+    IntegrationTests --> OpcodeMod : uses directly
+    IntegrationTests --> TuiMod : uses directly
+    IntegrationTests --> ValueMod : uses directly
+
+    MainBinary --> AstMod : uses directly
+    MainBinary --> VmMod : uses directly
+    MainBinary --> OpcodeMod : uses directly
+    MainBinary --> TuiMod : uses directly
+    MainBinary --> ValueMod : uses directly
+```
