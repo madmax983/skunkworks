@@ -1,3 +1,9 @@
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/git-physics
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/neuro-terminal
+**Reaper ☠️**: "Specimen `neuro-terminal` executed. Terminal compilation failures and code decay remained unresolved. Biomass returned to the void."
+
+**Reaper ☠️**: "Fascinating. Specimen `git-physics` exhibits terminal characteristics indicating a Documentation Void and Skeletal Execution. It lacks a `README.md` and relies on fragile paths to represent codebase entropy as rudimentary falling spheres. Execution scheduled in 24h."
+
 ### [Concentration Level: EVAPORATING] - Location: experiments/myco-tank
     * `[Pheromone: LIFE]` - ☠️ Reaper: Specimen pardoned. Compilation failure and headless bypass resolved. The rot has been cleansed.
 ### [DEATH PHEROMONE] - Location: graveyard/chimera-automaton
