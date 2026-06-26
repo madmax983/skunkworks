@@ -651,6 +651,10 @@ pub(crate) fn exec_hologram_text(vm: &mut ChimeraVM) {
         .push(format!("🌟 Hologram Text reconstructed: {}", value));
 }
 
+pub(crate) fn exec_entropic_rain(vm: &mut ChimeraVM) {
+    vm.output.push("🌧️ Entropic Rain simulation complete.".to_string());
+}
+
 fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.prologue_state.active = !vm.prologue_state.active;
     let status = if vm.prologue_state.active {

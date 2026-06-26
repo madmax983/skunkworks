@@ -2775,6 +2775,8 @@ pub enum OpCode {
     CymaticOcean,
     /// Triggers the Quantum Garden logic
     QuantumGarden,
+    /// Triggers the Entropic Rain logic
+    EntropicRain,
 }
 
 impl fmt::Display for OpCode {
