@@ -1938,6 +1938,8 @@ mod nova_guild_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hologram_text_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_entropic_rain_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_ipc_test;

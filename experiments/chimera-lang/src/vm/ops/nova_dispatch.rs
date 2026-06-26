@@ -683,6 +683,10 @@ impl crate::vm::ChimeraVM {
                     .push("Quantum Garden simulation triggered.".to_string());
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
+            OpCode::EntropicRain => {
+                crate::vm::nova::exec_entropic_rain(self);
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+            }
             OpCode::ChaosHologram => {
                 crate::vm::nova::exec_chaos_hologram(self);
                 crate::vm::ops::Dispatch::Handled
