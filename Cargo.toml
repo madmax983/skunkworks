@@ -41,6 +41,7 @@ members = [
     "experiments/neuro-quipu",
     "experiments/quipu-physics",
     "experiments/quipu-market",
+    "experiments/git-quipu",
     "experiments/gray-miller",
 
 ]

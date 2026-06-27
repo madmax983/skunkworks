@@ -4754,6 +4754,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "git-quipu"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "git-associates",
+ "quipu",
+ "ratatui",
+ "tui-shared",
+]
+
+[[package]]
 name = "git-strings"
 version = "0.1.0"
 dependencies = [
@@ -5094,6 +5106,10 @@ dependencies = [
  "ratatui",
  "tui-shared",
 ]
+
+[[package]]
+name = "gray-locus"
+version = "0.1.0"
 
 [[package]]
 name = "gray-miller"

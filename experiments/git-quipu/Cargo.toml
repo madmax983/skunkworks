@@ -1,0 +1,12 @@
+[package]
+name = "git-quipu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm = "0.28"
+ratatui = "0.30"
+tui-shared = { path = "../../crates/tui-shared" }
+quipu = { path = "../../crates/quipu" }
+git-associates = { path = "../../crates/git-associates" }
+anyhow = "1.0"
