@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **gray-miller**: Specimen condemned. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution (trivial coordinate projection, lack of depth). Grace period: 24h.
+- **quipu-physics**: Specimen condemned. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Grace period: 24h.
 
 ## ☠️ Executed
+- **gray-miller**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution (trivial coordinate projection, lack of depth). Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **git-physics**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution (hardcoded paths, generic representation). Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **neuro-terminal**: Specimen executed. Diagnosis: Terminal Compilation Failure (`E0603`: private module, `E0282`: type annotations needed) and Code Decay (abandoned `.orig`/`.rej` files). Grace period expired. Moved to graveyard.
 - **hyper-flock**: Specimen executed. Diagnosis: Terminal Compilation Failure (`E0603`: module `math` is private, `E0599`: no method named `scale` found for struct `macroquad::math::Vec4`). The specimen attempts to access a private module and relies on missing `Vec4` methods (`scale`, `zero`, `rotate_xw_fast`, etc.) after the `flock` and `locus` refactorings. Ecosystem Maladaptation (missing headless bypass). Grace period expired. Moved to graveyard.
