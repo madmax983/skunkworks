@@ -656,6 +656,11 @@ pub(crate) fn exec_entropic_rain(vm: &mut ChimeraVM) {
         .push("🌧️ Entropic Rain simulation complete.".to_string());
 }
 
+pub(crate) fn exec_spectral_scribe(vm: &mut ChimeraVM) {
+    vm.output
+        .push("📻 Spectral Scribe encoding complete.".to_string());
+}
+
 fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.prologue_state.active = !vm.prologue_state.active;
     let status = if vm.prologue_state.active {

@@ -5108,10 +5108,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gray-locus"
-version = "0.1.0"
-
-[[package]]
 name = "gray-miller"
 version = "0.1.0"
 dependencies = [
