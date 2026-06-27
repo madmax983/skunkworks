@@ -2777,6 +2777,8 @@ pub enum OpCode {
     QuantumGarden,
     /// Triggers the Entropic Rain logic
     EntropicRain,
+    /// Triggers the Spectral Scribe logic
+    SpectralScribe,
 }
 
 impl fmt::Display for OpCode {
