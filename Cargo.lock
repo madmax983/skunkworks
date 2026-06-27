@@ -4743,18 +4743,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-physics"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "git-associates",
- "glam 0.27.0",
- "macroquad",
- "physics-pbd",
- "rand 0.8.6",
-]
-
-[[package]]
 name = "git-poincare"
 version = "0.1.0"
 dependencies = [
@@ -7640,17 +7628,6 @@ dependencies = [
  "parking_lot",
  "rand 0.8.6",
  "ratatui",
-]
-
-[[package]]
-name = "neuro-terminal"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "rand 0.8.6",
- "ratatui",
- "tui-shared",
 ]
 
 [[package]]
