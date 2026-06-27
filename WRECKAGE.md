@@ -164,3 +164,15 @@ fatal runtime error: stack overflow, aborting
 ```
 🧪 **Reproduction:** `cargo test -p quipu --test havoc`
 😈 **Comment:** "You thought making `PartialEq` and `Drop` iterative was enough to save you. But you left `Clone` and `Debug` to default derivation, making them implicitly recursive. Now any user cloning or debug printing a deep Cord instantly crashes the program. The stack is mine once again."
+
+### 15. `flocking` (The Unequal Panic)
+🧨 **The Trigger:** Provided a `positions` array and a `velocities` array of different lengths to `compute_force`.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_flocking_panic_inner' panicked at crates/flocking/src/lib.rs:310:5:
+assertion `left == right` failed
+  left: 2
+ right: 1
+```
+🧪 **Reproduction:** `cargo test -p flocking --test havoc_unequal`
+😈 **Comment:** "You relied on an explicit assert to check array bounds. If a user makes a mistake and passes arrays of different lengths, you crash the entire program instead of returning an error or a default vector. The panic is mine."
