@@ -3545,3 +3545,79 @@ classDiagram
     MainBinary --> TuiMod : uses directly
     MainBinary --> ValueMod : uses directly
 ```
+
+## Esoteric Submodules Encapsulation (ADR 134)
+
+Enforcing the Facade pattern in `verge-computer`, `chaos-hologram`, and `hologram-text` prevents the leakage of their internal structures, ensuring consumers rely only on the exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class VergeComputerFacade {
+            <<Facade>>
+        }
+        class ChaosHologramFacade {
+            <<Facade>>
+        }
+        class HologramTextFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class VergeInternal {
+            <<pub(crate)>>
+        }
+        class ChaosInternal {
+            <<pub(crate)>>
+        }
+        class HologramInternal {
+            <<pub(crate)>>
+        }
+    }
+
+    VergeComputerFacade ..> VergeInternal : encapsulates
+    ChaosHologramFacade ..> ChaosInternal : encapsulates
+    HologramTextFacade ..> HologramInternal : encapsulates
+```
+
+## Arthropod, Chimera-Lang, and Turbulent-Rhythms Encapsulation (ADR 135)
+
+Enforcing the Facade pattern in `arthropod`, `chimera-lang`, and `turbulent-rhythms` prevents the leakage of internal module structures, ensuring consumers rely only on the explicitly exported API while keeping essential modules like `compiler` public when needed.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class ArthropodFacade {
+            <<Facade>>
+        }
+        class ChimeraLangFacade {
+            <<Facade>>
+        }
+        class TurbulentRhythmsFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class ArthropodInternal {
+            <<pub(crate)>>
+        }
+        class ChimeraLangInternal {
+            <<pub(crate)>>
+        }
+        class ChimeraLangCompiler {
+            <<pub mod>>
+        }
+        class TurbulentRhythmsInternal {
+            <<pub(crate)>>
+        }
+    }
+
+    ArthropodFacade ..> ArthropodInternal : encapsulates
+    ChimeraLangFacade ..> ChimeraLangInternal : encapsulates
+    ChimeraLangFacade --> ChimeraLangCompiler : exposes
+    TurbulentRhythmsFacade ..> TurbulentRhythmsInternal : encapsulates
+```
