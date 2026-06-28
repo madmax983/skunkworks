@@ -8,7 +8,11 @@
 //! than strict layout grids. It visually communicates state changes (idle vs. hooked)
 //! through different icons and animated water effects.
 
-use ratatui::widgets::canvas::Context;
+use ratatui::{
+    style::{Color, Modifier, Style},
+    text::{Line, Span},
+    widgets::canvas::Context,
+};
 
 /// A visual component representing a fishing bobber on a Canvas.
 ///
@@ -86,7 +90,16 @@ impl Bobber {
     /// canvas.render(Rect::new(0, 0, 10, 10), &mut buffer);
     /// ```
     pub fn draw(&self, ctx: &mut Context, tick: u64) {
-        let icon = if self.is_hooked { "⚡" } else { "🎣" };
+        let icon = if self.is_hooked {
+            Line::from(Span::styled(
+                "⚡",
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD),
+            ))
+        } else {
+            Line::from(Span::styled("🎣", Style::default().fg(Color::Cyan)))
+        };
 
         // Draw the main bobber body
         ctx.print(self.x, self.y, icon);
@@ -94,18 +107,20 @@ impl Bobber {
         // Draw effects
         if self.is_hooked {
             // Splash effects for hooked state
-            ctx.print(self.x - 3.0, self.y + 1.0, "💦");
-            ctx.print(self.x + 3.0, self.y + 2.0, "∴");
-            ctx.print(self.x - 2.0, self.y + 2.0, "°");
-            ctx.print(self.x + 4.0, self.y + 1.0, "∷");
+            let splash_style = Style::default().fg(Color::LightBlue);
+            ctx.print(self.x - 3.0, self.y + 1.0, Line::from(Span::styled("💦", splash_style)));
+            ctx.print(self.x + 3.0, self.y + 2.0, Line::from(Span::styled("∴", splash_style)));
+            ctx.print(self.x - 2.0, self.y + 2.0, Line::from(Span::styled("°", splash_style)));
+            ctx.print(self.x + 4.0, self.y + 1.0, Line::from(Span::styled("∷", splash_style)));
             // Extra splash particles
-            ctx.print(self.x - 4.0, self.y, "*");
-            ctx.print(self.x + 5.0, self.y, "o");
-            ctx.print(self.x, self.y + 3.0, "!");
+            ctx.print(self.x - 4.0, self.y, Line::from(Span::styled("*", splash_style)));
+            ctx.print(self.x + 5.0, self.y, Line::from(Span::styled("o", splash_style)));
+            ctx.print(self.x, self.y + 3.0, Line::from(Span::styled("!", splash_style)));
         } else {
             // Gentle ripples for idle state
-            ctx.print(self.x - 2.0, self.y, "≈");
-            ctx.print(self.x + 2.0, self.y, "≈");
+            let ripple_style = Style::default().fg(Color::Blue);
+            ctx.print(self.x - 2.0, self.y, Line::from(Span::styled("≈", ripple_style)));
+            ctx.print(self.x + 2.0, self.y, Line::from(Span::styled("≈", ripple_style)));
         }
 
         // Animated Splash / Ripple around bobber based on tick
@@ -118,8 +133,9 @@ impl Bobber {
                 1 => ("<", ">"),
                 _ => ("{", "}"),
             };
-            ctx.print(self.x - 2.0, self.y, left);
-            ctx.print(self.x + 1.0, self.y, right);
+            let anim_style = Style::default().fg(Color::Cyan);
+            ctx.print(self.x - 2.0, self.y, Line::from(Span::styled(left, anim_style)));
+            ctx.print(self.x + 1.0, self.y, Line::from(Span::styled(right, anim_style)));
         }
     }
 }
