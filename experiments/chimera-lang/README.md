@@ -305,7 +305,7 @@ locus = { path = "path/to/skunkworks/crates/locus", features = ["serde"] }
 resonance-audio = { path = "path/to/skunkworks/crates/resonance-audio" }
 hyper-system = { path = "path/to/skunkworks/crates/hyper-system", default-features = false }
 poincare-disk = { path = "path/to/skunkworks/crates/poincare-disk" }
-miller-lattice = "0.1.0"
+miller-lattice = { path = "path/to/skunkworks/crates/miller-lattice" }
 ```
 
 Example `main.rs`:
