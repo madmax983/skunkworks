@@ -2779,6 +2779,8 @@ pub enum OpCode {
     EntropicRain,
     /// Triggers the Spectral Scribe logic
     SpectralScribe,
+    /// **`ChromaticCode`** executes chromatic code logic
+    ChromaticCode,
 }
 
 impl fmt::Display for OpCode {
