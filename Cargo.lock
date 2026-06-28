@@ -9160,16 +9160,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "quipu-physics"
-version = "0.1.0"
-dependencies = [
- "glam 0.28.0",
- "macroquad",
- "physics-pbd",
- "quipu",
-]
-
-[[package]]
 name = "quipu-poincare"
 version = "0.1.0"
 dependencies = [
