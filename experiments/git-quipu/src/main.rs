@@ -50,7 +50,11 @@ impl GitQuipuApp {
 
                 let cord = Cord::from(limited_volume);
                 quipu.add_cord(cord);
-                commit_messages.push(format!("{} - {}", commit.short_hash, commit.message.lines().next().unwrap_or("")));
+                commit_messages.push(format!(
+                    "{} - {}",
+                    commit.short_hash,
+                    commit.message.lines().next().unwrap_or("")
+                ));
             }
         }
 
@@ -80,7 +84,10 @@ fn main() -> anyhow::Result<()> {
     loop {
         tui.terminal.draw(|f: &mut Frame| {
             let mut text = vec![
-                Line::from(Span::styled("Git Quipu: Knotted Codebase History", Style::default().fg(Color::Yellow))),
+                Line::from(Span::styled(
+                    "Git Quipu: Knotted Codebase History",
+                    Style::default().fg(Color::Yellow),
+                )),
                 Line::from(""),
             ];
 
@@ -98,14 +105,23 @@ fn main() -> anyhow::Result<()> {
                     cord_str.push_str("  "); // space between clusters
                 }
                 text.push(Line::from(vec![
-                    Span::styled(format!("{:>20} | ", msg), Style::default().fg(Color::DarkGray)),
+                    Span::styled(
+                        format!("{:>20} | ", msg),
+                        Style::default().fg(Color::DarkGray),
+                    ),
                     Span::styled(format!("--{}", cord_str), Style::default().fg(Color::Cyan)),
-                    Span::styled(format!(" (Val: {})", cord.value()), Style::default().fg(Color::Gray)),
+                    Span::styled(
+                        format!(" (Val: {})", cord.value()),
+                        Style::default().fg(Color::Gray),
+                    ),
                 ]));
             }
 
-            let paragraph = Paragraph::new(text)
-                .block(Block::default().title(" Quipu Ledger ").borders(Borders::ALL));
+            let paragraph = Paragraph::new(text).block(
+                Block::default()
+                    .title(" Quipu Ledger ")
+                    .borders(Borders::ALL),
+            );
 
             f.render_widget(paragraph, f.area());
         })?;
