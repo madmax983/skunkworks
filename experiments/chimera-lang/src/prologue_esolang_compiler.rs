@@ -1126,6 +1126,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_spectral_scribe_instr(instr)?);
                 }
             }
+            Rule::chromatic_code_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_chromatic_code_instr(instr)?);
+                }
+            }
 
             Rule::quipu_block => {
                 for instr in inner_block.into_inner() {
@@ -2839,4 +2844,36 @@ hologram {
         assert_eq!(genes[1].op, OpCode::Push);
         assert_eq!(genes[2].op, OpCode::Hologram);
     }
+}
+
+fn compile_chromatic_code_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "steg" {
+                genes.push(Gene::new(OpCode::ChromaticCode, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
 }

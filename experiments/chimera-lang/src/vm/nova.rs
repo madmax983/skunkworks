@@ -2423,3 +2423,10 @@ impl ChimeraVM {
         }
     }
 }
+
+pub fn exec_chromatic_code(vm: &mut ChimeraVM) {
+    // Steganography visual output or logic hook
+    vm.output.push("CHROMATIC_CODE: Carrier Signal Detected 🌈🔐".to_string());
+    // Modify grid conceptually to represent hidden data
+    vm.grid[0][0] = crate::vm::Value::Str("HIDDEN_DATA".to_string());
+}
