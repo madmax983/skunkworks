@@ -1928,8 +1928,6 @@ mod nova_dream_trace_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_entropic_rain_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_spectral_scribe_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_fluid_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_fungi_test;
@@ -2015,6 +2013,7 @@ mod nova_signals_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_spectral_scribe_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_splice_test;
 #[cfg(all(test, feature = "nova"))]

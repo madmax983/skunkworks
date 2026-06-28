@@ -433,3 +433,13 @@ impl PrologueState {
         }
     }
 }
+
+impl PrologueState {
+    /// Checks if a string is a built-in agent type.
+    pub fn is_agent_type(s: &str) -> bool {
+        matches!(
+            s,
+            "C" | "♬" | "₣" | "ζ" | "P" | "⚓" | "∃" | "χ" | "🕷" | "✂" | "🔗" | "🦠" | "🛠" | "🎓" | "🌀" | "⚗" | "ð" | "♣" | "🧙" | "💤" | "👹" | "★" | "🤖" | "🗿"
+        )
+    }
+}

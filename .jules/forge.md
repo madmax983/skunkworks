@@ -18,3 +18,11 @@
 **[Extracting God Functions in Display Impls]**
 **Learning:** `std::fmt::Display` implementations, especially for structures like `Snapshot` that serialize multiple collections (e.g., `metrics` and `entities`), can easily grow into "God Functions" (100+ lines).
 **Action:** Extract the formatting logic for individual collections into private helper methods on the struct (e.g., `fmt_metrics`, `fmt_entities`), reducing nesting and cognitive load in the main `fmt` method.
+
+**[Flattening Pyramids of Doom in Match Arms]**
+**Learning:** When matching on multiple patterns where the success case relies on nested `if let Some(...) = ...` (a Pyramid of Doom), utilizing guard clauses `let Some(...) = ... else { return; }` allows us to extract values cleanly and dramatically reduce nesting, as seen in `apply_sink_rune`.
+**Action:** Prefer `let ... else { return; }` in `match` arms over deep nesting to keep code flat and readable.
+
+**[Replacing if-else Chains with Match]**
+**Learning:** Massive `if current_type == X else if current_type == Y` chains (like the one in `process_agents` which spanned nearly 150 lines) are hard to read and easily miss logic. They should be simplified using standard `match` syntax.
+**Action:** Refactor long `if-else if` chains evaluating equality on the same variable to idiomatic Rust `match` expressions.
