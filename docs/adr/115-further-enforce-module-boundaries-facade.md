@@ -3,7 +3,7 @@
 Date: 2026-06-14
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Various experimental crates (such as `spqr-rsa`, `lensing-poetry`, `colony-concerto`, `system-attractor`, `clockwork-concerto`, `dependency-karst`, `cargo-rocket`, `phonetic-flock`, `synaptic-pachinko`, `hyperbolic-dungeon`, `heap-arena`, `thermo-market`, `verge-computer`, `glossolalia`, `harmonic-engine`, `crystal-fs`, `spectral-scribe`, `neuro-terminal`, `quipu-serializer`, `mnem-bridge`, `memetic-market`, `git-cantata`, `syncopated-threads`) were leaking their internal submodules directly via `pub mod`. This broke the intended Facade pattern and exposed implementation details to downstream consumers.

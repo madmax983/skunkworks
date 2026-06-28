@@ -3,7 +3,7 @@
 Date: 2026-06-09
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The repository contains numerous experimental prototypes. The recent execution of the `physics-locus` hybrid by the Splice Surgeon successfully crossed rigid body dynamics (`physics-pbd`) with topological boundaries (`locus`). However, this architectural mutation was not formally recorded in the system architecture diagrams.

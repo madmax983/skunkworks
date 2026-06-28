@@ -3621,3 +3621,80 @@ classDiagram
     ChimeraLangFacade --> ChimeraLangCompiler : exposes
     TurbulentRhythmsFacade ..> TurbulentRhythmsInternal : encapsulates
 ```
+
+## Experiment: Quipu-Market (ADR 138)
+
+**Quipu-Market** explores a "Physical Knotted Market Ledger" by crossing the discrete 2D order book grid of `market-sim` (Bids and Asks) with the discrete knotted data structures of `quipu`.
+
+### Hybrid Architecture
+
+The hybrid maps ephemeral trades from a financial market order book directly into a permanent structural format. When a bid and ask collide to produce a trade, the trade's numerical price is encoded as discrete base-10 knots tied onto a new Quipu cord, providing a physical sedimentation of financial activity.
+
+```mermaid
+classDiagram
+    direction TB
+    class QuipuMarket {
+        +MarketGrid market
+        +Quipu ledger
+        +run()
+    }
+
+    class MarketGrid {
+        <<Library: market-sim>>
+        +Vec~Particle~ cells
+        +update()
+    }
+
+    class Quipu {
+        <<Library: quipu>>
+        +Vec~Cord~ cords
+        +add_cord()
+    }
+
+    QuipuMarket --> MarketGrid : Order Book Activity
+    QuipuMarket --> Quipu : Knotted Ledger
+```
+
+## Experiment: Git-Quipu (ADR 139)
+
+**Git-Quipu** explores a "Codebase Knotted Ledger" by crossing the discrete chronological git commit history (`git-associates`) with the knotted data structures of ancient Inca accounting (`quipu`).
+
+### Hybrid Architecture
+
+The hybrid translates abstract codebase history (commits) into physical structural data. Insertions and deletions from each commit are combined into a volume metric, which is then mapped into a sequence of knots (Simple, Long, Figure-Eight) tied along a continuous Quipu cord.
+
+```mermaid
+classDiagram
+    direction TB
+    class GitQuipu {
+        +CommitHistory history
+        +Quipu ledger
+        +run()
+    }
+
+    class CommitHistory {
+        <<Library: git-associates>>
+        +Vec~Commit~ commits
+        +parse_metadata()
+    }
+
+    class Quipu {
+        <<Library: quipu>>
+        +Vec~Cord~ cords
+        +add_cord()
+    }
+
+    GitQuipu --> CommitHistory : Code Volume
+    GitQuipu --> Quipu : Structural Record
+```
+
+## Storage Separation (ADR 012)
+
+Circular dependencies were causing build failures, so persistence logic was moved to a dedicated crate. The `Storage` module acts as a standalone library that `Core` depends on via Trait Bounds, breaking the circular reference.
+
+```mermaid
+classDiagram
+    class Core
+    class Storage
+    Core --> Storage : Uses (Trait Bound)
+```

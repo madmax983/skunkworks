@@ -3,7 +3,7 @@
 Date: 2026-06-02
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The internal `math` module within `crates/hyper-system` was leaked as a public module (`pub mod math`), violating the Facade pattern and exposing implementation boundaries. This created tight coupling where consumers could rely on internal structures rather than the intended public API.
