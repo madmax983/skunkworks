@@ -90,7 +90,7 @@ fn havoc_quipu_huge_cord_clone() {
 
     if let Ok(status) = status {
         assert!(
-            !status.success(),
+            status.success(),
             "👺 Havoc: System safely handled 100k depth Clone! We failed to break it."
         );
     }
@@ -122,7 +122,7 @@ fn havoc_quipu_huge_cord_debug() {
 
     if let Ok(status) = status {
         assert!(
-            !status.success(),
+            status.success(),
             "👺 Havoc: System safely handled 100k depth Debug! We failed to break it."
         );
     }

@@ -236,7 +236,7 @@ pub enum Color {
 /// // Tens (10^1)
 /// assert_eq!(cord.clusters[1], vec![Knot::Simple]);
 /// ```
-#[derive(Debug, Clone, Eq, Default)]
+#[derive(Eq, Default)]
 pub struct Cord {
     /// The clusters of knots, ordered from Units (index 0) to highest power.
     ///
@@ -248,6 +248,113 @@ pub struct Cord {
     pub color: Color,
 }
 
+impl Clone for Cord {
+    fn clone(&self) -> Self {
+        let mut stack = vec![(
+            self,
+            0,
+            Cord {
+                clusters: self.clusters.clone(),
+                subsidiaries: Vec::with_capacity(self.subsidiaries.len()),
+                color: self.color,
+            },
+        )];
+
+        loop {
+            let last_idx = stack.len() - 1;
+            if stack[last_idx].1 < stack[last_idx].0.subsidiaries.len() {
+                let child_idx = stack[last_idx].1;
+                stack[last_idx].1 += 1;
+                let child_orig = &stack[last_idx].0.subsidiaries[child_idx];
+                stack.push((
+                    child_orig,
+                    0,
+                    Cord {
+                        clusters: child_orig.clusters.clone(),
+                        subsidiaries: Vec::with_capacity(child_orig.subsidiaries.len()),
+                        color: child_orig.color,
+                    },
+                ));
+            } else {
+                let (_, _, completed) = stack.pop().unwrap();
+                if let Some(parent) = stack.last_mut() {
+                    parent.2.subsidiaries.push(completed);
+                } else {
+                    return completed;
+                }
+            }
+        }
+    }
+}
+
+impl std::fmt::Debug for Cord {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Capping depth for Debug to prevent stack overflow on deep recursive structs.
+        // It's meant for debugging, so returning a capped string is perfectly acceptable.
+        // (This mirrors what many stdlib types do when dealing with huge trees).
+        fn cap_depth(
+            cord: &Cord,
+            depth: usize,
+            f: &mut std::fmt::Formatter<'_>,
+        ) -> std::fmt::Result {
+            if depth > 100 {
+                return write!(f, "Cord {{ ... (max depth reached) }}");
+            }
+            f.debug_struct("Cord")
+                .field("clusters", &cord.clusters)
+                .field("color", &cord.color)
+                .field(
+                    "subsidiaries",
+                    &crate::DebugSubsidiaries {
+                        cord,
+                        depth: depth + 1,
+                    },
+                )
+                .finish()
+        }
+        cap_depth(self, 0, f)
+    }
+}
+
+struct DebugSubsidiaries<'a> {
+    cord: &'a Cord,
+    depth: usize,
+}
+impl<'a> std::fmt::Debug for DebugSubsidiaries<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.depth > 100 {
+            return write!(f, "[...]");
+        }
+        f.debug_list()
+            .entries(self.cord.subsidiaries.iter().map(|s| DebugCappedCord {
+                cord: s,
+                depth: self.depth,
+            }))
+            .finish()
+    }
+}
+struct DebugCappedCord<'a> {
+    cord: &'a Cord,
+    depth: usize,
+}
+impl<'a> std::fmt::Debug for DebugCappedCord<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.depth > 100 {
+            return write!(f, "Cord {{ ... }}");
+        }
+        f.debug_struct("Cord")
+            .field("clusters", &self.cord.clusters)
+            .field("color", &self.cord.color)
+            .field(
+                "subsidiaries",
+                &DebugSubsidiaries {
+                    cord: self.cord,
+                    depth: self.depth + 1,
+                },
+            )
+            .finish()
+    }
+}
 impl PartialEq for Cord {
     fn eq(&self, other: &Self) -> bool {
         let mut stack = vec![(self, other)];

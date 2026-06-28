@@ -1,5 +1,5 @@
-use chimera_lang::prologue_esolang_compiler::compile;
 use chimera_lang::opcode::OpCode;
+use chimera_lang::prologue_esolang_compiler::compile;
 use chimera_lang::vm::ChimeraVM;
 
 #[test]
@@ -22,9 +22,9 @@ chromatic_code {
     vm.step();
 
     // Verify side effect
-    assert!(
-        vm.output.contains(&"CHROMATIC_CODE: Carrier Signal Detected 🌈\u{1f510}".to_string())
-    );
+    assert!(vm
+        .output
+        .contains(&"CHROMATIC_CODE: Carrier Signal Detected 🌈\u{1f510}".to_string()));
     assert_eq!(
         vm.grid[0][0],
         chimera_lang::vm::Value::Str("HIDDEN_DATA".to_string())

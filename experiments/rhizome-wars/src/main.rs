@@ -79,10 +79,14 @@ async fn main() {
 
             // Update Trees
             // Target strategy: find nearest resource for each tree
-            let target1 =
-                find_nearest_resource(tree1.nodes.last().unwrap().pos, &scheduler.resources);
-            let target2 =
-                find_nearest_resource(tree2.nodes.last().unwrap().pos, &scheduler.resources);
+            let target1 = find_nearest_resource(
+                tree1.nodes.last().map(|n| n.pos).unwrap_or(Vec2::ZERO),
+                &scheduler.resources,
+            );
+            let target2 = find_nearest_resource(
+                tree2.nodes.last().map(|n| n.pos).unwrap_or(Vec2::ZERO),
+                &scheduler.resources,
+            );
 
             // Grow multiple steps per frame for speed
             for _ in 0..10 {
