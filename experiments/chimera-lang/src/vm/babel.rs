@@ -23,8 +23,8 @@ pub fn exec_babel_op(
         OpCode::BabelCompile => {
             // [ cst, handler_strand ] -> [ new_strand_idx ]
             if vm.stack.len() >= 2 {
-                let handler_val = vm.stack.pop().unwrap();
-                let cst_val = vm.stack.pop().unwrap();
+                let handler_val = vm.stack.pop().unwrap_or(Value::Int(0));
+                let cst_val = vm.stack.pop().unwrap_or(Value::Int(0));
 
                 if let Value::Int(handler_idx) = handler_val {
                     if handler_idx >= 0 {
@@ -60,8 +60,8 @@ pub fn exec_babel_op(
         OpCode::Tongue => {
             // [ grammar, input ] -> [ corrupted ]
             if vm.stack.len() >= 2 {
-                let input_val = vm.stack.pop().unwrap();
-                let grammar_val = vm.stack.pop().unwrap();
+                let input_val = vm.stack.pop().unwrap_or(Value::Int(0));
+                let grammar_val = vm.stack.pop().unwrap_or(Value::Int(0));
 
                 if let Value::Str(input_str) = input_val {
                     // 1. Parse
@@ -129,8 +129,8 @@ pub fn exec_babel_op(
                         }
                         "Seq" | "Alt" => {
                             if vm.stack.len() >= 2 {
-                                let p2 = vm.stack.pop().unwrap();
-                                let p1 = vm.stack.pop().unwrap();
+                                let p2 = vm.stack.pop().unwrap_or(Value::Int(0));
+                                let p1 = vm.stack.pop().unwrap_or(Value::Int(0));
                                 args.push(p1);
                                 args.push(p2);
                                 vm.stack.push(Value::Junction(JunctionType::Any, args));
@@ -165,8 +165,8 @@ pub fn exec_babel_op(
                         }
                         "Mutate" => {
                             if vm.stack.len() >= 2 {
-                                let rate_val = vm.stack.pop().unwrap();
-                                let grammar_val = vm.stack.pop().unwrap();
+                                let rate_val = vm.stack.pop().unwrap_or(Value::Int(0));
+                                let grammar_val = vm.stack.pop().unwrap_or(Value::Int(0));
 
                                 let rate = if let Value::Int(r) = rate_val {
                                     (r as f64) / 100.0
@@ -198,8 +198,8 @@ pub fn exec_babel_op(
         OpCode::Parse => {
             // Stack: [ ..., parser, input ]
             if vm.stack.len() >= 2 {
-                let input_val = vm.stack.pop().unwrap();
-                let parser_val = vm.stack.pop().unwrap();
+                let input_val = vm.stack.pop().unwrap_or(Value::Int(0));
+                let parser_val = vm.stack.pop().unwrap_or(Value::Int(0));
 
                 if let Value::Str(input_str) = input_val {
                     match run_parser(&parser_val, &input_str, &vm.prologue_state.logos_engine, 0) {
@@ -251,8 +251,8 @@ pub fn exec_babel_op(
         }
         OpCode::ParserSeq => {
             if vm.stack.len() >= 2 {
-                let p2 = vm.stack.pop().unwrap();
-                let p1 = vm.stack.pop().unwrap();
+                let p2 = vm.stack.pop().unwrap_or(Value::Int(0));
+                let p1 = vm.stack.pop().unwrap_or(Value::Int(0));
                 if p1.depth() > 500 || p2.depth() > 500 {
                     vm.output
                         .push("Error: Parser depth limit exceeded".to_string());
@@ -276,7 +276,7 @@ pub fn exec_babel_op(
                     let mut args = vec![Value::Str("Seq".to_string())];
                     let mut items = Vec::new();
                     for _ in 0..count {
-                        items.push(vm.stack.pop().unwrap());
+                        items.push(vm.stack.pop().unwrap_or(Value::Int(0)));
                     }
                     items.reverse();
 
@@ -303,8 +303,8 @@ pub fn exec_babel_op(
         }
         OpCode::ParserAlt => {
             if vm.stack.len() >= 2 {
-                let p2 = vm.stack.pop().unwrap();
-                let p1 = vm.stack.pop().unwrap();
+                let p2 = vm.stack.pop().unwrap_or(Value::Int(0));
+                let p1 = vm.stack.pop().unwrap_or(Value::Int(0));
                 if p1.depth() > 500 || p2.depth() > 500 {
                     vm.output
                         .push("Error: Parser depth limit exceeded".to_string());
@@ -328,7 +328,7 @@ pub fn exec_babel_op(
                     let mut args = vec![Value::Str("Alt".to_string())];
                     let mut items = Vec::new();
                     for _ in 0..count {
-                        items.push(vm.stack.pop().unwrap());
+                        items.push(vm.stack.pop().unwrap_or(Value::Int(0)));
                     }
                     items.reverse();
 
@@ -389,8 +389,8 @@ pub fn exec_babel_op(
         OpCode::DefineRule => {
             // [ parser, name ]
             if vm.stack.len() >= 2 {
-                let name_val = vm.stack.pop().unwrap();
-                let parser_val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap_or(Value::Int(0));
+                let parser_val = vm.stack.pop().unwrap_or(Value::Int(0));
 
                 if let Value::Str(name) = name_val {
                     let rule = value_to_grammar_rule(&parser_val);
@@ -410,8 +410,8 @@ pub fn exec_babel_op(
         }
         OpCode::GridGrammar => {
             if vm.stack.len() >= 2 {
-                let x_val = vm.stack.pop().unwrap();
-                let y_val = vm.stack.pop().unwrap();
+                let x_val = vm.stack.pop().unwrap_or(Value::Int(0));
+                let y_val = vm.stack.pop().unwrap_or(Value::Int(0));
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                     if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                         let grammar = read_grammar_from_grid(vm, ny, nx);
@@ -441,9 +441,9 @@ pub fn exec_babel_op(
         }
         OpCode::BabelLive => {
             if vm.stack.len() >= 3 {
-                let input_val = vm.stack.pop().unwrap();
-                let x_val = vm.stack.pop().unwrap();
-                let y_val = vm.stack.pop().unwrap();
+                let input_val = vm.stack.pop().unwrap_or(Value::Int(0));
+                let x_val = vm.stack.pop().unwrap_or(Value::Int(0));
+                let y_val = vm.stack.pop().unwrap_or(Value::Int(0));
 
                 if let (Value::Int(y), Value::Int(x), Value::Str(input)) = (y_val, x_val, input_val)
                 {

@@ -693,7 +693,8 @@ fn draw_chimera_view(f: &mut Frame, state: &mut AppState, area: ratatui::layout:
             log_area,
         );
 
-        let msg = state.log_messages.last().unwrap();
+        let empty_msg = String::new();
+        let msg = state.log_messages.last().unwrap_or(&empty_msg);
         let p = Paragraph::new(Span::styled(msg, Style::default().fg(Color::Yellow)))
             .block(Block::default().borders(Borders::TOP));
         f.render_widget(p, log_area);

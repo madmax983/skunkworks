@@ -129,7 +129,7 @@ async fn async_main() -> anyhow::Result<()> {
                 // Only add point if moved enough? Or every N frames.
                 // Adding every frame makes smooth lines but uses memory.
                 if trails[i].is_empty()
-                    || (body.pos - *trails[i].last().unwrap()).length_squared() > 4.0
+                    || (body.pos - *trails[i].last().unwrap_or(&Vec2::ZERO)).length_squared() > 4.0
                 {
                     trails[i].push(body.pos);
                     if trails[i].len() > 500 {
