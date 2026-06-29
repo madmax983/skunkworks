@@ -7,3 +7,26 @@
 * **Lineage from `market-sim`**: Discrete Euclidean order book grid where Bids and Asks collide to generate trades.
 * **Lineage from `quipu`**: Discrete structural memory architecture that encodes data dynamically as permanent tied knots along a cord.
 * **Phenotype**: This hybrid turns abstract, ephemeral market liquidity into a permanent, physical artifact. Every time a trade executes in the order book, a new knotted record of that trade's price is structurally tied onto a Quipu cord. The Quipu cord visualizes the permanent sedimentation of financial activity.
+
+## Quick Start
+
+You can run the interactive simulation using Cargo:
+
+```bash
+cargo run -p quipu-market
+```
+
+*Note: For automated environments, append the `--headless` flag to bypass the interactive terminal UI.*
+
+### Visual Example
+
+When running the TUI, you will observe real-time trades translating into knots tied into the history cord:
+
+```text
+▲    .   ▼ .    ▲▲ ▼   ▲    .
+  .  . ▲ ▲      .  ▲ .    .
+. .  .   .    ▼  ✸  ▲  .  ▲
+ .    ▲ .   ▲ .  ▲ ▲ ✸
+
+[ Cord 0 ] => 15 knots:  . ▲ ▲ ... . . . ▼ ▼ ▲
+```

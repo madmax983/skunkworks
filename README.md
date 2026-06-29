@@ -1,5 +1,7 @@
 # Chimera Prologue ⚛️
 
+Chimera is a visual programming language and simulation environment.
+
 > "Order is but a transient island in the ocean of Chaos. We are the storm."
 
 **Chimera Prologue** is a Grid-based Visual Logic Language embedded within the Chimera biological VM. It allows for the construction of "Digital Circuits", "Logic Agents", and "Genetic Machinery" directly on a memory grid.

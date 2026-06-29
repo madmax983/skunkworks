@@ -159,7 +159,7 @@ Links the Holographic genetics with the physical Grid.
 *   `spore_cloud(radius, density)`: Randomly spawns hyphae nearby.
 
 ### Genetics II (Nova)
-*   `splice(strand_a, strand_b, method)`: Combines two strands. 0=Interleave, 1=Crossover, 2=Merge.
+*   `splice(strand_a: Int, strand_b: Int, method: Int)`: Combines two strands. 0=Interleave, 1=Crossover, 2=Merge.
 *   `recombine(strand_a, strand_b, split)`: Swaps tails of two strands.
 *   `crispr_scan(target, guide)`: Scans target strand for pattern matching guide. Returns index.
 *   `cas9_cut(strand, index)`: Cuts strand at index. Tail becomes new strand.
