@@ -16,10 +16,10 @@ pub fn exec_logistics(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     if vm.stack.len() >= 4 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        let dir_val = vm.stack.pop().unwrap();
-        let type_val = vm.stack.pop().unwrap();
+        let x_val = vm.stack.pop()?;
+        let y_val = vm.stack.pop()?;
+        let dir_val = vm.stack.pop()?;
+        let type_val = vm.stack.pop()?;
 
         if let (Value::Int(x), Value::Int(y), Value::Int(dir), Value::Int(t)) =
             (x_val, y_val, dir_val, type_val)

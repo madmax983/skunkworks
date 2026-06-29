@@ -26,3 +26,6 @@
 **[Replacing if-else Chains with Match]**
 **Learning:** Massive `if current_type == X else if current_type == Y` chains (like the one in `process_agents` which spanned nearly 150 lines) are hard to read and easily miss logic. They should be simplified using standard `match` syntax.
 **Action:** Refactor long `if-else if` chains evaluating equality on the same variable to idiomatic Rust `match` expressions.
+**[Refactoring Safe Unwraps to Idiomatic Guard Clauses]**
+**Learning:** Even when `unwrap()` is technically safe due to preceding bounds checks (e.g., `if vm.stack.len() >= 2 { let val = vm.stack.pop().unwrap(); }`), it is not idiomatic Rust and sets a dangerous precedent. It also fails `clippy` checks for panic risks if policies change.
+**Action:** Replace these "safe" unwraps with idiomatic guard clauses (`let Some(val) = vm.stack.pop() else { return; };`) or the try operator (`?` if the function returns an `Option`/`Result`). This enforces static safety and prevents future refactors from accidentally turning safe unwraps into panics.

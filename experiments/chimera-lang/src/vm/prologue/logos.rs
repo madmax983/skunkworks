@@ -370,7 +370,11 @@ impl LogosEngine {
                     pick -= w;
                 }
                 // Should not reach here
-                self.generate_from_rule(&choices.last().unwrap().1, depth + 1)
+                if let Some((_, r)) = choices.last() {
+                    self.generate_from_rule(r, depth + 1)
+                } else {
+                    Err("Empty WeightedChoice".to_string())
+                }
             }
             GrammarRule::Reference(name) => {
                 if let Some(r) = self.rules.get(name) {
@@ -446,7 +450,7 @@ impl LogosEngine {
                 }
             }
             GrammarRule::Whitespace => {
-                let re = Regex::new(r"^\s+").unwrap();
+                let re = Regex::new(r"^\s+").map_err(|e| format!("Invalid regex: {}", e))?;
                 if let Some(mat) = re.find(&input[pos..]) {
                     Ok((None, pos + mat.as_str().len()))
                 } else {

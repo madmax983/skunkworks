@@ -1,22 +1,29 @@
-1. **Phase 1: Evaluate Previous Hybrids**
-   - Use `run_in_bash_session` to compile and evaluate `git-locus` via `cargo check -p git-locus`.
-   - Update `MUTATIONS.md` using python scripts to move `git-locus` from `Proposed Crosses` to `Attempted Crosses` and document the evaluation results.
+1. **Refactor `exec_reshape` in `experiments/chimera-lang/src/vm/nova_cymatics.rs`**
+   - Replace the `unwrap()` calls on stack pops with a guard clause `let Some(mode_val) = vm.stack.pop() else { return; }`.
 
-2. **Phase 2: Create One New Hybrid**
-   - Read `MUTATIONS.md` proposed crosses (it is empty, so we must invent a new one autonomously, or find one from proposed section).
-   - *Since `Proposed Crosses` only contains `git-locus` which is being evaluated, we will invent a new hybrid*: `gray-miller` (`crates/gray-scott` + `crates/miller-lattice`).
-   - Create the directory `experiments/gray-miller`.
-   - Implement the hybrid by having the discrete hierarchical crystal structure from `miller-lattice` act as a static barrier or feed rate modifier on the continuous Turing pattern of `gray-scott`.
-   - Update `Cargo.toml` in `experiments/gray-miller` with the correct dependencies (`gray-scott`, `miller-lattice`, `macroquad`, etc.).
-   - Make sure to add `gray-miller` to the workspace `Cargo.toml` members.
-   - Ensure the hybrid compiles and passes `cargo check -p gray-miller`. Include a `--headless` bypass.
+2. **Refactor `exec_logistics` in `experiments/chimera-lang/src/vm/nova_logistics.rs`**
+   - Replace the `unwrap()` calls on stack pops with guard clauses `let Some(x_val) = vm.stack.pop() else { return; }`.
 
-3. **Update Tracking Files**
-   - Update `MUTATIONS.md` to add `gray-miller` to `Attempted Crosses`. Include the parents, concept, novel trait, predicted phenotype, status, and evaluation.
-   - Leave a recombination pheromone for `gray-miller` in `GUESTBOOK.md`.
+3. **Refactor `catalyze` in `experiments/chimera-lang/src/vm/catalyst.rs`**
+   - Replace the `unwrap()` calls on stack pops with guard clauses `let Some(target_val) = vm.stack.pop() else { return; }`.
 
-4. **Run Pre-Commit Checks**
-   - Call `pre_commit_instructions` to ensure proper testing, verifications, reviews and reflections are done.
+4. **Refactor line 276 in `experiments/chimera-lang/src/vm/prologue/alchemy.rs`**
+   - Replace `let h = chars.next().unwrap().to_string();` with a safe check `let Some(c) = chars.next() else { return (None, None); }` or `let Some(h) = chars.next().map(|c| c.to_string()) else { return (None, None); }`.
 
-5. **Submit**
-   - Commit and push changes via `submit`.
+5. **Refactor `binary_op` in `experiments/chimera-lang/src/vm/prologue/pilot.rs`**
+   - Replace the `unwrap()` calls on stack pops in `binary_op` with guard clauses.
+
+6. **Refactor `binary_op` in `experiments/chimera-lang/src/vm/prologue/forth.rs`**
+   - Replace the `unwrap()` calls on stack pops in `binary_op` with guard clauses.
+
+7. **Refactor `generate_from_rule` and Regex unwraps in `experiments/chimera-lang/src/vm/prologue/logos.rs`**
+   - Replace `choices.last().unwrap()` at line 373 with a safe check and `.unwrap()` on Regex creation at line 449 with a safe return.
+
+8. **Refactor `exec_biophysics_op` in `experiments/chimera-lang/src/vm/neuron.rs`**
+   - Replace the `unwrap()` calls on stack pops with guard clauses `let Some(x_val) = vm.stack.pop() else { return; }`.
+
+9. **Run tests**
+   - Run `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test`, `cargo fmt --all`. Ensure all code builds and tests pass.
+
+10. **Pre-commit checks**
+    - Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
