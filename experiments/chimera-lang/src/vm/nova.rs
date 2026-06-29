@@ -2431,3 +2431,8 @@ pub fn exec_chromatic_code(vm: &mut ChimeraVM) {
     // Modify grid conceptually to represent hidden data
     vm.grid[0][0] = crate::vm::Value::Str("HIDDEN_DATA".to_string());
 }
+
+pub(crate) fn exec_spqr_rsa(vm: &mut ChimeraVM) {
+    vm.output
+        .push("🏛️ SPQR RSA cryptography simulated.".to_string());
+}
