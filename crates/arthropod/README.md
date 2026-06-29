@@ -9,6 +9,7 @@ Add this to your `Cargo.toml`:
 ```toml
 [dependencies]
 arthropod = { path = "../crates/arthropod" }
+macroquad = "0.4"
 ```
 
 ## Quick Start
