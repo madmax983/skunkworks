@@ -26,3 +26,8 @@
 **Bloat:** `generate_level` in `experiments/heap-arena/src/level_gen.rs` returning a deeply nested generic soup `Result<Option<LevelProfile>>`, coupled with manual `?` operators causing the search to abruptly abort on benign file-read errors.
 **Cut:** Flattened return type to `Option<LevelProfile>`, swallowed transient IO errors internally via `if let Ok(...)` guards to ensure robust searching without polluting the API with nested error variants, and refactored the caller in `main.rs` to ditch the `Result` matching.
 **Saved:** Cognitive load of deciphering `Ok(Some(X))`, one layer of nesting, and an unused `anyhow` crate dependency in `level_gen.rs`.
+
+## [Reduction]
+**Bloat:** `GardenParser` empty struct acting as an unnecessary namespace in `experiments/syntax-garden/src/parser.rs`.
+**Cut:** Removed the struct entirely and converted its methods (`parse_directory`, `analyze_file`) into standalone free functions.
+**Saved:** Eliminated a useless instantiation in `main.rs` and flattened a needless abstraction layer.

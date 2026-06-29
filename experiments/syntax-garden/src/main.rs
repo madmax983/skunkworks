@@ -19,7 +19,7 @@ use std::{env, io, time::Duration};
 mod parser;
 mod turtle;
 
-use parser::GardenParser;
+use parser::parse_directory;
 use turtle::Turtle;
 
 struct App {
@@ -31,9 +31,7 @@ struct App {
 
 impl App {
     fn new(path: &str) -> Result<Self> {
-        let mut parser = GardenParser::new();
-        let genome = parser
-            .parse_directory(path)
+        let genome = parse_directory(path)
             .unwrap_or_else(|e| format!("Error: {}", e));
 
         // Initialize turtle
