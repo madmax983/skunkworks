@@ -176,3 +176,26 @@ assertion `left == right` failed
 ```
 🧪 **Reproduction:** `cargo test -p flocking --test havoc_unequal`
 😈 **Comment:** "You relied on an explicit assert to check array bounds. If a user makes a mistake and passes arrays of different lengths, you crash the entire program instead of returning an error or a default vector. The panic is mine."
+
+### 16. `market-sim`
+🧨 **The Trigger:** Mutating the `width`, `height`, or `cells` fields of a `Grid` directly after initialization, setting `width = 0`, `width = 100`, or clearing `cells`, and then calling `update()`.
+📉 **The Stack Trace:**
+```
+thread 'havoc_market_sim_public_fields_zero_width_inner' panicked at core/src/slice/mod.rs:1367:36:
+chunk size must be non-zero
+
+thread 'havoc_market_sim_public_fields_oob_inner' panicked at crates/market-sim/src/lib.rs:300:32:
+index out of bounds: the len is 100 but the index is 100
+```
+🧪 **Reproduction:** `cargo test -p market-sim --test havoc`
+😈 **Comment:** "You exposed the internal state of your grid as `pub`, breaking the invariant between `width`, `height`, and the internal arrays `cells`, `updated`, and `scan_x`. A single malicious mutation to `width` crashes your loops. Encapsulation exists for a reason."
+
+### 16. `market-sim`
+🧨 **The Trigger:** Mutating the `width`, `height`, or `cells` fields of a `Grid` directly after initialization, setting `width = 100`, or clearing `cells`, and then calling `update()`.
+📉 **The Stack Trace:**
+```
+thread 'havoc_market_sim_public_fields_oob_inner' panicked at crates/market-sim/src/lib.rs:300:32:
+index out of bounds: the len is 100 but the index is 100
+```
+🧪 **Reproduction:** `cargo test -p market-sim --test havoc`
+😈 **Comment:** "You exposed the internal state of your grid as `pub`, breaking the invariant between `width`, `height`, and the internal arrays `cells`, `updated`, and `scan_x`. A single malicious mutation to `width` crashes your loops. Encapsulation exists for a reason."
