@@ -1,6 +1,6 @@
 # 114. Enforce Module Boundaries in Git Cantata and Gaze Attractor
 
-* **Status:** Proposed
+* **Status:** Accepted
 * **Context:**
   In the `git-cantata` and `gaze-attractor` experiments, internal module structures were exposed due to leaky `pub mod` declarations (in previous states or before Atlas's refactor). This leaks internal implementation details to consumers, violating the principle of encapsulation and creating tight coupling between an experiment's internal file layout and its external interface.
 

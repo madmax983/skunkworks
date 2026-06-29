@@ -1,6 +1,6 @@
 # 113. Enforce Module Boundaries in Syncopated Threads
 
-* **Status:** Proposed
+* **Status:** Accepted
 * **Context:**
   In the `syncopated-threads` experiment, internal modules (`audio`, `model`, `threads`, `tui`) were previously exposed using `pub mod`. This leaked internal implementation details and structure to consumers, violating the principle of encapsulation and creating tight coupling between the experiment's internal organization and its external usage.
 
