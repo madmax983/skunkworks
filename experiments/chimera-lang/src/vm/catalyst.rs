@@ -75,8 +75,8 @@ pub fn synthesize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn catalyze(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: catalyst_id, target_strand_idx
     if vm.stack.len() >= 2 {
-        let target_val = vm.stack.pop().unwrap();
-        let cat_val = vm.stack.pop().unwrap();
+        let target_val = vm.stack.pop()?;
+        let cat_val = vm.stack.pop()?;
 
         if let (Value::Int(cid), Value::Int(tid)) = (cat_val, target_val) {
             let t_idx = tid as usize;

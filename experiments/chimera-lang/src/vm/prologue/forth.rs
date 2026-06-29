@@ -342,8 +342,8 @@ where
     F: Fn(i64, i64) -> i64,
 {
     if stack.len() >= 2 {
-        let b = stack.pop().unwrap();
-        let a = stack.pop().unwrap();
+        let Some(b) = stack.pop() else { return; };
+        let Some(a) = stack.pop() else { return; };
         if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
             stack.push(Value::Int(op(ia, ib)));
         } else {
