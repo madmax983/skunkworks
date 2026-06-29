@@ -7554,6 +7554,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "neuro-market"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "market-sim",
+ "neuro-sim",
+ "rand 0.8.6",
+ "ratatui",
+ "tui-shared",
+]
+
+[[package]]
 name = "neuro-platter"
 version = "0.1.0"
 dependencies = [
