@@ -2781,6 +2781,8 @@ pub enum OpCode {
     SpectralScribe,
     /// **`ChromaticCode`** executes chromatic code logic
     ChromaticCode,
+    /// **`SpqrRsa`** executes spqr-rsa logic
+    SpqrRsa,
 }
 
 impl fmt::Display for OpCode {

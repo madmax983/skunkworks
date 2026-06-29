@@ -692,6 +692,11 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
 
+            OpCode::SpqrRsa => {
+                crate::vm::nova::exec_spqr_rsa(self);
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+            }
+
             OpCode::ChromaticCode => {
                 crate::vm::nova::exec_chromatic_code(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
