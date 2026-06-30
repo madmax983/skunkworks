@@ -43,6 +43,7 @@ members = [
     "experiments/quipu-market",
     "experiments/git-quipu",
     "experiments/neuro-market",
+    "experiments/neuro-physics",
 
 
 ]
