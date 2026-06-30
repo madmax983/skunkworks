@@ -2783,12 +2783,15 @@ pub enum OpCode {
     ChromaticCode,
     /// **`SpqrRsa`** executes spqr-rsa logic
     SpqrRsa,
+    /// **`SorobanSpecter`** executes soroban-specter logic
+    SorobanSpecter,
 }
 
 impl fmt::Display for OpCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             OpCode::Unknown(s) => write!(f, "{}", s),
+            OpCode::SorobanSpecter => write!(f, "SorobanSpecter"),
             _ => write!(f, "{}", self.as_ref()),
         }
     }

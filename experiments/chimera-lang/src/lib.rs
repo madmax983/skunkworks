@@ -2018,6 +2018,8 @@ mod nova_spectral_scribe_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_spqr_rsa_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_soroban_specter_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_splice_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_spore_test;
