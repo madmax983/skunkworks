@@ -3,7 +3,7 @@
 Date: 2026-06-08
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The repository contains numerous experimental prototypes designed to crossbreed biological or physical simulations with digital data structures. The recent execution of the `miller-platter` hybrid by the Splice Surgeon successfully crossed the rigid 3D directory crystal generator (`miller-lattice`) with a 2D continuous scalar thermodynamic field (`platter`). However, this architectural mutation was not formally recorded in the system architecture diagrams, obscuring its lineage and structural mechanism.

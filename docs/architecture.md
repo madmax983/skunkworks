@@ -3698,3 +3698,14 @@ classDiagram
     class Storage
     Core --> Storage : Uses (Trait Bound)
 ```
+
+## Neuro-Calligraphy OutlineSink (ADR 140)
+
+The `Builder` struct in `neuro-calligraphy` was renamed to `OutlineSink` to flatten speculative generality and accurately reflect its role as a state sink.
+
+```mermaid
+classDiagram
+    class OutlineBuilder { <<Trait>> }
+    class OutlineSink
+    OutlineBuilder <|-- OutlineSink : Implements
+```

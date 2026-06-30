@@ -3,7 +3,7 @@
 Date: 2026-06-09
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The repository contains numerous experimental prototypes. The recent execution of the `origami-poincare` hybrid by the Splice Surgeon successfully crossed the procedural Miura-ori soft-body mesh generator (`origami`) with a continuous non-Euclidean hyperbolic space (`poincare-disk`). However, this architectural mutation was not formally recorded in the system architecture diagrams.
