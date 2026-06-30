@@ -697,6 +697,11 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
 
+            OpCode::SorobanSpecter => {
+                crate::vm::nova::exec_soroban_specter(self);
+                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+            }
+
             OpCode::ChromaticCode => {
                 crate::vm::nova::exec_chromatic_code(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)

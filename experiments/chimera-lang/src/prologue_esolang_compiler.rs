@@ -1131,6 +1131,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_spqr_rsa_instr(instr)?);
                 }
             }
+            Rule::soroban_specter_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_soroban_specter_instr(instr)?);
+                }
+            }
             Rule::chromatic_code_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_chromatic_code_instr(instr)?);
@@ -1249,6 +1254,38 @@ fn compile_tui_mod_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
                 OpCode::Push,
                 vec![Nucleotide::String(content.to_string())],
             ));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
+}
+
+fn compile_soroban_specter_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "simulate" || op == "calculate" || op == "trade" {
+                genes.push(Gene::new(OpCode::SorobanSpecter, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
         }
         _ => {}
     }
