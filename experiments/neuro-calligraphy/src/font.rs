@@ -1,4 +1,3 @@
-use std::io::Read;
 use ttf_parser::{Face, OutlineBuilder};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -33,12 +32,12 @@ pub struct GlyphOutline {
     pub advance_width: f32,
 }
 
-struct Builder {
+struct OutlineSink {
     contours: Vec<Contour>,
     current_contour: Option<Contour>,
 }
 
-impl Builder {
+impl OutlineSink {
     fn new() -> Self {
         Self {
             contours: Vec::new(),
@@ -54,7 +53,7 @@ impl Builder {
     }
 }
 
-impl OutlineBuilder for Builder {
+impl OutlineBuilder for OutlineSink {
     fn move_to(&mut self, x: f32, y: f32) {
         if let Some(c) = self.current_contour.take() {
             self.contours.push(c);
@@ -98,12 +97,12 @@ impl OutlineBuilder for Builder {
 
 pub fn load_glyph(face: &Face, char_code: char) -> Option<GlyphOutline> {
     let glyph_id = face.glyph_index(char_code)?;
-    let mut builder = Builder::new();
+    let mut sink = OutlineSink::new();
 
     // Check if the glyph has an outline
-    let _ = face.outline_glyph(glyph_id, &mut builder)?;
+    let _ = face.outline_glyph(glyph_id, &mut sink)?;
 
-    let contours = builder.finish();
+    let contours = sink.finish();
     let advance_width = face.glyph_hor_advance(glyph_id).unwrap_or(0) as f32;
 
     Some(GlyphOutline {

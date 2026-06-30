@@ -31,3 +31,8 @@
 **Bloat:** `GardenParser` empty struct acting as an unnecessary namespace in `experiments/syntax-garden/src/parser.rs`.
 **Cut:** Removed the struct entirely and converted its methods (`parse_directory`, `analyze_file`) into standalone free functions.
 **Saved:** Eliminated a useless instantiation in `main.rs` and flattened a needless abstraction layer.
+
+## [Reduction]
+**Bloat:** `Builder` struct used as a simple accumulator for glyph contours in `experiments/neuro-calligraphy/src/font.rs`
+**Cut:** Renamed to `OutlineSink` to accurately reflect its role as a state sink, destroying the speculative "Builder" abstraction naming.
+**Saved:** Eliminated cognitive load of "Enterprise FizzBuzz" naming conventions for a simple struct.
