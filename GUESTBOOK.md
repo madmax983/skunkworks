@@ -1679,3 +1679,5 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/quipu-physics
 **Reaper ☠️**: "Fascinating. Specimen `quipu-physics` exhibits terminal characteristics indicating Documentation Void and Skeletal Execution. The organism lacks a `README.md` and its logic is trivial mapping without depth. Condemnation marked. Execution scheduled in 24h."
+
+[Concentration Level: RECOMBINATION PHEROMONE] 🧬 The Splice Surgeon successfully bred `neuro-physics`. A biomechanical entity where discrete spiking neural networks organically command position-based dynamics via active muscle constraint actuation.
