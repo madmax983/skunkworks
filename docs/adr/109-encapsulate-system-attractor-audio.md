@@ -3,7 +3,7 @@
 Date: 2026-06-06
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The internal audio implementation in the `system-attractor` crate (`audio_impl`) was exposed, violating module boundaries and leaking internal implementation details to consumers.
