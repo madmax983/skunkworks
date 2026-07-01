@@ -199,3 +199,54 @@ index out of bounds: the len is 100 but the index is 100
 ```
 🧪 **Reproduction:** `cargo test -p market-sim --test havoc`
 😈 **Comment:** "You exposed the internal state of your grid as `pub`, breaking the invariant between `width`, `height`, and the internal arrays `cells`, `updated`, and `scan_x`. A single malicious mutation to `width` crashes your loops. Encapsulation exists for a reason."
+
+### 17. `syncopated-threads`
+🧨 **The Trigger:** Initiated heavily contended parallel threads sharing the same `snare` Mutex in `spawn_rhythm_thread` using highly restrictive `RhythmParams`.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_contention_inner' panicked at experiments/syncopated-threads/tests/havoc_deadlock.rs:78:9:
+👺 Havoc SUCCESS: Application logic suffered severe starvation under contention!
+```
+🧪 **Reproduction:** `cargo test -p syncopated-threads --test havoc_deadlock`
+😈 **Comment:** "Your threads play a symphony of starvation when you push them to the edge."
+
+### 18. `turbulent-rhythms`
+🧨 **The Trigger:** Set loop_duration_ms to 0 and hold_duration_ms to 100 for 10 concurrent Musicians fighting for the same beat_lock.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_contention_inner' panicked at experiments/turbulent-rhythms/tests/havoc_contention.rs:78:9:
+👺 Havoc SUCCESS: Application logic suffered severe starvation under contention!
+```
+🧪 **Reproduction:** `cargo test -p turbulent-rhythms --test havoc_contention`
+😈 **Comment:** "10 concurrent musicians hammering a single beat_lock with zero rest duration. Total starvation. A cacophony of deadlocks."
+
+### 19. `colony-concerto`
+🧨 **The Trigger:** Initiated threads to lock a Node state twice out of order and let `loom` trace all thread execution paths looking for deadlocks.
+📉 **The Stack Trace:**
+```
+thread 'test_havoc_deadlock' panicked at library/core/src/panicking.rs:233:5:
+panic in a destructor during cleanup
+thread caused non-unwinding panic. aborting.
+```
+🧪 **Reproduction:** `cargo test -p colony-concerto --test havoc_deadlock --features loom`
+😈 **Comment:** "Two ants trying to lock two connected graph nodes in opposite orders? Loom found your deadlock exactly as I planned."
+
+### 20. `heap-arena`
+🧨 **The Trigger:** Provided a deeply nested AST (15,000 deep `if true { ... }`) during terrain generation.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_ast_stack_overflow_inner' has overflowed its stack
+fatal runtime error: stack overflow, aborting
+```
+🧪 **Reproduction:** `cargo test -p heap-arena --test havoc`
+😈 **Comment:** "You relied on recursion to parse syntax trees. I handed you an abyss. Your stack shattered."
+
+### 21. `circuit-sigil`
+🧨 **The Trigger:** Provided a `0x0` dimensions to `CircuitGenerator::new(0, 0)`.
+📉 **The Stack Trace:**
+```
+thread 'havoc_test_circuit_generator_panic' panicked at experiments/circuit-sigil/src/circuit.rs:44:43:
+attempt to subtract with overflow
+```
+🧪 **Reproduction:** `cargo test -p circuit-sigil --test havoc_circuit`
+😈 **Comment:** "You assumed you'd always have plenty of room to draw traces. You were wrong."
