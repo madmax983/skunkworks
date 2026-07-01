@@ -91,8 +91,12 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
 pub fn exec_reshape(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
     // Stack: [ ..., threshold, mode ]
     if vm.stack.len() >= 2 {
-        let Some(mode_val) = vm.stack.pop() else { return; };
-        let Some(thresh_val) = vm.stack.pop() else { return; };
+        let Some(mode_val) = vm.stack.pop() else {
+            return;
+        };
+        let Some(thresh_val) = vm.stack.pop() else {
+            return;
+        };
 
         if let (Value::Int(threshold_int), Value::Int(mode)) = (thresh_val, mode_val) {
             let threshold = (threshold_int as f32) / 100.0;

@@ -1,72 +1,42 @@
 # Locus 📍
 
-A lightweight 2D/3D/4D geometry library for TUI applications, grid-based simulations, and hyper-dimensional experiments.
+A lightweight 2D geometry library for TUI applications and grid-based simulations.
 
-`locus` provides the fundamental primitives for moving, measuring, and mapping coordinates in discrete or continuous space.
+`locus` provides the fundamental primitives for moving, measuring, and mapping coordinates
+in discrete or continuous space.
 
-## The Modules
+## Features
 
-- **`vec2`, `vec3`, `vec4`**: Robust mathematical vectors for physics and movement.
-- **`flocking`**: Craig Reynolds' "Boids" algorithm for simulating complex group behavior.
-- **`topology`**: The rulebook for how your world connects (Plane, Torus, Klein Bottle, etc.).
+- **`Vec2`**: A robust 2D vector struct for physics and movement.
+- **`Topology`**: A system for defining how your world wraps (Plane, Torus, Klein Bottle, etc.).
+- **`serde`**: (Optional) Enables `Serialize` and `Deserialize`.
 
-## The Hero's Journey: Navigating the Unknown
+## Example: The Hero's Journey (Moving on a Torus)
 
-First, add `locus` to your `Cargo.toml`:
-
-```toml
-[dependencies]
-locus = "0.1.0"
 ```
-
-If you're building a simulation where agents move through space, `locus` handles the heavy lifting. This example shows an agent moving in a Torus world (where walking off the edge wraps you around to the other side).
-
-```rust
 use locus::{Vec2, Topology};
 
-fn main() {
+# fn main() {
     let width = 20;
     let height = 10;
-
-    // 🗺️ The Map Room
-    // A Torus topology means the world wraps around like Pac-Man
     let topo = Topology::Torus;
 
-    // 🕊️ The Agent
-    // Start at position (x=19.0, y=5.0) - right at the eastern edge
+    // Start at position (x=19.0, y=5.0) - at the right edge
     let mut position = Vec2::new(19.0, 5.0);
+    let velocity = Vec2::new(1.0, 0.0); // Moving right
 
-    // Moving east (right)
-    let velocity = Vec2::new(1.0, 0.0);
-
-    // Time steps forward...
+    // Move
     position += velocity;
 
-    // We reached x=20.0, but our map is only 20 units wide (0 to 19)!
-    // Use Topology to find our true grid cell coordinates.
-    // Note: Topology expects (row, col) i.e. (y, x) integers.
+    // Normalize using Topology to find the grid cell
+    // Note: Topology expects (row, col) i.e. (y, x) integers
     let y_idx = position.y.round() as i64;
     let x_idx = position.x.round() as i64;
 
     if let Some((ny, nx)) = topo.normalize(y_idx, x_idx, width, height) {
-        // We safely wrapped to the left side!
+        // Should wrap to left side (x=0)
         assert_eq!(nx, 0);
         assert_eq!(ny, 5);
-        println!("Wrapped around to: x={}, y={}", nx, ny);
     }
-}
-```
-
-## Features
-
-- **`serde`**: (Optional) Enables `Serialize` and `Deserialize` on core types.
-- **`macroquad`**: (Optional) Implements `From` and `Into` for interoperability with `macroquad::prelude::Vec3`.
-
-## Installation
-
-To use `locus` in another project, add the following to your `Cargo.toml`:
-
-```toml
-[dependencies]
-locus = { version = "0.1.0", features = ["serde"] }
+# }
 ```

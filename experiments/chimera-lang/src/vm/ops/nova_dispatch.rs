@@ -639,19 +639,19 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Tardis => {
-                self.output.push("Tardis logic triggered.".to_string());
+                crate::vm::nova_pachinko::exec_tardis(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Pachinko => {
-                self.output.push("Pachinko physics simulated.".to_string());
+                crate::vm::nova_pachinko::exec_pachinko(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Automaton => {
-                self.output.push("Automaton logic simulated.".to_string());
+                crate::vm::nova_pachinko::exec_automaton(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Syncopation => {
-                self.output.push("Syncopation logic triggered.".to_string());
+                crate::vm::nova_pachinko::exec_syncopation(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::FerrousCore => {
@@ -660,12 +660,11 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Choreography => {
-                self.output
-                    .push("Choreography logic triggered.".to_string());
+                crate::vm::nova_pachinko::exec_choreography(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Runes => {
-                self.output.push("Runes logic triggered.".to_string());
+                crate::vm::nova_pachinko::exec_runes(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Verge => {

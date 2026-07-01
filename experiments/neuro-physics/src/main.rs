@@ -3,7 +3,7 @@ use std::time::{Duration, Instant};
 
 use glam::Vec3;
 use neuro_sim::Network;
-use physics_pbd::{PbdSystem, Constraint};
+use physics_pbd::{Constraint, PbdSystem};
 use rand::{thread_rng, Rng};
 
 use tui_shared::{
@@ -40,7 +40,11 @@ impl NeuroPhysicsApp {
             for x in 0..width {
                 let is_pinned = y == 0;
                 let mass = if is_pinned { 0.0 } else { 1.0 };
-                let pos = Vec3::new(start_x + (x as f32) * spacing, start_y + (y as f32) * spacing, 0.0);
+                let pos = Vec3::new(
+                    start_x + (x as f32) * spacing,
+                    start_y + (y as f32) * spacing,
+                    0.0,
+                );
                 let p_idx = body.add_particle(pos, mass);
                 if is_pinned {
                     let _ = body.add_pin_constraint(p_idx, pos);
@@ -62,15 +66,43 @@ impl NeuroPhysicsApp {
 
                 if x < width - 1 {
                     let right_idx = y * width + (x + 1);
-                    let _ = body.add_actuator_constraint(p_indices[idx], p_indices[right_idx], spacing * 0.5, spacing, 1.0);
-                    brain.add_synapse(node_to_neuron[idx], node_to_neuron[right_idx], rng.gen_range(5.0..10.0));
-                    brain.add_synapse(node_to_neuron[right_idx], node_to_neuron[idx], rng.gen_range(5.0..10.0));
+                    let _ = body.add_actuator_constraint(
+                        p_indices[idx],
+                        p_indices[right_idx],
+                        spacing * 0.5,
+                        spacing,
+                        1.0,
+                    );
+                    brain.add_synapse(
+                        node_to_neuron[idx],
+                        node_to_neuron[right_idx],
+                        rng.gen_range(5.0..10.0),
+                    );
+                    brain.add_synapse(
+                        node_to_neuron[right_idx],
+                        node_to_neuron[idx],
+                        rng.gen_range(5.0..10.0),
+                    );
                 }
                 if y < height - 1 {
                     let down_idx = (y + 1) * width + x;
-                    let _ = body.add_actuator_constraint(p_indices[idx], p_indices[down_idx], spacing * 0.5, spacing, 1.0);
-                    brain.add_synapse(node_to_neuron[idx], node_to_neuron[down_idx], rng.gen_range(5.0..10.0));
-                    brain.add_synapse(node_to_neuron[down_idx], node_to_neuron[idx], rng.gen_range(5.0..10.0));
+                    let _ = body.add_actuator_constraint(
+                        p_indices[idx],
+                        p_indices[down_idx],
+                        spacing * 0.5,
+                        spacing,
+                        1.0,
+                    );
+                    brain.add_synapse(
+                        node_to_neuron[idx],
+                        node_to_neuron[down_idx],
+                        rng.gen_range(5.0..10.0),
+                    );
+                    brain.add_synapse(
+                        node_to_neuron[down_idx],
+                        node_to_neuron[idx],
+                        rng.gen_range(5.0..10.0),
+                    );
                 }
             }
         }
@@ -168,7 +200,11 @@ fn run_app(tui: &mut Tui) -> anyhow::Result<()> {
                             let pos1 = app.body.particles[*p1].pos;
                             let pos2 = app.body.particles[*p2].pos;
 
-                            let color = if *factor < 0.5 { Color::Red } else { Color::Blue };
+                            let color = if *factor < 0.5 {
+                                Color::Red
+                            } else {
+                                Color::Blue
+                            };
 
                             ctx.draw(&tui_shared::ratatui::widgets::canvas::Line {
                                 x1: pos1.x as f64,
@@ -182,13 +218,20 @@ fn run_app(tui: &mut Tui) -> anyhow::Result<()> {
 
                     for (i, p) in app.body.particles.iter().enumerate() {
                         let is_spiking = app.brain.spikes[app.node_to_neuron[i]];
-                        let color = if is_spiking { Color::Yellow } else { Color::White };
+                        let color = if is_spiking {
+                            Color::Yellow
+                        } else {
+                            Color::White
+                        };
                         let symbol = if is_spiking { "O" } else { "o" };
 
                         ctx.print(
                             p.pos.x as f64,
                             (150.0 - p.pos.y) as f64,
-                            tui_shared::ratatui::text::Span::styled(symbol, Style::default().fg(color))
+                            tui_shared::ratatui::text::Span::styled(
+                                symbol,
+                                Style::default().fg(color),
+                            ),
                         );
                     }
                 });
@@ -197,12 +240,16 @@ fn run_app(tui: &mut Tui) -> anyhow::Result<()> {
 
             let mut active_spikes = 0;
             for &s in &app.brain.spikes {
-                if s { active_spikes += 1; }
+                if s {
+                    active_spikes += 1;
+                }
             }
 
             let stats = Paragraph::new(format!(
                 "Neurons: {} | Spiking: {} | Muscles (Actuators): {} | [Q] Quit",
-                app.brain.neurons.len(), active_spikes, app.body.constraints.len()
+                app.brain.neurons.len(),
+                active_spikes,
+                app.body.constraints.len()
             ))
             .block(Block::default().borders(Borders::ALL));
             f.render_widget(stats, chunks[1]);
