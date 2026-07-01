@@ -2424,6 +2424,27 @@ impl ChimeraVM {
     }
 }
 
+/// Executes the Chromatic Code instruction, applying steganographic effects to the grid.
+///
+/// This function is designed to handle esoteric operations involving color-based or hidden
+/// cryptographic data. It injects a carrier signal message into the VM's output log and
+/// embeds hidden data (`"HIDDEN_DATA"`) directly into the grid's memory at coordinates (0, 0).
+///
+/// ## Examples
+///
+/// ```rust
+/// use chimera_lang::vm::ChimeraVM;
+/// use chimera_lang::ast::Dna;
+/// use chimera_lang::vm::nova::exec_chromatic_code;
+///
+/// let dna = Dna::from_genes(vec![]);
+/// let mut vm = ChimeraVM::new(dna);
+///
+/// exec_chromatic_code(&mut vm);
+///
+/// assert_eq!(vm.output.last().unwrap(), "CHROMATIC_CODE: Carrier Signal Detected 🌈🔐");
+/// assert_eq!(vm.grid[0][0].to_string(), "\"HIDDEN_DATA\"");
+/// ```
 pub fn exec_chromatic_code(vm: &mut ChimeraVM) {
     // Steganography visual output or logic hook
     vm.output
