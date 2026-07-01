@@ -31,8 +31,7 @@ struct App {
 
 impl App {
     fn new(path: &str) -> Result<Self> {
-        let genome = parse_directory(path)
-            .unwrap_or_else(|e| format!("Error: {}", e));
+        let genome = parse_directory(path).unwrap_or_else(|e| format!("Error: {}", e));
 
         // Initialize turtle
         // Start facing UP (90 degrees in Cartesian coords)

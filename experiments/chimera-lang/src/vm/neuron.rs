@@ -133,8 +133,12 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
         OpCode::NeuroGenesis => {
             // Stack: [ ..., y, x ]
             if vm.stack.len() >= 2 {
-                let Some(x_val) = vm.stack.pop() else { return; };
-                let Some(y_val) = vm.stack.pop() else { return; };
+                let Some(x_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(y_val) = vm.stack.pop() else {
+                    return;
+                };
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                     if vm.is_valid_coord(y, x) {
                         let coord = (y as usize, x as usize);
@@ -167,9 +171,15 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
         OpCode::Stimulate => {
             // Stack: [ ..., amount, y, x ]
             if vm.stack.len() >= 3 {
-                let Some(x_val) = vm.stack.pop() else { return; };
-                let Some(y_val) = vm.stack.pop() else { return; };
-                let Some(amt_val) = vm.stack.pop() else { return; };
+                let Some(x_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(y_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(amt_val) = vm.stack.pop() else {
+                    return;
+                };
                 if let (Value::Int(y), Value::Int(x), Value::Int(amt)) = (y_val, x_val, amt_val) {
                     let coord = (y as usize, x as usize);
                     if let Some(neuron) = vm.neurons.get_mut(&coord) {
@@ -194,8 +204,12 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
         OpCode::Dendrite => {
             // Stack: [ ..., y, x ] -> [ ..., voltage ]
             if vm.stack.len() >= 2 {
-                let Some(x_val) = vm.stack.pop() else { return; };
-                let Some(y_val) = vm.stack.pop() else { return; };
+                let Some(x_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(y_val) = vm.stack.pop() else {
+                    return;
+                };
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                     let coord = (y as usize, x as usize);
                     if let Some(neuron) = vm.neurons.get(&coord) {
@@ -255,11 +269,21 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
         OpCode::Receptor => {
             // Stack: [ ..., channel, sensitivity, threshold, y, x ]
             if vm.stack.len() >= 5 {
-                let Some(x_val) = vm.stack.pop() else { return; };
-                let Some(y_val) = vm.stack.pop() else { return; };
-                let Some(t_val) = vm.stack.pop() else { return; };
-                let Some(s_val) = vm.stack.pop() else { return; };
-                let Some(c_val) = vm.stack.pop() else { return; };
+                let Some(x_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(y_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(t_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(s_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(c_val) = vm.stack.pop() else {
+                    return;
+                };
 
                 if let (
                     Value::Int(x),
@@ -301,9 +325,15 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
         OpCode::NeuroCoupling => {
             // Stack: [ ..., weight, y, x ]
             if vm.stack.len() >= 3 {
-                let Some(x_val) = vm.stack.pop() else { return; };
-                let Some(y_val) = vm.stack.pop() else { return; };
-                let Some(w_val) = vm.stack.pop() else { return; };
+                let Some(x_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(y_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(w_val) = vm.stack.pop() else {
+                    return;
+                };
                 if let (Value::Int(y), Value::Int(x), Value::Int(w)) = (y_val, x_val, w_val) {
                     if vm.is_valid_coord(y, x) {
                         let coord = (y as usize, x as usize);
@@ -333,9 +363,15 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
         OpCode::NeuroSynapse => {
             // Stack: [ ..., strand_idx, y, x ]
             if vm.stack.len() >= 3 {
-                let Some(x_val) = vm.stack.pop() else { return; };
-                let Some(y_val) = vm.stack.pop() else { return; };
-                let Some(s_val) = vm.stack.pop() else { return; };
+                let Some(x_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(y_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(s_val) = vm.stack.pop() else {
+                    return;
+                };
                 if let (Value::Int(y), Value::Int(x), Value::Int(s_idx)) = (y_val, x_val, s_val) {
                     if vm.is_valid_coord(y, x) {
                         let coord = (y as usize, x as usize);

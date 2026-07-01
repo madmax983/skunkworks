@@ -1842,8 +1842,8 @@ pub mod prelude {
     pub use crate::compiler;
     pub use crate::opcode::OpCode;
     pub use crate::value::Value;
-    pub use crate::vm::ChimeraVM;
     pub use crate::vm::narrative::NarrativeBuilder;
+    pub use crate::vm::ChimeraVM;
 }
 
 #[cfg(all(test, feature = "nova"))]
@@ -2014,15 +2014,15 @@ mod nova_signals_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_spectral_scribe_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_spqr_rsa_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_soroban_specter_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_spectral_scribe_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_splice_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_spore_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_spqr_rsa_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_strings_test;
 #[cfg(all(test, feature = "nova"))]
