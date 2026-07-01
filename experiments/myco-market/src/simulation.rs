@@ -171,8 +171,9 @@ impl World {
 
     pub fn update(&mut self) {
         // Step 1: Update agents and get deposits
+        // Pre-allocating `deposits` avoids dynamic array resizing on the hot path.
         let mut agents_clone = self.agents.clone();
-        let mut deposits = Vec::new();
+        let mut deposits = Vec::with_capacity(agents_clone.len());
         for agent in agents_clone.iter_mut() {
             deposits.push(agent.update(self));
         }
