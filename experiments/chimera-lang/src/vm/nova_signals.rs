@@ -36,7 +36,7 @@ fn peek(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64) -> Option<i64> {
     let (ny, nx) = vm.normalize_coords(y as i64 + dy, x as i64 + dx)?;
     match &vm.grid[ny][nx] {
         Value::Int(n) => Some(*n),
-        Value::Str(s) => {
+        Value::Str(ref s) => {
             if s.len() == 1 {
                 char_to_val(s.chars().next().unwrap())
             } else {
@@ -193,6 +193,232 @@ struct PhageCloneRequest {
 /// ```text
 /// // Example usage of process_signals
 /// ```
+fn process_signal_char(
+    vm: &mut ChimeraVM,
+    c: char,
+    y: usize,
+    x: usize,
+    signal: u8,
+    ctx: &mut SignalContext,
+) {
+    match c {
+        #[cfg(feature = "biophysics")]
+        '@' => {
+            // Neuron
+            // 1. Spiking Output
+            if let Some(neuron) = vm.neurons.get(&(y, x)) {
+                if neuron.v > 0.0 {
+                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                    for (dy, dx) in neighbors {
+                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            ctx.next_signals[ny][nx] = ctx.next_signals[ny][nx].saturating_add(1);
+                        }
+                    }
+                }
+            } else if signal > 0 {
+                // Neurogenesis if signaled and missing
+            }
+
+            // 2. Input Stimulus
+            if signal > 0 {
+                ctx.neuron_stimuli
+                    .push(NeuronStimulus { y, x, amount: 50.0 });
+            }
+        }
+        #[cfg(feature = "biophysics")]
+        '^' => {
+            // Synapse: Read South (Input), Stimulate North (Target)
+            if let Some(val) = peek(vm, y, x, 1, 0) {
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 - 1, x as i64) {
+                    let weight = val as f32;
+                    if weight > 0.0 {
+                        ctx.neuron_stimuli.push(NeuronStimulus {
+                            y: ny,
+                            x: nx,
+                            amount: weight * 5.0,
+                        });
+                    }
+                }
+            }
+        }
+        '*' | '!' => {
+            // Bang
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    ctx.next_signals[ny][nx] = ctx.next_signals[ny][nx].saturating_add(1);
+                }
+            }
+        }
+        '>' => propagate_directional(vm, y, x, 0, 1, 1, &mut ctx.next_signals),
+        '<' => propagate_directional(vm, y, x, 0, -1, 1, &mut ctx.next_signals),
+        #[cfg(not(feature = "biophysics"))]
+        '^' => propagate_directional(vm, y, x, -1, 0, 1, &mut ctx.next_signals),
+        'v' => propagate_directional(vm, y, x, 1, 0, 1, &mut ctx.next_signals),
+        '+' => {
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    ctx.next_signals[ny][nx] = ctx.next_signals[ny][nx].saturating_add(signal);
+                }
+            }
+        }
+        'N' => read_write_directional(
+            vm,
+            y,
+            x,
+            DirectionalDeltas {
+                read_dy: -1,
+                read_dx: 0,
+                write_dy: 1,
+                write_dx: 0,
+            },
+            ctx,
+        ),
+        'S' => read_write_directional(
+            vm,
+            y,
+            x,
+            DirectionalDeltas {
+                read_dy: 1,
+                read_dx: 0,
+                write_dy: -1,
+                write_dx: 0,
+            },
+            ctx,
+        ),
+        'E' => read_write_directional(
+            vm,
+            y,
+            x,
+            DirectionalDeltas {
+                read_dy: 0,
+                read_dx: 1,
+                write_dy: 0,
+                write_dx: -1,
+            },
+            ctx,
+        ),
+        'W' => read_write_directional(
+            vm,
+            y,
+            x,
+            DirectionalDeltas {
+                read_dy: 0,
+                read_dx: -1,
+                write_dy: 0,
+                write_dx: 1,
+            },
+            ctx,
+        ),
+        'A' | 'a' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_add(b)),
+        'B' | 'b' => exec_babel_signal(vm, y, x, signal, ctx),
+        's' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_sub(b)),
+        'D' | 'd' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
+            if b != 0 {
+                a.wrapping_div(b)
+            } else {
+                0
+            }
+        }),
+        'M' | 'm' => exec_mutate(vm, y, x, signal, ctx),
+        'T' | 't' => exec_teleport(vm, y, x, ctx),
+        'L' | 'l' => exec_laser(vm, y, x, ctx),
+        'Z' | 'z' => exec_resonate(vm, y, x, signal, ctx),
+        'I' | 'i' => exec_increment(vm, y, x, ctx),
+        'R' | 'r' => exec_random(vm, y, x, ctx),
+        'C' | 'c' => exec_clock(vm, y, x, ctx),
+        'X' | 'x' => exec_write(vm, y, x, ctx),
+        'O' | 'o' => exec_offset(vm, y, x, ctx),
+        'G' | 'g' => exec_gene_read(vm, y, x, ctx),
+        'P' | 'p' => exec_play(vm, y, x, signal, ctx),
+        'K' | 'k' => exec_kill(vm, y, x, signal, ctx),
+        'Y' | 'y' => exec_synthesize(vm, y, x, signal, ctx),
+        'Q' | 'q' => exec_query(vm, y, x, ctx),
+        'H' | 'h' => exec_project_signal(vm, y, x, signal, ctx),
+        'U' | 'u' => exec_unzip(vm, y, x, signal, ctx),
+        'F' | 'f' => exec_flux(vm, y, x, signal, ctx),
+        'J' | 'j' => exec_jumper(vm, y, x, signal, ctx),
+        '(' => exec_warp(vm, y, x, signal, ctx),
+        ':' => exec_midi_note(vm, y, x, signal, ctx),
+        ';' => exec_midi_cc(vm, y, x, signal, ctx),
+        #[cfg(feature = "oracle")]
+        '?' => exec_oracle(vm, y, x, ctx),
+        #[cfg(not(feature = "oracle"))]
+        '?' => exec_random(vm, y, x, ctx), // Fallback
+        'V' => exec_voltage(vm, y, x, signal, ctx),
+        'e' => exec_electrode(vm, y, x, signal, ctx),
+        '%' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
+            if b != 0 {
+                a.rem_euclid(b)
+            } else {
+                0
+            }
+        }),
+        '=' => binary_op(
+            vm,
+            y,
+            x,
+            &mut ctx.grid_writes,
+            |a, b| {
+                if a == b {
+                    1
+                } else {
+                    0
+                }
+            },
+        ),
+        '&' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a & b),
+        '|' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a | b),
+        '[' => exec_ether_send(vm, y, x, signal, ctx),
+        ']' => exec_ether_recv(vm, y, x, signal, ctx),
+        '#' => exec_catalyze(vm, y, x, signal, ctx),
+        '$' => exec_stack_io(vm, y, x, signal, ctx),
+        '~' => exec_wave(vm, y, x, signal, ctx),
+        'Ψ' | 'ψ' => exec_psi(vm, y, x, signal, ctx),
+        'Φ' | 'φ' => exec_phi(vm, y, x, signal, ctx),
+        'Ω' | 'ω' => exec_omega(vm, y, x, signal, ctx),
+        '§' => exec_sigil(vm, y, x, signal, ctx),
+        'ƒ' => exec_function_op(vm, y, x, signal, ctx),
+        'Γ' => exec_gamma(vm, y, x, signal, ctx),
+        'Σ' => exec_sigma(vm, y, x, ctx),
+        #[cfg(feature = "oracle")]
+        'Π' => exec_pi(vm, y, x, signal, ctx),
+        #[cfg(feature = "oracle")]
+        'λ' => exec_lambda(vm, y, x, signal, ctx),
+        '{' => exec_inject(vm, y, x, signal, ctx),
+        '}' => exec_extract(vm, y, x, signal, ctx),
+        '⚛' => exec_reactor_rune(vm, y, x, signal, ctx),
+        _ => {
+            if let Value::Str(ref s) = vm.grid[y][x] {
+                if let Ok(op) = s.parse::<OpCode>() {
+                    if signal > 0 {
+                        ctx.executions.push((op, vec![]));
+                    }
+                } else if signal > 0 {
+                    // Check for Dynamic Operators in KB
+                    #[cfg(feature = "oracle")]
+                    if let Some(strand_idx) = check_kb_operator(vm, s.as_str()) {
+                        ctx.executions
+                            .push((OpCode::Call, vec![Nucleotide::Number(strand_idx)]));
+                    }
+
+                    // Check for Named Sigils
+                    #[cfg(feature = "nova")]
+                    if let Some(sigil) = vm.sigil_registry.get(s) {
+                        if nova_sigil::check_dynamic_pattern(vm, y, x, &sigil.pattern) {
+                            ctx.executions.push((
+                                OpCode::Call,
+                                vec![Nucleotide::Number(sigil.strand_idx as i64)],
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 pub fn process_signals(vm: &mut ChimeraVM) {
     let size = GRID_SIZE;
     let mut ctx = SignalContext {
@@ -249,7 +475,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
 
             let val = &vm.grid[y][x];
             let c = match val {
-                Value::Str(s) => {
+                Value::Str(ref s) => {
                     let mut chars = s.chars();
                     if let Some(first) = chars.next() {
                         if chars.next().is_none() {
@@ -303,226 +529,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 continue;
             }
 
-            match c {
-                #[cfg(feature = "biophysics")]
-                '@' => {
-                    // Neuron
-                    // 1. Spiking Output
-                    if let Some(neuron) = vm.neurons.get(&(y, x)) {
-                        if neuron.v > 0.0 {
-                            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                            for (dy, dx) in neighbors {
-                                if let Some((ny, nx)) =
-                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                                {
-                                    ctx.next_signals[ny][nx] =
-                                        ctx.next_signals[ny][nx].saturating_add(1);
-                                }
-                            }
-                        }
-                    } else if signal > 0 {
-                        // Neurogenesis if signaled and missing
-                    }
-
-                    // 2. Input Stimulus
-                    if signal > 0 {
-                        ctx.neuron_stimuli
-                            .push(NeuronStimulus { y, x, amount: 50.0 });
-                    }
-                }
-                #[cfg(feature = "biophysics")]
-                '^' => {
-                    // Synapse: Read South (Input), Stimulate North (Target)
-                    if let Some(val) = peek(vm, y, x, 1, 0) {
-                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 - 1, x as i64) {
-                            let weight = val as f32;
-                            if weight > 0.0 {
-                                ctx.neuron_stimuli.push(NeuronStimulus {
-                                    y: ny,
-                                    x: nx,
-                                    amount: weight * 5.0,
-                                });
-                            }
-                        }
-                    }
-                }
-                '*' | '!' => {
-                    // Bang
-                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                    for (dy, dx) in neighbors {
-                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                            ctx.next_signals[ny][nx] = ctx.next_signals[ny][nx].saturating_add(1);
-                        }
-                    }
-                }
-                '>' => propagate_directional(vm, y, x, 0, 1, 1, &mut ctx.next_signals),
-                '<' => propagate_directional(vm, y, x, 0, -1, 1, &mut ctx.next_signals),
-                #[cfg(not(feature = "biophysics"))]
-                '^' => propagate_directional(vm, y, x, -1, 0, 1, &mut ctx.next_signals),
-                'v' => propagate_directional(vm, y, x, 1, 0, 1, &mut ctx.next_signals),
-                '+' => {
-                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                    for (dy, dx) in neighbors {
-                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                            ctx.next_signals[ny][nx] =
-                                ctx.next_signals[ny][nx].saturating_add(signal);
-                        }
-                    }
-                }
-                'N' => read_write_directional(
-                    vm,
-                    y,
-                    x,
-                    DirectionalDeltas {
-                        read_dy: -1,
-                        read_dx: 0,
-                        write_dy: 1,
-                        write_dx: 0,
-                    },
-                    &mut ctx,
-                ),
-                'S' => read_write_directional(
-                    vm,
-                    y,
-                    x,
-                    DirectionalDeltas {
-                        read_dy: 1,
-                        read_dx: 0,
-                        write_dy: -1,
-                        write_dx: 0,
-                    },
-                    &mut ctx,
-                ),
-                'E' => read_write_directional(
-                    vm,
-                    y,
-                    x,
-                    DirectionalDeltas {
-                        read_dy: 0,
-                        read_dx: 1,
-                        write_dy: 0,
-                        write_dx: -1,
-                    },
-                    &mut ctx,
-                ),
-                'W' => read_write_directional(
-                    vm,
-                    y,
-                    x,
-                    DirectionalDeltas {
-                        read_dy: 0,
-                        read_dx: -1,
-                        write_dy: 0,
-                        write_dx: 1,
-                    },
-                    &mut ctx,
-                ),
-                'A' | 'a' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_add(b)),
-                'B' | 'b' => exec_babel_signal(vm, y, x, signal, &mut ctx),
-                's' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_sub(b)),
-                'D' | 'd' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
-                    if b != 0 {
-                        a.wrapping_div(b)
-                    } else {
-                        0
-                    }
-                }),
-                'M' | 'm' => exec_mutate(vm, y, x, signal, &mut ctx),
-                'T' | 't' => exec_teleport(vm, y, x, &mut ctx),
-                'L' | 'l' => exec_laser(vm, y, x, &mut ctx),
-                'Z' | 'z' => exec_resonate(vm, y, x, signal, &mut ctx),
-                'I' | 'i' => exec_increment(vm, y, x, &mut ctx),
-                'R' | 'r' => exec_random(vm, y, x, &mut ctx),
-                'C' | 'c' => exec_clock(vm, y, x, &mut ctx),
-                'X' | 'x' => exec_write(vm, y, x, &mut ctx),
-                'O' | 'o' => exec_offset(vm, y, x, &mut ctx),
-                'G' | 'g' => exec_gene_read(vm, y, x, &mut ctx),
-                'P' | 'p' => exec_play(vm, y, x, signal, &mut ctx),
-                'K' | 'k' => exec_kill(vm, y, x, signal, &mut ctx),
-                'Y' | 'y' => exec_synthesize(vm, y, x, signal, &mut ctx),
-                'Q' | 'q' => exec_query(vm, y, x, &mut ctx),
-                'H' | 'h' => exec_project_signal(vm, y, x, signal, &mut ctx),
-                'U' | 'u' => exec_unzip(vm, y, x, signal, &mut ctx),
-                'F' | 'f' => exec_flux(vm, y, x, signal, &mut ctx),
-                'J' | 'j' => exec_jumper(vm, y, x, signal, &mut ctx),
-                '(' => exec_warp(vm, y, x, signal, &mut ctx),
-                ':' => exec_midi_note(vm, y, x, signal, &mut ctx),
-                ';' => exec_midi_cc(vm, y, x, signal, &mut ctx),
-                #[cfg(feature = "oracle")]
-                '?' => exec_oracle(vm, y, x, &mut ctx),
-                #[cfg(not(feature = "oracle"))]
-                '?' => exec_random(vm, y, x, &mut ctx), // Fallback
-                'V' => exec_voltage(vm, y, x, signal, &mut ctx),
-                'e' => exec_electrode(vm, y, x, signal, &mut ctx),
-                '%' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
-                    if b != 0 {
-                        a.rem_euclid(b)
-                    } else {
-                        0
-                    }
-                }),
-                '=' => binary_op(
-                    vm,
-                    y,
-                    x,
-                    &mut ctx.grid_writes,
-                    |a, b| {
-                        if a == b {
-                            1
-                        } else {
-                            0
-                        }
-                    },
-                ),
-                '&' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a & b),
-                '|' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a | b),
-                '[' => exec_ether_send(vm, y, x, signal, &mut ctx),
-                ']' => exec_ether_recv(vm, y, x, signal, &mut ctx),
-                '#' => exec_catalyze(vm, y, x, signal, &mut ctx),
-                '$' => exec_stack_io(vm, y, x, signal, &mut ctx),
-                '~' => exec_wave(vm, y, x, signal, &mut ctx),
-                'Ψ' | 'ψ' => exec_psi(vm, y, x, signal, &mut ctx),
-                'Φ' | 'φ' => exec_phi(vm, y, x, signal, &mut ctx),
-                'Ω' | 'ω' => exec_omega(vm, y, x, signal, &mut ctx),
-                '§' => exec_sigil(vm, y, x, signal, &mut ctx),
-                'ƒ' => exec_function_op(vm, y, x, signal, &mut ctx),
-                'Γ' => exec_gamma(vm, y, x, signal, &mut ctx),
-                'Σ' => exec_sigma(vm, y, x, &mut ctx),
-                #[cfg(feature = "oracle")]
-                'Π' => exec_pi(vm, y, x, signal, &mut ctx),
-                #[cfg(feature = "oracle")]
-                'λ' => exec_lambda(vm, y, x, signal, &mut ctx),
-                '{' => exec_inject(vm, y, x, signal, &mut ctx),
-                '}' => exec_extract(vm, y, x, signal, &mut ctx),
-                '⚛' => exec_reactor_rune(vm, y, x, signal, &mut ctx),
-                _ => {
-                    if let Value::Str(s) = val {
-                        if let Ok(op) = s.parse::<OpCode>() {
-                            if signal > 0 {
-                                ctx.executions.push((op, vec![]));
-                            }
-                        } else if signal > 0 {
-                            // Check for Dynamic Operators in KB
-                            #[cfg(feature = "oracle")]
-                            if let Some(strand_idx) = check_kb_operator(vm, s.as_str()) {
-                                ctx.executions
-                                    .push((OpCode::Call, vec![Nucleotide::Number(strand_idx)]));
-                            }
-
-                            // Check for Named Sigils
-                            #[cfg(feature = "nova")]
-                            if let Some(sigil) = vm.sigil_registry.get(s) {
-                                if nova_sigil::check_dynamic_pattern(vm, y, x, &sigil.pattern) {
-                                    ctx.executions.push((
-                                        OpCode::Call,
-                                        vec![Nucleotide::Number(sigil.strand_idx as i64)],
-                                    ));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            process_signal_char(vm, c, y, x, signal, &mut ctx);
         }
     }
 
@@ -1251,7 +1258,7 @@ fn process_phages(vm: &ChimeraVM, ctx: &mut SignalContext) {
                 let mut bounced = false;
 
                 match cell_val {
-                    Value::Str(s) => {
+                    Value::Str(ref s) => {
                         match s.as_str() {
                             "*" | "!" => {
                                 // Mutation
