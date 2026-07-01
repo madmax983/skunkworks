@@ -3709,3 +3709,32 @@ classDiagram
     class OutlineSink
     OutlineBuilder <|-- OutlineSink : Implements
 ```
+
+## Empty Namespaces Flattening (ADR 141)
+
+Empty structs previously used as namespaces for free functions (like `TextGlitcher`, `Assembler`, `RecoveryEngine`, `EntropyEngine`) and the `NarrativeBuilder` in `chimera-lang` have been eliminated to reduce boilerplate and cognitive load, favoring direct manipulation and free functions.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Before {
+        class TextGlitcher {
+            +corrupt()
+        }
+        class NarrativeBuilder {
+            +build()
+        }
+    }
+    namespace After {
+        class FreeFunctions {
+            <<module>>
+            +corrupt()
+        }
+        class DirectManipulation {
+            <<module>>
+            +mutate_grid()
+        }
+    }
+    TextGlitcher ..> FreeFunctions : Flattened
+    NarrativeBuilder ..> DirectManipulation : Removed
+```
