@@ -1,6 +1,6 @@
-use crate::boid::DNA;
+use crate::boid::Dna;
 
-pub fn apply_syntax_mutation(dna: &mut DNA, char_eaten: char) {
+pub fn apply_syntax_mutation(dna: &mut Dna, char_eaten: char) {
     if char_eaten.is_ascii_uppercase() {
         // Uppercase: Increase intensity (speed)
         dna.max_speed = (dna.max_speed * 1.1).clamp(0.5, 3.0);
@@ -34,8 +34,8 @@ mod tests {
     use super::*;
     use ratatui::style::Color;
 
-    fn mock_dna() -> DNA {
-        DNA {
+    fn mock_dna() -> Dna {
+        Dna {
             max_speed: 1.0,
             max_force: 0.1,
             view_radius: 10.0,

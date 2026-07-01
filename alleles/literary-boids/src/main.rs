@@ -16,14 +16,14 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph, canvas::Canvas},
 };
 
-pub mod boid;
+pub(crate) mod boid;
 #[cfg(feature = "nova")]
-pub mod critic;
+pub(crate) mod critic;
 #[cfg(feature = "nova")]
-pub mod syntax_physics;
+pub(crate) mod syntax_physics;
 #[cfg(feature = "nova")]
-pub mod traces;
-pub mod world;
+pub(crate) mod traces;
+pub(crate) mod world;
 
 use world::World;
 
