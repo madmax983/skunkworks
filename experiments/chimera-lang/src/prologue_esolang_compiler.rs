@@ -2720,6 +2720,70 @@ fn compile_git_associates_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec
 }
 
 #[cfg(feature = "nova")]
+fn compile_chromatic_code_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "steg" {
+                genes.push(Gene::new(OpCode::ChromaticCode, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
+}
+
+fn compile_spqr_rsa_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "encrypt" || op == "decrypt" || op == "simulate" {
+                genes.push(Gene::new(OpCode::SpqrRsa, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2886,68 +2950,4 @@ hologram {
         assert_eq!(genes[1].op, OpCode::Push);
         assert_eq!(genes[2].op, OpCode::Hologram);
     }
-}
-
-fn compile_chromatic_code_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
-    let mut genes = Vec::new();
-    let inner = pair
-        .into_inner()
-        .next()
-        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
-
-    match inner.as_rule() {
-        Rule::identifier => {
-            let op = inner.as_str().to_ascii_lowercase();
-            if op == "steg" {
-                genes.push(Gene::new(OpCode::ChromaticCode, vec![]));
-            } else if let Ok(opcode) = OpCode::from_str(&op) {
-                genes.push(Gene::new(opcode, vec![]));
-            } else {
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
-            }
-        }
-        Rule::number => {
-            let n: i64 = inner.as_str().parse()?;
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
-        }
-        Rule::string => {
-            let s = inner.as_str().trim_matches('"').to_string();
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
-        }
-        _ => {}
-    }
-
-    Ok(genes)
-}
-
-fn compile_spqr_rsa_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
-    let mut genes = Vec::new();
-    let inner = pair
-        .into_inner()
-        .next()
-        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
-
-    match inner.as_rule() {
-        Rule::identifier => {
-            let op = inner.as_str().to_ascii_lowercase();
-            if op == "encrypt" || op == "decrypt" || op == "simulate" {
-                genes.push(Gene::new(OpCode::SpqrRsa, vec![]));
-            } else if let Ok(opcode) = OpCode::from_str(&op) {
-                genes.push(Gene::new(opcode, vec![]));
-            } else {
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
-            }
-        }
-        Rule::number => {
-            let n: i64 = inner.as_str().parse()?;
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
-        }
-        Rule::string => {
-            let s = inner.as_str().trim_matches('"').to_string();
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
-        }
-        _ => {}
-    }
-
-    Ok(genes)
 }
