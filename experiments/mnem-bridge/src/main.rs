@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use mnem_bridge::model::{State, Terrain, World};
+use mnem_bridge::{State, Terrain, World};
 
 const GRID_WIDTH: usize = 100;
 const GRID_HEIGHT: usize = 60;

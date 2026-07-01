@@ -36,3 +36,23 @@
 **Bloat:** `Builder` struct used as a simple accumulator for glyph contours in `experiments/neuro-calligraphy/src/font.rs`
 **Cut:** Renamed to `OutlineSink` to accurately reflect its role as a state sink, destroying the speculative "Builder" abstraction naming.
 **Saved:** Eliminated cognitive load of "Enterprise FizzBuzz" naming conventions for a simple struct.
+
+## [Reduction]
+**Bloat:** `TextGlitcher` empty structs in `mnem-*` experiments used merely as a namespace for a `corrupt` function.
+**Cut:** Removed the struct and `impl` block, converted `corrupt` to a standalone free function.
+**Saved:** Multiple lines of boilerplate across 4 crates and flattened the namespace.
+
+## [Reduction]
+**Bloat:** `Assembler` empty struct in `experiments/hidden-brush/src/bytecode.rs` used as an unnecessary namespace for `parse` and `disassemble` methods.
+**Cut:** Removed the struct entirely, converting its methods into standalone free functions.
+**Saved:** Boilerplate and an unnecessary level of abstraction.
+
+## [Reduction]
+**Bloat:** `RecoveryEngine` and `EntropyEngine` empty structs in `experiments/digital-sediment` acting as namespaces for single methods.
+**Cut:** Removed the structs, exposing `recover` and `corrupt` directly as module-level free functions.
+**Saved:** Unnecessary object-oriented style abstraction in functional operations.
+
+## [Reduction]
+**Bloat:** `NarrativeBuilder` in `experiments/chimera-lang/src/vm/narrative.rs` providing an unnecessary and verbose Builder pattern for simple Grid mutations.
+**Cut:** Deleted `narrative.rs`, eliminated the Builder, and refactored examples to mutate the Grid memory and DNA Helix directly.
+**Saved:** 70+ lines of builder abstraction code and cognitive overhead.

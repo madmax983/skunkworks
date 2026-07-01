@@ -37,7 +37,6 @@ pub use locus::Topology;
 use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
 use rand::Rng;
-pub(crate) mod narrative;
 pub(crate) mod organelles;
 pub(crate) mod systems;
 #[cfg(feature = "nova")]

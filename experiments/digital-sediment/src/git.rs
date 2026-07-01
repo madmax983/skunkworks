@@ -25,7 +25,7 @@ pub fn list_commits(repo: &Repository, limit: usize) -> Result<Vec<CommitInfo>> 
 
         commits.push(CommitInfo {
             id: id.to_string(),
-            message: commit.summary().unwrap_or("").to_string(),
+            message: commit.summary().unwrap_or(Some("")).unwrap().to_string(),
         });
     }
     Ok(commits)

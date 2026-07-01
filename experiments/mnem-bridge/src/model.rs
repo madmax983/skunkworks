@@ -1,4 +1,3 @@
-use crate::glitch::TextGlitcher;
 use rand::Rng;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -153,7 +152,7 @@ impl World {
 
                 // Corrupt payload
                 if rng.gen::<f32>() < 0.05 {
-                    ant.payload = TextGlitcher::corrupt(&ant.payload, 1.0 - ant.health);
+                    ant.payload = crate::glitch::corrupt(&ant.payload, 1.0 - ant.health);
                 }
 
                 if ant.health <= 0.0 {
