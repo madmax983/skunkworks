@@ -1842,7 +1842,6 @@ pub mod prelude {
     pub use crate::compiler;
     pub use crate::opcode::OpCode;
     pub use crate::value::Value;
-    pub use crate::vm::narrative::NarrativeBuilder;
     pub use crate::vm::ChimeraVM;
 }
 

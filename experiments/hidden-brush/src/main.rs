@@ -70,7 +70,7 @@ fn main() -> Result<()> {
             if bytes_read as u64 > limit {
                 anyhow::bail!("Script file {:?} exceeds 1MB limit", script);
             }
-            let bytecode = bytecode::Assembler::parse(&script_content)?;
+            let bytecode = bytecode::parse(&script_content)?;
 
             let cover = if let Some(path) = image {
                 image::open(path)?
@@ -87,7 +87,7 @@ fn main() -> Result<()> {
             let bytecode = stego::decode(&img)?;
             println!("Decoded {} bytes of bytecode.", bytecode.len());
 
-            let instructions = bytecode::Assembler::disassemble(&bytecode)?;
+            let instructions = bytecode::disassemble(&bytecode)?;
             println!("Parsed {} instructions.", instructions.len());
 
             let mut turtle = vm::Turtle::new();

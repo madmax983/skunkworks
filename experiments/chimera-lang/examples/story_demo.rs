@@ -13,16 +13,33 @@ fn main() -> anyhow::Result<()> {
     println!("✍️  Writing story elements to Petri Dish...");
 
     // Let's create a story: "Once upon a time, there were 10 dragons."
-    let mut builder = NarrativeBuilder::new(&mut vm, 0, 0);
-
     // In Chimera: push(10) print()
-    // Using builder abstractions:
-    builder
-        .write_instruction("push")
-        .write_value(10)
-        .write_instruction("print");
+    // Using direct grid manipulation:
+    vm.grid[0][0] = Value::Str("push".to_string());
+    vm.grid[0][1] = Value::Int(10);
+    vm.grid[0][2] = Value::Str("print".to_string());
 
-    builder.incubate();
+    let reader_strand = Strand {
+        genes: vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(3)],
+            }, // len
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // x
+            Gene {
+                op: OpCode::Incubate,
+                args: vec![],
+            },
+        ],
+    };
+    vm.dna.helix.strands.push(reader_strand);
 
     println!("🧪 Incubating narrative... Launching TUI.");
     println!("(Press Space to Step, Q to Quit)");

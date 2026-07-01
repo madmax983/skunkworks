@@ -5,7 +5,6 @@ mod glitch;
 mod graph;
 mod simulation;
 
-use glitch::TextGlitcher;
 use graph::Graph;
 use simulation::Simulation;
 
@@ -158,7 +157,7 @@ async fn main() {
 
             // Label
             if zoom > 0.5 || is_hovered {
-                let glitched_name = TextGlitcher::corrupt(&node.name, 1.0 - node.health);
+                let glitched_name = glitch::corrupt(&node.name, 1.0 - node.health);
                 draw_text(
                     &glitched_name,
                     screen_pos.x + 10.0 * zoom,
@@ -172,7 +171,7 @@ async fn main() {
         // Draw Hover Overlay
         if let Some(idx) = hovered_node {
             let node = &sim.graph.nodes[idx];
-            let content = TextGlitcher::corrupt(&node.content, 1.0 - node.health);
+            let content = glitch::corrupt(&node.content, 1.0 - node.health);
 
             let padding = 20.0;
             draw_rectangle(

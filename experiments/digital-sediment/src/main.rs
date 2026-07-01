@@ -22,9 +22,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use entropy::EntropyEngine;
 use git::CommitInfo;
-use recovery::RecoveryEngine;
 
 struct App {
     repo: git2::Repository,
@@ -249,9 +247,9 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
     let content_text = if app.recovery_mode {
         // Run recovery
         // First corrupt it (simulation of what we found)
-        let corrupted = EntropyEngine::corrupt(&app.file_content, decay_factor);
+        let corrupted = entropy::corrupt(&app.file_content, decay_factor);
         // Then try to recover
-        let tokens = RecoveryEngine::recover(&corrupted);
+        let tokens = recovery::recover(&corrupted);
 
         // Let's iterate tokens and build Lines.
         let mut lines = Vec::new();
@@ -284,7 +282,7 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         }
         lines
     } else {
-        let corrupted = EntropyEngine::corrupt(&app.file_content, decay_factor);
+        let corrupted = entropy::corrupt(&app.file_content, decay_factor);
         corrupted
             .lines()
             .map(|l| Line::from(l.to_string()))

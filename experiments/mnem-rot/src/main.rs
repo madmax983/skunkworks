@@ -4,7 +4,6 @@ use std::io::Read;
 mod graph;
 use graph::Graph;
 mod glitch;
-use glitch::TextGlitcher;
 
 #[macroquad::main("Mnemonic Rot")]
 async fn main() {
@@ -190,7 +189,7 @@ async fn main() {
 
             // Content
             let intensity = 1.0 - node.health;
-            let corrupted = TextGlitcher::corrupt(&node.content, intensity);
+            let corrupted = glitch::corrupt(&node.content, intensity);
 
             // Render text lines
             let lines: Vec<&str> = corrupted.lines().take(35).collect();
