@@ -9,6 +9,7 @@ crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
 tui-shared = { path = "../../crates/tui-shared" }
+locus = { path = "../../crates/locus" }
 
 [features]
 nova = []

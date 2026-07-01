@@ -1,29 +1,13 @@
-1. **Refactor `exec_reshape` in `experiments/chimera-lang/src/vm/nova_cymatics.rs`**
-   - Replace the `unwrap()` calls on stack pops with a guard clause `let Some(mode_val) = vm.stack.pop() else { return; }`.
+1. **Analyze the problem:** The user reported `capacity overflow` panic in origami, but checking `crates/origami`, that was already solved based on the journal `.jules/atlas.md`.
+Looking closer at the prompt, I am asked to enforce high cohesion and low coupling across the codebase, identifying and fixing "The Knot", "The Leak", "The Bloat", "The Sprawl", "The Shotgun" etc.
+Wait, the `literary-boids` crate had an unresolved import issue with `tui_shared::math::Vec2`. I fixed it by changing it to `locus::Vec2`.
+Also I ran `grep -rnw -e "pub mod" crates experiments graveyard alleles` which showed that many `graveyard` and `alleles` crates are leaking their internal submodules directly via `pub mod`. I applied the Facade pattern by replacing `pub mod` with `pub(crate) mod` in `alleles/literary-boids/src/main.rs`. Wait, I did `pub(crate) mod` for `boid`, `critic`, `syntax_physics`, `traces` and `world` in `literary-boids/src/main.rs`. But that wasn't an explicit PR request yet, I should probably do it properly and record the ADR/journal.
+Wait, let's review `.jules/atlas.md` again. It mentions I only add journal entries when I discover:
+- A circular dependency that required a "Facade" or "Bridge" pattern to fix.
+- A module that has grown too large and needs splitting (The "Blob" anti-pattern).
+- A violation of the Orphan Rule that forced a specific trait design.
+- An Architectural Decision Record (ADR) that needs to be captured.
 
-2. **Refactor `exec_logistics` in `experiments/chimera-lang/src/vm/nova_logistics.rs`**
-   - Replace the `unwrap()` calls on stack pops with guard clauses `let Some(x_val) = vm.stack.pop() else { return; }`.
-
-3. **Refactor `catalyze` in `experiments/chimera-lang/src/vm/catalyst.rs`**
-   - Replace the `unwrap()` calls on stack pops with guard clauses `let Some(target_val) = vm.stack.pop() else { return; }`.
-
-4. **Refactor line 276 in `experiments/chimera-lang/src/vm/prologue/alchemy.rs`**
-   - Replace `let h = chars.next().unwrap().to_string();` with a safe check `let Some(c) = chars.next() else { return (None, None); }` or `let Some(h) = chars.next().map(|c| c.to_string()) else { return (None, None); }`.
-
-5. **Refactor `binary_op` in `experiments/chimera-lang/src/vm/prologue/pilot.rs`**
-   - Replace the `unwrap()` calls on stack pops in `binary_op` with guard clauses.
-
-6. **Refactor `binary_op` in `experiments/chimera-lang/src/vm/prologue/forth.rs`**
-   - Replace the `unwrap()` calls on stack pops in `binary_op` with guard clauses.
-
-7. **Refactor `generate_from_rule` and Regex unwraps in `experiments/chimera-lang/src/vm/prologue/logos.rs`**
-   - Replace `choices.last().unwrap()` at line 373 with a safe check and `.unwrap()` on Regex creation at line 449 with a safe return.
-
-8. **Refactor `exec_biophysics_op` in `experiments/chimera-lang/src/vm/neuron.rs`**
-   - Replace the `unwrap()` calls on stack pops with guard clauses `let Some(x_val) = vm.stack.pop() else { return; }`.
-
-9. **Run tests**
-   - Run `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test`, `cargo fmt --all`. Ensure all code builds and tests pass.
-
-10. **Pre-commit checks**
-    - Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
+The core problem was `literary-boids` failed to compile because `tui_shared::math` was removed (presumably moved to `locus`). I fixed `literary-boids`, `repo-rover`, `laban-rover`, `metric-marionette`, and `git_galaxy` to use `locus::Vec2`.
+And I encapsulated the modules in `literary-boids` with `pub(crate) mod`.
+Let's see if there are any other leaks or tangles.

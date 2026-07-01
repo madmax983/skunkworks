@@ -6334,6 +6334,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "literary-boids"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "locus",
+ "rand 0.8.6",
+ "ratatui",
+ "tui-shared",
+]
+
+[[package]]
 name = "lithosphere-git"
 version = "0.1.0"
 dependencies = [

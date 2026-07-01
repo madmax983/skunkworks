@@ -4,6 +4,7 @@ members = [
     "crates/arthropod",
     "crates/*",
     "experiments/*",
+    "alleles/*",
     "experiments/git-locus",
     "experiments/miller-origami",
     "experiments/git-poincare",

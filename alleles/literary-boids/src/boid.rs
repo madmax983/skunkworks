@@ -1,10 +1,10 @@
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::TAU;
-pub use tui_shared::math::Vec2;
+pub use locus::Vec2;
 
 #[derive(Clone, Debug)]
-pub struct DNA {
+pub struct Dna {
     pub max_speed: f64,
     pub max_force: f64,
     pub view_radius: f64,
@@ -15,7 +15,7 @@ pub struct DNA {
     pub char_representation: char,
 }
 
-impl DNA {
+impl Dna {
     pub fn random() -> Self {
         let mut rng = rand::thread_rng();
         Self {
@@ -36,7 +36,7 @@ pub struct Boid {
     pub position: Vec2,
     pub velocity: Vec2,
     pub acceleration: Vec2,
-    pub dna: DNA,
+    pub dna: Dna,
     pub energy: f64,
 }
 
@@ -44,7 +44,7 @@ impl Boid {
     pub fn new(x: f64, y: f64) -> Self {
         let mut rng = rand::thread_rng();
         let angle = rng.gen_range(0.0..TAU);
-        let dna = DNA::random();
+        let dna = Dna::random();
 
         Self {
             position: Vec2::new(x, y),
@@ -180,18 +180,9 @@ impl Boid {
 }
 
 // Deprecated or wrappers
-pub fn distance(p1: Vec2, p2: Vec2) -> f64 {
-    p1.distance(p2)
-}
 
-pub fn distance_squared(p1: Vec2, p2: Vec2) -> f64 {
-    p1.distance_squared(p2)
-}
 
 // limit is no longer needed as standalone, but if we keep it for backward compat it needs Vec2
-pub fn limit(vector: Vec2, max: f64) -> Vec2 {
-    vector.limit(max)
-}
 
 #[cfg(test)]
 mod tests {
@@ -224,8 +215,8 @@ mod tests {
     fn test_distance_squared() {
         let p1 = Vec2::new(0.0, 0.0);
         let p2 = Vec2::new(3.0, 4.0);
-        assert!((distance_squared(p1, p2) - 25.0).abs() < 1e-6);
-        assert!((distance(p1, p2) - 5.0).abs() < 1e-6);
+        assert!((p1.distance_squared(p2) - 25.0).abs() < 1e-6);
+        assert!((p1.distance(p2) - 5.0).abs() < 1e-6);
     }
 
     #[test]

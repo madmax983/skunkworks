@@ -1,4 +1,4 @@
-use crate::boid::{Boid, DNA, Vec2, distance};
+use crate::boid::{Boid, Dna, Vec2};
 #[cfg(feature = "nova")]
 use crate::critic::Critic;
 #[cfg(feature = "nova")]
@@ -143,7 +143,7 @@ impl World {
 
                 // Eat boids
                 for (b_idx, boid) in self.boids.iter().enumerate() {
-                    if distance(critic.position, boid.position) < critic.kill_radius {
+                    if critic.position.distance(boid.position) < critic.kill_radius {
                         self.eaten_boid_indices_buffer.push(b_idx);
                     }
                 }
@@ -164,7 +164,7 @@ impl World {
 
         for boid in self.boids.iter_mut() {
             for (food_idx, food) in self.food.iter().enumerate() {
-                if distance(boid.position, food.position) < 2.0 {
+                if boid.position.distance(food.position) < 2.0 {
                     // Eating radius
                     // Eat
                     boid.energy += 20.0;
@@ -198,7 +198,7 @@ impl World {
                 boid.energy -= 80.0; // Cost of reproduction
                 let mut child = boid.clone();
                 child.energy = 80.0;
-                // Mutate DNA
+                // Mutate Dna
                 mutate_dna(&mut child.dna);
                 self.new_boids_buffer.push(child);
             }
@@ -218,7 +218,7 @@ impl World {
     }
 }
 
-fn mutate_dna(dna: &mut DNA) {
+fn mutate_dna(dna: &mut Dna) {
     let mut rng = rand::thread_rng();
     if rng.gen_bool(0.1) {
         dna.max_speed += rng.gen_range(-0.1..0.1);
