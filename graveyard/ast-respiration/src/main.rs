@@ -1,5 +1,5 @@
-pub mod parser;
-pub mod simulation;
+pub(crate) mod parser;
+pub(crate) mod simulation;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};

@@ -1,5 +1,5 @@
 #[allow(clippy::module_inception)]
-pub mod ast {
+pub(crate) mod ast {
     use std::collections::HashMap;
 
     #[derive(Debug, Clone)]

@@ -1,6 +1,6 @@
-pub mod audio;
-pub mod physics;
-pub mod ui;
+pub(crate) mod audio;
+pub(crate) mod physics;
+pub(crate) mod ui;
 
 use anyhow::Result;
 use audio::{run_audio, AudioCommand};

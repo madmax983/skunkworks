@@ -4,7 +4,7 @@ pub enum AudioEvent {
 }
 
 #[cfg(feature = "audio")]
-pub mod engine {
+pub(crate) mod engine {
     use super::*;
     use anyhow::anyhow;
     use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};

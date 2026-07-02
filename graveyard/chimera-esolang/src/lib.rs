@@ -1,9 +1,9 @@
 use anyhow::{anyhow, Result};
 use pest::Parser;
 
-pub mod ast;
-pub mod parser;
-pub mod compiler;
+pub(crate) mod ast;
+pub(crate) mod parser;
+pub(crate) mod compiler;
 
 use ast::ast::*;
 use parser::{EsolangParser, Rule};
@@ -63,3 +63,8 @@ fn parse_instruction(pair: pest::iterators::Pair<'_, Rule>) -> Result<Instructio
         _ => Err(anyhow!("Unknown instruction rule: {:?}", inner.as_rule())),
     }
 }
+
+// Facade API
+pub use ast::*;
+pub use parser::*;
+pub use compiler::*;

@@ -1,4 +1,4 @@
-pub mod model;
+pub(crate) mod model;
 
 use crate::model::*;
 use anyhow::Result;

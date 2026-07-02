@@ -1,1 +1,4 @@
-pub mod model;
+pub(crate) mod model;
+
+// Facade API
+pub use model::*;

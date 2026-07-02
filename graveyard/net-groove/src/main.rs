@@ -1,7 +1,7 @@
-pub mod audio;
-pub mod network;
-pub mod shared;
-pub mod tui;
+pub(crate) mod audio;
+pub(crate) mod network;
+pub(crate) mod shared;
+pub(crate) mod tui;
 
 use anyhow::Result;
 use std::sync::Arc;

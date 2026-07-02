@@ -1,4 +1,4 @@
-pub mod agent;
-pub mod config;
-pub mod project;
-pub mod task;
+pub(crate) mod agent;
+pub(crate) mod config;
+pub(crate) mod project;
+pub(crate) mod task;

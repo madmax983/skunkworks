@@ -13,9 +13,9 @@ use ratatui::{
 use std::time::Duration;
 use tui_shared::Tui;
 
-pub mod input;
-pub mod neuron;
-pub mod retina;
+pub(crate) mod input;
+pub(crate) mod neuron;
+pub(crate) mod retina;
 
 use input::InputGenerator;
 use retina::Retina;

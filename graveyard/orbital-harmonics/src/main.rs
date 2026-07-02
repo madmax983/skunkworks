@@ -7,9 +7,9 @@ use std::{
 };
 use tui_shared::Tui;
 
-pub mod app;
-pub mod audio;
-pub mod physics;
+pub(crate) mod app;
+pub(crate) mod audio;
+pub(crate) mod physics;
 
 use app::App;
 

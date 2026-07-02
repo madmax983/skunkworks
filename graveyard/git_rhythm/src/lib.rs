@@ -1,9 +1,18 @@
-pub mod harvester;
-pub mod synth;
-pub mod vis;
+pub(crate) mod harvester;
+pub(crate) mod synth;
+pub(crate) mod vis;
 
 #[cfg(feature = "nova")]
-pub mod nova;
+pub(crate) mod nova;
 
 #[cfg(feature = "nova")]
-pub mod experimental;
+pub(crate) mod experimental;
+
+// Facade API
+pub use harvester::*;
+pub use synth::*;
+pub use vis::*;
+#[cfg(feature = "nova")]
+pub use nova::*;
+#[cfg(feature = "nova")]
+pub use experimental::*;

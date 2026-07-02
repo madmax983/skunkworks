@@ -5,8 +5,8 @@ use ratatui::{prelude::*, widgets::Widget};
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-pub mod model;
-pub mod root;
+pub(crate) mod model;
+pub(crate) mod root;
 
 use model::{Grid, SoilType};
 use root::{Algorithm, RootSystem};

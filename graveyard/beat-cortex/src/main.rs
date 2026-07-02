@@ -17,9 +17,9 @@ use ndarray::Array1;
 use crate::audio::{AudioEngine, AudioEvent};
 use crate::network::Reservoir;
 
-pub mod audio;
-pub mod network;
-pub mod neuron;
+pub(crate) mod audio;
+pub(crate) mod network;
+pub(crate) mod neuron;
 
 fn main() -> Result<()> {
     // Initialize TUI

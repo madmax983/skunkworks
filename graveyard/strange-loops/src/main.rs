@@ -1,4 +1,4 @@
-pub mod attractors;
+pub(crate) mod attractors;
 
 use anyhow::Result;
 use attractors::{AizawaAttractor, LorenzAttractor, RosslerAttractor, Vector3};

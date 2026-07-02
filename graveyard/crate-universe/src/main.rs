@@ -22,8 +22,8 @@ use std::{
 
 use crate::physics::System;
 
-pub mod graph;
-pub mod physics;
+pub(crate) mod graph;
+pub(crate) mod physics;
 
 struct App {
     system: System,

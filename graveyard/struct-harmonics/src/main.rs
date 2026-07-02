@@ -1,5 +1,5 @@
-pub mod audio;
-pub mod physics;
+pub(crate) mod audio;
+pub(crate) mod physics;
 
 use anyhow::Result;
 use audio::{map_mass_to_freq, AudioEngine};
