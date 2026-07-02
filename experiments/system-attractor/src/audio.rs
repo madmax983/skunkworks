@@ -6,6 +6,7 @@ pub(crate) mod audio_impl {
 
     type AudioProducer = Producer<f32, Arc<SharedRb<f32, Vec<std::mem::MaybeUninit<f32>>>>>;
 
+    /// A live audio synthesizer that plays a sine wave.
     pub struct Synth {
         #[allow(dead_code)]
         stream: cpal::Stream,
@@ -17,6 +18,7 @@ pub(crate) mod audio_impl {
     }
 
     impl Synth {
+        /// Creates a new live audio synthesizer.
         pub fn new() -> Result<Self, anyhow::Error> {
             let host = cpal::default_host();
             let device = host
@@ -55,6 +57,7 @@ pub(crate) mod audio_impl {
             })
         }
 
+        /// Updates the frequency and amplitude of the playing sine wave.
         pub fn update(&mut self, freq: f32, amp: f32) {
             self.frequency = freq;
             self.amplitude = amp;
@@ -80,11 +83,14 @@ pub(crate) mod audio_impl {
 
 #[cfg(not(feature = "audio"))]
 pub(crate) mod audio_impl {
+    /// A placeholder struct for a disabled audio synthesizer.
     pub struct Synth;
     impl Synth {
+        /// Creates a new placeholder synthesizer.
         pub fn new() -> Result<Self, anyhow::Error> {
             Ok(Self)
         }
+        /// Ignored update for the placeholder synthesizer.
         pub fn update(&mut self, _freq: f32, _amp: f32) {}
     }
 }

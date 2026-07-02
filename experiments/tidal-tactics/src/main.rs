@@ -1,3 +1,15 @@
+//! Tidal Tactics 🌊⚔️
+//!
+//! A Turn-Based Strategy Game where the terrain is a heightmap and water is fully simulated using Shallow Water Equations (Virtual Pipes).
+//!
+//! "The battlefield is not solid ground. It is a fluid dynamic."
+//!
+//! ## Mechanics
+//! - **Terrain**: Malleable. Can be raised or lowered.
+//! - **Water**: Dynamic. Flows based on gravity and terrain height. Tides rise and fall.
+//! - **Units**:
+//!   - **Tank**: Strong, but drowns in deep water (> 0.5 depth).
+//!   - **Hovercraft**: Fast, can cross any water, but weak armor.
 mod fluid;
 mod game;
 mod map;
