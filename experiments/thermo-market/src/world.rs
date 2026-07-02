@@ -83,7 +83,7 @@ pub struct Agent {
     /// Indicates if a termite is currently holding building material.
     pub carrying: bool, // For Termite
     /// The thermal energy carried by an air particle.
-    pub heat: f32,      // For Air
+    pub heat: f32, // For Air
 }
 
 impl Agent {

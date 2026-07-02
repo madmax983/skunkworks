@@ -28,7 +28,6 @@ fn havoc_test_rwlock_contention() {
 #[ignore]
 fn havoc_test_rwlock_contention_inner() {
     if std::env::args().any(|arg| arg == "havoc_test_rwlock_contention_inner") {
-
         let state = Arc::new(RwLock::new(audio::SharedState::new()));
 
         let mut handles = vec![];

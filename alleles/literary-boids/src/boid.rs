@@ -1,7 +1,7 @@
+pub use locus::Vec2;
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::TAU;
-pub use locus::Vec2;
 
 #[derive(Clone, Debug)]
 pub struct Dna {
@@ -180,7 +180,6 @@ impl Boid {
 }
 
 // Deprecated or wrappers
-
 
 // limit is no longer needed as standalone, but if we keep it for backward compat it needs Vec2
 
