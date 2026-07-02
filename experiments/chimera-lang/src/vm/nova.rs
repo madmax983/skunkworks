@@ -2462,3 +2462,8 @@ pub(crate) fn exec_soroban_specter(vm: &mut ChimeraVM) {
     vm.output
         .push("🧮 Soroban Specter calculation simulated.".to_string());
 }
+
+pub(crate) fn exec_clockwork_concerto(vm: &mut ChimeraVM) {
+    vm.output
+        .push("⚙️ Clockwork Concerto simulation tick.".to_string());
+}
