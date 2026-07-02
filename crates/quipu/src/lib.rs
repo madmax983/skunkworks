@@ -843,4 +843,41 @@ mod tests {
         c4.subsidiaries.push(Cord::new());
         assert_eq!(c3, c4);
     }
+    #[test]
+    fn test_debug_capped_cord_internal() {
+        let cord = Cord::from(10);
+        let capped = DebugCappedCord {
+            cord: &cord,
+            depth: 101,
+        };
+        let formatted = format!("{:?}", capped);
+        assert_eq!(formatted, "Cord { ... }");
+
+        let normal = DebugCappedCord {
+            cord: &cord,
+            depth: 1,
+        };
+        let formatted = format!("{:?}", normal);
+        assert!(formatted.contains("clusters:"));
+    }
+
+    #[test]
+    fn test_debug_subsidiaries_internal() {
+        let mut cord = Cord::from(10);
+        cord.subsidiaries.push(Cord::from(5));
+
+        let subs = DebugSubsidiaries {
+            cord: &cord,
+            depth: 101,
+        };
+        let formatted = format!("{:?}", subs);
+        assert_eq!(formatted, "[...]");
+
+        let normal = DebugSubsidiaries {
+            cord: &cord,
+            depth: 1,
+        };
+        let formatted = format!("{:?}", normal);
+        assert!(formatted.contains("clusters:"));
+    }
 }

@@ -14,3 +14,6 @@
 **[Unwrap Panics in AST Parsing]**
 **Learning:** Found and removed dozens of `.unwrap()` calls on iterators when parsing Pest AST nodes. Even if a grammar enforces a structure, parsing errors or mid-parse failures should be gracefully bubbled up rather than causing a fatal panic.
 **Action:** Replace `inner.next().unwrap()` with `inner.next().ok_or_else(|| anyhow!("Expected ..."))?` in compiler passes to gracefully handle incomplete ASTs or parsing errors, especially when parsing nested blocks or definition arguments.
+**[Quipu Recursive Formatting Helpers]**
+**Learning:** Achieving 100% line coverage for internal debugging helper structs (`DebugCappedCord` and `DebugSubsidiaries`) which cap `fmt::Debug` recursion limits is extremely difficult from outside the crate due to privacy bounds, macro resolution, and how deeply nested structs hit recursion caps. Tarpaulin struggles to mark lines 326, 330, 331, 343, and 351 as covered despite multiple angles of attack.
+**Action:** Accept >95% coverage on recursive debug wrappers as long as the primary logic (like `checked_add`, edge case construction, and trait derivations) are rigorously tested and prevent panics.
