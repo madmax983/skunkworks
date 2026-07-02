@@ -616,3 +616,57 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to write a script using the `splice` enzyme. The docs say `splice(strand_a, strand_b, method)`, but when I passed strand names, it crashed. It doesn't tell me what types these arguments should be."
 *   🕵️ **The Reality:** "Turns out some arguments require integer indices, some require strings, and it's completely undocumented."
 *   💡 **The Fix:** "Update the `Enzymes` list in the README to explicitly state the expected types for all instruction arguments."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/neuro-physics/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `neuro-physics` experiment headlessly."
+**Action:** Copy and pasted the Quick Start command `cargo run -p neuro-physics --headless` from the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `neuro-physics` experiment using the exact command in the README. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to run `cargo run -p neuro-physics --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the Quick Start command in the README to be `cargo run -p neuro-physics -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/ferrous-core/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `ferrous-core` crate."
+**Action:** Copy and pasted the Quick Start example code from the README into a fresh `src/main.rs` file.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Top-Level Declaration Error:** The example code fails to compile immediately with `error: expected item, found keyword 'let'`.
+    - *Impact:* Total compilation failure.
+    - *Cause:* The code block in the README is just a sequence of statements and lacks the necessary `fn main() { ... }` wrapper to make it a valid, runnable Rust program.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start example is broken (missing main function)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the basic example from `ferrous-core`'s README. The compiler immediately threw a fit about 'expected item, found keyword `let`'."
+*   🕵️ **The Reality:** "Turns out the example code isn't wrapped in a `fn main() { ... }` block, so it's invalid Rust syntax when copy-pasted directly into a new binary project."
+*   💡 **The Fix:** "Update the Quick Start example block to include the `fn main() {` wrapper around the code."
