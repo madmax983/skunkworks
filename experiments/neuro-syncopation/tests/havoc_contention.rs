@@ -47,7 +47,10 @@ fn havoc_test_contention_inner() {
                 Arc::new(Mutex::new(brain::NeuronState::default())),
                 running.clone(),
             );
-            n.synapses.push(brain::Synapse { target: target.clone(), weight: 1.0 });
+            n.synapses.push(brain::Synapse {
+                target: target.clone(),
+                weight: 1.0,
+            });
 
             handles.push(thread::spawn(move || {
                 let sleep_duration = Duration::from_nanos(1); // Very low sleep to maximize contention

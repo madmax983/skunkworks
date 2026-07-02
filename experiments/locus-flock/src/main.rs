@@ -57,49 +57,51 @@ impl LocusFlockApp {
     fn tick(&mut self) {
         let mut new_velocities = self.velocities.clone();
 
-        for i in 0..self.positions.len() {
-            // Apply topological wrapping to positions so agents see "ghosts" across borders
-            // For true topological distance, we should ideally adjust compute_force,
-            // but as an approximation, we create a wrapped copy of positions relative to this agent.
+        // ⚡ Bolt: Pre-allocate `virtual_positions` once per tick.
+        // Reusing this buffer avoids `N` heap allocations per tick, significantly reducing
+        // memory allocations on the hot path (O(N) allocations -> O(1) allocations).
+        let mut virtual_positions = Vec::with_capacity(self.positions.len());
+        virtual_positions.extend_from_slice(&self.positions);
 
-            // To make this simple, we just use standard compute_force for now.
-            // The true hybrid trait is how they wrap around the edges.
-            let mut virtual_positions = self.positions.clone();
+        for (i, velocity) in new_velocities.iter_mut().enumerate() {
+            // Reset virtual positions to actual positions for this agent's calculation
+            virtual_positions.copy_from_slice(&self.positions);
 
             // Re-center virtual positions to mimic topology (Torus)
             if matches!(self.topology, Topology::Torus) {
-                for j in 0..virtual_positions.len() {
+                let w = self.width as f64;
+                let h = self.height as f64;
+                let center_x = self.positions[i].x;
+                let center_y = self.positions[i].y;
+
+                for (j, v_pos) in virtual_positions.iter_mut().enumerate() {
                     if i == j {
                         continue;
                     }
-                    let dx = virtual_positions[j].x - self.positions[i].x;
-                    let dy = virtual_positions[j].y - self.positions[i].y;
-
-                    let w = self.width as f64;
-                    let h = self.height as f64;
+                    let dx = v_pos.x - center_x;
+                    let dy = v_pos.y - center_y;
 
                     if dx > w / 2.0 {
-                        virtual_positions[j].x -= w;
+                        v_pos.x -= w;
+                    } else if dx < -w / 2.0 {
+                        v_pos.x += w;
                     }
-                    if dx < -w / 2.0 {
-                        virtual_positions[j].x += w;
-                    }
+
                     if dy > h / 2.0 {
-                        virtual_positions[j].y -= h;
-                    }
-                    if dy < -h / 2.0 {
-                        virtual_positions[j].y += h;
+                        v_pos.y -= h;
+                    } else if dy < -h / 2.0 {
+                        v_pos.y += h;
                     }
                 }
             }
 
             let force = compute_force(&virtual_positions, &self.velocities, i, &self.params);
-            new_velocities[i] += force;
+            *velocity += force;
 
             // Cap speed
-            let speed = new_velocities[i].magnitude();
+            let speed = velocity.magnitude();
             if speed > self.params.max_speed {
-                new_velocities[i] = new_velocities[i].normalize() * self.params.max_speed;
+                *velocity = velocity.normalize() * self.params.max_speed;
             }
         }
 
@@ -222,4 +224,17 @@ fn main() -> std::io::Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tick_runs_without_panicking() {
+        let mut app = LocusFlockApp::new(100, 100, 100, Topology::Torus);
+        for _ in 0..10 {
+            app.tick(); // Verify logic runs cleanly and the vector re-allocation avoids issues
+        }
+    }
 }

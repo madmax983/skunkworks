@@ -7,3 +7,7 @@
 ## Avoiding `std::mem::take` on self fields for mutable borrowing
 **Learning:** `std::mem::take(&mut self.field)` is tempting to sidestep borrow checker conflicts when you need to pass `&mut self` to a method while iterating over one of its fields. However, if the field represents the system's state (like `self.agents`), taking it leaves the state empty during the method call. If the method ever inspects the system state, it will incorrectly see an empty state, leading to silent logical regressions.
 **Action:** Clone the field or find another way to restructure the state to avoid the borrow conflict. Micro-optimizations should never compromise correctness or the invariants of the data structure.
+
+**[Optimizing Allocations in Hybrid Iteration]**
+**Learning:** In hybrid traits/systems where components copy environmental views per agent (e.g., computing forces on a torus requiring "ghost" positions for wrapping), using `.clone()` inside the N agent update loop triggers O(N) memory allocations, destroying performance.
+**Action:** Pre-allocate a single buffer with `Vec::with_capacity(size)` outside the loop and reuse it via `buffer.copy_from_slice(&original)` to reduce allocations to O(1) on the hot path. Be careful to use `enumerate` where needed to avoid clippy's `needless_range_loop` warning.
