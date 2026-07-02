@@ -8,8 +8,13 @@
 //! "The Cartridge is the Code."
 
 /// Assembly compiler for the Stego-Cartridge bytecode.
-pub mod asm;
+pub(crate) mod asm;
 /// LSB steganography operations for hiding/extracting programs in images.
-pub mod stego;
+pub(crate) mod stego;
 /// The core stack-based Virtual Machine and instruction set.
-pub mod vm;
+pub(crate) mod vm;
+
+// Facade API
+pub use asm::*;
+pub use stego::*;
+pub use vm::*;

@@ -1,5 +1,5 @@
-pub mod game;
-pub mod physics;
+pub(crate) mod game;
+pub(crate) mod physics;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind, MouseButton, MouseEventKind};

@@ -1,6 +1,6 @@
-pub mod glyph;
-pub mod scanner;
-pub mod starmap;
+pub(crate) mod glyph;
+pub(crate) mod scanner;
+pub(crate) mod starmap;
 
 pub use glyph::Glyph;
 pub use scanner::Scanner;

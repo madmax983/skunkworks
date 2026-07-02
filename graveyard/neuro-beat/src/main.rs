@@ -11,9 +11,9 @@ use ratatui::{
 use std::{collections::VecDeque, time::Duration};
 use tui_shared::Tui;
 
-pub mod audio;
-pub mod network;
-pub mod neuron;
+pub(crate) mod audio;
+pub(crate) mod network;
+pub(crate) mod neuron;
 
 #[cfg(feature = "audio")]
 use audio::AudioEvent;

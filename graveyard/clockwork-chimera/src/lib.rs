@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
-pub mod cpu;
-pub mod mechanism;
-pub mod view;
+pub(crate) mod cpu;
+pub(crate) mod mechanism;
+pub(crate) mod view;
 
 use cpu::{chimera_tick_system, TickEvent};
 
@@ -68,3 +68,8 @@ fn detect_tick_system(
         }
     }
 }
+
+// Facade API
+pub use cpu::*;
+pub use mechanism::*;
+pub use view::*;

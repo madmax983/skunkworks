@@ -1,7 +1,7 @@
-pub mod agent;
-pub mod market;
-pub mod model;
-pub mod ui;
+pub(crate) mod agent;
+pub(crate) mod market;
+pub(crate) mod model;
+pub(crate) mod ui;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};

@@ -1,6 +1,6 @@
-pub mod mapping;
-pub mod synth;
-pub mod ui;
+pub(crate) mod mapping;
+pub(crate) mod synth;
+pub(crate) mod ui;
 
 use anyhow::Context;
 use crossterm::{

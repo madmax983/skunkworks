@@ -1,5 +1,5 @@
-pub mod audio;
-pub mod mechanism;
+pub(crate) mod audio;
+pub(crate) mod mechanism;
 
 #[cfg(test)]
 mod tests {
@@ -27,3 +27,7 @@ mod tests {
         assert_eq!(events[0].track_index, 0);
     }
 }
+
+// Facade API
+pub use audio::*;
+pub use mechanism::*;

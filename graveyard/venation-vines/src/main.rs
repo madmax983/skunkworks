@@ -10,7 +10,7 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-pub mod model;
+pub(crate) mod model;
 use model::Leaf;
 
 struct App {

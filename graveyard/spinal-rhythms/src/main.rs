@@ -1,8 +1,8 @@
 use macroquad::prelude::*;
 
-pub mod lamprey;
-pub mod neuro;
-pub mod physics;
+pub(crate) mod lamprey;
+pub(crate) mod neuro;
+pub(crate) mod physics;
 
 use lamprey::Lamprey;
 use physics::PhysicsWorld;

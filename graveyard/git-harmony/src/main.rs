@@ -18,7 +18,7 @@ use ratatui::{
 };
 use std::io;
 
-pub mod synthesizer;
+pub(crate) mod synthesizer;
 
 use synthesizer::Synthesizer;
 

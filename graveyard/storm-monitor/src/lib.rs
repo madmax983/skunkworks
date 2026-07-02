@@ -1,5 +1,5 @@
-pub mod lorenz;
-pub mod monitor;
+pub(crate) mod lorenz;
+pub(crate) mod monitor;
 
 #[cfg(test)]
 mod tests {
@@ -60,3 +60,7 @@ mod tests {
         assert!(beta >= 2.6, "Beta should be >= 2.6");
     }
 }
+
+// Facade API
+pub use lorenz::*;
+pub use monitor::*;

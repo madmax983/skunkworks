@@ -12,8 +12,8 @@ use ratatui::{
 };
 use std::collections::HashSet;
 
-pub mod genome;
-pub mod population;
+pub(crate) mod genome;
+pub(crate) mod population;
 
 use genome::ShapeType;
 use population::Population;

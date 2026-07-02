@@ -51,7 +51,7 @@ impl LSystem {
 }
 
 // Presets
-pub mod presets {
+pub(crate) mod presets {
     use super::*;
 
     pub fn binary_tree() -> LSystem {

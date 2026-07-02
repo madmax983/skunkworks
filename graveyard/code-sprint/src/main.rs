@@ -1,6 +1,6 @@
-pub mod game;
-pub mod scanner;
-pub mod ui;
+pub(crate) mod game;
+pub(crate) mod scanner;
+pub(crate) mod ui;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};

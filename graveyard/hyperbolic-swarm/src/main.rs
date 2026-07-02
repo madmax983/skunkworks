@@ -1,8 +1,8 @@
 use crate::swarm::Swarm;
 use macroquad::prelude::*;
 
-pub mod boid;
-pub mod swarm;
+pub(crate) mod boid;
+pub(crate) mod swarm;
 
 #[macroquad::main("Hyperbolic Swarm")]
 async fn main() {

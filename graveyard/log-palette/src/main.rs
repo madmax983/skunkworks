@@ -1,7 +1,7 @@
-pub mod color;
-pub mod parser;
-pub mod sentiment;
-pub mod ui;
+pub(crate) mod color;
+pub(crate) mod parser;
+pub(crate) mod sentiment;
+pub(crate) mod ui;
 
 use anyhow::Result;
 use clap::Parser;

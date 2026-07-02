@@ -1,5 +1,5 @@
-pub mod model;
-pub mod ui;
+pub(crate) mod model;
+pub(crate) mod ui;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};

@@ -1,7 +1,7 @@
-pub mod de;
-pub mod error;
-pub mod quipu;
-pub mod ser;
+pub(crate) mod de;
+pub(crate) mod error;
+pub(crate) mod quipu;
+pub(crate) mod ser;
 
 pub use de::from_str;
 pub use error::Error;

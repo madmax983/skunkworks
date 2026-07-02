@@ -1,5 +1,5 @@
-pub mod forecaster;
-pub mod sexagesimal;
+pub(crate) mod forecaster;
+pub(crate) mod sexagesimal;
 
 #[cfg(test)]
 mod tests;
