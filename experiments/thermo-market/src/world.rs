@@ -10,31 +10,47 @@ use market_sim::{Grid, Particle, DEFAULT_TRADE_AGE};
 use rand::prelude::*;
 use rayon::prelude::*;
 
+/// The width of the simulation grid.
 pub const WIDTH: usize = 512;
+/// The height of the simulation grid.
 pub const HEIGHT: usize = 512;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+/// Defines the physical composition of a cell in the grid.
 pub enum Material {
+    /// Empty space, allows movement and airflow.
     Empty,
+    /// A physical barrier that also acts as a cooling fin.
     Wall, // Cooling Fin
     #[allow(dead_code)]
+    /// A market exchange node acting as a primary heat source.
     Server, // Exchange / Heat Source
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+/// The types of mobile agents in the simulation.
 pub enum AgentKind {
+    /// An infrastructure bot that builds cooling walls.
     Termite,
+    /// A particle representing air flow and heat transfer.
     Air,
 }
 
 #[derive(Clone, Copy, Debug)]
+/// Represents a discrete spatial location in the simulation grid.
 pub struct Cell {
+    /// The physical substance occupying the cell.
     pub material: Material,
+    /// The current thermal energy in the cell.
     pub heat: f32,
+    /// Chemical trail intensity used by termites for navigation.
     pub pheromone: f32,
     // Fluid Dynamics Fields (accumulated from particles)
+    /// The concentration of air particles.
     pub air_density: f32,
+    /// The horizontal velocity of the air flow.
     pub air_vx: f32,
+    /// The vertical velocity of the air flow.
     pub air_vy: f32,
 }
 
@@ -52,13 +68,21 @@ impl Default for Cell {
 }
 
 #[derive(Clone, Copy, Debug)]
+/// A mobile entity moving across the world grid.
 pub struct Agent {
+    /// Horizontal position.
     pub x: f32,
+    /// Vertical position.
     pub y: f32,
+    /// Horizontal velocity.
     pub vx: f32,
+    /// Vertical velocity.
     pub vy: f32,
+    /// The behavioral type of the agent.
     pub kind: AgentKind,
+    /// Indicates if a termite is currently holding building material.
     pub carrying: bool, // For Termite
+    /// The thermal energy carried by an air particle.
     pub heat: f32,      // For Air
 }
 
@@ -70,7 +94,7 @@ impl Agent {
     /// # Examples
     ///
     /// ```
-    /// use thermo_market::world::Agent;
+    /// use thermo_market::Agent;
     /// let termite = Agent::new_termite(10.0, 10.0);
     /// assert_eq!(termite.x, 10.0);
     /// ```
@@ -93,7 +117,7 @@ impl Agent {
     /// # Examples
     ///
     /// ```
-    /// use thermo_market::world::Agent;
+    /// use thermo_market::Agent;
     /// let air = Agent::new_air(10.0, 10.0);
     /// assert_eq!(air.heat, 0.0);
     /// ```
@@ -112,10 +136,15 @@ impl Agent {
     }
 }
 
+/// The global state containing the grid, agents, and the financial market.
 pub struct World {
+    /// The 1D array representing the 2D spatial grid.
     pub grid: Vec<Cell>,
+    /// The collection of active mobile entities.
     pub agents: Vec<Agent>,
+    /// The continuous double auction market simulation.
     pub market: Grid,
+    /// The current simulation time step.
     pub step: u64,
     // Double buffers for physics (Reuse memory)
     current_heats: Vec<f32>,
@@ -136,7 +165,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// use thermo_market::world::World;
+    /// use thermo_market::World;
     /// let world = World::new();
     /// assert_eq!(world.step, 0);
     /// ```
@@ -153,21 +182,25 @@ impl World {
         }
     }
 
+    /// Calculates the 1D vector index for 2D (x, y) coordinates.
     pub fn get_index(&self, x: usize, y: usize) -> usize {
         y * WIDTH + x
     }
 
+    /// Retrieves an immutable reference to the cell at (x, y).
     pub fn get_cell(&self, x: usize, y: usize) -> &Cell {
         &self.grid[self.get_index(x, y)]
     }
 
     #[allow(dead_code)]
+    /// Retrieves a mutable reference to the cell at (x, y).
     pub fn get_cell_mut(&mut self, x: usize, y: usize) -> &mut Cell {
         let idx = self.get_index(x, y);
         &mut self.grid[idx]
     }
 
     #[allow(dead_code)]
+    /// Spawns a rectangular block of server cells that generate heat.
     pub fn add_server_block(&mut self, x: usize, y: usize, w: usize, h: usize) {
         for dy in 0..h {
             for dx in 0..w {
@@ -180,6 +213,7 @@ impl World {
         }
     }
 
+    /// Advances the entire world simulation by one tick, including the market and physics.
     pub fn update(&mut self) {
         // 1. Sync Thermo -> Market (Walls)
         self.sync_walls_to_market();

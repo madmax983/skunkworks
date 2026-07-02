@@ -1,3 +1,25 @@
+//! System Bio-Dome 🧬
+//!
+//! A Hybrid Experiment by The Splice Surgeon.
+//! "The chaos of the storm drives the pulse of the life."
+//!
+//! This experiment is a genetic hybrid of two previous systems:
+//! - **Parent A**: `experiments/chem-sys` (Gray-Scott Reaction Diffusion)
+//! - **Parent B**: `experiments/sys-weather` (Lorenz Attractor)
+//!
+//! The Lorenz Attractor, a system of chaotic differential equations often used to model atmospheric convection,
+//! acts as the "DNA Driver" for a Gray-Scott reaction-diffusion simulation.
+//! System Bio-Dome 🧬
+//!
+//! A Hybrid Experiment by The Splice Surgeon.
+//! "The chaos of the storm drives the pulse of the life."
+//!
+//! This experiment is a genetic hybrid of two previous systems:
+//! - **Parent A**: `experiments/chem-sys` (Gray-Scott Reaction Diffusion)
+//! - **Parent B**: `experiments/sys-weather` (Lorenz Attractor)
+//!
+//! The Lorenz Attractor, a system of chaotic differential equations often used to model atmospheric convection,
+//! acts as the "DNA Driver" for a Gray-Scott reaction-diffusion simulation.
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, MouseEventKind};
 use gray_scott::GrayScott;
@@ -211,8 +233,8 @@ impl<'a> Widget for ChemWidget<'a> {
                     continue;
                 }
 
-                let idx_top = self.system.get_index(grid_x, grid_y_top);
-                let idx_bot = self.system.get_index(grid_x, grid_y_bot);
+                let idx_top = self.system.get_index(grid_x, grid_y_top).unwrap();
+                let idx_bot = self.system.get_index(grid_x, grid_y_bot).unwrap();
 
                 let v_top = self.system.v()[idx_top] as f64;
                 let v_bot = self.system.v()[idx_bot] as f64;

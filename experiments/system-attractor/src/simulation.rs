@@ -9,14 +9,19 @@ const RHO_BASE: f32 = 28.0;
 const RHO_SCALE: f32 = 72.0;
 const BETA_VAL: f32 = 8.0 / 3.0;
 
+/// A particle traversing the chaotic Lorenz Attractor.
 #[derive(Clone, Copy)]
 pub struct Particle {
+    /// Current 3D position in the phase space.
     pub pos: Vec3,
+    /// Current velocity (change in position over dt).
     pub vel: Vec3,
+    /// Display color, determined by velocity and system load.
     pub color: Color,
 }
 
 impl Particle {
+    /// Creates a new particle at the specified position.
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self {
             pos: vec3(x, y, z),
@@ -25,6 +30,7 @@ impl Particle {
         }
     }
 
+    /// Generates a particle at a random starting location within standard bounds.
     pub fn random() -> Self {
         Self::new(
             rand::gen_range(-10.0, 10.0),
@@ -34,11 +40,18 @@ impl Particle {
     }
 }
 
+/// Parameters governing the shape and behavior of the Lorenz Attractor.
+/// These are mapped directly from real-time system metrics.
 pub struct LorenzParams {
+    /// Represents volatility/turbulence (mapped from CPU usage).
     pub sigma: f32,
+    /// Represents the driving force (mapped from Memory usage).
     pub rho: f32,
+    /// The beta constant, usually 8/3.
     pub beta: f32,
+    /// Introduces random noise into particle positions (mapped from Swap usage).
     pub jitter: f32,
+    /// Shifts the hue of particles to indicate instability (mapped from Load Average).
     pub color_shift: f32,
 }
 
@@ -54,8 +67,10 @@ impl Default for LorenzParams {
     }
 }
 
+/// Monitors system resources and translates them into parameters for the simulation.
 pub struct SystemMonitor {
     sys: System,
+    /// The translated simulation parameters.
     pub params: LorenzParams,
     last_update: f64,
 }
@@ -67,6 +82,7 @@ impl Default for SystemMonitor {
 }
 
 impl SystemMonitor {
+    /// Initializes the system monitor, preparing it to read CPU and Memory metrics.
     pub fn new() -> Self {
         let sys = System::new_with_specifics(
             RefreshKind::new()
@@ -80,6 +96,7 @@ impl SystemMonitor {
         }
     }
 
+    /// Refreshes the system metrics and recalculates the Lorenz parameters.
     pub fn update(&mut self) {
         let now = get_time();
         if now - self.last_update < 1.0 {
@@ -135,12 +152,16 @@ impl SystemMonitor {
     }
 }
 
+/// The core simulation state, containing all particles and the system monitor.
 pub struct Simulation {
+    /// The collection of particles moving through the attractor.
     pub particles: Vec<Particle>,
+    /// The system monitor driving the attractor's parameters.
     pub monitor: SystemMonitor,
 }
 
 impl Simulation {
+    /// Initializes a new simulation with the given number of particles.
     pub fn new(count: usize) -> Self {
         let mut particles = Vec::with_capacity(count);
         for _ in 0..count {
@@ -153,11 +174,13 @@ impl Simulation {
         }
     }
 
+    /// Steps the simulation forward by updating the monitor and moving all particles.
     pub fn update(&mut self, dt: f32) {
         self.monitor.update();
         update_particles(&mut self.particles, &self.monitor.params, dt);
     }
 
+    /// Resets all particles to random starting positions.
     pub fn reset(&mut self) {
         // Reset single-threaded to avoid rand concurrency issues
         self.particles.iter_mut().for_each(|p| {
@@ -166,6 +189,7 @@ impl Simulation {
     }
 }
 
+/// Advances the positions of a slice of particles using the provided parameters and time delta.
 pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f32) {
     particles.par_iter_mut().for_each(|p| {
         // RK4 Integration
@@ -209,6 +233,7 @@ pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f
     });
 }
 
+/// Calculates the rate of change (derivatives) for the Lorenz system at a given position.
 pub fn derivatives(pos: Vec3, params: &LorenzParams) -> Vec3 {
     let x = pos.x;
     let y = pos.y;
@@ -221,6 +246,7 @@ pub fn derivatives(pos: Vec3, params: &LorenzParams) -> Vec3 {
     vec3(dx, dy, dz)
 }
 
+/// Performs a single Runge-Kutta 4th Order (RK4) integration step to advance a particle's position.
 pub fn solve_rk4(pos: Vec3, params: &LorenzParams, dt: f32) -> Vec3 {
     let k1 = derivatives(pos, params);
     let k2 = derivatives(pos + k1 * dt * 0.5, params);
