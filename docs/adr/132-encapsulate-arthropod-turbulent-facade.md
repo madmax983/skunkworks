@@ -3,7 +3,7 @@
 Date: 2026-06-24
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The Atlas persona recently observed that internal modules within `crates/arthropod/src/lib.rs` and `experiments/turbulent-rhythms/tests/havoc_contention.rs` were leaking via `pub mod`. This breaks the intended Facade pattern and exposes implementation details directly to consumers, resulting in tight coupling and violating architectural boundaries.

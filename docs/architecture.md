@@ -3738,3 +3738,85 @@ classDiagram
     TextGlitcher ..> FreeFunctions : Flattened
     NarrativeBuilder ..> DirectManipulation : Removed
 ```
+
+## Literary-Boids Vector Math & Facade (ADR 142)
+
+The `literary-boids` experiment was refactored to decouple its vector math dependency from `tui-shared` to the dedicated `locus` crate, and its internal modules were strictly encapsulated via the Facade pattern.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace LiteraryBoidsFacade {
+        class Main {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class Boid {
+            <<pub(crate)>>
+        }
+        class Critic {
+            <<pub(crate)>>
+        }
+        class SyntaxPhysics {
+            <<pub(crate)>>
+        }
+        class Traces {
+            <<pub(crate)>>
+        }
+        class World {
+            <<pub(crate)>>
+        }
+    }
+
+    class LocusVec2 {
+        <<Library: locus>>
+        +Vec2
+    }
+
+    Main ..> Boid : encapsulates
+    Main ..> Critic : encapsulates
+    Main ..> SyntaxPhysics : encapsulates
+    Main ..> Traces : encapsulates
+    Main ..> World : encapsulates
+
+    World --> LocusVec2 : uses
+    Boid --> LocusVec2 : uses
+```
+
+## Graveyard Crates Module Boundaries (ADR 143)
+
+The internal submodules of graveyard crates (like `git_galaxy`, `git_rhythm`, `thread-symphony`) have been correctly encapsulated using the Facade pattern while preserving conditional compilation (`cfg` attributes).
+
+```mermaid
+classDiagram
+    direction TB
+    namespace GraveyardFacades {
+        class GitGalaxyFacade {
+            <<Facade>>
+        }
+        class GitRhythmFacade {
+            <<Facade>>
+        }
+        class ThreadSymphonyFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class GalaxyInternal {
+            <<pub(crate)>>
+        }
+        class RhythmInternal {
+            <<pub(crate)>>
+        }
+        class SymphonyInternal {
+            <<pub(crate)>>
+        }
+    }
+
+    GitGalaxyFacade ..> GalaxyInternal : encapsulates
+    GitRhythmFacade ..> RhythmInternal : encapsulates
+    ThreadSymphonyFacade ..> SymphonyInternal : encapsulates
+```
