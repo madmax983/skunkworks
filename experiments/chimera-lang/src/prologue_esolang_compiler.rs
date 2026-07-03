@@ -2789,8 +2789,6 @@ fn compile_spqr_rsa_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
     Ok(genes)
 }
 
-
-
 fn compile_clockwork_concerto_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let inner = pair

@@ -1,34 +1,5 @@
-**[Flattening ViewMode Checks]**
-**Learning:** `tui/app/handlers/normal/chars.rs` had deep nesting with `if let ViewMode::... = app_state.view_mode { ... } else if let ...`.
-**Action:** Replaced `if let ViewMode::... = ...` chains with `match app_state.view_mode { ... }` blocks where multiple branches existed. Replaced isolated `if let ViewMode::... = ...` with `if matches!(app_state.view_mode, ViewMode::...)` to reduce nesting and improve clarity.
+# Forge's Journal
 
-**[Flattening VM Pyramids of Doom]**
-**Learning:** Stack manipulation in VM operations often involved deep nesting `if vm.stack.len() >= N { let val = ...; if let Value::Int(...) = val { ... } }`.
-**Action:** Refactored VM operations in `nova.rs`, `babel.rs`, and `elektra.rs` to use guard clauses: `let Some(Value::Int(c_val)) = vm.stack.pop() else { return None; };` to flatten the execution flow and improve readability.
-
-**[Flattening ViewMode Checks]**
-**Learning:** `tui/app/handlers/normal/chars.rs` had deep nesting with `if let ViewMode::... = app_state.view_mode { ... } else if let ...`.
-**Action:** Replaced `if let ViewMode::... = ...` chains with `match app_state.view_mode { ... }` blocks where multiple branches existed. Replaced isolated `if let ViewMode::... = ...` with `if matches!(app_state.view_mode, ViewMode::...)` to reduce nesting and improve clarity.
-
-**[Flattening VM Pyramids of Doom]**
-**Learning:** Stack manipulation in VM operations often involved deep nesting `if vm.stack.len() >= N { let val = ...; if let Value::Int(...) = val { ... } }`.
-**Action:** Refactored VM operations in `nova.rs`, `babel.rs`, and `elektra.rs` to use guard clauses: `let Some(Value::Int(c_val)) = vm.stack.pop() else { return None; };` to flatten the execution flow and improve readability.
-**[Flattening ViewMode Checks in Handlers]**\n**Learning:** In TUI handler functions that only apply to a specific `ViewMode` and do nothing otherwise, using `if matches!(app_state.view_mode, ViewMode::X) { ... }` creates unnecessary rightward drift and nesting.\n**Action:** Replaced these blocks with early return guard clauses: `let ViewMode::X = app_state.view_mode else { return Ok(false); };`, flattening the function body and adhering strictly to Forge's guard clause preference.
-
-**[Extracting God Functions in Display Impls]**
-**Learning:** `std::fmt::Display` implementations, especially for structures like `Snapshot` that serialize multiple collections (e.g., `metrics` and `entities`), can easily grow into "God Functions" (100+ lines).
-**Action:** Extract the formatting logic for individual collections into private helper methods on the struct (e.g., `fmt_metrics`, `fmt_entities`), reducing nesting and cognitive load in the main `fmt` method.
-
-**[Flattening Pyramids of Doom in Match Arms]**
-**Learning:** When matching on multiple patterns where the success case relies on nested `if let Some(...) = ...` (a Pyramid of Doom), utilizing guard clauses `let Some(...) = ... else { return; }` allows us to extract values cleanly and dramatically reduce nesting, as seen in `apply_sink_rune`.
-**Action:** Prefer `let ... else { return; }` in `match` arms over deep nesting to keep code flat and readable.
-
-**[Replacing if-else Chains with Match]**
-**Learning:** Massive `if current_type == X else if current_type == Y` chains (like the one in `process_agents` which spanned nearly 150 lines) are hard to read and easily miss logic. They should be simplified using standard `match` syntax.
-**Action:** Refactor long `if-else if` chains evaluating equality on the same variable to idiomatic Rust `match` expressions.
-**[Refactoring Safe Unwraps to Idiomatic Guard Clauses]**
-**Learning:** Even when `unwrap()` is technically safe due to preceding bounds checks (e.g., `if vm.stack.len() >= 2 { let val = vm.stack.pop().unwrap(); }`), it is not idiomatic Rust and sets a dangerous precedent. It also fails `clippy` checks for panic risks if policies change.
-**Action:** Replace these "safe" unwraps with idiomatic guard clauses (`let Some(val) = vm.stack.pop() else { return; };`) or the try operator (`?` if the function returns an `Option`/`Result`). This enforces static safety and prevents future refactors from accidentally turning safe unwraps into panics.
-**[Refactoring Safe Unwraps to Idiomatic Guard Clauses (VM Modules)]**
-**Learning:** Even when `unwrap()` is "safe" due to preceding length checks (e.g., `if vm.stack.len() >= 2 { let val = vm.stack.pop().unwrap(); }`), it is not idiomatic and violates Forge's essentialist safety principles. However, when refactoring to the try operator (`?`), pay strict attention to the function's return signature. You cannot use `?` on an `Option` inside a function that returns `()` (like `exec_resonance_op` or `exec_phylogeny_op`).
-**Action:** Use `let val = vm.stack.pop()?;` in functions returning `Option<T>` (like most `nova` extensions), but fallback to Forge's guard clause `let Some(val) = vm.stack.pop() else { return; };` in functions returning the unit type `()`.
+## Removing Panics in Stack Pops
+**Learning:** Even when stack bounds are checked via `stack.len() >= N`, calling `.unwrap()` is dangerous because it assumes internal logic or bounds checking won't change. However, when writing guard clauses (e.g. `let Some(val) = stack.pop() else { return None; }`), if the enclosing function returns an `Option`, using the `?` operator (e.g., `let val = stack.pop()?;`) is significantly cleaner and idiomatic.
+**Action:** When popping from a stack in a function returning `Option`, use the `?` try operator. For functions returning `()` or `bool`, use `let Some(...) = stack.pop() else { return ...; };`. Rely on `cargo clippy --fix` to automate `?` suggestions.

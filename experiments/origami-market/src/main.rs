@@ -83,17 +83,49 @@ async fn run_sim() {
         }
 
         // Camera movement
-        if is_key_down(KeyCode::Left) { camera.position.x -= 1.0; }
-        if is_key_down(KeyCode::Right) { camera.position.x += 1.0; }
-        if is_key_down(KeyCode::Up) { camera.position.y += 1.0; }
-        if is_key_down(KeyCode::Down) { camera.position.y -= 1.0; }
+        if is_key_down(KeyCode::Left) {
+            camera.position.x -= 1.0;
+        }
+        if is_key_down(KeyCode::Right) {
+            camera.position.x += 1.0;
+        }
+        if is_key_down(KeyCode::Up) {
+            camera.position.y += 1.0;
+        }
+        if is_key_down(KeyCode::Down) {
+            camera.position.y -= 1.0;
+        }
 
         set_default_camera();
 
-        draw_text(&format!("Bids: {}", market.total_bids), 10.0, 20.0, 30.0, GREEN);
-        draw_text(&format!("Asks: {}", market.total_asks), 10.0, 50.0, 30.0, RED);
-        draw_text(&format!("Trades: {}", market.trade_count), 10.0, 80.0, 30.0, YELLOW);
-        draw_text(&format!("Gamma Tension: {:.2}", base_gamma), 10.0, 110.0, 30.0, WHITE);
+        draw_text(
+            &format!("Bids: {}", market.total_bids),
+            10.0,
+            20.0,
+            30.0,
+            GREEN,
+        );
+        draw_text(
+            &format!("Asks: {}", market.total_asks),
+            10.0,
+            50.0,
+            30.0,
+            RED,
+        );
+        draw_text(
+            &format!("Trades: {}", market.trade_count),
+            10.0,
+            80.0,
+            30.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!("Gamma Tension: {:.2}", base_gamma),
+            10.0,
+            110.0,
+            30.0,
+            WHITE,
+        );
 
         next_frame().await
     }

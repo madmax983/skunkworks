@@ -148,8 +148,12 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         }
         OpCode::PhyloSynthesize => {
             if vm.stack.len() >= 2 {
-                let content_val = vm.stack.pop().unwrap();
-                let path_val = vm.stack.pop().unwrap();
+                let Some(content_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(path_val) = vm.stack.pop() else {
+                    return;
+                };
                 if let (Value::Str(path_str), Value::Str(content)) = (path_val, content_val) {
                     if let Some(path) = sanitize_path(&vm.sandbox_root, &path_str) {
                         match fs::write(&path, content) {
@@ -171,8 +175,12 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         }
         OpCode::PhyloInfect => {
             if vm.stack.len() >= 2 {
-                let content_val = vm.stack.pop().unwrap();
-                let path_val = vm.stack.pop().unwrap();
+                let Some(content_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(path_val) = vm.stack.pop() else {
+                    return;
+                };
                 if let (Value::Str(path_str), Value::Str(content)) = (path_val, content_val) {
                     if let Some(path) = sanitize_path(&vm.sandbox_root, &path_str) {
                         let mut file =

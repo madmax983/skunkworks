@@ -23,8 +23,12 @@ pub fn exec_meta_op(
             // stack: strand_idx, name_str (top)
             // Usage: push(1) push("name") define
             if vm.stack.len() >= 2 {
-                let name_val = vm.stack.pop().unwrap();
-                let s_val = vm.stack.pop().unwrap();
+                let Some(name_val) = vm.stack.pop() else {
+                    return None;
+                };
+                let Some(s_val) = vm.stack.pop() else {
+                    return None;
+                };
 
                 if let (Value::Str(name), Value::Int(idx)) = (name_val, s_val) {
                     if idx >= 0 && (idx as usize) < vm.dna.helix.strands.len() {
