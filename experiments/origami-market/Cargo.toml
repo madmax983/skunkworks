@@ -1,0 +1,10 @@
+[package]
+name = "origami-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+market-sim = { path = "../../crates/market-sim" }
+origami = { path = "../../crates/origami" }
+macroquad = "0.4.15"
+rand = { workspace = true }

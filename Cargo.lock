@@ -8263,6 +8263,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "origami-market"
+version = "0.1.0"
+dependencies = [
+ "macroquad",
+ "market-sim",
+ "origami",
+ "rand 0.8.6",
+]
+
+[[package]]
 name = "origami-mycelium"
 version = "0.1.0"
 dependencies = [
