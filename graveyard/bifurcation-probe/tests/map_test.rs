@@ -1,4 +1,4 @@
-use bifurcation_probe::map::{ChaoticMap, LogisticMap};
+use bifurcation_probe::LogisticMap;
 
 #[test]
 fn test_logistic_iteration() {
@@ -23,7 +23,7 @@ fn test_lyapunov_stable() {
         x = map.iterate(x);
     }
 
-    let lambda = bifurcation_probe::map::calculate_lyapunov(&map, x, 100);
+    let lambda = bifurcation_probe::calculate_lyapunov(&map, x, 100);
     assert!((lambda - (-0.693)).abs() < 0.1);
 }
 
@@ -36,6 +36,6 @@ fn test_lyapunov_chaotic() {
     for _ in 0..100 {
         x = map.iterate(x);
     }
-    let lambda = bifurcation_probe::map::calculate_lyapunov(&map, x, 1000);
+    let lambda = bifurcation_probe::calculate_lyapunov(&map, x, 1000);
     assert!((lambda - 0.693).abs() < 0.1);
 }

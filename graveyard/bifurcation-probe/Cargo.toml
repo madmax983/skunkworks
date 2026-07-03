@@ -7,3 +7,4 @@ edition = "2021"
 macroquad = "0.4.5"
 rayon = "1.10"
 image = "0.24"
+[workspace]

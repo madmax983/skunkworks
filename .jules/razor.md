@@ -56,3 +56,8 @@
 **Bloat:** `NarrativeBuilder` in `experiments/chimera-lang/src/vm/narrative.rs` providing an unnecessary and verbose Builder pattern for simple Grid mutations.
 **Cut:** Deleted `narrative.rs`, eliminated the Builder, and refactored examples to mutate the Grid memory and DNA Helix directly.
 **Saved:** 70+ lines of builder abstraction code and cognitive overhead.
+
+## [Reduction]
+**Bloat:** `Decay` trait in `graveyard/mnemosyne` and `ChaoticMap` trait in `graveyard/bifurcation-probe` implemented by exactly one struct (`Memory` and `LogisticMap` respectively).
+**Cut:** Eliminated the traits entirely. Moved the method definitions directly to concrete `impl Memory` and `impl LogisticMap` blocks, and updated function signatures (e.g., `calculate_lyapunov`) to accept concrete types instead of generics (`&LogisticMap` instead of `&impl ChaoticMap`).
+**Saved:** Unnecessary indirection and generic bounds for single-implementation types, reducing cognitive load and adhering strictly to the KISS principle.

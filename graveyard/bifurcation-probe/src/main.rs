@@ -1,4 +1,4 @@
-use bifurcation_probe::map::{ChaoticMap, LogisticMap};
+use bifurcation_probe::LogisticMap;
 use macroquad::prelude::*;
 use rayon::prelude::*;
 
@@ -59,7 +59,7 @@ fn draw_cobweb(r: f64, rect: Rect) {
     }
 
     draw_text(
-        &format!("Cobweb (r={:.5})", r),
+        format!("Cobweb (r={:.5})", r),
         rect.x + 5.,
         rect.y + 20.,
         20.,
@@ -205,7 +205,7 @@ async fn main() {
                             // Alpha/Brightness based on count
                             let alpha = (count as f32 / max_count as f32).sqrt();
 
-                            col_pixels[y * 4 + 0] = (base_color.r * 255.0 * alpha) as u8;
+                            col_pixels[y * 4] = (base_color.r * 255.0 * alpha) as u8;
                             col_pixels[y * 4 + 1] = (base_color.g * 255.0 * alpha) as u8;
                             col_pixels[y * 4 + 2] = (base_color.b * 255.0 * alpha) as u8;
                             col_pixels[y * 4 + 3] = 255;
@@ -258,7 +258,7 @@ async fn main() {
         let mouse_pos = mouse_position();
         let r_hover = min_r + (max_r - min_r) * (mouse_pos.0 as f64 / screen_width() as f64);
 
-        draw_text(&format!("R: {:.5}", r_hover), 10., 30., 20., WHITE);
+        draw_text(format!("R: {:.5}", r_hover), 10., 30., 20., WHITE);
         draw_text(
             "Left Click: Cobweb Plot | Right Click: Pan | Scroll: Zoom",
             10.,
