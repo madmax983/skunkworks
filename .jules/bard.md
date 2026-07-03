@@ -39,3 +39,11 @@
 ## 2024-05-24 - [Simplifying Jargon in AGENTS.md]
 **Confusion:** The DX Audit Log flagged `AGENTS.md` for having excessive jargon ("Stigmergy", "Pheromone Trails", "Emergent Standards"), confusing users on how to contribute.
 **Clarification:** Replaced jargon in `AGENTS.md` with clearer terms ("Indirect Coordination", "Status Updates", "Adopted Conventions") to make the human interface of agent guidelines more accessible.
+
+## 2026-07-03 - [Fixing Cargo Run Arguments in README]
+**Confusion:** The Quick Start command in `experiments/neuro-physics/README.md` was `cargo run -p neuro-physics --headless`, which caused an error because cargo thought `--headless` was a cargo argument instead of an argument to the binary.
+**Clarification:** You must use the `--` separator when passing arguments to the underlying binary instead of cargo itself, e.g. `cargo run -p neuro-physics -- --headless`.
+
+## 2026-07-03 - [Fixing Quick Start Code Blocks in README]
+**Confusion:** The Quick Start code block in `crates/ferrous-core/README.md` was missing a `fn main() { ... }` wrapper, causing compilation errors when users copy-pasted it.
+**Clarification:** Always wrap example code blocks inside a `fn main() { ... }` block in READMEs so they are valid, runnable Rust programs.

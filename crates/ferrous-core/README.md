@@ -24,17 +24,19 @@ ferrous-core = { path = "../ferrous-core" }
 ```rust
 use ferrous_core::Platter;
 
-// Create a 10x10 platter
-let mut p = Platter::new(10, 10);
+fn main() {
+    // Create a 10x10 platter
+    let mut p = Platter::new(10, 10);
 
-// Accumulate fluid density at (5, 5)
-p.accumulate(5, 5, 1.5);
+    // Accumulate fluid density at (5, 5)
+    p.accumulate(5, 5, 1.5);
 
-// Check the value
-assert_eq!(p.get(5, 5), 1.5);
+    // Check the value
+    assert_eq!(p.get(5, 5), 1.5);
 
-// Apply pheromone decay
-p.decay(0.5);
+    // Apply pheromone decay
+    p.decay(0.5);
 
-assert_eq!(p.get(5, 5), 0.75);
+    assert_eq!(p.get(5, 5), 0.75);
+}
 ```
