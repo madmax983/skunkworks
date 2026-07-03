@@ -1934,6 +1934,8 @@ mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_garden_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_genetic_luthier_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_guild_test;

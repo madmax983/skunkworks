@@ -1131,6 +1131,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_spqr_rsa_instr(instr)?);
                 }
             }
+            Rule::genetic_luthier_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_genetic_luthier_instr(instr)?);
+                }
+            }
             Rule::clockwork_concerto_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_clockwork_concerto_instr(instr)?);
@@ -2789,8 +2794,6 @@ fn compile_spqr_rsa_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
     Ok(genes)
 }
 
-
-
 fn compile_clockwork_concerto_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let inner = pair
@@ -2991,4 +2994,28 @@ hologram {
         assert_eq!(genes[1].op, OpCode::Push);
         assert_eq!(genes[2].op, OpCode::Hologram);
     }
+}
+
+fn compile_genetic_luthier_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    let op_str = inner.as_str().to_lowercase();
+    match op_str.as_str() {
+        "pluck" | "tune" | "simulate" => {
+            genes.push(Gene::new(
+                OpCode::Push,
+                vec![Nucleotide::String(op_str.to_string())],
+            ));
+            genes.push(Gene::new(OpCode::GeneticLuthier, vec![]));
+        }
+        _ => {
+            genes.push(Gene::new(OpCode::Unknown(op_str.to_string()), vec![]));
+        }
+    }
+
+    Ok(genes)
 }

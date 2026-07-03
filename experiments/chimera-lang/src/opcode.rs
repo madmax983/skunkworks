@@ -2787,6 +2787,8 @@ pub enum OpCode {
     SorobanSpecter,
     /// **`ClockworkConcerto`** executes clockwork-concerto logic
     ClockworkConcerto,
+    /// **`GeneticLuthier`** executes genetic-luthier logic
+    GeneticLuthier,
 }
 
 impl fmt::Display for OpCode {
@@ -2795,6 +2797,7 @@ impl fmt::Display for OpCode {
             OpCode::Unknown(s) => write!(f, "{}", s),
             OpCode::SorobanSpecter => write!(f, "SorobanSpecter"),
             OpCode::ClockworkConcerto => write!(f, "ClockworkConcerto"),
+            OpCode::GeneticLuthier => write!(f, "GeneticLuthier"),
             _ => write!(f, "{}", self.as_ref()),
         }
     }

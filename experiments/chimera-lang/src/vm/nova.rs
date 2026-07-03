@@ -2467,3 +2467,13 @@ pub(crate) fn exec_clockwork_concerto(vm: &mut ChimeraVM) {
     vm.output
         .push("⚙️ Clockwork Concerto simulation tick.".to_string());
 }
+
+pub(crate) fn exec_genetic_luthier(vm: &mut ChimeraVM) {
+    if let Some(val) = vm.stack.pop() {
+        vm.output
+            .push(format!("🎻 Genetic Luthier string {}.", val));
+    } else {
+        vm.output
+            .push("🎻 Genetic Luthier string plucked.".to_string());
+    }
+}
