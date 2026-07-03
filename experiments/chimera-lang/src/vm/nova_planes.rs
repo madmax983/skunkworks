@@ -59,9 +59,15 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         OpCode::DRead => {
             // Stack: y, x, plane_id
             if vm.stack.len() >= 3 {
-                let plane_val = vm.stack.pop().unwrap();
-                let x_val = vm.stack.pop().unwrap();
-                let y_val = vm.stack.pop().unwrap();
+                let Some(plane_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(x_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(y_val) = vm.stack.pop() else {
+                    return;
+                };
 
                 if let (Value::Int(y), Value::Int(x), Value::Int(id)) = (y_val, x_val, plane_val) {
                     if id == vm.current_plane {
@@ -95,10 +101,18 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         OpCode::DWrite => {
             // Stack: val, y, x, plane_id
             if vm.stack.len() >= 4 {
-                let plane_val = vm.stack.pop().unwrap();
-                let x_val = vm.stack.pop().unwrap();
-                let y_val = vm.stack.pop().unwrap();
-                let val = vm.stack.pop().unwrap();
+                let Some(plane_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(x_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(y_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(val) = vm.stack.pop() else {
+                    return;
+                };
 
                 if let (Value::Int(y), Value::Int(x), Value::Int(id)) = (y_val, x_val, plane_val) {
                     if !vm.is_valid_coord(y, x) {
@@ -136,8 +150,12 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         OpCode::DMerge => {
             // Stack: method, plane_id
             if vm.stack.len() >= 2 {
-                let id_val = vm.stack.pop().unwrap();
-                let method_val = vm.stack.pop().unwrap();
+                let Some(id_val) = vm.stack.pop() else {
+                    return;
+                };
+                let Some(method_val) = vm.stack.pop() else {
+                    return;
+                };
 
                 if let (Value::Int(method), Value::Int(id)) = (method_val, id_val) {
                     if id == vm.current_plane {

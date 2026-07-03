@@ -146,11 +146,21 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
         }
 
         // Peek/Pop state
-        let mut turtle_stack_val = vm.stack.pop().unwrap();
-        let mut index_val = vm.stack.pop().unwrap();
-        let mut string_val = vm.stack.pop().unwrap();
-        let mapping_val = vm.stack.pop().unwrap();
-        let rules_val = vm.stack.last().unwrap().clone();
+        let Some(mut turtle_stack_val) = vm.stack.pop() else {
+            return false;
+        };
+        let Some(mut index_val) = vm.stack.pop() else {
+            return false;
+        };
+        let Some(mut string_val) = vm.stack.pop() else {
+            return false;
+        };
+        let Some(mapping_val) = vm.stack.pop() else {
+            return false;
+        };
+        let Some(rules_val) = vm.stack.last().cloned() else {
+            return false;
+        };
 
         let mut alive = true;
         let mut grew = false;
