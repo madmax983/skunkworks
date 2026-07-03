@@ -66,7 +66,6 @@ impl Memory {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::decay::Decay;
 
     #[test]
     fn test_erosion() {

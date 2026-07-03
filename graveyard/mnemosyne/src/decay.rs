@@ -1,13 +1,8 @@
 use crate::memory::Memory;
 use rand::Rng;
 
-pub trait Decay {
-    fn erode(&mut self);
-    fn recall(&mut self, cx: u32, cy: u32, radius: u32);
-}
-
-impl Decay for Memory {
-    fn erode(&mut self) {
+impl Memory {
+    pub fn erode(&mut self) {
         let mut rng = rand::thread_rng();
         let width = self.width;
         let height = self.height;
@@ -52,7 +47,7 @@ impl Decay for Memory {
         }
     }
 
-    fn recall(&mut self, cx: u32, cy: u32, radius: u32) {
+    pub fn recall(&mut self, cx: u32, cy: u32, radius: u32) {
         let mut rng = rand::thread_rng();
 
         let x_start = cx.saturating_sub(radius);

@@ -3,9 +3,8 @@ use macroquad::prelude::*;
 
 mod memory;
 use memory::Memory;
-mod decay;
-use decay::Decay;
 mod audio;
+mod decay;
 
 #[macroquad::main("Mnemosyne")]
 async fn main() {

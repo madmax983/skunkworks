@@ -1,8 +1,3 @@
-pub trait ChaoticMap {
-    fn iterate(&self, x: f64) -> f64;
-    fn derivative(&self, x: f64) -> f64;
-}
-
 pub struct LogisticMap {
     pub r: f64,
 }
@@ -11,19 +6,17 @@ impl LogisticMap {
     pub fn new(r: f64) -> Self {
         Self { r }
     }
-}
 
-impl ChaoticMap for LogisticMap {
-    fn iterate(&self, x: f64) -> f64 {
+    pub fn iterate(&self, x: f64) -> f64 {
         self.r * x * (1.0 - x)
     }
 
-    fn derivative(&self, x: f64) -> f64 {
+    pub fn derivative(&self, x: f64) -> f64 {
         self.r * (1.0 - 2.0 * x)
     }
 }
 
-pub fn calculate_lyapunov(map: &impl ChaoticMap, initial_x: f64, steps: usize) -> f64 {
+pub fn calculate_lyapunov(map: &LogisticMap, initial_x: f64, steps: usize) -> f64 {
     let mut x = initial_x;
     let mut sum_log_deriv = 0.0;
 
