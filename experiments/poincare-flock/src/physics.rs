@@ -13,6 +13,9 @@ pub struct Universe {
     pub width: f64,
     pub height: f64,
     pub params: FlockingParams,
+    pub positions_buffer: Vec<Vec2>,
+    pub velocities_buffer: Vec<Vec2>,
+    pub next_velocities_buffer: Vec<Vec2>,
 }
 
 impl Universe {
@@ -36,6 +39,9 @@ impl Universe {
             particles,
             width,
             height,
+            positions_buffer: Vec::with_capacity(150),
+            velocities_buffer: Vec::with_capacity(150),
+            next_velocities_buffer: Vec::with_capacity(150),
             params: FlockingParams {
                 view_radius: 20.0,
                 separation_radius: 5.0,
@@ -50,30 +56,46 @@ impl Universe {
 
     pub fn update(&mut self, _dt: f64) {
         let n = self.particles.len();
-        let positions: Vec<Vec2> = self.particles.iter().map(|p| p.pos).collect();
-        let velocities: Vec<Vec2> = self.particles.iter().map(|p| p.vel).collect();
-        let mut next_velocities = velocities.clone();
+
+        self.positions_buffer.clear();
+        self.positions_buffer
+            .extend(self.particles.iter().map(|p| p.pos));
+
+        self.velocities_buffer.clear();
+        self.velocities_buffer
+            .extend(self.particles.iter().map(|p| p.vel));
+
+        self.next_velocities_buffer.clear();
+        self.next_velocities_buffer
+            .extend(self.velocities_buffer.iter().copied());
 
         let center = Vec2::new(self.width / 2.0, self.height / 2.0);
         let max_r = (self.width.min(self.height) / 2.0) - 2.0;
 
         for i in 0..n {
             // Apply flocking rules in Euclidean space (local perception)
-            let force = compute_force(&positions, &velocities, i, &self.params);
-            next_velocities[i] += force;
-            next_velocities[i] = next_velocities[i].limit(self.params.max_speed);
+            let force = compute_force(
+                &self.positions_buffer,
+                &self.velocities_buffer,
+                i,
+                &self.params,
+            );
+            self.next_velocities_buffer[i] += force;
+            self.next_velocities_buffer[i] =
+                self.next_velocities_buffer[i].limit(self.params.max_speed);
 
             // Central attractor to keep them from getting lost in infinity
-            let delta = center - positions[i];
+            let delta = center - self.positions_buffer[i];
             let dist = delta.magnitude();
             if dist > max_r * 0.2 {
-                next_velocities[i] += delta.normalize() * 0.02 * (dist / max_r);
-                next_velocities[i] = next_velocities[i].limit(self.params.max_speed);
+                self.next_velocities_buffer[i] += delta.normalize() * 0.02 * (dist / max_r);
+                self.next_velocities_buffer[i] =
+                    self.next_velocities_buffer[i].limit(self.params.max_speed);
             }
         }
 
         for i in 0..n {
-            self.particles[i].vel = next_velocities[i];
+            self.particles[i].vel = self.next_velocities_buffer[i];
 
             // Map position to unit disk [-1, 1]
             let mut p_nx = (self.particles[i].pos.x - center.x) / max_r;
