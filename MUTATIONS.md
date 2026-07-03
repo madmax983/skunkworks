@@ -1584,3 +1584,10 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/physics-origami
 - **Evaluation**: Success. Compiled. The soft-body mesh is physically deformed by colliding particles acting as strikers.
 
+### origami-market
+- **Parents**: crates/market-sim + crates/origami
+- **Concept**: Topographical Market Depth.
+- **Novel trait**: The continuous Double Auction is mapped onto a 3D soft-body Miura-ori mesh. High trading activity dynamically actuates the physical constraints within the soft body mesh, causing the paper to bulge, warp, and deform dramatically to physically represent market volatility and trading pressure.
+- **Predicted Phenotype**: An emergent financial structure where discrete trades manifest as topographic folding and crumpling on an organic soft-body mesh, turning market volatility into physical topographical tension.
+- **Status**: experiments/origami-market
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Trading pressure successfully physically bends the origami mesh.
