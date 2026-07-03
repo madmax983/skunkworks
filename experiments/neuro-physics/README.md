@@ -10,5 +10,5 @@
 
 ## Quick Start
 ```bash
-cargo run -p neuro-physics --headless
+cargo run -p neuro-physics -- --headless
 ```
