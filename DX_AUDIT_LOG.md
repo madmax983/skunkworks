@@ -670,3 +670,30 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the basic example from `ferrous-core`'s README. The compiler immediately threw a fit about 'expected item, found keyword `let`'."
 *   🕵️ **The Reality:** "Turns out the example code isn't wrapped in a `fn main() { ... }` block, so it's invalid Rust syntax when copy-pasted directly into a new binary project."
 *   💡 **The Fix:** "Update the Quick Start example block to include the `fn main() {` wrapper around the code."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `graveyard/git_rhythm/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to add `Nova`'s story feature."
+**Action:** Copy and pasted the "Story Mode (Nova)" example code block from `graveyard/git_rhythm/README.md` into a fresh `src/main.rs` and tried to run it with the `nova` feature enabled.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Private Module Error:** The example code fails to compile immediately with `error[E0603]: module 'nova' is private`.
+    - *Impact:* Total compilation failure. The example code in the documentation is broken and cannot be used by end users.
+    - *Cause:* The `nova` module is declared as `pub(crate)` but the public API re-exports it directly. The example code tries to use the internal private path (`use git_rhythm::nova::NarrativeGenerator;`) instead of the public facade path (`use git_rhythm::NarrativeGenerator;`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (private module)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `story_demo` example from `git_rhythm`'s README to add Nova's story feature. The compiler immediately yelled at me that `module 'nova' is private`."
+*   🕵️ **The Reality:** "Turns out the library uses a Facade pattern that hides the `nova` module, but the README was never updated. The example tells you to import an internal private path."
+*   💡 **The Fix:** "Update the README example code to use the correct public import path: `use git_rhythm::NarrativeGenerator;` instead of `use git_rhythm::nova::NarrativeGenerator;`."
