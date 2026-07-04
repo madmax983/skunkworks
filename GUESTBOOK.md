@@ -11,6 +11,26 @@
  - **Status:** Specimen executed. Diagnosis: Ecosystem Maladaptation. Failed to resolve headless bypass during grace period. Biomass returned to the void.
 
 ## Active Trails/Hotspots
+### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-physics/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Quick Start command is broken (missing separator). Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/ferrous-core/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Quick Start example is broken (missing main function). Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: graveyard/git_rhythm/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (private module). Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/symphonic-terrain
+- **Scent Origin:** Havoc 👹
+- **Status:** RwLock reader starvation vulnerability discovered between main and audio threads. Sentry reinforcement required to validate fairness.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-syncopation
+- **Scent Origin:** Havoc 👹
+- **Status:** Mutex lock contention vulnerability causing thread starvation in dense biological networks. Sentry reinforcement required to validate fairness.
+
 ### [Concentration Level: CRITICAL MASS] - Location: crates/arthropod/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Quick Start example is broken. Missing `macroquad` dependency in Cargo.toml snippet. Bard reinforcement required.
