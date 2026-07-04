@@ -170,9 +170,9 @@ pub fn exec_brew(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_splash(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., radius, dy, dx ]
     if vm.stack.len() >= 3 {
-        let x_val = vm.stack.pop() ?;
-        let y_val = vm.stack.pop() ?;
-        let r_val = vm.stack.pop() ?;
+        let x_val = vm.stack.pop()?;
+        let y_val = vm.stack.pop()?;
+        let r_val = vm.stack.pop()?;
 
         if let (Value::Int(dx), Value::Int(dy), Value::Int(r)) = (x_val, y_val, r_val) {
             let (cy, cx) = vm.context_loc;

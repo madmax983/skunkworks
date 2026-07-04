@@ -266,8 +266,8 @@ pub fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_secrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let amount_val = vm.stack.pop() ?;
-        let channel_val = vm.stack.pop() ?;
+        let amount_val = vm.stack.pop()?;
+        let channel_val = vm.stack.pop()?;
         if let (Value::Int(c), Value::Int(a)) = (channel_val, amount_val) {
             if a > 0 {
                 let (cy, cx) = vm.context_loc;
@@ -324,8 +324,8 @@ pub fn exec_detect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_absorb(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let amount_val = vm.stack.pop() ?;
-        let channel_val = vm.stack.pop() ?;
+        let amount_val = vm.stack.pop()?;
+        let channel_val = vm.stack.pop()?;
         if let (Value::Int(c), Value::Int(a)) = (channel_val, amount_val) {
             let (cy, cx) = vm.context_loc;
             let channel_idx = (c.unsigned_abs() as usize) % 3;
@@ -524,8 +524,8 @@ pub fn exec_spirit(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_match(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let target_val = vm.stack.pop() ?;
-        let pattern_val = vm.stack.pop() ?;
+        let target_val = vm.stack.pop()?;
+        let pattern_val = vm.stack.pop()?;
 
         if let (Value::Str(p), Value::Str(t)) = (pattern_val, target_val) {
             // Re-implement glob_match here or make it public in nova.rs?

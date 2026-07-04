@@ -2277,8 +2277,12 @@ fn exec_connect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if let Some((ty, tx)) = vm.normalize_coords(y, x) {
                 let (cy, cx) = vm.context_loc;
                 if vm.mycelium.contains_key(&(cy, cx)) && vm.mycelium.contains_key(&(ty, tx)) {
-                    if let Some(nodes) = vm.mycelium.get_mut(&(cy, cx)) { nodes.push((ty, tx)); }
-                    if let Some(nodes) = vm.mycelium.get_mut(&(ty, tx)) { nodes.push((cy, cx)); }
+                    if let Some(nodes) = vm.mycelium.get_mut(&(cy, cx)) {
+                        nodes.push((ty, tx));
+                    }
+                    if let Some(nodes) = vm.mycelium.get_mut(&(ty, tx)) {
+                        nodes.push((cy, cx));
+                    }
                     vm.energy = vm.energy.saturating_sub(10);
                     vm.output.push(format!(
                         "CONNECT: Mycelium linked {},{} <-> {},{}",

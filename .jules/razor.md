@@ -61,3 +61,8 @@
 **Bloat:** `Decay` trait in `graveyard/mnemosyne` and `ChaoticMap` trait in `graveyard/bifurcation-probe` implemented by exactly one struct (`Memory` and `LogisticMap` respectively).
 **Cut:** Eliminated the traits entirely. Moved the method definitions directly to concrete `impl Memory` and `impl LogisticMap` blocks, and updated function signatures (e.g., `calculate_lyapunov`) to accept concrete types instead of generics (`&LogisticMap` instead of `&impl ChaoticMap`).
 **Saved:** Unnecessary indirection and generic bounds for single-implementation types, reducing cognitive load and adhering strictly to the KISS principle.
+
+## [Reduction]
+**Bloat:** `Vec4Ext` trait in `graveyard/chimera-enigma/src/main.rs` implemented by exactly one struct (`Vec4` from an external crate).
+**Cut:** Eliminated the trait entirely. Converted the rotation methods (`rotate_xw`, `rotate_yw`, etc.) into standalone module-level functions (`fn rotate_xw(v: &Vec4, theta: f32) -> Vec4`).
+**Saved:** Unnecessary trait declaration and indirection for a single struct type, adhering strictly to the KISS principle.
