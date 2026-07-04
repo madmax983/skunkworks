@@ -169,11 +169,8 @@ fn ui(f: &mut Frame, app: &mut App) {
             let render_x = x as f64;
 
             // Terrain
-            match app.grid.get_terrain(x, y) {
-                Terrain::Bridge => {
-                    app.bridge_buf.push((render_x, render_y));
-                }
-                _ => {}
+            if app.grid.get_terrain(x, y) == Terrain::Bridge {
+                app.bridge_buf.push((render_x, render_y));
             }
 
             // Particles

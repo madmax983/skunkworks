@@ -11,3 +11,7 @@
 **[Optimizing Allocations in Hybrid Iteration]**
 **Learning:** In hybrid traits/systems where components copy environmental views per agent (e.g., computing forces on a torus requiring "ghost" positions for wrapping), using `.clone()` inside the N agent update loop triggers O(N) memory allocations, destroying performance.
 **Action:** Pre-allocate a single buffer with `Vec::with_capacity(size)` outside the loop and reuse it via `buffer.copy_from_slice(&original)` to reduce allocations to O(1) on the hot path. Be careful to use `enumerate` where needed to avoid clippy's `needless_range_loop` warning.
+
+**[liquidity-bridge: Removing O(W) Allocations on the Hot Path]**
+**Learning:** In 2D grid simulations (like cellular automata or particle systems), stateful buffers used solely to determine scan order (e.g. `self.scan_x.clone()`) cause unnecessary per-frame allocations. If the scan order only toggles between forward and reverse, computing the index inline with a boolean flag completely eliminates the allocation.
+**Action:** Always scrutinize `.clone()` inside hot paths like `update()` loops, especially for vectors. Look for ways to compute the needed state inline using boolean flags or simple arithmetic rather than allocating intermediate state vectors.
