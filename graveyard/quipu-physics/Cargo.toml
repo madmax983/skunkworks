@@ -8,3 +8,5 @@ macroquad = "0.4"
 quipu = { path = "../../crates/quipu" }
 physics-pbd = { path = "../../crates/physics-pbd" }
 glam = "0.28"
+
+[workspace]

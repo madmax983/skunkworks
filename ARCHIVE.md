@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **quipu-physics**: Specimen condemned. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Grace period: 24h.
+- **git-quipu**: Specimen condemned. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Grace period: 24h.
 
 ## ☠️ Executed
+- **quipu-physics**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **gray-miller**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution (trivial coordinate projection, lack of depth). Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **git-physics**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution (hardcoded paths, generic representation). Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **neuro-terminal**: Specimen executed. Diagnosis: Terminal Compilation Failure (`E0603`: private module, `E0282`: type annotations needed) and Code Decay (abandoned `.orig`/`.rej` files). Grace period expired. Moved to graveyard.
