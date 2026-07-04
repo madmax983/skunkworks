@@ -1820,7 +1820,9 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
             let mut escaped = false;
             while let Some(&next_c) = chars.peek() {
                 if escaped {
-                    s.push(chars.next().unwrap());
+                    if let Some(c) = chars.next() {
+                        s.push(c);
+                    }
                     escaped = false;
                 } else if next_c == '\\' {
                     chars.next(); // consume backslash
@@ -1829,7 +1831,9 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
                     chars.next(); // consume closing quote
                     break;
                 } else {
-                    s.push(chars.next().unwrap());
+                    if let Some(c) = chars.next() {
+                        s.push(c);
+                    }
                 }
             }
             row.push(Value::Str(s));
@@ -1839,7 +1843,9 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
             // If '-' is followed by digit, it's a number.
 
             let mut s = String::new();
-            s.push(chars.next().unwrap()); // consume the first digit or '-'
+            if let Some(c) = chars.next() {
+                s.push(c);
+            } // consume the first digit or '-'
 
             // Check if it's just a '-' and the next character isn't a digit.
             let is_negative_sign_only =
@@ -1850,7 +1856,9 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
             } else {
                 while let Some(&next_c) = chars.peek() {
                     if next_c.is_ascii_digit() {
-                        s.push(chars.next().unwrap());
+                        if let Some(c) = chars.next() {
+                            s.push(c);
+                        }
                     } else {
                         break;
                     }
@@ -1867,10 +1875,14 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
             // Logic: If it looks like a word (>1 char), treat as String.
             // If single char, treat as String (Rune).
             let mut s = String::new();
-            s.push(chars.next().unwrap());
+            if let Some(c) = chars.next() {
+                s.push(c);
+            }
             while let Some(&next_c) = chars.peek() {
                 if next_c.is_alphanumeric() || next_c == '_' {
-                    s.push(chars.next().unwrap());
+                    if let Some(c) = chars.next() {
+                        s.push(c);
+                    }
                 } else {
                     break;
                 }
@@ -1878,7 +1890,7 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
             row.push(Value::Str(s));
         } else {
             // Single Char Rune (Symbols like !, ?, ~, &)
-            let c = chars.next().unwrap();
+            let Some(c) = chars.next() else { continue };
             if c == '.' {
                 row.push(Value::Int(0));
             } else {

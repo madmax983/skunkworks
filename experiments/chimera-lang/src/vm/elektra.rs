@@ -166,10 +166,10 @@ fn exec_patch(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 4 {
         return None;
     }
-    let target_val = vm.stack.pop().unwrap();
-    let x_val = vm.stack.pop().unwrap();
-    let y_val = vm.stack.pop().unwrap();
-    let source_val = vm.stack.pop().unwrap();
+    let target_val = vm.stack.pop()?;
+    let x_val = vm.stack.pop()?;
+    let y_val = vm.stack.pop()?;
+    let source_val = vm.stack.pop()?;
 
     if let (Value::Int(source_type), Value::Int(y), Value::Int(x), Value::Int(target_id)) =
         (source_val, y_val, x_val, target_val)
@@ -266,8 +266,8 @@ fn exec_circuit_breaker(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 2 {
         return None;
     }
-    let s_val = vm.stack.pop().unwrap();
-    let t_val = vm.stack.pop().unwrap();
+    let s_val = vm.stack.pop()?;
+    let t_val = vm.stack.pop()?;
 
     if let (Value::Int(strand_idx), Value::Int(threshold)) = (s_val, t_val) {
         let (y, x) = vm.context_loc;
@@ -285,9 +285,9 @@ fn exec_battery(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 3 {
         return None;
     }
-    let x_val = vm.stack.pop().unwrap();
-    let y_val = vm.stack.pop().unwrap();
-    let v_val = vm.stack.pop().unwrap();
+    let x_val = vm.stack.pop()?;
+    let y_val = vm.stack.pop()?;
+    let v_val = vm.stack.pop()?;
     if let (Value::Int(x), Value::Int(y), Value::Int(v)) = (x_val, y_val, v_val) {
         if let Some((ny, nx)) = vm.normalize_coords(y, x) {
             vm.voltage_grid[ny][nx] = v as f32;
@@ -302,8 +302,8 @@ fn exec_ground(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 2 {
         return None;
     }
-    let x_val = vm.stack.pop().unwrap();
-    let y_val = vm.stack.pop().unwrap();
+    let x_val = vm.stack.pop()?;
+    let y_val = vm.stack.pop()?;
     if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
         if let Some((ny, nx)) = vm.normalize_coords(y, x) {
             vm.voltage_grid[ny][nx] = 0.0;
@@ -318,8 +318,8 @@ fn exec_sense_volt(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 2 {
         return None;
     }
-    let x_val = vm.stack.pop().unwrap();
-    let y_val = vm.stack.pop().unwrap();
+    let x_val = vm.stack.pop()?;
+    let y_val = vm.stack.pop()?;
     if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
         if let Some((ny, nx)) = vm.normalize_coords(y, x) {
             let v = vm.voltage_grid[ny][nx];
@@ -335,8 +335,8 @@ fn exec_shock(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 2 {
         return None;
     }
-    let r_val = vm.stack.pop().unwrap();
-    let p_val = vm.stack.pop().unwrap();
+    let r_val = vm.stack.pop()?;
+    let p_val = vm.stack.pop()?;
     if let (Value::Int(r), Value::Int(p)) = (r_val, p_val) {
         let (cy, cx) = vm.context_loc;
         iterate_circle(
@@ -366,8 +366,8 @@ fn exec_lightning(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 2 {
         return None;
     }
-    let x_val = vm.stack.pop().unwrap();
-    let y_val = vm.stack.pop().unwrap();
+    let x_val = vm.stack.pop()?;
+    let y_val = vm.stack.pop()?;
     if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
         vm.output.push(format!("LIGHTNING: Strike at {},{}", x, y));
     }
@@ -378,8 +378,8 @@ fn exec_tesla_coil(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 2 {
         return None;
     }
-    let r_val = vm.stack.pop().unwrap();
-    let p_val = vm.stack.pop().unwrap();
+    let r_val = vm.stack.pop()?;
+    let p_val = vm.stack.pop()?;
     if let (Value::Int(r), Value::Int(p)) = (r_val, p_val) {
         let (cy, cx) = vm.context_loc;
 
@@ -506,8 +506,8 @@ fn exec_railgun(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let x_val = vm.stack.pop().unwrap();
-    let y_val = vm.stack.pop().unwrap();
+    let x_val = vm.stack.pop()?;
+    let y_val = vm.stack.pop()?;
 
     if let (Value::Int(dx), Value::Int(dy)) = (x_val, y_val) {
         let (cy, cx) = vm.context_loc;
@@ -572,9 +572,9 @@ fn exec_component_placement(vm: &mut ChimeraVM, type_prefix: &str) -> Option<(us
     if vm.stack.len() < 3 {
         return None;
     }
-    let x_val = vm.stack.pop().unwrap();
-    let y_val = vm.stack.pop().unwrap();
-    let param_val = vm.stack.pop().unwrap();
+    let x_val = vm.stack.pop()?;
+    let y_val = vm.stack.pop()?;
+    let param_val = vm.stack.pop()?;
 
     if let (Value::Int(x), Value::Int(y), Value::Int(p)) = (x_val, y_val, param_val) {
         if let Some((ny, nx)) = vm.normalize_coords(y, x) {

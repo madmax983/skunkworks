@@ -915,55 +915,55 @@ fn find_exit_edge(
     match dp {
         Direction::Right => {
             // Max X
-            let max_x = candidates.iter().map(|c| c.1).max().unwrap();
+            let max_x = candidates.iter().map(|c| c.1).max().unwrap_or(0);
             candidates.retain(|c| c.1 == max_x);
             // Tie breaker
             candidates.sort_by_key(|c| c.0); // Sort by Y
             if cc == CodelChooser::Right {
                 // Max Y
-                **candidates.last().unwrap()
+                **candidates.last().unwrap_or(&&(0,0))
             } else {
                 // Min Y
-                **candidates.first().unwrap()
+                **candidates.first().unwrap_or(&&(0,0))
             }
         }
         Direction::Down => {
             // Max Y
-            let max_y = candidates.iter().map(|c| c.0).max().unwrap();
+            let max_y = candidates.iter().map(|c| c.0).max().unwrap_or(0);
             candidates.retain(|c| c.0 == max_y);
             candidates.sort_by_key(|c| c.1); // Sort by X
             if cc == CodelChooser::Right {
                 // Min X
-                **candidates.first().unwrap()
+                **candidates.first().unwrap_or(&&(0,0))
             } else {
                 // Max X
-                **candidates.last().unwrap()
+                **candidates.last().unwrap_or(&&(0,0))
             }
         }
         Direction::Left => {
             // Min X
-            let min_x = candidates.iter().map(|c| c.1).min().unwrap();
+            let min_x = candidates.iter().map(|c| c.1).min().unwrap_or(0);
             candidates.retain(|c| c.1 == min_x);
             candidates.sort_by_key(|c| c.0); // Sort by Y
             if cc == CodelChooser::Right {
                 // Min Y
-                **candidates.first().unwrap()
+                **candidates.first().unwrap_or(&&(0,0))
             } else {
                 // Max Y
-                **candidates.last().unwrap()
+                **candidates.last().unwrap_or(&&(0,0))
             }
         }
         Direction::Up => {
             // Min Y
-            let min_y = candidates.iter().map(|c| c.0).min().unwrap();
+            let min_y = candidates.iter().map(|c| c.0).min().unwrap_or(0);
             candidates.retain(|c| c.0 == min_y);
             candidates.sort_by_key(|c| c.1); // Sort by X
             if cc == CodelChooser::Right {
                 // Max X
-                **candidates.last().unwrap()
+                **candidates.last().unwrap_or(&&(0,0))
             } else {
                 // Min X
-                **candidates.first().unwrap()
+                **candidates.first().unwrap_or(&&(0,0))
             }
         }
     }
@@ -998,32 +998,32 @@ fn execute_op(vm: &mut ChimeraVM, state: &mut PietState, dh: i32, dl: i32, block
         (1, 0) => {
             // Add
             if state.stack.len() >= 2 {
-                let a = state.stack.pop().unwrap();
-                let b = state.stack.pop().unwrap();
+                let Some(a) = state.stack.pop() else { return };
+                let Some(b) = state.stack.pop() else { return };
                 state.stack.push(b.wrapping_add(a));
             }
         }
         (1, 1) => {
             // Sub
             if state.stack.len() >= 2 {
-                let a = state.stack.pop().unwrap();
-                let b = state.stack.pop().unwrap();
+                let Some(a) = state.stack.pop() else { return };
+                let Some(b) = state.stack.pop() else { return };
                 state.stack.push(b.wrapping_sub(a));
             }
         }
         (1, 2) => {
             // Mul
             if state.stack.len() >= 2 {
-                let a = state.stack.pop().unwrap();
-                let b = state.stack.pop().unwrap();
+                let Some(a) = state.stack.pop() else { return };
+                let Some(b) = state.stack.pop() else { return };
                 state.stack.push(b.wrapping_mul(a));
             }
         }
         (2, 0) => {
             // Div
             if state.stack.len() >= 2 {
-                let a = state.stack.pop().unwrap();
-                let b = state.stack.pop().unwrap();
+                let Some(a) = state.stack.pop() else { return };
+                let Some(b) = state.stack.pop() else { return };
                 if a != 0 {
                     state.stack.push(b.wrapping_div(a));
                 } else {
@@ -1037,8 +1037,8 @@ fn execute_op(vm: &mut ChimeraVM, state: &mut PietState, dh: i32, dl: i32, block
         (2, 1) => {
             // Mod
             if state.stack.len() >= 2 {
-                let a = state.stack.pop().unwrap();
-                let b = state.stack.pop().unwrap();
+                let Some(a) = state.stack.pop() else { return };
+                let Some(b) = state.stack.pop() else { return };
                 if a != 0 {
                     state.stack.push(b.wrapping_rem(a));
                 } else {
@@ -1056,8 +1056,8 @@ fn execute_op(vm: &mut ChimeraVM, state: &mut PietState, dh: i32, dl: i32, block
         (3, 0) => {
             // Greater
             if state.stack.len() >= 2 {
-                let a = state.stack.pop().unwrap();
-                let b = state.stack.pop().unwrap();
+                let Some(a) = state.stack.pop() else { return };
+                let Some(b) = state.stack.pop() else { return };
                 state.stack.push(if b > a { 1 } else { 0 });
             }
         }
@@ -1097,8 +1097,8 @@ fn execute_op(vm: &mut ChimeraVM, state: &mut PietState, dh: i32, dl: i32, block
         (4, 1) => {
             // Roll
             if state.stack.len() >= 2 {
-                let rolls = state.stack.pop().unwrap();
-                let depth = state.stack.pop().unwrap();
+                let Some(rolls) = state.stack.pop() else { return };
+                let Some(depth) = state.stack.pop() else { return };
                 if depth > 0 && (depth as usize) <= state.stack.len() {
                     let idx = state.stack.len() - (depth as usize);
                     // Just do a naive rotate

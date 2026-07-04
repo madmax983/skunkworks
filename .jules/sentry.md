@@ -17,3 +17,6 @@
 **[Quipu Recursive Formatting Helpers]**
 **Learning:** Achieving 100% line coverage for internal debugging helper structs (`DebugCappedCord` and `DebugSubsidiaries`) which cap `fmt::Debug` recursion limits is extremely difficult from outside the crate due to privacy bounds, macro resolution, and how deeply nested structs hit recursion caps. Tarpaulin struggles to mark lines 326, 330, 331, 343, and 351 as covered despite multiple angles of attack.
 **Action:** Accept >95% coverage on recursive debug wrappers as long as the primary logic (like `checked_add`, edge case construction, and trait derivations) are rigorously tested and prevent panics.
+**[Unwrap Panics on Stack Pops]**
+**Learning:** Found and removed dozens of `.unwrap()` calls on stack pops in various module execution contexts (like `nova_genetics`, `nova_fluid`, etc.). A malformed DNA script running in the ChimeraVM can cause the stack to be smaller than expected. Popping from an empty stack causes fatal crashes.
+**Action:** Always replace `.unwrap()` with idiomatic rust like `let Some(val) = vm.stack.pop() else { return; };` to silently stop execution of the op or return an error/`None`. Never trust the stack has elements just because the script called the OpCode.

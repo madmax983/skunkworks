@@ -58,9 +58,9 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let arg_val = vm.stack.pop().unwrap();
-    let name_val = vm.stack.pop().unwrap();
-    let action_val = vm.stack.pop().unwrap();
+    let arg_val = vm.stack.pop()?;
+    let name_val = vm.stack.pop()?;
+    let action_val = vm.stack.pop()?;
 
     let action = match action_val {
         Value::Str(s) => s,
@@ -110,7 +110,7 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             } else {
                 vm.energy -= 10;
                 {
-                    let guild = vm.guilds.get_mut(&name).unwrap();
+                    let guild = vm.guilds.get_mut(&name)?;
                     guild.members.insert(caller);
                     guild.treasury += 10;
                 }
@@ -125,7 +125,7 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
 
             let removed = {
-                let guild = vm.guilds.get_mut(&name).unwrap();
+                let guild = vm.guilds.get_mut(&name)?;
                 guild.members.remove(&caller)
             };
 
@@ -153,7 +153,7 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 let mut is_member = false;
                 {
-                    let guild = vm.guilds.get_mut(&name).unwrap();
+                    let guild = vm.guilds.get_mut(&name)?;
                     if guild.members.contains(&caller) {
                         is_member = true;
                         guild.treasury += amount;
@@ -188,7 +188,7 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let mut msg = String::new();
 
                 {
-                    let guild = vm.guilds.get_mut(&name).unwrap();
+                    let guild = vm.guilds.get_mut(&name)?;
                     if !guild.members.contains(&caller) {
                         msg = format!("GUILD: Must be a member of '{}'", name);
                     } else if guild.founder != caller {
@@ -236,9 +236,9 @@ pub fn exec_charter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let guild_name_val = vm.stack.pop().unwrap();
-    let arg_val = vm.stack.pop().unwrap();
-    let action_val = vm.stack.pop().unwrap();
+    let guild_name_val = vm.stack.pop()?;
+    let arg_val = vm.stack.pop()?;
+    let action_val = vm.stack.pop()?;
 
     let action = match action_val {
         Value::Str(s) => s,
@@ -270,7 +270,7 @@ pub fn exec_charter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let mut msg = None;
 
     {
-        let guild = vm.guilds.get_mut(&name).unwrap();
+        let guild = vm.guilds.get_mut(&name)?;
         if guild.founder != caller {
             msg = Some("CHARTER: Only founder can amend charter".to_string());
         } else {
@@ -310,7 +310,7 @@ pub fn exec_charter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     if let Some(target) = kick_target {
         {
-            let guild = vm.guilds.get_mut(&name).unwrap();
+            let guild = vm.guilds.get_mut(&name)?;
             guild.members.remove(&target);
         }
         vm.strand_guild_map.remove(&target);

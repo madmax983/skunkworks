@@ -50,12 +50,8 @@ pub fn exec_scent_op(
 fn exec_emit(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., intensity, signature_string ]
     if vm.stack.len() >= 2 {
-        let Some(sig_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(int_val) = vm.stack.pop() else {
-            return None;
-        };
+        let sig_val = vm.stack.pop()?;
+        let int_val = vm.stack.pop()?;
 
         if let (Value::Str(sig), Value::Int(int)) = (sig_val, int_val) {
             if int > 0 {
