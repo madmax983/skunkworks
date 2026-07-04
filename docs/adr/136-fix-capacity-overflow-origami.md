@@ -3,7 +3,7 @@
 Date: 2026-06-27
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 During an architectural review by the Atlas persona, it was discovered that `crates/origami/src/lib.rs` calculated capacity for `Vec::with_capacity` using user-provided input parameters. It failed to bound the capacity allocation against the process limits (`isize::MAX / size_of<T>`), which caused fatal `capacity overflow` panics on absurd input sizes.

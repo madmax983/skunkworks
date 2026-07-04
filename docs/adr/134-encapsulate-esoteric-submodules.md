@@ -3,7 +3,7 @@
 Date: 2026-06-27
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 During an architectural review by the Atlas persona, it was discovered that several experimental crates (`verge-computer`, `chaos-hologram`, and `hologram-text`) leaked their internal submodules directly via `pub mod`. This breaks the intended Facade pattern and exposes implementation details that should remain internal to the crates.
