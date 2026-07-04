@@ -217,12 +217,8 @@ pub fn exec_aeolus(
         return None;
     }
 
-    let Some(str_val) = vm.stack.pop() else {
-        return None;
-    };
-    let Some(ang_val) = vm.stack.pop() else {
-        return None;
-    };
+    let str_val = vm.stack.pop() ?;
+    let ang_val = vm.stack.pop() ?;
 
     let (Value::Int(ang), Value::Int(str)) = (ang_val, str_val) else {
         vm.output
@@ -268,12 +264,8 @@ pub fn exec_storm(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Opti
         return None;
     }
 
-    let Some(rad_val) = vm.stack.pop() else {
-        return None;
-    };
-    let Some(int_val) = vm.stack.pop() else {
-        return None;
-    };
+    let rad_val = vm.stack.pop() ?;
+    let int_val = vm.stack.pop() ?;
 
     let (Value::Int(int), Value::Int(rad)) = (int_val, rad_val) else {
         vm.output.push("Error: Type mismatch for Storm".to_string());
@@ -321,12 +313,8 @@ pub fn exec_tsunami(
         return None;
     }
 
-    let Some(pow_val) = vm.stack.pop() else {
-        return None;
-    };
-    let Some(dir_val) = vm.stack.pop() else {
-        return None;
-    };
+    let pow_val = vm.stack.pop() ?;
+    let dir_val = vm.stack.pop() ?;
 
     let (Value::Int(dir), Value::Int(pow)) = (dir_val, pow_val) else {
         vm.output

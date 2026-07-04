@@ -18,12 +18,8 @@ pub fn exec_morphogen(
 ) -> Option<(usize, usize)> {
     // Stack: [ ..., channel, amount ] -> [ ... ]
     if vm.stack.len() >= 2 {
-        let Some(amt_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(chan_val) = vm.stack.pop() else {
-            return None;
-        };
+        let amt_val = vm.stack.pop() ?;
+        let chan_val = vm.stack.pop() ?;
 
         if let (Value::Int(c), Value::Int(a)) = (chan_val, amt_val) {
             let channel = c.clamp(0, 2) as usize;
@@ -66,15 +62,9 @@ pub fn exec_hox_switch(
 ) -> Option<(usize, usize)> {
     // Stack: [ ..., channel, threshold, strand_idx ] -> [ ... ]
     if vm.stack.len() >= 3 {
-        let Some(strand_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(thresh_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(chan_val) = vm.stack.pop() else {
-            return None;
-        };
+        let strand_val = vm.stack.pop() ?;
+        let thresh_val = vm.stack.pop() ?;
+        let chan_val = vm.stack.pop() ?;
 
         if let (Value::Int(c), Value::Int(t), Value::Int(s_idx)) =
             (chan_val, thresh_val, strand_val)

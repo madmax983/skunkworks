@@ -768,8 +768,8 @@ fn exec_rune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_tui_mod(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let mode_val = vm.stack.pop().unwrap();
-        let val_val = vm.stack.pop().unwrap();
+        let mode_val = vm.stack.pop()?;
+        let val_val = vm.stack.pop()?;
 
         match (mode_val, val_val) {
             (Value::Int(mode), Value::Int(val)) => match mode {
@@ -951,8 +951,8 @@ pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
 
 fn exec_harmonize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let s_val = vm.stack.pop().unwrap();
-        let chord_val = vm.stack.pop().unwrap();
+        let s_val = vm.stack.pop()?;
+        let chord_val = vm.stack.pop()?;
 
         if let (Value::Int(s_idx), Value::Junction(_, notes)) = (s_val, chord_val) {
             let idx = s_idx as usize;
@@ -1341,8 +1341,8 @@ fn exec_stabilize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_disintegrate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
+        let x_val = vm.stack.pop()?;
+        let y_val = vm.stack.pop()?;
         if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                 vm.entropy_grid[ny][nx] = 100;
@@ -1435,8 +1435,8 @@ fn exec_ret(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_bind(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let s_val = vm.stack.pop().unwrap();
-        let c_val = vm.stack.pop().unwrap();
+        let s_val = vm.stack.pop()?;
+        let c_val = vm.stack.pop()?;
         if let (Value::Int(s), Value::Int(c)) = (s_val, c_val) {
             let strand_idx = s as usize;
             let key = (c as u8) as char;
@@ -1477,8 +1477,8 @@ fn exec_unbind(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_lumine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let intensity_val = vm.stack.pop().unwrap();
-        let radius_val = vm.stack.pop().unwrap();
+        let intensity_val = vm.stack.pop()?;
+        let radius_val = vm.stack.pop()?;
         if let (Value::Int(r), Value::Int(intensity)) = (radius_val, intensity_val) {
             if r > 0 && intensity > 0 {
                 let (cy, cx) = vm.context_loc;
@@ -1520,8 +1520,8 @@ fn exec_sense_light(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_sonar(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let dx_val = vm.stack.pop().unwrap();
-        let dy_val = vm.stack.pop().unwrap();
+        let dx_val = vm.stack.pop()?;
+        let dy_val = vm.stack.pop()?;
         if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
             let (cy, cx) = vm.context_loc;
             let mut found = false;
@@ -1559,8 +1559,8 @@ fn exec_sonar(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_broadcast(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let value = vm.stack.pop().unwrap();
-        let channel_val = vm.stack.pop().unwrap();
+        let value = vm.stack.pop()?;
+        let channel_val = vm.stack.pop()?;
         if let Value::Int(channel) = channel_val {
             if vm.ether.len() >= crate::vm::MAX_ETHER_CHANNELS && !vm.ether.contains_key(&channel) {
                 vm.output
@@ -1669,8 +1669,8 @@ fn exec_verbum_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Optio
     match op {
         OpCode::Forge => {
             if vm.stack.len() >= 2 {
-                let strand_val = vm.stack.pop().unwrap();
-                let name_val = vm.stack.pop().unwrap();
+                let strand_val = vm.stack.pop()?;
+                let name_val = vm.stack.pop()?;
                 if let (Value::Str(name), Value::Int(idx)) = (name_val, strand_val) {
                     let s_idx = idx as usize;
                     if s_idx < vm.dna.helix.strands.len() {
@@ -1858,7 +1858,7 @@ fn exec_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let Value::Str(s) = val {
             match ChimeraParser::parse(Rule::strand, &s) {
                 Ok(mut pairs) => {
-                    let pair = pairs.next().unwrap();
+                    let pair = pairs.next()?;
                     match crate::ast::Strand::try_from_pair(pair) {
                         Ok(strand) => {
                             super::nova_simulation::execute_ephemeral_strand(vm, &strand);
@@ -1885,8 +1885,8 @@ fn exec_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let func_val = vm.stack.pop().unwrap();
-        let target_val = vm.stack.pop().unwrap();
+        let func_val = vm.stack.pop()?;
+        let target_val = vm.stack.pop()?;
 
         if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
             vm.output.push("Error: Input too deep for Map".to_string());
@@ -1907,7 +1907,7 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             match &func_val {
                 Value::Str(s) => {
                     if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
-                        let pair = pairs.next().unwrap();
+                        let pair = pairs.next()?;
                         match crate::ast::Strand::try_from_pair(pair) {
                             Ok(strand) => {
                                 super::nova_simulation::execute_ephemeral_strand(vm, &strand)
@@ -1954,9 +1954,9 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_fold(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 3 {
-        let func_val = vm.stack.pop().unwrap();
-        let init_val = vm.stack.pop().unwrap();
-        let target_val = vm.stack.pop().unwrap();
+        let func_val = vm.stack.pop()?;
+        let init_val = vm.stack.pop()?;
+        let target_val = vm.stack.pop()?;
 
         if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH
             || init_val.depth() >= crate::vm::MAX_RECURSION_DEPTH
@@ -1979,7 +1979,7 @@ fn exec_fold(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             match &func_val {
                 Value::Str(s) => {
                     if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
-                        let pair = pairs.next().unwrap();
+                        let pair = pairs.next()?;
                         if let Ok(strand) = crate::ast::Strand::try_from_pair(pair) {
                             super::nova_simulation::execute_ephemeral_strand(vm, &strand);
                         }
@@ -2012,8 +2012,8 @@ fn exec_fold(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_filter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let func_val = vm.stack.pop().unwrap();
-        let target_val = vm.stack.pop().unwrap();
+        let func_val = vm.stack.pop()?;
+        let target_val = vm.stack.pop()?;
 
         if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
             vm.output
@@ -2034,7 +2034,7 @@ fn exec_filter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             match &func_val {
                 Value::Str(s) => {
                     if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
-                        let pair = pairs.next().unwrap();
+                        let pair = pairs.next()?;
                         if let Ok(strand) = crate::ast::Strand::try_from_pair(pair) {
                             super::nova_simulation::execute_ephemeral_strand(vm, &strand);
                         }
@@ -2080,8 +2080,8 @@ fn exec_filter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_zip(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let val_b = vm.stack.pop().unwrap();
-        let val_a = vm.stack.pop().unwrap();
+        let val_b = vm.stack.pop()?;
+        let val_a = vm.stack.pop()?;
 
         if val_a.depth() >= crate::vm::MAX_RECURSION_DEPTH
             || val_b.depth() >= crate::vm::MAX_RECURSION_DEPTH
@@ -2137,11 +2137,11 @@ fn exec_zip(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_pigment(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 5 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        let b_val = vm.stack.pop().unwrap();
-        let g_val = vm.stack.pop().unwrap();
-        let r_val = vm.stack.pop().unwrap();
+        let x_val = vm.stack.pop()?;
+        let y_val = vm.stack.pop()?;
+        let b_val = vm.stack.pop()?;
+        let g_val = vm.stack.pop()?;
+        let r_val = vm.stack.pop()?;
 
         if let (Value::Int(x), Value::Int(y), Value::Int(r), Value::Int(g), Value::Int(b)) =
             (x_val, y_val, r_val, g_val, b_val)
@@ -2175,9 +2175,9 @@ fn exec_pigment(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_glyph(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 3 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        let c_val = vm.stack.pop().unwrap();
+        let x_val = vm.stack.pop()?;
+        let y_val = vm.stack.pop()?;
+        let c_val = vm.stack.pop()?;
 
         if let (Value::Int(x), Value::Int(y), Value::Int(c)) = (x_val, y_val, c_val) {
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
@@ -2271,14 +2271,14 @@ fn exec_hyphae(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_connect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
+        let x_val = vm.stack.pop()?;
+        let y_val = vm.stack.pop()?;
         if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
             if let Some((ty, tx)) = vm.normalize_coords(y, x) {
                 let (cy, cx) = vm.context_loc;
                 if vm.mycelium.contains_key(&(cy, cx)) && vm.mycelium.contains_key(&(ty, tx)) {
-                    vm.mycelium.get_mut(&(cy, cx)).unwrap().push((ty, tx));
-                    vm.mycelium.get_mut(&(ty, tx)).unwrap().push((cy, cx));
+                    if let Some(nodes) = vm.mycelium.get_mut(&(cy, cx)) { nodes.push((ty, tx)); }
+                    if let Some(nodes) = vm.mycelium.get_mut(&(ty, tx)) { nodes.push((cy, cx)); }
                     vm.energy = vm.energy.saturating_sub(10);
                     vm.output.push(format!(
                         "CONNECT: Mycelium linked {},{} <-> {},{}",
@@ -2305,9 +2305,9 @@ fn exec_connect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_transport(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 3 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        let val = vm.stack.pop().unwrap();
+        let x_val = vm.stack.pop()?;
+        let y_val = vm.stack.pop()?;
+        let val = vm.stack.pop()?;
 
         if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
             if let Some((ty, tx)) = vm.normalize_coords(y, x) {
@@ -2360,8 +2360,8 @@ fn exec_transport(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_spore_cloud(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let dens_val = vm.stack.pop().unwrap();
-        let rad_val = vm.stack.pop().unwrap();
+        let dens_val = vm.stack.pop()?;
+        let rad_val = vm.stack.pop()?;
         if let (Value::Int(r), Value::Int(d)) = (rad_val, dens_val) {
             let (cy, cx) = vm.context_loc;
             let mut rng = rand::thread_rng();

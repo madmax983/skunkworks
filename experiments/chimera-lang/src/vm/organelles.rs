@@ -315,8 +315,8 @@ impl crate::vm::ChimeraVM {
         F: Fn(i64, i64) -> Option<i64>,
     {
         if self.stack.len() >= 2 {
-            let b = self.stack.pop().unwrap();
-            let a = self.stack.pop().unwrap();
+            let Some(b) = self.stack.pop() else { return };
+            let Some(a) = self.stack.pop() else { return };
             if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
                 if let Some(res) = op(ia, ib) {
                     self.stack.push(Value::Int(res));
@@ -375,8 +375,12 @@ impl crate::vm::ChimeraVM {
     fn process_ribosome_read(&mut self, cy: usize, cx: usize, push_zero_on_fail: bool) {
         // Offset Read: [dy, dx] -> [val]
         if self.stack.len() >= 2 {
-            let x_off = self.stack.pop().unwrap();
-            let y_off = self.stack.pop().unwrap();
+            let Some(x_off) = self.stack.pop() else {
+                return;
+            };
+            let Some(y_off) = self.stack.pop() else {
+                return;
+            };
             if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
                 if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
                     self.stack.push(self.grid[ny][nx].clone());
@@ -391,9 +395,13 @@ impl crate::vm::ChimeraVM {
     fn process_ribosome_write(&mut self, cy: usize, cx: usize) {
         // Offset Write: [val, dy, dx] -> []
         if self.stack.len() >= 3 {
-            let x_off = self.stack.pop().unwrap();
-            let y_off = self.stack.pop().unwrap();
-            let val = self.stack.pop().unwrap();
+            let Some(x_off) = self.stack.pop() else {
+                return;
+            };
+            let Some(y_off) = self.stack.pop() else {
+                return;
+            };
+            let Some(val) = self.stack.pop() else { return };
             if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
                 if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
                     self.grid[ny][nx] = val;
@@ -458,8 +466,8 @@ impl crate::vm::ChimeraVM {
                 }),
                 "=" => {
                     if self.stack.len() >= 2 {
-                        let b = self.stack.pop().unwrap();
-                        let a = self.stack.pop().unwrap();
+                        let Some(b) = self.stack.pop() else { return };
+                        let Some(a) = self.stack.pop() else { return };
                         if a == b {
                             self.stack.push(Value::Int(1));
                         } else {

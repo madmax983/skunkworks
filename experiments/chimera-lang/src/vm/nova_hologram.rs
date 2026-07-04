@@ -528,7 +528,7 @@ pub fn exec_holo_invoke(
             }
 
             if vm.stack.len() > start_stack_depth {
-                let grammar = vm.stack.pop().unwrap();
+                let grammar = vm.stack.pop()?;
                 match crate::vm::babel::run_parser(
                     &grammar,
                     &input_string,
@@ -592,7 +592,7 @@ pub fn exec_holo_speak(
         }
 
         if vm.stack.len() > start_stack_depth {
-            let grammar = vm.stack.pop().unwrap();
+            let grammar = vm.stack.pop()?;
             let s = crate::vm::babel::generate_string(&grammar);
             vm.output.push(format!("HOLO_SPEAK: '{}'", s));
             vm.stack.push(Value::Str(s));

@@ -131,18 +131,10 @@ fn exec_sediment(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 fn exec_tectonics(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: dy, dx, h, w (top)
     if vm.stack.len() >= 4 {
-        let Some(w_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(h_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(dx_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(dy_val) = vm.stack.pop() else {
-            return None;
-        };
+        let w_val = vm.stack.pop() ?;
+        let h_val = vm.stack.pop() ?;
+        let dx_val = vm.stack.pop() ?;
+        let dy_val = vm.stack.pop() ?;
 
         if let (Value::Int(dy), Value::Int(dx), Value::Int(h), Value::Int(w)) =
             (dy_val, dx_val, h_val, w_val)

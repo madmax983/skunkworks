@@ -18,18 +18,10 @@ const NEIGHBOR_DIRECTIONS: [(i64, i64, u8); 4] = [
 pub fn exec_luciferin(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [r, g, b, intensity]
     if vm.stack.len() >= 4 {
-        let Some(intensity_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(b_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(g_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(r_val) = vm.stack.pop() else {
-            return None;
-        };
+        let intensity_val = vm.stack.pop() ?;
+        let b_val = vm.stack.pop() ?;
+        let g_val = vm.stack.pop() ?;
+        let r_val = vm.stack.pop() ?;
 
         if let (Value::Int(r), Value::Int(g), Value::Int(b), Value::Int(i)) =
             (r_val, g_val, b_val, intensity_val)

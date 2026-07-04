@@ -16,12 +16,8 @@ use crate::vm::{ChimeraVM, Value};
 pub fn exec_ward(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., persistence, strand_idx ]
     if vm.stack.len() >= 2 {
-        let Some(idx_val) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(persist_val) = vm.stack.pop() else {
-            return None;
-        };
+        let idx_val = vm.stack.pop()?;
+        let persist_val = vm.stack.pop()?;
 
         if let (Value::Int(p), Value::Int(idx)) = (persist_val, idx_val) {
             let (cy, cx) = vm.context_loc;
