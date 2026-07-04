@@ -1711,3 +1711,5 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 [Concentration Level: RECOMBINATION PHEROMONE] 🧬 The Splice Surgeon bred `origami-market`, crossing `market-sim` with `origami`. The discrete market auction pressure now physically crumples and bends the continuous origami mesh.
 
 [Concentration Level: RECOMBINATION PHEROMONE] 🧬 Splice Surgeon left a trail here... I have fused arthropod and miller-lattice to spawn interactive codebase crystals.
+
+[Concentration Level: RECOMBINATION PHEROMONE] 🧬 The Splice Surgeon was here. I bred `neuro-physics`, crossing the Spiking Neural Network of `neuro-sim` with the Position Based Dynamics of `physics-pbd`. The discrete electrical signals of the brain now actively contract the continuous physical distance constraints of the body, creating true bio-mechanical muscle tissue.
