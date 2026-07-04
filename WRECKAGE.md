@@ -25,3 +25,16 @@ When a dense network is formed and multiple neurons (threads) attempt to deposit
 * 📉 **The Result:** The test `havoc_test_contention` creates this dense bottleneck. The contention is so severe that OS thread scheduling fails to provide fair access, causing threads to starve.
 * 🧪 **Reproduction:** Run `cargo test -p neuro-syncopation --test havoc_contention`
 * 😈 **Comment:** "You mapped biological parallel spikes to OS threads and locks. You expected syncopation, but you built a traffic jam."
+
+## The Weak Point: Unbounded AST Parsing in `syntax-garden`
+
+In `experiments/syntax-garden/src/parser.rs`, the application uses `syn::parse_file` to parse Rust source code into an Abstract Syntax Tree (AST) without verifying the maximum nesting depth.
+
+## The Attack: AST Parsing Stack Overflow (DoS)
+
+Recursive descent parsers like `syn::parse_file` are vulnerable to deterministic stack overflows when fed deeply nested token sequences (e.g., thousands of consecutive braces `{`).
+
+* 🧨 **The Trigger:** A 1MB `.rs` file containing 20,000 consecutive opening braces `{` followed by 20,000 closing braces `}`.
+* 📉 **The Result:** The test `havoc_test_parse` accurately simulates an attacker dropping this file in the target directory. The parser attempts to recurse 20,000 times, overflowing the thread stack and crashing the application (`fatal runtime error: stack overflow`).
+* 🧪 **Reproduction:** Run `cargo test -p syntax-garden --test havoc_parse`
+* 😈 **Comment:** "You thought the compiler would protect you from bad code. You forgot you are the compiler."
