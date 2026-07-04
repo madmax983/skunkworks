@@ -3,7 +3,7 @@
 Date: 2026-06-27
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 During an architectural review by the Atlas persona, it was discovered that `crates/tui-shared/src/lib.rs` leaked internal modules via `pub mod`, breaking the intended Facade pattern.

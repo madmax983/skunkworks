@@ -3,7 +3,7 @@
 Date: 2026-06-27
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 During an architectural review by the Atlas persona, it was discovered that internal modules within `crates/arthropod/src/lib.rs`, `experiments/chimera-lang/src/lib.rs`, and `experiments/turbulent-rhythms/tests/havoc_contention.rs` leaked via `pub mod`. This breaks the Facade pattern and exposes implementation details.

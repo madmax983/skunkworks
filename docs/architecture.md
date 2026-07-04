@@ -3820,3 +3820,37 @@ classDiagram
     GitRhythmFacade ..> RhythmInternal : encapsulates
     ThreadSymphonyFacade ..> SymphonyInternal : encapsulates
 ```
+
+## TUI-Shared Modules Encapsulation (ADR 137)
+
+The `tui-shared` crate previously exposed its internal modules directly (`action`, `entity`, `region`, `snapshot`). This was changed to enforce a strict Facade pattern by hiding these implementation details from external consumers using `pub(crate) mod` and explicitly re-exporting necessary items.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace TuiSharedFacade {
+        class TuiSharedLib {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class Action {
+            <<pub(crate)>>
+        }
+        class Entity {
+            <<pub(crate)>>
+        }
+        class Region {
+            <<pub(crate)>>
+        }
+        class Snapshot {
+            <<pub(crate)>>
+        }
+    }
+
+    TuiSharedLib ..> Action : encapsulates
+    TuiSharedLib ..> Entity : encapsulates
+    TuiSharedLib ..> Region : encapsulates
+    TuiSharedLib ..> Snapshot : encapsulates
+```
