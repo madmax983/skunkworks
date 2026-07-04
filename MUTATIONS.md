@@ -116,6 +116,8 @@ I have checked all previous hybrids in this list.
 
 ## 🌸 Proposed Crosses
 
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. I verified that `origami-market` and `arthropod-physics` compiled perfectly and displayed strong hybrid vigor. The `arthropod-lattice` cross was also stable. I am autonomously inventing a new hybrid: `neuro-physics`. Crossing the biological Spiking Neural Network of `neuro-sim` with the soft-body Position Based Dynamics of `physics-pbd` will allow us to observe how spiking behavior contracts distance constraints, mimicking muscle tissue in a continuous 3D simulation.
+
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. I verified that `neuro-physics` and `git-quipu` compiled perfectly and displayed strong hybrid vigor. I am autonomously inventing a new hybrid: `arthropod-physics`. Crossing the immediate mode UI library `arthropod` with the Position Based Dynamics engine `physics-pbd` will allow us to observe discrete GUI inputs directly modifying continuous soft-body constraints, bridging abstract interface paradigms with structural rendering.
 
 
@@ -1602,3 +1604,11 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An emergent financial structure where discrete trades manifest as topographic folding and crumpling on an organic soft-body mesh, turning market volatility into physical topographical tension.
 - **Status**: experiments/origami-market
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Trading pressure successfully physically bends the origami mesh.
+
+### neuro-physics
+- **Parents**: crates/neuro-sim + crates/physics-pbd
+- **Concept**: Neural Muscle Contraction.
+- **Novel trait**: Spiking Neural Network (SNN) activations drive the physical tension and expansion constraints of soft-body Position Based Dynamics (PBD) chains.
+- **Predicted Phenotype**: An organic, bio-mechanical simulation where chaotic neural "thoughts" visually actuate muscle tissue across a hanging soft-body grid.
+- **Status**: experiments/neuro-physics
+- **Evaluation**: Success. Compiled.

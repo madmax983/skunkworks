@@ -4,9 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+macroquad = "0.4"
 neuro-sim = { path = "../../crates/neuro-sim" }
 physics-pbd = { path = "../../crates/physics-pbd" }
-glam = "0.28"
-anyhow = "1.0"
-tui-shared = { path = "../../crates/tui-shared" }
-rand = { workspace = true }
+glam = "0.28" # Match physics-pbd's glam version
+rand = "0.8"
