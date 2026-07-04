@@ -73,7 +73,6 @@ pub struct Grid {
 
     // --- Internal Simulation State ---
     updated: Vec<bool>,
-    scan_x: Vec<usize>,
 }
 
 impl Grid {
@@ -92,7 +91,6 @@ impl Grid {
             total_asks: 0,
             center_of_mass: height as f32 / 2.0,
             updated: vec![false; width * height],
-            scan_x: (0..width).collect(),
         }
     }
 
@@ -128,21 +126,15 @@ impl Grid {
 
         self.updated.fill(false);
 
-        // Randomize column scan order
-        if rng.gen_bool(0.5) {
-            self.scan_x.iter_mut().enumerate().for_each(|(i, v)| *v = i);
-        } else {
-            self.scan_x
-                .iter_mut()
-                .enumerate()
-                .for_each(|(i, v)| *v = self.width - 1 - i);
-        }
-
-        let scan_order = self.scan_x.clone();
+        // ⚡ Bolt: Removed `self.scan_x.clone()`.
+        // By replacing the clone with a boolean flag, we avoid allocating a `Vec`
+        // every single frame. This prevents O(W) allocations on the hot path.
+        let reverse_scan = rng.gen_bool(0.5);
 
         // Pass 1: Bids (Up)
         for y in 0..self.height {
-            for &x in &scan_order {
+            for i in 0..self.width {
+                let x = if reverse_scan { self.width - 1 - i } else { i };
                 let idx = y * self.width + x;
                 if self.updated[idx] {
                     continue;
@@ -157,7 +149,8 @@ impl Grid {
 
         // Pass 2: Asks (Down)
         for y in (0..self.height).rev() {
-            for &x in &scan_order {
+            for i in 0..self.width {
+                let x = if reverse_scan { self.width - 1 - i } else { i };
                 let idx = y * self.width + x;
                 if self.updated[idx] {
                     continue;

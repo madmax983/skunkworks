@@ -5,6 +5,7 @@ use rand::Rng;
 pub enum State {
     Foraging,
     Bridging,
+    #[allow(dead_code)]
     Returning,
 }
 

@@ -26,7 +26,8 @@ async fn run() {
         ..Default::default()
     };
 
-    let btn_grow = Button::new("Grow Crystal", 10.0, 10.0, 150.0, 30.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
+    let btn_grow =
+        Button::new("Grow Crystal", 10.0, 10.0, 150.0, 30.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
 
     // Default crystal from current dir
     let mut crystals: Vec<Crystal> = vec![];
@@ -49,7 +50,11 @@ async fn run() {
             let offset = vec3((i as f32) * 50.0, 0.0, 0.0);
 
             for atom in &crystal.atoms {
-                let pos = vec3(atom.position.x as f32, atom.position.y as f32, atom.position.z as f32) + offset;
+                let pos = vec3(
+                    atom.position.x as f32,
+                    atom.position.y as f32,
+                    atom.position.z as f32,
+                ) + offset;
 
                 let color = if atom.is_dir { GREEN } else { WHITE };
 
@@ -60,8 +65,16 @@ async fn run() {
                 let p1 = &crystal.atoms[bond.0];
                 let p2 = &crystal.atoms[bond.1];
 
-                let pos1 = vec3(p1.position.x as f32, p1.position.y as f32, p1.position.z as f32) + offset;
-                let pos2 = vec3(p2.position.x as f32, p2.position.y as f32, p2.position.z as f32) + offset;
+                let pos1 = vec3(
+                    p1.position.x as f32,
+                    p1.position.y as f32,
+                    p1.position.z as f32,
+                ) + offset;
+                let pos2 = vec3(
+                    p2.position.x as f32,
+                    p2.position.y as f32,
+                    p2.position.z as f32,
+                ) + offset;
 
                 draw_line_3d(pos1, pos2, GRAY);
             }
