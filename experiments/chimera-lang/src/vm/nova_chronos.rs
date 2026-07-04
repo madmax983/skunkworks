@@ -308,8 +308,8 @@ pub fn exec_germinate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_paradox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let val = vm.stack.pop() ?;
-        let id_val = vm.stack.pop() ?;
+        let val = vm.stack.pop()?;
+        let id_val = vm.stack.pop()?;
 
         if let Value::Int(loop_id) = id_val {
             if let Some(&idx) = vm.paradox_loops.get(&loop_id) {
@@ -367,8 +367,8 @@ pub fn exec_paradox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_time_warp(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let factor_val = vm.stack.pop() ?;
-        let radius_val = vm.stack.pop() ?;
+        let factor_val = vm.stack.pop()?;
+        let radius_val = vm.stack.pop()?;
 
         if let (Value::Int(r), Value::Int(f)) = (radius_val, factor_val) {
             if r > 0 {
@@ -507,8 +507,8 @@ pub fn exec_retrograde(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_divergence(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: query, count (top)
     if vm.stack.len() >= 2 {
-        let count_val = vm.stack.pop() ?;
-        let query_val = vm.stack.pop() ?;
+        let count_val = vm.stack.pop()?;
+        let query_val = vm.stack.pop()?;
 
         if let Value::Int(count) = count_val {
             let limit = count.clamp(1, 50); // Safety limit

@@ -121,8 +121,7 @@ pub fn generate_level(path: &Path) -> Option<LevelProfile> {
                     if c == '{' || c == '(' || c == '[' {
                         current_depth += 1;
                         max_depth = max_depth.max(current_depth);
-                    }
-                    else if c == '}' || c == ')' || c == ']' {
+                    } else if c == '}' || c == ')' || c == ']' {
                         current_depth = (current_depth - 1).max(0);
                     }
                 }

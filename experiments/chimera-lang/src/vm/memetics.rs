@@ -4351,9 +4351,9 @@ fn handle_bio_hack(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         vm.output.push("BIOHACK: Stack underflow".to_string());
         return None;
     }
-    let meme_val = vm.stack.pop() ?;
-    let grammar_val = vm.stack.pop() ?;
-    let name_val = vm.stack.pop() ?;
+    let meme_val = vm.stack.pop()?;
+    let grammar_val = vm.stack.pop()?;
+    let name_val = vm.stack.pop()?;
 
     let (Value::Int(m_id), Value::Str(name)) = (meme_val, name_val) else {
         vm.output
@@ -4430,9 +4430,9 @@ fn handle_conceive(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             .push("Error: Stack underflow for conceive".to_string());
         return None;
     }
-    let fid_val = vm.stack.pop() ?;
-    let vir_val = vm.stack.pop() ?;
-    let len_val = vm.stack.pop() ?;
+    let fid_val = vm.stack.pop()?;
+    let vir_val = vm.stack.pop()?;
+    let len_val = vm.stack.pop()?;
 
     let (Value::Int(l), Value::Int(v), Value::Int(f)) = (len_val, vir_val, fid_val) else {
         vm.output
@@ -4491,8 +4491,8 @@ fn handle_propagate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let target_val = vm.stack.pop() ?;
-    let meme_val = vm.stack.pop() ?;
+    let target_val = vm.stack.pop()?;
+    let meme_val = vm.stack.pop()?;
 
     let (Value::Int(m_id), Value::Int(t_idx)) = (meme_val, target_val) else {
         vm.output
@@ -4559,8 +4559,8 @@ fn handle_shibboleth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             .push("Error: Stack underflow for shibboleth".to_string());
         return None;
     }
-    let to_val = vm.stack.pop() ?;
-    let from_val = vm.stack.pop() ?;
+    let to_val = vm.stack.pop()?;
+    let from_val = vm.stack.pop()?;
 
     let (Value::Str(from), Value::Str(to)) = (from_val, to_val) else {
         vm.output
@@ -4597,11 +4597,11 @@ fn handle_infect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let mode_val = vm.stack.pop() ?;
-    let name_val = vm.stack.pop() ?;
-    let pattern_val = vm.stack.pop() ?;
-    let rate_val = vm.stack.pop() ?;
-    let payload_val = vm.stack.pop() ?;
+    let mode_val = vm.stack.pop()?;
+    let name_val = vm.stack.pop()?;
+    let pattern_val = vm.stack.pop()?;
+    let rate_val = vm.stack.pop()?;
+    let payload_val = vm.stack.pop()?;
 
     let mut grammar = None;
     let mut quorum_threshold = 0;

@@ -22,7 +22,7 @@ use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::value::Value;
 use chimera_lang::vm::ChimeraVM;
-use hyper_system::math::{Vec3, Vec4};
+use hyper_system::{Vec3, Vec4};
 use macroquad::prelude::*;
 use std::collections::VecDeque;
 
@@ -31,74 +31,23 @@ fn to_mq(v: Vec3) -> macroquad::math::Vec3 {
     macroquad::math::vec3(v.x, v.y, v.z)
 }
 
-trait Vec4Ext {
-    fn rotate_xy(&self, theta: f32) -> Vec4;
-    fn rotate_xz(&self, theta: f32) -> Vec4;
-    fn rotate_xw(&self, theta: f32) -> Vec4;
-    fn rotate_yz(&self, theta: f32) -> Vec4;
-    fn rotate_yw(&self, theta: f32) -> Vec4;
-    fn rotate_zw(&self, theta: f32) -> Vec4;
+fn rotate_xw(v: &Vec4, theta: f32) -> Vec4 {
+    let (sin, cos) = theta.sin_cos();
+    Vec4 {
+        x: v.x * cos - v.w * sin,
+        y: v.y,
+        z: v.z,
+        w: v.x * sin + v.w * cos,
+    }
 }
 
-impl Vec4Ext for Vec4 {
-    fn rotate_xy(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x * cos - self.y * sin,
-            y: self.x * sin + self.y * cos,
-            z: self.z,
-            w: self.w,
-        }
-    }
-
-    fn rotate_xz(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x * cos - self.z * sin,
-            y: self.y,
-            z: self.x * sin + self.z * cos,
-            w: self.w,
-        }
-    }
-
-    fn rotate_xw(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x * cos - self.w * sin,
-            y: self.y,
-            z: self.z,
-            w: self.x * sin + self.w * cos,
-        }
-    }
-
-    fn rotate_yz(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x,
-            y: self.y * cos - self.z * sin,
-            z: self.y * sin + self.z * cos,
-            w: self.w,
-        }
-    }
-
-    fn rotate_yw(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x,
-            y: self.y * cos - self.w * sin,
-            z: self.z,
-            w: self.y * sin + self.w * cos,
-        }
-    }
-
-    fn rotate_zw(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x,
-            y: self.y,
-            z: self.z * cos - self.w * sin,
-            w: self.z * sin + self.w * cos,
-        }
+fn rotate_yw(v: &Vec4, theta: f32) -> Vec4 {
+    let (sin, cos) = theta.sin_cos();
+    Vec4 {
+        x: v.x,
+        y: v.y * cos - v.w * sin,
+        z: v.z,
+        w: v.y * sin + v.w * cos,
     }
 }
 
@@ -135,32 +84,33 @@ struct Agent {
 impl Agent {
     fn new(start_idx: usize, vertices: &[Vec4]) -> Self {
         // Create random DNA
-        let mut genes = Vec::new();
         // A simple genome that tries to produce a number
-        genes.push(Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Number(rand::gen_range(0, 100))],
-        });
-        genes.push(Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Number(rand::gen_range(0, 100))],
-        });
-        genes.push(Gene {
-            op: OpCode::Add,
-            args: vec![],
-        }); // Sum
-        genes.push(Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Number(10)],
-        });
-        genes.push(Gene {
-            op: OpCode::Mod,
-            args: vec![],
-        }); // Mod 10
-        genes.push(Gene {
-            op: OpCode::Jump,
-            args: vec![Nucleotide::Number(0)],
-        }); // Loop
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(rand::gen_range(0, 100))],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(rand::gen_range(0, 100))],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            }, // Sum
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Mod,
+                args: vec![],
+            }, // Mod 10
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            }, // Loop
+        ];
 
         let dna = Dna {
             evolution_config: None,
@@ -196,13 +146,11 @@ impl Agent {
             self.vm.step();
 
             // Interact with Rotor
-            if let Some(val) = self.vm.stack.last() {
-                if let Value::Int(n) = val {
-                    // Modulate rotor based on output
-                    // Small change based on gene output
-                    let delta = (*n as f32) * 0.01;
-                    rotors[self.target_idx] += delta;
-                }
+            if let Some(Value::Int(n)) = self.vm.stack.last() {
+                // Modulate rotor based on output
+                // Small change based on gene output
+                let delta = (*n as f32) * 0.01;
+                rotors[self.target_idx] += delta;
             }
 
             // Pick new target (neighbor)
@@ -215,7 +163,7 @@ impl Agent {
         } else {
             // Move
             let dir = diff.scale(1.0 / dist);
-            self.position = self.position + dir.scale(self.speed * dt);
+            self.position += dir.scale(self.speed * dt);
         }
     }
 }
@@ -341,8 +289,8 @@ async fn main() {
         let transform = |v: Vec4| -> macroquad::math::Vec3 {
             let mut v = v;
             // Rotate in 4D
-            v = v.rotate_xw(rotation_speed * get_time() as f32);
-            v = v.rotate_yw(rotation_speed * get_time() as f32 * 0.5);
+            v = rotate_xw(&v, rotation_speed * get_time() as f32);
+            v = rotate_yw(&v, rotation_speed * get_time() as f32 * 0.5);
             to_mq(v.project_to_3d(3.0))
         };
 
@@ -380,7 +328,7 @@ async fn main() {
         draw_text("CHIMERA ENIGMA", 20.0, 30.0, 40.0, WHITE);
         draw_text("Bio-Encryption Active", 20.0, 60.0, 20.0, GREEN);
         draw_text(
-            &format!("Total Key Energy: {:.2}", total_energy),
+            &format!("Total Key Energy: {:.2}", total_energy)[..],
             20.0,
             80.0,
             20.0,
@@ -389,7 +337,7 @@ async fn main() {
 
         let mut y = 120.0;
         for (din, dout) in &enigma.history {
-            draw_text(&format!("{} -> {}", din, dout), 20.0, y, 30.0, GREEN);
+            draw_text(&format!("{} -> {}", din, dout)[..], 20.0, y, 30.0, GREEN);
             y += 30.0;
         }
 

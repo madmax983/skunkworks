@@ -921,10 +921,10 @@ fn find_exit_edge(
             candidates.sort_by_key(|c| c.0); // Sort by Y
             if cc == CodelChooser::Right {
                 // Max Y
-                **candidates.last().unwrap_or(&&(0,0))
+                **candidates.last().unwrap_or(&&(0, 0))
             } else {
                 // Min Y
-                **candidates.first().unwrap_or(&&(0,0))
+                **candidates.first().unwrap_or(&&(0, 0))
             }
         }
         Direction::Down => {
@@ -934,10 +934,10 @@ fn find_exit_edge(
             candidates.sort_by_key(|c| c.1); // Sort by X
             if cc == CodelChooser::Right {
                 // Min X
-                **candidates.first().unwrap_or(&&(0,0))
+                **candidates.first().unwrap_or(&&(0, 0))
             } else {
                 // Max X
-                **candidates.last().unwrap_or(&&(0,0))
+                **candidates.last().unwrap_or(&&(0, 0))
             }
         }
         Direction::Left => {
@@ -947,10 +947,10 @@ fn find_exit_edge(
             candidates.sort_by_key(|c| c.0); // Sort by Y
             if cc == CodelChooser::Right {
                 // Min Y
-                **candidates.first().unwrap_or(&&(0,0))
+                **candidates.first().unwrap_or(&&(0, 0))
             } else {
                 // Max Y
-                **candidates.last().unwrap_or(&&(0,0))
+                **candidates.last().unwrap_or(&&(0, 0))
             }
         }
         Direction::Up => {
@@ -960,10 +960,10 @@ fn find_exit_edge(
             candidates.sort_by_key(|c| c.1); // Sort by X
             if cc == CodelChooser::Right {
                 // Max X
-                **candidates.last().unwrap_or(&&(0,0))
+                **candidates.last().unwrap_or(&&(0, 0))
             } else {
                 // Min X
-                **candidates.first().unwrap_or(&&(0,0))
+                **candidates.first().unwrap_or(&&(0, 0))
             }
         }
     }
@@ -1097,8 +1097,12 @@ fn execute_op(vm: &mut ChimeraVM, state: &mut PietState, dh: i32, dl: i32, block
         (4, 1) => {
             // Roll
             if state.stack.len() >= 2 {
-                let Some(rolls) = state.stack.pop() else { return };
-                let Some(depth) = state.stack.pop() else { return };
+                let Some(rolls) = state.stack.pop() else {
+                    return;
+                };
+                let Some(depth) = state.stack.pop() else {
+                    return;
+                };
                 if depth > 0 && (depth as usize) <= state.stack.len() {
                     let idx = state.stack.len() - (depth as usize);
                     // Just do a naive rotate
