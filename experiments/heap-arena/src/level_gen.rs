@@ -115,6 +115,21 @@ pub fn generate_level(path: &Path) -> Option<LevelProfile> {
                     continue; // Ignore large files, try another one
                 }
 
+                let mut max_depth = 0;
+                let mut current_depth = 0;
+                for c in content.chars() {
+                    if c == '{' || c == '(' || c == '[' {
+                        current_depth += 1;
+                        max_depth = max_depth.max(current_depth);
+                    }
+                    else if c == '}' || c == ')' || c == ']' {
+                        current_depth = (current_depth - 1).max(0);
+                    }
+                }
+                if max_depth > 128 {
+                    continue; // Skip deeply nested files that could cause stack overflow
+                }
+
                 if let Ok(ast) = syn::parse_file(&content) {
                     struct FnCollector<'a> {
                         funcs: Vec<&'a ItemFn>,
