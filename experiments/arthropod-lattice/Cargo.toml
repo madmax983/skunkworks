@@ -1,0 +1,9 @@
+[package]
+name = "arthropod-lattice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arthropod = { path = "../../crates/arthropod" }
+miller-lattice = { path = "../../crates/miller-lattice" }
+macroquad = "0.4"

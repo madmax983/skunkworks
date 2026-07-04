@@ -374,6 +374,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-lattice"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "macroquad",
+ "miller-lattice",
+]
+
+[[package]]
 name = "arthropod-physics"
 version = "0.1.0"
 dependencies = [
