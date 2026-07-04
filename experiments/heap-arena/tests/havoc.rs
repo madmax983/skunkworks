@@ -11,10 +11,10 @@ fn havoc_test_ast_stack_overflow() {
         .status();
 
     if let Ok(status) = status {
-        if !status.success() {
-            println!("👺 Havoc SUCCESS: generate_level panics internally due to stack overflow on deeply nested AST!");
+        if status.success() {
+            println!("👺 Havoc SUCCESS: generate_level survived deeply nested AST!");
         } else {
-            panic!("Havoc failed to cause a crash!");
+            panic!("Havoc failed: generate_level crashed on deeply nested AST!");
         }
     }
 }
