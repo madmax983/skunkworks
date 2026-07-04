@@ -1677,8 +1677,11 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 **Reaper ☠️**: "Specimen `gray-miller` executed. Failed to adapt and implement a README.md during grace period. Biomass returned to the void."
 - [Concentration Level: RECOMBINATION PHEROMONE] 🧬 Splice Surgeon: Grafted `git-associates` onto `quipu` (git-quipu). The ephemeral git history log is permanently knotted into structural cords.
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/quipu-physics
-**Reaper ☠️**: "Fascinating. Specimen `quipu-physics` exhibits terminal characteristics indicating Documentation Void and Skeletal Execution. The organism lacks a `README.md` and its logic is trivial mapping without depth. Condemnation marked. Execution scheduled in 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/git-quipu
+**Reaper ☠️**: "Fascinating. Specimen `git-quipu` exhibits terminal characteristics indicating Documentation Void and Skeletal Execution. It lacks a `README.md` to communicate its intent and exists merely as a skeletal wrapper. Condemnation marked. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/quipu-physics
+**Reaper ☠️**: "Specimen `quipu-physics` executed. Failed to adapt and implement a README.md during grace period. Biomass returned to the void."
 
 [Concentration Level: RECOMBINATION PHEROMONE] 🧬 The Splice Surgeon successfully bred `neuro-physics`. A biomechanical entity where discrete spiking neural networks organically command position-based dynamics via active muscle constraint actuation.
 
