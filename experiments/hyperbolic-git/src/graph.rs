@@ -7,6 +7,7 @@ use std::f64::consts::PI;
 
 #[derive(Clone, Debug)]
 pub struct CommitData {
+    #[allow(dead_code)]
     pub oid: Oid,
     pub message: String,
     pub author: String,
@@ -45,7 +46,7 @@ impl CommitGraph {
         }
 
         let commit = self.repo.find_commit(oid)?;
-        let message = commit.summary().unwrap_or("").to_string();
+        let message = commit.summary().unwrap_or(Some("")).unwrap_or("").to_string();
         let author = commit.author().name().unwrap_or("").to_string();
 
         let parents: Vec<Oid> = commit.parents().map(|p| p.id()).collect();
@@ -105,11 +106,13 @@ impl CommitGraph {
                 continue;
             }
 
-            if let Err(_) = self.ensure_neighbors_loaded(u) {
+            if self.ensure_neighbors_loaded(u).is_err() {
                 continue;
             }
 
-            let data = self.commits.get(&u).unwrap();
+            let Some(data) = self.commits.get(&u) else {
+                continue;
+            };
             let mut neighbors = Vec::new();
             // Prioritize parents then children? Mixed is fine.
             for p in &data.parents {

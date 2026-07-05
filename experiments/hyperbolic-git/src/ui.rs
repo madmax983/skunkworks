@@ -91,7 +91,7 @@ pub fn draw_ui(
 
                 // Label for focused/selected or nearby
                 if is_focused || is_selected || pos.norm() < 0.5 {
-                    let label = format!("{}", &oid.to_string()[0..6]);
+                    let label = oid.to_string()[0..6].to_string();
                     ctx.print(pos.re + radius, pos.im, label);
                 }
             }
