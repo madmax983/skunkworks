@@ -33,8 +33,8 @@ pub fn signal(vm: &mut ChimeraVM) {
             if fs::create_dir_all(&channel_dir).is_ok() {
                 let timestamp = SystemTime::now()
                     .duration_since(UNIX_EPOCH)
-                    .unwrap()
-                    .as_micros();
+                    .map(|d| d.as_micros())
+                    .unwrap_or(0);
                 let mut rng = rand::thread_rng();
                 let random_suffix: u32 = rng.gen();
                 let filename = format!("{}_{}.json", timestamp, random_suffix);

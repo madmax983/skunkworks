@@ -1700,7 +1700,7 @@ pub fn exec_compile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let Value::Str(s) = val {
             match ChimeraParser::parse(Rule::strand, &s) {
                 Ok(mut pairs) => {
-                    let pair = pairs.next().unwrap();
+                    let pair = pairs.next()?;
                     match crate::ast::Strand::try_from_pair(pair) {
                         Ok(strand) => {
                             if vm.dna.helix.strands.len() >= MAX_STRANDS {

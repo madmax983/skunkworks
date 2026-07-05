@@ -124,7 +124,7 @@ pub fn exec_unearth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         // Parse
                         match ChimeraParser::parse(Rule::strand, dna_content) {
                             Ok(mut pairs) => {
-                                let pair = pairs.next().unwrap();
+                                let pair = pairs.next()?;
                                 match Strand::try_from_pair(pair) {
                                     Ok(strand) => {
                                         vm.dna.helix.strands.push(strand);

@@ -296,7 +296,7 @@ pub fn exec_rebirth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                             match ChimeraParser::parse(Rule::strand, gene_src) {
                                 Ok(mut pairs) => {
-                                    let pair = pairs.next().unwrap();
+                                    let pair = pairs.next()?;
                                     match crate::ast::Strand::try_from_pair(pair) {
                                         Ok(strand) => {
                                             if vm.dna.helix.strands.len() >= MAX_STRANDS {
