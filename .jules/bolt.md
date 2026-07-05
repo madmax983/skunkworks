@@ -15,3 +15,7 @@
 **[liquidity-bridge: Removing O(W) Allocations on the Hot Path]**
 **Learning:** In 2D grid simulations (like cellular automata or particle systems), stateful buffers used solely to determine scan order (e.g. `self.scan_x.clone()`) cause unnecessary per-frame allocations. If the scan order only toggles between forward and reverse, computing the index inline with a boolean flag completely eliminates the allocation.
 **Action:** Always scrutinize `.clone()` inside hot paths like `update()` loops, especially for vectors. Look for ways to compute the needed state inline using boolean flags or simple arithmetic rather than allocating intermediate state vectors.
+
+**[quantum-boids: Removing O(N) Allocations on the Hot Path]**
+**Learning:** In simulations involving physical updates (like flocking algorithms), calculating fields iteratively and creating multiple `Vec` buffers via `.collect()` (e.g. `let positions = self.boids.iter().map(|b| b.position).collect();`) and allocating a new `Vec` via `self.boids.clone()` per tick causes immense heap allocation churn (O(N) allocations per frame).
+**Action:** Replace `self.boids.clone()` with a persistent `self.boids_buffer` (cleared and extended each frame, then swapped using `std::mem::swap`). Pre-allocate separate persistent buffers for computed values like `positions_buffer`, `velocities_buffer`, and `forces_buffer`, clearing and refilling them on the hot path. This drops allocations per frame to zero.
