@@ -1,0 +1,9 @@
+[package]
+name = "arthropod-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arthropod = { path = "../../crates/arthropod" }
+origami = { path = "../../crates/origami" }
+macroquad = "0.4"
