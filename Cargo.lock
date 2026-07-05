@@ -374,6 +374,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-flock"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "flocking",
+ "locus",
+ "macroquad",
+ "rand 0.8.6",
+]
+
+[[package]]
 name = "arthropod-lattice"
 version = "0.1.0"
 dependencies = [
