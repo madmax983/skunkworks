@@ -4,13 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-anyhow.workspace = true
-crossterm.workspace = true
+anyhow = "1.0"
+crossterm = "0.28"
 git2 = "0.18"
 hound = "3.5"
-rand.workspace = true
-ratatui.workspace = true
-tui-shared.workspace = true
+rand = "0.8"
+ratatui = "0.29"
+tui-shared = { path = "../../crates/tui-shared" }
 
 [features]
 nova = []
@@ -22,3 +22,5 @@ required-features = ["nova"]
 [[example]]
 name = "circadian_clock"
 required-features = ["nova"]
+
+[workspace]
