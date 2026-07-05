@@ -89,14 +89,19 @@ impl World {
         let dances: Vec<Dance> = self
             .bees
             .iter()
-            .filter(|b| b.state == BeeState::Dancing && b.target_source_idx.is_some())
-            .map(|b| {
-                let source_pos = self.sources[b.target_source_idx.unwrap()].position;
-                Dance {
-                    target_idx: b.target_source_idx.unwrap(),
-                    angle: source_pos.arg(), // Angle from hive (origin) to source
-                    distance: hyperbolic_dist(Point::new(0.0, 0.0), source_pos),
-                    quality: b.memory_quality,
+            .filter_map(|b| {
+                if b.state == BeeState::Dancing {
+                    let target_idx = b.target_source_idx?;
+                    let source = self.sources.get(target_idx)?;
+                    let source_pos = source.position;
+                    Some(Dance {
+                        target_idx,
+                        angle: source_pos.arg(), // Angle from hive (origin) to source
+                        distance: hyperbolic_dist(Point::new(0.0, 0.0), source_pos),
+                        quality: b.memory_quality,
+                    })
+                } else {
+                    None
                 }
             })
             .collect();
@@ -173,7 +178,7 @@ impl World {
                 }
                 BeeState::Observing => {
                     // Drift near hive
-                    let step = Complex::from_polar(bee_speed * 0.1 * dt, rng.gen_range(0.0..6.28));
+                    let step = Complex::from_polar(bee_speed * 0.1 * dt, rng.gen_range(0.0..std::f64::consts::TAU));
                     bee.position = mobius_add(step, bee.position);
                     if bee.position.norm() > 0.1 {
                         bee.position = Complex::from_polar(0.09, bee.position.arg());
@@ -207,7 +212,7 @@ impl World {
                             bee.position = mobius_add(step, bee.position);
                             // Jitter
                             let jitter =
-                                Complex::from_polar(bee_speed * 0.2 * dt, rng.gen_range(0.0..6.28));
+                                Complex::from_polar(bee_speed * 0.2 * dt, rng.gen_range(0.0..std::f64::consts::TAU));
                             bee.position = mobius_add(jitter, bee.position);
                         }
                     } else {
@@ -303,14 +308,14 @@ async fn main() {
 
         draw_text("Hyperbolic Bees", 20.0, 30.0, 30.0, WHITE);
         draw_text(
-            &format!("Bees: {}", world.bees.len()),
+            &format!("Bees: {}", world.bees.len())[..],
             20.0,
             60.0,
             20.0,
             GRAY,
         );
         draw_text(
-            &format!("Sources: {}", world.sources.len()),
+            &format!("Sources: {}", world.sources.len())[..],
             20.0,
             80.0,
             20.0,
@@ -349,5 +354,16 @@ mod tests {
         world.add_source(0.5, 0.0, 1.0);
         assert_eq!(world.sources.len(), 1);
         assert_eq!(world.sources[0].quality, 1.0);
+    }
+
+    #[test]
+    fn test_out_of_bounds_target_source_idx() {
+        let mut world = World::new(1);
+        // Bee is dancing but target_source_idx is out of bounds
+        world.bees[0].state = BeeState::Dancing;
+        world.bees[0].target_source_idx = Some(999);
+
+        // This should not panic
+        world.update();
     }
 }
