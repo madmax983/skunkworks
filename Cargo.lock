@@ -383,6 +383,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-origami"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "macroquad",
+ "origami",
+]
+
+[[package]]
 name = "arthropod-physics"
 version = "0.1.0"
 dependencies = [

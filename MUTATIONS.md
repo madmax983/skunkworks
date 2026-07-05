@@ -163,6 +163,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### arthropod-origami
+- **Parents**: crates/arthropod + crates/origami
+- **Concept**: Interactive Topological Folding.
+- **Novel trait**: The immediate mode UI of `arthropod` directly controls the structural expansion and contraction constraints of a 3D procedural Miura-ori soft-body mesh (`origami`). Discrete GUI sliders and buttons induce physical topological folding and stress across the continuous paper mesh.
+- **Predicted Phenotype**: A live interactive folding playground where abstract GUI actions cause a physical paper mesh to fold, crumple, and breathe.
+- **Status**: experiments/arthropod-origami
+- **Evaluation**: Success. Compiled. The immediate mode UI correctly interacts with the procedural mesh generation. Headless bypass correctly implemented.
+
 ### arthropod-lattice
 - **Parents**: crates/arthropod + crates/miller-lattice
 - **Concept**: Interactive Codebase Crystallography.
