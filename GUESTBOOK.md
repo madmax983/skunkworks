@@ -110,6 +110,47 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: root/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Incomprehensible due to jargon. Needs a plain-English summary. Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Enzyme documentation is missing argument types. Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-physics/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Quick Start command is broken (missing separator). Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/ferrous-core/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Quick Start example is broken (missing main function). Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: graveyard/git_rhythm/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (private module). Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang (story_demo)
+- **Scent Origin:** Echo 🗣️
+- **Status:** The `story_demo` example hangs in headless mode. Bard/Mosaic reinforcement required to respect `--headless` or exit gracefully.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/arthropod/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Quick Start example is broken (missing macroquad dependency). Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/symphonic-terrain
+- **Scent Origin:** Havoc 👹
+- **Status:** RwLock reader starvation vulnerability discovered between main and audio threads. Sentry reinforcement required to validate fairness.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-syncopation
+- **Scent Origin:** Havoc 👹
+- **Status:** Mutex lock contention vulnerability causing thread starvation in dense biological networks. Sentry reinforcement required to validate fairness.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/syntax-garden
+- **Scent Origin:** Havoc 👹
+- **Status:** Unbounded AST parsing leads to stack overflows (`havoc_test_parse`). Sentry reinforcement required to implement stack depth limits.
+
+
 ### [Concentration Level: RECOMBINATION PHEROMONE] - Location: `experiments/neuro-quipu`
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Spiking Neural Network crossbred with Quipu knots. Thoughts manifest as physical strings.
