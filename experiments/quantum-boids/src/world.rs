@@ -8,6 +8,14 @@ pub struct World {
     pub boids: Vec<Boid>,
     pub width: f64,
     pub height: f64,
+    /// ⚡ Bolt: Pre-allocated buffer to avoid O(N) heap allocations per frame when updating boids.
+    pub boids_buffer: Vec<Boid>,
+    /// ⚡ Bolt: Pre-allocated buffer to avoid collecting positions into a new Vec per frame.
+    pub positions_buffer: Vec<Vec2>,
+    /// ⚡ Bolt: Pre-allocated buffer to avoid collecting velocities into a new Vec per frame.
+    pub velocities_buffer: Vec<Vec2>,
+    /// ⚡ Bolt: Pre-allocated buffer to avoid creating a new forces Vec per frame.
+    pub forces_buffer: Vec<Vec2>,
 }
 
 impl World {
@@ -20,16 +28,21 @@ impl World {
             boids,
             width,
             height,
+            boids_buffer: Vec::with_capacity(50),
+            positions_buffer: Vec::with_capacity(50),
+            velocities_buffer: Vec::with_capacity(50),
+            forces_buffer: Vec::with_capacity(50),
         }
     }
 
     pub fn update(&mut self) {
         // Quantum interactions (Entanglement)
         let n = self.boids.len();
-        let mut new_boids = self.boids.clone();
+        self.boids_buffer.clear();
+        self.boids_buffer.extend_from_slice(&self.boids);
 
         for i in 0..n {
-            let boid = &mut new_boids[i];
+            let boid = &mut self.boids_buffer[i];
 
             // Randomly apply H gate (Quantum fluctuations)
             if rand::thread_rng().gen_bool(0.01) {
@@ -71,12 +84,16 @@ impl World {
             }
         }
 
-        self.boids = new_boids;
+        std::mem::swap(&mut self.boids, &mut self.boids_buffer);
 
         // Physics Loop
-        let positions: Vec<Vec2> = self.boids.iter().map(|b| b.position).collect();
-        let velocities: Vec<Vec2> = self.boids.iter().map(|b| b.velocity).collect();
-        let mut forces = Vec::with_capacity(n);
+        self.positions_buffer.clear();
+        self.positions_buffer
+            .extend(self.boids.iter().map(|b| b.position));
+        self.velocities_buffer.clear();
+        self.velocities_buffer
+            .extend(self.boids.iter().map(|b| b.velocity));
+        self.forces_buffer.clear();
 
         for (i, boid) in self.boids.iter().enumerate() {
             // Quantum Weighting
@@ -97,12 +114,12 @@ impl World {
                 cohesion_weight: coh_w,
             };
 
-            let force = compute_force(&positions, &velocities, i, &params);
-            forces.push(force);
+            let force = compute_force(&self.positions_buffer, &self.velocities_buffer, i, &params);
+            self.forces_buffer.push(force);
         }
 
         for (i, boid) in self.boids.iter_mut().enumerate() {
-            boid.apply_force(forces[i]);
+            boid.apply_force(self.forces_buffer[i]);
             boid.update(self.width, self.height);
         }
     }
@@ -112,5 +129,29 @@ impl World {
             boid.qubit.measure();
             boid.entangled_partner = None; // Measurement breaks entanglement
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_buffers_are_reused_avoiding_allocations() {
+        let mut world = World::new(100.0, 100.0);
+
+        // Assert buffers are initialized with capacity
+        assert!(world.boids_buffer.capacity() >= 50);
+        assert!(world.positions_buffer.capacity() >= 50);
+        assert!(world.velocities_buffer.capacity() >= 50);
+        assert!(world.forces_buffer.capacity() >= 50);
+
+        world.update();
+
+        // Assert buffers are still there and reused (capacity didn't shrink to 0)
+        assert!(world.boids_buffer.capacity() >= 50);
+        assert!(world.positions_buffer.capacity() >= 50);
+        assert!(world.velocities_buffer.capacity() >= 50);
+        assert!(world.forces_buffer.capacity() >= 50);
     }
 }
