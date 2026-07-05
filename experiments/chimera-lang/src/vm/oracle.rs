@@ -342,7 +342,7 @@ pub fn exec_oracle_op(
                 };
                 match ChimeraParser::parse(Rule::gene, &query_str) {
                     Ok(mut pairs) => {
-                        let pair = pairs.next().unwrap();
+                        let pair = pairs.next()?;
                         match Gene::try_from_pair(pair) {
                             Ok(gene) => {
                                 let op_name = gene.op.to_string();
