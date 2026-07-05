@@ -90,34 +90,34 @@ fn handle_paradox_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<
 
 fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Genome Editing Logic
-    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
-        Ok(mut pairs) => {
-            let Some(pair) = pairs.next() else {
-                app_state.status_msg = "Parse Error: Empty input".to_string();
-                return None;
-            };
-            match Gene::try_from_pair(pair) {
-                Ok(gene) => {
-                    if app_state.selected_strand < vm.dna.helix.strands.len()
-                        && app_state.selected_gene
-                            < vm.dna.helix.strands[app_state.selected_strand].genes.len()
-                    {
-                        vm.dna.helix.strands[app_state.selected_strand].genes
-                            [app_state.selected_gene] = gene;
-                        app_state.status_msg = "Gene updated successfully".to_string();
-                    }
-                }
-                Err(e) => {
-                    app_state.status_msg = format!("Parse Error: {}", e);
-                    return None;
-                }
-            }
-        }
+    let mut pairs = match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
+        Ok(p) => p,
         Err(e) => {
             app_state.status_msg = format!("Parse Error: {}", e);
             return None;
         }
+    };
+
+    let Some(pair) = pairs.next() else {
+        app_state.status_msg = "Parse Error: Empty input".to_string();
+        return None;
+    };
+
+    let gene = match Gene::try_from_pair(pair) {
+        Ok(g) => g,
+        Err(e) => {
+            app_state.status_msg = format!("Parse Error: {}", e);
+            return None;
+        }
+    };
+
+    if app_state.selected_strand < vm.dna.helix.strands.len()
+        && app_state.selected_gene < vm.dna.helix.strands[app_state.selected_strand].genes.len()
+    {
+        vm.dna.helix.strands[app_state.selected_strand].genes[app_state.selected_gene] = gene;
+        app_state.status_msg = "Gene updated successfully".to_string();
     }
+
     Some(true)
 }
 
@@ -211,130 +211,158 @@ fn handle_evolution_enter(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Opti
 fn handle_ecology_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Inject Gene into Selected Organelle
     let gene_src = app_state.input_buffer.clone();
-    if !gene_src.is_empty() {
-        // 1. Compile gene
-        // We use a hack: wrap in strand to compile, then extract gene
-        let src = format!("strand injection {{ {} }}", gene_src);
-        match crate::compiler::compile(&src, None) {
-            Ok(dna) => {
-                if let Some(strand) = dna.helix.strands.first() {
-                    // 2. Inject into selected organelle
-                    let mut found = false;
-                    let (cx, cy) = app_state.grid_cursor;
-                    for org in vm.organelles.iter_mut() {
-                        if org.context_loc == (cy, cx) {
-                            // Push to stack or execute immediately?
-                            // Let's append to their current strand? No, shared DNA.
-                            // Let's force execute immediately (Interrupt)
-                            // Or push to their stack?
+    if gene_src.is_empty() {
+        return Some(true);
+    }
 
-                            // "Mad Science" Injection: Modify the Organelle's IP to a new ephemeral strand?
-                            // Complicated.
-                            // Let's just try to execute the genes on the organelle's stack context?
-                            // VM doesn't support executing genes on organelle directly easily without setting IP.
+    // 1. Compile gene
+    // We use a hack: wrap in strand to compile, then extract gene
+    let src = format!("strand injection {{ {} }}", gene_src);
+    let dna = match crate::compiler::compile(&src, None) {
+        Ok(dna) => dna,
+        Err(e) => {
+            app_state.status_msg = format!("Compilation Error: {}", e);
+            return Some(true);
+        }
+    };
 
-                            // Simplest: Add genes to the end of the Helix, and Jump the organelle there.
-                            vm.dna.helix.strands.push(strand.clone());
-                            let new_idx = vm.dna.helix.strands.len() - 1;
+    let Some(strand) = dna.helix.strands.first() else {
+        return Some(true);
+    };
 
-                            // Save current IP to call stack
-                            org.call_stack.push(org.ip);
-                            org.ip = (new_idx, 0);
+    // 2. Inject into selected organelle
+    let mut found = false;
+    let (cx, cy) = app_state.grid_cursor;
+    for org in vm.organelles.iter_mut() {
+        if org.context_loc == (cy, cx) {
+            // Push to stack or execute immediately?
+            // Let's append to their current strand? No, shared DNA.
+            // Let's force execute immediately (Interrupt)
+            // Or push to their stack?
 
-                            found = true;
-                            app_state.status_msg = format!("Injected code into {}", org.name);
-                            break;
-                        }
-                    }
-                    if !found {
-                        app_state.status_msg = "No organelle at cursor.".to_string();
-                    }
-                }
-            }
-            Err(e) => {
-                app_state.status_msg = format!("Compilation Error: {}", e);
-            }
+            // "Mad Science" Injection: Modify the Organelle's IP to a new ephemeral strand?
+            // Complicated.
+            // Let's just try to execute the genes on the organelle's stack context?
+            // VM doesn't support executing genes on organelle directly easily without setting IP.
+
+            // Simplest: Add genes to the end of the Helix, and Jump the organelle there.
+            vm.dna.helix.strands.push(strand.clone());
+            let new_idx = vm.dna.helix.strands.len() - 1;
+
+            // Save current IP to call stack
+            org.call_stack.push(org.ip);
+            org.ip = (new_idx, 0);
+
+            found = true;
+            app_state.status_msg = format!("Injected code into {}", org.name);
+            break;
         }
     }
+
+    if !found {
+        app_state.status_msg = "No organelle at cursor.".to_string();
+    }
+
     Some(true)
+}
+
+#[cfg(feature = "nova")]
+fn apply_genesis_editor(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    let src = format!("strand genesis {{ {} }}", app_state.genesis_editor_buffer);
+    let dna = match crate::compiler::compile(&src, None) {
+        Ok(dna) => dna,
+        Err(e) => {
+            app_state.status_msg = format!("Compile Error: {}", e);
+            return;
+        }
+    };
+
+    let Some(strand) = dna.helix.strands.first() else {
+        return;
+    };
+
+    for gene in &strand.genes {
+        vm.execute_gene_inner(gene.op.clone(), &gene.args);
+    }
+    app_state.status_msg = "Genesis: Executed.".to_string();
+}
+
+#[cfg(feature = "nova")]
+fn apply_genesis_grammar(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
+    let exprs = match crate::lisp::parse(&app_state.genesis_grammar_buffer) {
+        Ok(exprs) => exprs,
+        Err(e) => {
+            app_state.status_msg = format!("Lisp Error: {}", e);
+            return None;
+        }
+    };
+
+    let Some(expr) = exprs.first() else {
+        app_state.status_msg = "Error: Empty Grammar".to_string();
+        return Some(false);
+    };
+
+    match crate::lisp::sexpr_to_value(expr) {
+        Ok(grammar) => {
+            vm.active_grammar = grammar;
+            app_state.status_msg = "Genesis: Grammar Updated.".to_string();
+        }
+        Err(e) => app_state.status_msg = format!("Value Conversion Error: {}", e),
+    }
+    Some(false)
 }
 
 #[cfg(feature = "nova")]
 fn handle_genesis_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     // Commit change based on focus
     if app_state.genesis_focus == 0 {
-        // Compile Editor Code
-        let src = format!("strand genesis {{ {} }}", app_state.genesis_editor_buffer);
-        match crate::compiler::compile(&src, None) {
-            Ok(dna) => {
-                if let Some(strand) = dna.helix.strands.first() {
-                    // Execute immediately
-                    for gene in &strand.genes {
-                        vm.execute_gene_inner(gene.op.clone(), &gene.args);
-                    }
-                    app_state.status_msg = "Genesis: Executed.".to_string();
-                }
-            }
-            Err(e) => app_state.status_msg = format!("Compile Error: {}", e),
-        }
-    // Clear buffer? Maybe keep it for repeated editing.
+        apply_genesis_editor(vm, app_state);
+        Some(false)
     } else if app_state.genesis_focus == 1 {
-        // Update Grammar
-        match crate::lisp::parse(&app_state.genesis_grammar_buffer) {
-            Ok(exprs) => {
-                // Take the first expression as the grammar
-                if let Some(expr) = exprs.first() {
-                    match crate::lisp::sexpr_to_value(expr) {
-                        Ok(grammar) => {
-                            vm.active_grammar = grammar;
-                            app_state.status_msg = "Genesis: Grammar Updated.".to_string();
-                        }
-                        Err(e) => app_state.status_msg = format!("Value Conversion Error: {}", e),
-                    }
-                } else {
-                    app_state.status_msg = "Error: Empty Grammar".to_string();
-                }
-            }
-            Err(e) => {
-                app_state.status_msg = format!("Lisp Error: {}", e);
-                return None;
-            }
-        }
+        apply_genesis_grammar(vm, app_state)
     } else {
         // Grid
-        return apply_grid_edit(vm, app_state);
+        apply_grid_edit(vm, app_state)
     }
-    Some(false)
+}
+
+#[cfg(feature = "nova")]
+fn apply_forge_define_rule(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    if app_state.forge_selected_rule.is_empty() {
+        return;
+    }
+    vm.prologue_state.logos_engine.define_rule(
+        &app_state.forge_selected_rule,
+        &app_state.forge_editor_buffer,
+    );
+    app_state.status_msg = format!("Forge: Rule '{}' updated.", app_state.forge_selected_rule);
+}
+
+#[cfg(feature = "nova")]
+fn apply_forge_test_rule(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    if app_state.forge_selected_rule.is_empty() {
+        return;
+    }
+    match vm
+        .prologue_state
+        .logos_engine
+        .parse_input(&app_state.forge_selected_rule, &app_state.forge_test_input)
+    {
+        Ok(val) => {
+            app_state.forge_test_output = format!("Success: {}", val);
+        }
+        Err(e) => {
+            app_state.forge_test_output = format!("Error: {}", e);
+        }
+    }
 }
 
 #[cfg(feature = "nova")]
 fn handle_forge_enter(vm: &mut ChimeraVM, app_state: &mut AppState) -> Option<bool> {
     if app_state.forge_focus == 1 {
-        // Define Rule
-        if !app_state.forge_selected_rule.is_empty() {
-            vm.prologue_state.logos_engine.define_rule(
-                &app_state.forge_selected_rule,
-                &app_state.forge_editor_buffer,
-            );
-            app_state.status_msg =
-                format!("Forge: Rule '{}' updated.", app_state.forge_selected_rule);
-        }
+        apply_forge_define_rule(vm, app_state);
     } else if app_state.forge_focus == 2 {
-        // Test Rule
-        if !app_state.forge_selected_rule.is_empty() {
-            match vm
-                .prologue_state
-                .logos_engine
-                .parse_input(&app_state.forge_selected_rule, &app_state.forge_test_input)
-            {
-                Ok(val) => {
-                    app_state.forge_test_output = format!("Success: {}", val);
-                }
-                Err(e) => {
-                    app_state.forge_test_output = format!("Error: {}", e);
-                }
-            }
-        }
+        apply_forge_test_rule(vm, app_state);
     }
     Some(false)
 }
