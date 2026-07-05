@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-quipu**: Specimen condemned. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Grace period: 24h.
+- **miller-locus**: Specimen condemned. Diagnosis: Skeletal Implementation and Terminal Genericism. Grace period: 24h.
 
 ## ☠️ Executed
+- **git-quipu**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **quipu-physics**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **gray-miller**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution (trivial coordinate projection, lack of depth). Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **git-physics**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution (hardcoded paths, generic representation). Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
@@ -333,7 +334,6 @@
 - **ink-jet**: Specimen executed. Documentation void. Redundant with `typographic-turbulence`. Asset reliance. Moved to graveyard.
 - **babylonian-forecaster**: Specimen executed. Terminal Chart Rot (Y-axis mismatch). Redundant with `babylonian-garden`. Grace period expired. Moved to graveyard.
 - **sono-scapes**: Specimen executed. Documentation void. Redundant with `ripple-tank`. Sketch Rot. Moved to graveyard.
-- **git-quipu**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **git-climber**: Specimen executed. Documentation void. Fragile stack. Skeletal implementation. Moved to graveyard.
 - **hertzian-shimmer**: Specimen executed. Documentation void. Fragile dependency. Redundant with `cymatic-ocean`. Moved to graveyard.
 - **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Sketch Rot. Moved to graveyard.
