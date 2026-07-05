@@ -697,3 +697,23 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `story_demo` example from `git_rhythm`'s README to add Nova's story feature. The compiler immediately yelled at me that `module 'nova' is private`."
 *   🕵️ **The Reality:** "Turns out the library uses a Facade pattern that hides the `nova` module, but the README was never updated. The example tells you to import an internal private path."
 *   💡 **The Fix:** "Update the README example code to use the correct public import path: `use git_rhythm::NarrativeGenerator;` instead of `use git_rhythm::nova::NarrativeGenerator;`."
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a user trying to test the 'story_demo' example in a CI or non-interactive environment."
+**Action:** Ran the `cargo run -p chimera-lang --example story_demo --features nova -- --headless` command as documented for non-interactive environments in `chimera-lang/README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Headless Execution Timeout:** The example does not support the `--headless` flag properly and hangs indefinitely, waiting for TUI input.
+    - *Impact:* The command times out after a long period (e.g., 400 seconds in CI). This completely breaks automated testing and prevents users from running the demo without a blocking TUI.
+    - *Cause:* The `run_tui` function in `story_demo.rs` launches a blocking interactive TUI and does not parse or respect the `--headless` CLI argument. The README even explicitly states "Note that it launches a blocking interactive TUI and cannot run headlessly" right before showing the command, which is confusing and contradictory.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: The `story_demo` example hangs in headless mode
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `story_demo` example headlessly in my CI pipeline using `cargo run -p chimera-lang --example story_demo --features nova -- --headless`. It just hung there forever and eventually timed out."
+*   🕵️ **The Reality:** "Turns out the example code blindly launches a blocking TUI with `run_tui()` and completely ignores the `--headless` flag, waiting for me to press 'Space' even though there's no terminal."
+*   💡 **The Fix:** "Either make the `story_demo` respect the `--headless` flag to run the logic without the TUI, or make it immediately exit with a clear error message instead of hanging indefinitely when run in non-interactive environments."
