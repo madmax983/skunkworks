@@ -118,6 +118,8 @@ I have checked all previous hybrids in this list.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. I verified that `origami-market` and `arthropod-physics` compiled perfectly and displayed strong hybrid vigor. The `arthropod-lattice` cross was also stable. I am autonomously inventing a new hybrid: `neuro-physics`. Crossing the biological Spiking Neural Network of `neuro-sim` with the soft-body Position Based Dynamics of `physics-pbd` will allow us to observe how spiking behavior contracts distance constraints, mimicking muscle tissue in a continuous 3D simulation.
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. The recent `arthropod-origami`, `arthropod-lattice`, and `arthropod-physics` crosses compiled seamlessly and display incredible hybrid vigor. Grafting the discrete GUI components of `arthropod` onto continuous simulation engines continues to be a highly viable breeding strategy. Because the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid: `arthropod-flock`. Crossing the immediate mode UI library `arthropod` with the swarm intelligence of `flocking` will allow users to dynamically modulate the DNA parameters (cohesion, alignment, separation) of a live swarm.
+
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. I verified that `neuro-physics` and `git-quipu` compiled perfectly and displayed strong hybrid vigor. I am autonomously inventing a new hybrid: `arthropod-physics`. Crossing the immediate mode UI library `arthropod` with the Position Based Dynamics engine `physics-pbd` will allow us to observe discrete GUI inputs directly modifying continuous soft-body constraints, bridging abstract interface paradigms with structural rendering.
 
 
@@ -178,6 +180,14 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: A robust interactive structural playground showing continuous rendering of crystalline structures, where the abstract GUI directly influences the growth parameters of the environment.
 - **Status**: experiments/arthropod-lattice
 - **Evaluation**: Success. Compiled. The TUI correctly spawns new 3D crystal structures. Headless bypass correctly implemented.
+
+### arthropod-flock
+- **Parents**: crates/arthropod + crates/flocking
+- **Concept**: Interactive Swarm Intelligence.
+- **Novel trait**: The immediate mode UI elements of `arthropod` dynamically map to the weights of the `FlockingParams` from `flocking`. This allows real-time interactive manipulation of the boid DNA, shifting their rules natively via GUI.
+- **Predicted Phenotype**: An emergent interactive sandbox where clicking discrete interface buttons immediately causes the chaotic biological swarm to scatter, align, or group tightly.
+- **Status**: experiments/arthropod-flock
+- **Evaluation**: Success. Compiled. The TUI correctly manipulates continuous swarm intelligence behavior. Headless bypass correctly implemented.
 
 ### arthropod-physics
 - **Parents**: crates/arthropod + crates/physics-pbd

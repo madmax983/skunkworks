@@ -47,6 +47,7 @@ members = [
     "experiments/arthropod-physics",
     "experiments/arthropod-lattice",
     "experiments/origami-market",
+    "experiments/arthropod-flock",
 
 
 ]

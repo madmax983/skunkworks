@@ -1,0 +1,11 @@
+[package]
+name = "arthropod-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arthropod = { path = "../../crates/arthropod" }
+flocking = { path = "../../crates/flocking" }
+locus = { path = "../../crates/locus" }
+macroquad = "0.4.15"
+rand = "0.8"
