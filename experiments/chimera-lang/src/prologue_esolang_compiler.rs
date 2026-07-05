@@ -2828,6 +2828,29 @@ fn compile_clockwork_concerto_instr(pair: pest::iterators::Pair<Rule>) -> Result
     Ok(genes)
 }
 
+fn compile_genetic_luthier_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    let op_str = inner.as_str().to_lowercase();
+    match op_str.as_str() {
+        "pluck" | "tune" | "simulate" => {
+            genes.push(Gene::new(
+                OpCode::Push,
+                vec![Nucleotide::String(op_str.to_string())],
+            ));
+            genes.push(Gene::new(OpCode::GeneticLuthier, vec![]));
+        }
+        _ => {
+            genes.push(Gene::new(OpCode::Unknown(op_str.to_string()), vec![]));
+        }
+    }
+
+    Ok(genes)
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2996,26 +3019,3 @@ hologram {
     }
 }
 
-fn compile_genetic_luthier_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
-    let mut genes = Vec::new();
-    let inner = pair
-        .into_inner()
-        .next()
-        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
-
-    let op_str = inner.as_str().to_lowercase();
-    match op_str.as_str() {
-        "pluck" | "tune" | "simulate" => {
-            genes.push(Gene::new(
-                OpCode::Push,
-                vec![Nucleotide::String(op_str.to_string())],
-            ));
-            genes.push(Gene::new(OpCode::GeneticLuthier, vec![]));
-        }
-        _ => {
-            genes.push(Gene::new(OpCode::Unknown(op_str.to_string()), vec![]));
-        }
-    }
-
-    Ok(genes)
-}
