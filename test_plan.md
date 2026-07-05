@@ -1,13 +1,18 @@
-1. **Analyze the problem:** The user reported `capacity overflow` panic in origami, but checking `crates/origami`, that was already solved based on the journal `.jules/atlas.md`.
-Looking closer at the prompt, I am asked to enforce high cohesion and low coupling across the codebase, identifying and fixing "The Knot", "The Leak", "The Bloat", "The Sprawl", "The Shotgun" etc.
-Wait, the `literary-boids` crate had an unresolved import issue with `tui_shared::math::Vec2`. I fixed it by changing it to `locus::Vec2`.
-Also I ran `grep -rnw -e "pub mod" crates experiments graveyard alleles` which showed that many `graveyard` and `alleles` crates are leaking their internal submodules directly via `pub mod`. I applied the Facade pattern by replacing `pub mod` with `pub(crate) mod` in `alleles/literary-boids/src/main.rs`. Wait, I did `pub(crate) mod` for `boid`, `critic`, `syntax_physics`, `traces` and `world` in `literary-boids/src/main.rs`. But that wasn't an explicit PR request yet, I should probably do it properly and record the ADR/journal.
-Wait, let's review `.jules/atlas.md` again. It mentions I only add journal entries when I discover:
-- A circular dependency that required a "Facade" or "Bridge" pattern to fix.
-- A module that has grown too large and needs splitting (The "Blob" anti-pattern).
-- A violation of the Orphan Rule that forced a specific trait design.
-- An Architectural Decision Record (ADR) that needs to be captured.
-
-The core problem was `literary-boids` failed to compile because `tui_shared::math` was removed (presumably moved to `locus`). I fixed `literary-boids`, `repo-rover`, `laban-rover`, `metric-marionette`, and `git_galaxy` to use `locus::Vec2`.
-And I encapsulated the modules in `literary-boids` with `pub(crate) mod`.
-Let's see if there are any other leaks or tangles.
+1. **Fix Root README.md jargon**
+   - Add a plain-English summary to `README.md` right below the title explaining that "Chimera is a visual programming language and simulation environment".
+2. **Fix `experiments/chimera-lang/README.md` enzymes type documentation**
+   - Explicitly document the expected type for each argument in `splice` and other enzymes.
+3. **Fix `experiments/neuro-physics/README.md` quick start command**
+   - Update `cargo run -p neuro-physics --headless` to `cargo run -p neuro-physics -- --headless`.
+4. **Fix `crates/ferrous-core/README.md` quick start example**
+   - Wrap the rust code in `fn main() { ... }` block.
+5. **Fix `graveyard/git_rhythm/README.md` private module**
+   - Update the import in the example from `use git_rhythm::nova::NarrativeGenerator;` to `use git_rhythm::NarrativeGenerator;`.
+6. **Fix `experiments/chimera-lang/examples/story_demo.rs` headless mode**
+   - Add a check for `--headless` in `story_demo.rs` using `std::env::args()` and avoid launching the TUI if the flag is present, or just print a message and exit early like we do in macroquad tests.
+7. **Fix `crates/arthropod/README.md` missing macroquad dependency**
+   - Add `macroquad = "0.4"` to the `[dependencies]` in the `Installation` section of the README.
+8. **Fix `experiments/quipu-market/README.md` running instructions**
+   - Provide a visual example and explicitly write out `cargo run -p quipu-market` (it's already there but verify).
+9. **Pre-commit and Submit**
+   - Complete pre-commit checks and submit.
