@@ -747,13 +747,14 @@ fn exec_rune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() < 3 {
         return None;
     }
-    let Value::Int(x) = vm.stack.pop().unwrap() else {
+
+    let Some(Value::Int(x)) = vm.stack.pop() else {
         return None;
     };
-    let Value::Int(y) = vm.stack.pop().unwrap() else {
+    let Some(Value::Int(y)) = vm.stack.pop() else {
         return None;
     };
-    let Value::Int(c) = vm.stack.pop().unwrap() else {
+    let Some(Value::Int(c)) = vm.stack.pop() else {
         return None;
     };
 
@@ -2479,5 +2480,38 @@ pub(crate) fn exec_genetic_luthier(vm: &mut ChimeraVM) {
     } else {
         vm.output
             .push("🎻 Genetic Luthier string plucked.".to_string());
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast::{Dna, Helix, Strand};
+
+    #[test]
+    fn should_return_none_when_stack_underflow_in_exec_rune() {
+        // Red phase: verify that exec_rune safely returns when the stack does not have enough items (without panicking)
+        let dna = Dna {
+            evolution_config: None,
+            helix: Helix {
+                strands: vec![Strand { genes: vec![] }],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        // Case 1: Empty stack
+        assert_eq!(exec_rune(&mut vm), None);
+        assert_eq!(vm.stack.len(), 0);
+
+        // Case 2: Only one item
+        vm.stack.push(Value::Int(1));
+        assert_eq!(exec_rune(&mut vm), None);
+        // Stack should not be drained
+        assert_eq!(vm.stack.len(), 1);
+
+        // Case 3: Only two items
+        vm.stack.push(Value::Int(2));
+        assert_eq!(exec_rune(&mut vm), None);
+        // Stack should not be drained
+        assert_eq!(vm.stack.len(), 2);
     }
 }
