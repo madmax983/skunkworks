@@ -1,5 +1,5 @@
 // Run with: cargo run --features nova --example story_demo
-use git_rhythm::nova::NarrativeGenerator;
+use git_rhythm::NarrativeGenerator;
 
 fn main() {
     println!("Starting Story Mode...");

@@ -47,3 +47,7 @@
 ## 2026-07-03 - [Fixing Quick Start Code Blocks in README]
 **Confusion:** The Quick Start code block in `crates/ferrous-core/README.md` was missing a `fn main() { ... }` wrapper, causing compilation errors when users copy-pasted it.
 **Clarification:** Always wrap example code blocks inside a `fn main() { ... }` block in READMEs so they are valid, runnable Rust programs.
+
+## 2026-07-06 - [Fixing Headless Flag in Examples and Private Facade imports]
+**Confusion:** TUI examples might hang indefinitely in headless/CI environments if they don't explicitly parse and handle the `--headless` flag. Also, users were directed to import private facade modules directly.
+**Clarification:** Examples that launch TUIs should explicitly handle the `--headless` argument (e.g. `if std::env::args().any(|arg| arg == "--headless")`) by either running their logic directly without `run_tui` or exiting immediately, to prevent hanging in non-interactive environments. Additionally, example code in READMEs should import from the public facade instead of private internal modules.

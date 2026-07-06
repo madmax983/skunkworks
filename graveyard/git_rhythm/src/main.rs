@@ -8,12 +8,12 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-use git_rhythm::harvester::harvest_repo;
-use git_rhythm::synth::Synthesizer;
-use git_rhythm::vis::VisualState;
+use git_rhythm::harvest_repo;
+use git_rhythm::Synthesizer;
+use git_rhythm::VisualState;
 
 #[cfg(feature = "nova")]
-use git_rhythm::experimental::mood;
+use git_rhythm::mood;
 
 fn main() -> Result<()> {
     // 1. Harvest

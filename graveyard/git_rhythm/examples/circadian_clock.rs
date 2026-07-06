@@ -4,7 +4,7 @@ use crossterm::{
     execute,
     terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
-use git_rhythm::experimental::circadian::CircadianPhase;
+use git_rhythm::CircadianPhase;
 use ratatui::{
     Terminal,
     backend::CrosstermBackend,
