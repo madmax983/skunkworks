@@ -717,3 +717,111 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `story_demo` example headlessly in my CI pipeline using `cargo run -p chimera-lang --example story_demo --features nova -- --headless`. It just hung there forever and eventually timed out."
 *   🕵️ **The Reality:** "Turns out the example code blindly launches a blocking TUI with `run_tui()` and completely ignores the `--headless` flag, waiting for me to press 'Space' even though there's no terminal."
 *   💡 **The Fix:** "Either make the `story_demo` respect the `--headless` flag to run the logic without the TUI, or make it immediately exit with a clear error message instead of hanging indefinitely when run in non-interactive environments."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-flock/README.md`
+**Date:** 2026-07-06
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-flock` experiment headlessly in a CI environment."
+**Action:** Copy and pasted the headless command `cargo run -p arthropod-flock --release --headless` implied by the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Headless execution command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-flock` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-flock --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-flock --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-origami/README.md`
+**Date:** 2026-07-06
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-origami` experiment."
+**Action:** Try to run the experiment based *only* on the public docs in `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Running Instructions:** The README describes the concept and traits but lacks any instructions on how to actually compile and run the experiment.
+    - *Impact:* The user doesn't know the entry point (e.g. `cargo run -p arthropod-origami`).
+    - *Fix:* Provide clear "Quick Start" or "Running" instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing execution instructions for arthropod-origami
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-origami` experiment. The README tells me it's a hybrid but doesn't tell me how to run it."
+*   🕵️ **The Reality:** "Turns out the README is just a conceptual document and lacks basic `cargo run` commands or examples."
+*   💡 **The Fix:** "Add a 'Quick Start' or 'Usage' section with the `cargo run -p arthropod-origami` command."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-lattice/README.md`
+**Date:** 2026-07-06
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-lattice` experiment."
+**Action:** Try to run the experiment based *only* on the public docs in `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Running Instructions:** The README describes the concept and traits but lacks any instructions on how to actually compile and run the experiment.
+    - *Impact:* The user doesn't know the entry point (e.g. `cargo run -p arthropod-lattice`).
+    - *Fix:* Provide clear "Quick Start" or "Running" instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing execution instructions for arthropod-lattice
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-lattice` experiment. The README tells me it's a hybrid but doesn't tell me how to run it."
+*   🕵️ **The Reality:** "Turns out the README is just a conceptual document and lacks basic `cargo run` commands or examples."
+*   💡 **The Fix:** "Add a 'Quick Start' or 'Usage' section with the `cargo run -p arthropod-lattice` command."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-physics/README.md`
+**Date:** 2026-07-06
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-physics` experiment."
+**Action:** Try to run the experiment based *only* on the public docs in `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Running Instructions:** The README describes the concept and traits but lacks any instructions on how to actually compile and run the experiment.
+    - *Impact:* The user doesn't know the entry point (e.g. `cargo run -p arthropod-physics`).
+    - *Fix:* Provide clear "Quick Start" or "Running" instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing execution instructions for arthropod-physics
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-physics` experiment. The README tells me it's a hybrid but doesn't tell me how to run it."
+*   🕵️ **The Reality:** "Turns out the README is just a conceptual document and lacks basic `cargo run` commands or examples."
+*   💡 **The Fix:** "Add a 'Quick Start' or 'Usage' section with the `cargo run -p arthropod-physics` command."
