@@ -20,3 +20,7 @@
 **[Unwrap Panics on Stack Pops]**
 **Learning:** Found and removed dozens of `.unwrap()` calls on stack pops in various module execution contexts (like `nova_genetics`, `nova_fluid`, etc.). A malformed DNA script running in the ChimeraVM can cause the stack to be smaller than expected. Popping from an empty stack causes fatal crashes.
 **Action:** Always replace `.unwrap()` with idiomatic rust like `let Some(val) = vm.stack.pop() else { return; };` to silently stop execution of the op or return an error/`None`. Never trust the stack has elements just because the script called the OpCode.
+
+**[Stack Underflow Semantic Safety]**
+**Learning:** `vm.stack.pop().unwrap()` is dangerous, but simply replacing it with sequential `let Some(...) = vm.stack.pop() else { return None; }` can introduce semantic bugs in stack-based VMs. If the stack doesn't have enough items (e.g., requires 3, has 2), sequential popping will partially drain the stack before failing. The original explicit length check (`if vm.stack.len() < N { return None; }`) protected against this semantic side-effect.
+**Action:** When refactoring stack operations to remove `.unwrap()`, retain the `if vm.stack.len() < N` bounds check to ensure operations are atomic (either all popped, or none), then use safe popping.
