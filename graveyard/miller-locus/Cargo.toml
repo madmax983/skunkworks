@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 miller-lattice = { path = "../../crates/miller-lattice" }
 locus = { path = "../../crates/locus" }
+
+[workspace]

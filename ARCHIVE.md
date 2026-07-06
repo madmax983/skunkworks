@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **miller-locus**: Specimen condemned. Diagnosis: Skeletal Implementation and Terminal Genericism. Grace period: 24h.
+- **git-poincare**: Specimen condemned. Diagnosis: Skeletal Implementation and Terminal Genericism. Grace period: 24h.
 
 ## ☠️ Executed
+- **miller-locus**: Specimen executed. Diagnosis: Skeletal Implementation and Terminal Genericism. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **git-quipu**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **quipu-physics**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **gray-miller**: Specimen executed. Diagnosis: Documentation Void (missing `README.md`) and Skeletal Execution (trivial coordinate projection, lack of depth). Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
