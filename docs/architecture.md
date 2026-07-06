@@ -3854,3 +3854,205 @@ classDiagram
     TuiSharedLib ..> Region : encapsulates
     TuiSharedLib ..> Snapshot : encapsulates
 ```
+
+## Experiment: Arthropod-Physics (ADR 144)
+
+**Arthropod-Physics** explores a "Interactive Structural Rigging" by crosses the immediate mode UI library `arthropod` with the Position Based Dynamics engine `physics-pbd`.
+
+### Hybrid Architecture
+
+The hybrid maps discrete elements from `arthropod` into `physics-pbd`.
+
+```mermaid
+classDiagram
+    direction TB
+    class ArthropodPhysics {
+        +ArthropodUI ui
+        +PbdEngine physics
+        +run()
+    }
+
+    class ArthropodUI {
+        <<Library: arthropod>>
+        +Vec~Widget~ widgets
+        +update_state()
+    }
+
+    class PbdEngine {
+        <<Library: physics-pbd>>
+        +Vec~Particle~ particles
+        +Vec~Constraint~ constraints
+        +solve()
+    }
+
+    ArthropodPhysics --> ArthropodUI : Abstract GUI Actions
+    ArthropodPhysics --> PbdEngine : Physical Constraints
+```
+
+## Experiment: Arthropod-Lattice (ADR 145)
+
+**Arthropod-Lattice** explores a "Interactive Codebase Crystallography" by crosses the immediate mode UI library `arthropod` with the procedural codebase generation of `miller-lattice`.
+
+### Hybrid Architecture
+
+The hybrid maps discrete elements from `arthropod` into `miller-lattice`.
+
+```mermaid
+classDiagram
+    direction TB
+    class ArthropodLattice {
+        +ArthropodUI ui
+        +LatticeGenerator lattice
+        +run()
+    }
+
+    class ArthropodUI {
+        <<Library: arthropod>>
+        +Vec~Widget~ widgets
+        +update_state()
+    }
+
+    class LatticeGenerator {
+        <<Library: miller-lattice>>
+        +CodebaseCrystal crystal
+        +generate()
+    }
+
+    ArthropodLattice --> ArthropodUI : Discrete GUI Inputs
+    ArthropodLattice --> LatticeGenerator : Continuous 3D Crystal
+```
+
+## Experiment: Neuro-Physics (ADR 146)
+
+**Neuro-Physics** explores a "Neural Muscle Contraction" by crosses the biological Spiking Neural Network of `neuro-sim` with the soft-body Position Based Dynamics of `physics-pbd`.
+
+### Hybrid Architecture
+
+The hybrid maps discrete elements from `neuro-sim` into `physics-pbd`.
+
+```mermaid
+classDiagram
+    direction TB
+    class NeuroPhysics {
+        +SpikingNetwork network
+        +PbdEngine physics
+        +run()
+    }
+
+    class SpikingNetwork {
+        <<Library: neuro-sim>>
+        +Vec~Neuron~ neurons
+        +step()
+    }
+
+    class PbdEngine {
+        <<Library: physics-pbd>>
+        +Vec~Particle~ particles
+        +Vec~Constraint~ constraints
+        +solve()
+    }
+
+    NeuroPhysics --> SpikingNetwork : SNN Activations
+    NeuroPhysics --> PbdEngine : Muscle Tissue Actuation
+```
+
+## Experiment: Arthropod-Origami (ADR 147)
+
+**Arthropod-Origami** explores a "Interactive Topological Folding" by crosses the immediate mode UI of `arthropod` with the 3D procedural Miura-ori soft-body mesh of `origami`.
+
+### Hybrid Architecture
+
+The hybrid maps discrete elements from `arthropod` into `origami`.
+
+```mermaid
+classDiagram
+    direction TB
+    class ArthropodOrigami {
+        +ArthropodUI ui
+        +OrigamiMesh mesh
+        +run()
+    }
+
+    class ArthropodUI {
+        <<Library: arthropod>>
+        +Vec~Widget~ widgets
+        +update_state()
+    }
+
+    class OrigamiMesh {
+        <<Library: origami>>
+        +Vec~Vertex~ vertices
+        +fold()
+    }
+
+    ArthropodOrigami --> ArthropodUI : Abstract GUI Actions
+    ArthropodOrigami --> OrigamiMesh : Topological Folding
+```
+
+## Experiment: Arthropod-Flock (ADR 148)
+
+**Arthropod-Flock** explores a "Interactive Swarm Intelligence" by crosses the immediate mode UI elements of `arthropod` with the swarm intelligence of `flocking`.
+
+### Hybrid Architecture
+
+The hybrid maps discrete elements from `arthropod` into `flocking`.
+
+```mermaid
+classDiagram
+    direction TB
+    class ArthropodFlock {
+        +ArthropodUI ui
+        +SwarmSystem swarm
+        +run()
+    }
+
+    class ArthropodUI {
+        <<Library: arthropod>>
+        +Vec~Widget~ widgets
+        +update_state()
+    }
+
+    class SwarmSystem {
+        <<Library: flocking>>
+        +Vec~Boid~ boids
+        +FlockingParams params
+        +update()
+    }
+
+    ArthropodFlock --> ArthropodUI : Discrete Interface Buttons
+    ArthropodFlock --> SwarmSystem : Swarm DNA Modulation
+```
+
+## Experiment: Gray-Miller (ADR 149)
+
+**Gray-Miller** explores a "Continuous Codebase Crystallization" by crosses the `miller-lattice` crystal generation with `gray-scott` reaction-diffusion.
+
+### Hybrid Architecture
+
+The hybrid maps discrete elements from `miller-lattice` into `gray-scott`.
+
+```mermaid
+classDiagram
+    direction TB
+    class GrayMiller {
+        +LatticeGenerator lattice
+        +ReactionDiffusionGrid grid
+        +run()
+    }
+
+    class LatticeGenerator {
+        <<Library: miller-lattice>>
+        +CodebaseCrystal crystal
+        +generate()
+    }
+
+    class ReactionDiffusionGrid {
+        <<Library: gray-scott>>
+        +Vec~f32~ u
+        +Vec~f32~ v
+        +step()
+    }
+
+    GrayMiller --> LatticeGenerator : 3D Crystalline Structure
+    GrayMiller --> ReactionDiffusionGrid : 2D Morphogenetic Patterns
+```
