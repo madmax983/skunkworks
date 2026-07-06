@@ -38,3 +38,16 @@ Recursive descent parsers like `syn::parse_file` are vulnerable to deterministic
 * 📉 **The Result:** The test `havoc_test_parse` accurately simulates an attacker dropping this file in the target directory. The parser attempts to recurse 20,000 times, overflowing the thread stack and crashing the application (`fatal runtime error: stack overflow`).
 * 🧪 **Reproduction:** Run `cargo test -p syntax-garden --test havoc_parse`
 * 😈 **Comment:** "You thought the compiler would protect you from bad code. You forgot you are the compiler."
+
+## The Weak Point: Mutex Starvation in `system-turbulence`
+
+In `experiments/system-turbulence/src/system_monitor.rs`, the application uses a `std::sync::Mutex` to share state (`SystemStats`) between the background telemetry thread (writer) and the Bevy ECS systems (readers).
+
+## The Attack: Reader Starvation
+
+`std::sync::Mutex` under high contention with readers holding the lock (even briefly) can completely starve a single background writer thread, especially if the readers are aggressively polling the `try_lock()` or `lock()` operations.
+
+* 🧨 **The Trigger:** 100 "reader" threads repeatedly lock `SystemStats` while keeping the lock held for brief durations (10ms), causing the "writer" thread to hang indefinitely trying to get a lock to push telemetry updates.
+* 📉 **The Result:** The test `havoc_test_monitor_starvation` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p system-turbulence --test havoc_monitor`
+* 😈 **Comment:** "You thought standard Mutexes were fair. You were wrong."
