@@ -41,6 +41,21 @@ fn main() -> anyhow::Result<()> {
     };
     vm.dna.helix.strands.push(reader_strand);
 
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("🧪 Incubating narrative headlessly...");
+        // In headless mode, we can just run the VM for a few steps
+        // The Incubate op reads from the grid, creating a new strand.
+        // Then we can step the new strand.
+        for _ in 0..10 {
+            if vm.halted { break; }
+            vm.step();
+        }
+        for line in &vm.output {
+            println!("{}", line);
+        }
+        return Ok(());
+    }
+
     println!("🧪 Incubating narrative... Launching TUI.");
     println!("(Press Space to Step, Q to Quit)");
 
