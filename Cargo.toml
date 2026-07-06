@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "experiments/gray-miller",
     "crates/arthropod",
     "crates/*",
     "experiments/*",
