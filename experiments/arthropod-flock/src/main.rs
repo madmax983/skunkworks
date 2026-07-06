@@ -1,8 +1,8 @@
+use ::rand::Rng;
 use arthropod::Button;
 use flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use macroquad::prelude::*;
-use ::rand::Rng;
 
 fn window_conf() -> Conf {
     Conf {
@@ -47,10 +47,14 @@ async fn async_main() {
         cohesion_weight: 1.0,
     };
 
-    let btn_scatter = Button::new("Scatter", 20.0, 20.0, 100.0, 40.0).with_colors(RED, ORANGE, DARKGRAY);
-    let btn_group = Button::new("Group", 20.0, 70.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
-    let btn_align = Button::new("Align", 20.0, 120.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
-    let btn_reset = Button::new("Reset", 20.0, 170.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, BLACK);
+    let btn_scatter =
+        Button::new("Scatter", 20.0, 20.0, 100.0, 40.0).with_colors(RED, ORANGE, DARKGRAY);
+    let btn_group =
+        Button::new("Group", 20.0, 70.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
+    let btn_align =
+        Button::new("Align", 20.0, 120.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
+    let btn_reset =
+        Button::new("Reset", 20.0, 170.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, BLACK);
 
     loop {
         clear_background(color_u8!(20, 20, 30, 255));
@@ -90,10 +94,18 @@ async fn async_main() {
             positions[i] += velocities[i];
 
             // Wrap edges
-            if positions[i].x < 0.0 { positions[i].x += 800.0; }
-            if positions[i].x > 800.0 { positions[i].x -= 800.0; }
-            if positions[i].y < 0.0 { positions[i].y += 600.0; }
-            if positions[i].y > 600.0 { positions[i].y -= 600.0; }
+            if positions[i].x < 0.0 {
+                positions[i].x += 800.0;
+            }
+            if positions[i].x > 800.0 {
+                positions[i].x -= 800.0;
+            }
+            if positions[i].y < 0.0 {
+                positions[i].y += 600.0;
+            }
+            if positions[i].y > 600.0 {
+                positions[i].y -= 600.0;
+            }
         }
 
         // Draw boids

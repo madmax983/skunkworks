@@ -178,7 +178,10 @@ impl World {
                 }
                 BeeState::Observing => {
                     // Drift near hive
-                    let step = Complex::from_polar(bee_speed * 0.1 * dt, rng.gen_range(0.0..std::f64::consts::TAU));
+                    let step = Complex::from_polar(
+                        bee_speed * 0.1 * dt,
+                        rng.gen_range(0.0..std::f64::consts::TAU),
+                    );
                     bee.position = mobius_add(step, bee.position);
                     if bee.position.norm() > 0.1 {
                         bee.position = Complex::from_polar(0.09, bee.position.arg());
@@ -211,8 +214,10 @@ impl World {
                             let step = Complex::from_polar(bee_speed * dt, dir);
                             bee.position = mobius_add(step, bee.position);
                             // Jitter
-                            let jitter =
-                                Complex::from_polar(bee_speed * 0.2 * dt, rng.gen_range(0.0..std::f64::consts::TAU));
+                            let jitter = Complex::from_polar(
+                                bee_speed * 0.2 * dt,
+                                rng.gen_range(0.0..std::f64::consts::TAU),
+                            );
                             bee.position = mobius_add(jitter, bee.position);
                         }
                     } else {

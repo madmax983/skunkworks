@@ -73,7 +73,13 @@ async fn run() {
             extension_factor = (extension_factor - 0.05).max(0.01);
         }
 
-        draw_text(&format!("Extension: {:.2}", extension_factor), 10.0, 110.0, 20.0, WHITE);
+        draw_text(
+            &format!("Extension: {:.2}", extension_factor),
+            10.0,
+            110.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await;
     }

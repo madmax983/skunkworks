@@ -4191,7 +4191,10 @@ impl EvolutionEngine {
     /// // Example usage of tournament_select
     /// ```
     pub fn tournament_select(pool: &[(i64, Strand)], rng: &mut impl Rng) -> Strand {
-        if pool.is_empty() { println!("pool is empty"); return Strand { genes: vec![] }; }
+        if pool.is_empty() {
+            println!("pool is empty");
+            return Strand { genes: vec![] };
+        }
         let k = 3; // Tournament size
         let mut best: Option<&(i64, Strand)> = None;
 
