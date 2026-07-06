@@ -47,7 +47,9 @@ fn main() -> anyhow::Result<()> {
         // The Incubate op reads from the grid, creating a new strand.
         // Then we can step the new strand.
         for _ in 0..10 {
-            if vm.halted { break; }
+            if vm.halted {
+                break;
+            }
             vm.step();
         }
         for line in &vm.output {

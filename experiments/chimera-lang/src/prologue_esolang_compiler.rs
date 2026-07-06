@@ -3018,4 +3018,3 @@ hologram {
         assert_eq!(genes[2].op, OpCode::Hologram);
     }
 }
-
