@@ -300,86 +300,31 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             }
         }
         OpCode::DAC => {
-            // Read 4 neighbors.
-            let (cy, cx) = vm.context_loc;
-            let mut val = 0;
-
-            // Order: N=8, E=4, S=2, W=1
-            let neighbors = [(-1, 0, 8), (0, 1, 4), (1, 0, 2), (0, -1, 1)];
-
-            for (dy, dx, bit) in neighbors {
-                if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
-                    let cell = &vm.grid[ny][nx];
-                    let active = match cell {
-                        Value::Int(2) => true, // Electron Head
-                        Value::Str(s) if s.starts_with("EMIT:") => {
-                            // Check if firing (phase == 0)
-                            let parts: Vec<&str> = s.split(':').collect();
-                            if parts.len() == 3 {
-                                if let Ok(phase) = parts[2].parse::<i64>() {
-                                    phase == 0
-                                } else {
-                                    false
-                                }
-                            } else {
-                                false
-                            }
-                        }
-                        Value::Str(s) if s == "LATCH:1" => true,
-                        _ => false,
-                    };
-
-                    if active {
-                        val |= bit;
-                    }
-                }
-            }
-            vm.stack.push(Value::Int(val));
-            vm.output.push(format!("DAC: Read {}", val));
+            apply_dac_op(vm);
         }
         OpCode::ADC => {
-            // Pop value, write pulses
-            if let Some(Value::Int(val)) = vm.stack.pop() {
-                let (cy, cx) = vm.context_loc;
-                let neighbors = [(-1, 0, 8), (0, 1, 4), (1, 0, 2), (0, -1, 1)];
-
-                for (dy, dx, bit) in neighbors {
-                    if (val & bit) != 0 {
-                        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                        {
-                            // Only energize wires, don't overwrite components
-                            if let Value::Int(1) = vm.grid[ny][nx] {
-                                vm.grid[ny][nx] = Value::Int(2);
-                            }
-                        }
-                    }
-                }
-                vm.output.push(format!("ADC: Wrote {}", val));
-            } else {
-                vm.output
-                    .push("Error: Stack underflow or type mismatch for ADC".to_string());
-            }
+            apply_adc_op(vm);
         }
         OpCode::Trace => {
-            // stack: y, x (top)
-            if vm.stack.len() >= 2 {
+            let (y, x) = if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        let strand_idx = trace_circuit(vm, ny, nx);
-                        vm.stack.push(Value::Int(strand_idx as i64));
-                        vm.output.push(format!(
-                            "TRACE: Compiled circuit at {},{} to strand {}",
-                            nx, ny, strand_idx
-                        ));
-                    }
+                    (y, x)
                 } else {
-                    vm.output.push("Error: Type mismatch for trace".to_string());
+                    (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for trace".to_string());
+                (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
+            };
+
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                let strand_idx = trace_circuit(vm, ny, nx);
+                vm.stack.push(Value::Int(strand_idx as i64));
+                vm.output.push(format!(
+                    "TRACE: Created blueprint strand {} from circuit at {},{}",
+                    strand_idx, nx, ny
+                ));
             }
         }
         OpCode::Fabricate => {
@@ -949,4 +894,58 @@ pub fn step_cell_wireworld(vm: &ChimeraVM, y: usize, x: usize) -> Option<Value> 
         }
     }
     None
+}
+
+fn apply_dac_op(vm: &mut ChimeraVM) {
+    let (cy, cx) = vm.context_loc;
+    let mut val = 0;
+
+    let neighbors = [(-1, 0, 8), (0, 1, 4), (1, 0, 2), (0, -1, 1)];
+
+    for (dy, dx, bit) in neighbors {
+        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+            let cell = &vm.grid[ny][nx];
+            let active = match cell {
+                Value::Int(2) => true,
+                Value::Str(s) if s.starts_with("EMIT:") => {
+                    let parts: Vec<&str> = s.split(':').collect();
+                    if parts.len() == 3 {
+                        if let Ok(phase) = parts[2].parse::<i64>() {
+                            phase == 0
+                        } else {
+                            false
+                        }
+                    } else {
+                        false
+                    }
+                }
+                Value::Str(s) if s == "LATCH:1" => true,
+                _ => false,
+            };
+
+            if active {
+                val += bit;
+            }
+        }
+    }
+    vm.stack.push(Value::Int(val));
+    vm.output.push(format!("DAC: Read {}", val));
+}
+
+fn apply_adc_op(vm: &mut ChimeraVM) {
+    if let Some(Value::Int(val)) = vm.stack.pop() {
+        let (cy, cx) = vm.context_loc;
+        let neighbors = [(-1, 0, 8), (0, 1, 4), (1, 0, 2), (0, -1, 1)];
+
+        for (dy, dx, bit) in neighbors {
+            if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                if val & bit != 0 {
+                    vm.grid[ny][nx] = Value::Int(2);
+                } else {
+                    vm.grid[ny][nx] = Value::Int(0);
+                }
+            }
+        }
+        vm.output.push(format!("ADC: Wrote {}", val));
+    }
 }
