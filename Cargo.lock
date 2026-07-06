@@ -6988,14 +6988,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "miller-locus"
-version = "0.1.0"
-dependencies = [
- "locus",
- "miller-lattice",
-]
-
-[[package]]
 name = "miller-origami"
 version = "0.1.0"
 dependencies = [

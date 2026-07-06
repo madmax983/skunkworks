@@ -52,6 +52,7 @@ members = [
 
 ]
 exclude = [
+    "graveyard/miller-locus",
     "graveyard/hyper-flock",
     "graveyard/ferrous-swarm",
     "graveyard/myco-reaper",
