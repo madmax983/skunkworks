@@ -11,7 +11,7 @@ use ratatui::{
     Frame,
 };
 #[cfg(feature = "nova")]
-use tui_shared::{Bobber, Button, TensionBar};
+use tui_shared::{Button, TensionBar};
 
 #[cfg(feature = "nova")]
 pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
