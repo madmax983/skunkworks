@@ -230,10 +230,23 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
             // Stack: [ ..., x_source, y_source, x_target, y_target ] (Top)
             // Popping order: y_target, x_target, y_source, x_source
             if vm.stack.len() >= 4 {
-                let y_tgt_val = vm.stack.pop().unwrap();
-                let x_tgt_val = vm.stack.pop().unwrap();
-                let y_src_val = vm.stack.pop().unwrap();
-                let x_src_val = vm.stack.pop().unwrap();
+                // 🔒 Warden: Replaced unwrap with safe pop
+                let Some(y_tgt_val) = vm.stack.pop() else { return; };
+                let Some(x_tgt_val) = vm.stack.pop() else {
+                    vm.stack.push(y_tgt_val);
+                    return;
+                };
+                let Some(y_src_val) = vm.stack.pop() else {
+                    vm.stack.push(x_tgt_val);
+                    vm.stack.push(y_tgt_val);
+                    return;
+                };
+                let Some(x_src_val) = vm.stack.pop() else {
+                    vm.stack.push(y_src_val);
+                    vm.stack.push(x_tgt_val);
+                    vm.stack.push(y_tgt_val);
+                    return;
+                };
 
                 if let (Value::Int(ys), Value::Int(xs), Value::Int(yt), Value::Int(xt)) =
                     (y_src_val, x_src_val, y_tgt_val, x_tgt_val)
