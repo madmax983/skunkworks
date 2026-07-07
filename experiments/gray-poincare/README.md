@@ -1,12 +1,12 @@
-# gray-poincare
+# Gray-Poincaré Morphogenesis
 
-**Lineage:** `crates/gray-scott` × `crates/poincare-disk`
+This hybrid bridges the biological reaction-diffusion patterns of `gray-scott` with the continuous, hyperbolic non-Euclidean space of `poincare-disk`.
 
-## Concept
-Hyperbolic Reaction-Diffusion. This hybrid maps continuous chemical Turing patterns (V concentration from the `gray-scott` simulation) into the continuous non-Euclidean geometry of the Poincaré disk.
+## Lineage
 
-## Novel Trait
-Instead of a standard flat 2D grid, the visual representation applies a mapping that transforms the screen space into the non-Euclidean geometry of the `poincare-disk` via Mobius-like positional mapping. As the chemicals diffuse, they appear to stretch infinitely toward the boundary of the disk.
+* **From `gray-scott`**: Provides the continuous thermodynamic scalar field representing the chemical concentrations of U and V, resulting in Turing patterns.
+* **From `poincare-disk`**: Provides the continuous non-Euclidean coordinate space, mapping flat Euclidean coordinates into the hyperbolic bounds of the Poincaré disk.
 
-## Emergence
-The visual representation effectively bounds an infinite plane into a finite disk on the screen, creating an intricate biological simulation that shrinks toward the edges and expands at the center.
+## Emergent Phenotype
+
+This experiment physically warps the morphogenesis of reaction-diffusion patterns into hyperbolic space. As chemical concentration blobs grow, they appear to stretch and compress near the disk boundary, resulting in an Escher-like rendering of biological growth. The entire structure is slowly rotated via a continuous Möbius transformation.
