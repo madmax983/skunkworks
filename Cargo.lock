@@ -4782,17 +4782,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-poincare"
-version = "0.1.0"
-dependencies = [
- "git-associates",
- "glam 0.27.0",
- "macroquad",
- "num-complex",
- "poincare-disk",
-]
-
-[[package]]
 name = "git-strings"
 version = "0.1.0"
 dependencies = [
