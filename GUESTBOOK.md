@@ -110,6 +110,26 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/system-turbulence
+- **Scent Origin:** Havoc 👹
+- **Status:** Mutex lock contention vulnerability causing background telemetry writer starvation. Sentry reinforcement required to validate fairness.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-flock/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Headless execution command is broken (missing separator). Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-origami/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions. Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-lattice/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions. Bard reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-physics/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions. Bard reinforcement required.
+
 ### [Concentration Level: CRITICAL MASS] - Location: root/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Incomprehensible due to jargon. Needs a plain-English summary. Bard reinforcement required.
