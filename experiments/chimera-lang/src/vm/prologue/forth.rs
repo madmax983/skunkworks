@@ -166,10 +166,23 @@ pub fn process_forth_agent(
                 "w" | "gene_write" => {
                     // Write Gene: [strand, gene, op, arg] -> []
                     if updated_agent.stack.len() >= 4 {
-                        let arg_val = updated_agent.stack.pop().unwrap();
-                        let op_val = updated_agent.stack.pop().unwrap();
-                        let gene_idx_val = updated_agent.stack.pop().unwrap();
-                        let strand_idx_val = updated_agent.stack.pop().unwrap();
+                        // 🔒 Warden: Replaced unwrap with safe pop
+                        let Some(arg_val) = updated_agent.stack.pop() else { return Some((updated_agent, None)); };
+                        let Some(op_val) = updated_agent.stack.pop() else {
+                            updated_agent.stack.push(arg_val);
+                            return Some((updated_agent, None));
+                        };
+                        let Some(gene_idx_val) = updated_agent.stack.pop() else {
+                            updated_agent.stack.push(op_val);
+                            updated_agent.stack.push(arg_val);
+                            return Some((updated_agent, None));
+                        };
+                        let Some(strand_idx_val) = updated_agent.stack.pop() else {
+                            updated_agent.stack.push(gene_idx_val);
+                            updated_agent.stack.push(op_val);
+                            updated_agent.stack.push(arg_val);
+                            return Some((updated_agent, None));
+                        };
 
                         if let (
                             Value::Int(si),

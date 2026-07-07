@@ -129,7 +129,7 @@ pub fn apply_alchemy_runes(
                                     Some(Value::Int(n))
                                 } else if s.len() == 1 {
                                     // Char code
-                                    Some(Value::Int(s.chars().next().unwrap() as i64))
+                                    s.chars().next().map(|c| Value::Int(c as i64))
                                 } else {
                                     Some(Value::Int(0)) // Parse Error / Empty
                                 }
