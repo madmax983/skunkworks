@@ -51,3 +51,16 @@ In `experiments/system-turbulence/src/system_monitor.rs`, the application uses a
 * 📉 **The Result:** The test `havoc_test_monitor_starvation` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
 * 🧪 **Reproduction:** Run `cargo test -p system-turbulence --test havoc_monitor`
 * 😈 **Comment:** "You thought standard Mutexes were fair. You were wrong."
+
+## The Weak Point: Mutex Deadlock in `colony-concerto`
+
+In `experiments/colony-concerto/tests/havoc_deadlock.rs`, the test simulates the behavior of two ant threads fighting for locks on multiple dependency nodes concurrently.
+
+## The Attack: Classic A-B / B-A Deadlock
+
+Because the `Node` structure has a `Mutex<NodeDynamicState>` and threads (ants) attempt to lock multiple nodes without a total ordering guarantee, they are vulnerable to classic deadlocks. If Ant 1 locks Node A and wants Node B, while Ant 2 locks Node B and wants Node A, the system halts.
+
+* 🧨 **The Trigger:** Loom test simulating two concurrent threads: Thread 1 locking Node A then B, Thread 2 locking Node B then A, with a `loom::thread::yield_now()` to force the interleaving.
+* 📉 **The Result:** The Loom model explorer accurately detects this deadlock permutation and intentionally panics, aborting the process (SIGABRT/panic in destructor) to prove the synchronization is broken.
+* 🧪 **Reproduction:** Run `cargo test -p colony-concerto --test havoc_deadlock --features loom`
+* 😈 **Comment:** "You thought your ants were building a concerto. But without lock ordering, they just built a traffic jam. Thread-safe is a lie until proven by loom."

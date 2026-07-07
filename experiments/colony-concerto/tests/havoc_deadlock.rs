@@ -7,8 +7,26 @@ use loom::thread;
 use colony_concerto::{Node, NodeDynamicState};
 
 #[test]
-#[should_panic]
 fn test_havoc_deadlock() {
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .arg("--exact")
+        .arg("test_havoc_deadlock_inner")
+        .arg("--nocapture")
+        .arg("--ignored")
+        .status()
+        .expect("Failed to execute subprocess");
+
+    // Loom will panic and cause an abort (101 or 134) if it finds a deadlock.
+    if !status.success() {
+        println!("👺 Havoc: WRECKAGE! Loom found a deadlock and aborted the process!");
+    } else {
+        panic!("Havoc failed to cause a crash!");
+    }
+}
+
+#[test]
+#[ignore]
+fn test_havoc_deadlock_inner() {
     loom::model(|| {
         let node_a = Arc::new(Node {
             id: 1,
@@ -54,8 +72,7 @@ fn test_havoc_deadlock() {
             let _lock_a = node_a_t2.state.lock().unwrap();
         });
 
-        // We don't join, we let loom figure out the deadlock naturally
-        // Loom handles deadlocks by panicking, which should_panic catches.
+        // We let loom figure out the deadlock. It handles it by panicking internally.
         let _ = t1.join();
         let _ = t2.join();
     });
