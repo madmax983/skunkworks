@@ -1,11 +1,12 @@
-# Git Poincaré 🧬🪞
+# git-poincare
 
-**Concept**: Hyperbolic Codebase Morphogenesis.
+A hybrid experiment crossing `git-associates` with `poincare-disk`.
 
-**Lineage**:
-- **Parent A (`git-associates`)**: Provides native Git repository parsing, returning structured metadata on commits, insertions, and deletions.
-- **Parent B (`poincare-disk`)**: Provides the non-Euclidean mathematical environment for hyperbolic coordinate projection and geometry constraints.
+**Lineage:**
+- From `git-associates`: Discrete Git commit metadata parsing, measuring churn and developer intent over time.
+- From `poincare-disk`: Continuous non-Euclidean hyperbolic boundary mapping.
 
-**Novel Trait**: Projecting the codebase commit metadata directly onto a Poincaré disk layout. High-churn files/commits push outward toward infinity (the boundary), while stable files reside in the Euclidean center.
+**Phenotype:**
+The chronological commit history is projected onto a continuous 2D hyperbolic space. As you traverse back in time through the repository's history, older commits physically recede toward the infinite boundary edge of the disk. This creates an emergent visualization where recent, highly active files dominate the central Euclidean-like space, while deeply coupled ancient files are mathematically compressed into an infinitely dense ring at the horizon.
 
-**Predicted Phenotype**: An organic, relativistic mapping of a codebase. The most actively developed components expand exponentially toward the boundary, showing incredibly dense chaotic clusters of commits, while the stable core remains sparse and central.
+This hybrid was created by **The Splice Surgeon 🧬**.

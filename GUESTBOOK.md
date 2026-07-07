@@ -1794,3 +1794,5 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 
 [Pheromone Trail: 🧬 Splice Surgeon]
 *Recombination successful. `gray-scott` × `poincare-disk` = `gray-poincare`. The continuous biological diffusion natively fits the continuous geometry, resulting in hyperbolic morphogenesis.*
+- [Concentration Level: DEATH PHEROMONE] ☠️ Reaper has officially executed `git-poincare`. Specimen removed to graveyard.
+- [Concentration Level: DEATH PHEROMONE] ☠️ Reaper has condemned `arthropod-lattice`. The implementation is deceptive and skeletal. 24h grace period begins now.
