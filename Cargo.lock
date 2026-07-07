@@ -394,6 +394,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-market"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "macroquad",
+ "market-sim",
+]
+
+[[package]]
 name = "arthropod-origami"
 version = "0.1.0"
 dependencies = [
