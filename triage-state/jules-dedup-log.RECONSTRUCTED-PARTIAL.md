@@ -1,0 +1,164 @@
+
+## scale (worker W4, $TS)
+CLOSED: 1124,1127,1146,1147,1151,1152,1180,1289,1474,1529,1569,1572,1579,1591,1642,1647,1649,1654,1730,1889,2059,2063,2091,2094,2102,2108,2114,2116,2118,2122,2126,2127,2130,2146,2219,2478,2762,3115,3345,3448,3480,3607,3681,3742,3808,3813,3862,3947,3987,4034,4140,4181,4182,4195,4196,4247,4519
+FAILED: (none)
+closed=57 failed=0 planned=57
+
+
+## scale (worker W4, $TS)
+CLOSED: 1124,1127,1146,1147,1151,1152,1180,1289,1474,1529,1569,1572,1579,1591,1642,1647,1649,1654,1730,1889,2059,2063,2091,2094,2102,2108,2114,2116,2118,2122,2126,2127,2130,2146,2219,2478,2762,3115,3345,3448,3480,3607,3681,3742,3808,3813,3862,3947,3987,4034,4140,4181,4182,4195,4196,4247,4519
+FAILED: (none)
+closed=57 failed=0 planned=57
+
+## abrash (worker W3, $(date -u +%FT%TZ))
+CLOSED: $CLOSED
+FAILED: (none)
+counts: closed=111 failed=0
+## abrash (worker W3, $(date -u +%FT%TZ))
+CLOSED: $CLOSED
+FAILED: (none)
+counts: closed=111 failed=0
+
+## orpheus (worker W4, $TS)
+CLOSED: 785,786,787,794,797,803,808,809,820,822,823,826,831,834,839,841,843,846,847,849,850,852,857,860,862,867,869,877,883,888,890,895,897,899,901,902,906,907,908,916,919,920,924,925,926,932,933,934,935,938,942,944,946,952,967,971,1001,1004,1005,1009,1015,1019,1023,1028,1033,1035,1038,1048,1052,1056,1058,1059,1061,1062,1064,1069,1074,1078,1080,1084,1090,1091,1095,1107,1118,1126,1137,1159,1161,1182,1187,1189,1192,1196,1206,1218,1220,1226,1238,1246,1248,1263,1275,1280,1285,1289,1293,1294,1300,1307,1309,1326,1335,1342,1343,1347
+FAILED: (none)
+closed=116 failed=0 planned=116
+
+
+## orpheus (worker W4, $TS)
+CLOSED: 785,786,787,794,797,803,808,809,820,822,823,826,831,834,839,841,843,846,847,849,850,852,857,860,862,867,869,877,883,888,890,895,897,899,901,902,906,907,908,916,919,920,924,925,926,932,933,934,935,938,942,944,946,952,967,971,1001,1004,1005,1009,1015,1019,1023,1028,1033,1035,1038,1048,1052,1056,1058,1059,1061,1062,1064,1069,1074,1078,1080,1084,1090,1091,1095,1107,1118,1126,1137,1159,1161,1182,1187,1189,1192,1196,1206,1218,1220,1226,1238,1246,1248,1263,1275,1280,1285,1289,1293,1294,1300,1307,1309,1326,1335,1342,1343,1347
+FAILED: (none)
+closed=116 failed=0 planned=116
+
+
+## duke (worker W2, $TS)
+CLOSED: $CLOSED
+FAILED: (none)
+Counts: closed=170 failed=0 planned=170 (note: #1214 rate-limited once, succeeded on retry after 90s backoff)
+
+
+## duke (worker W2, $TS)
+CLOSED: $CLOSED
+FAILED: (none)
+Counts: closed=170 failed=0 planned=170 (note: #1214 rate-limited once, succeeded on retry after 90s backoff)
+
+
+## aletheiadb (worker W4, $TS)
+CLOSED: 2856,2864,2871,2875,2889,2893,2899,2902,2903,2904,2908,2917,2925,2926,2933,2939,2940,2944,2947,2949,2953,2955,2960,2964,2970,2972,2979,2983,2984,2989,2995,2996,2998,3007,3008,3010,3011,3012,3014,3019,3021,3026,3031,3033,3037,3038,3043,3046,3048,3051,3054,3055,3061,3064,3069,3070,3074,3078,3082,3087,3090,3105,3107,3110,3114,3116,3121,3124,3127,3133,3134,3143,3144,3146,3153,3155,3157,3161,3166,3169,3170,3172,3174,3181,3185,3188,3190,3198,3199,3201,3210,3233,3235,3237,3240,3248,3254,3255,3266,3272,3276,3278,3321,3329,3331
+FAILED: (none)
+closed=105 failed=0 planned=105
+note: PR 2939 hit a secondary rate limit on first attempt; closed successfully after 90s backoff retry
+
+
+## aletheiadb (worker W4, $TS)
+CLOSED: 2856,2864,2871,2875,2889,2893,2899,2902,2903,2904,2908,2917,2925,2926,2933,2939,2940,2944,2947,2949,2953,2955,2960,2964,2970,2972,2979,2983,2984,2989,2995,2996,2998,3007,3008,3010,3011,3012,3014,3019,3021,3026,3031,3033,3037,3038,3043,3046,3048,3051,3054,3055,3061,3064,3069,3070,3074,3078,3082,3087,3090,3105,3107,3110,3114,3116,3121,3124,3127,3133,3134,3143,3144,3146,3153,3155,3157,3161,3166,3169,3170,3172,3174,3181,3185,3188,3190,3198,3199,3201,3210,3233,3235,3237,3240,3248,3254,3255,3266,3272,3276,3278,3321,3329,3331
+FAILED: (none)
+closed=105 failed=0 planned=105
+note: PR 2939 hit a secondary rate limit on first attempt; closed successfully after 90s backoff retry
+
+## doom-rs (worker W3, $(date -u +%FT%TZ))
+CLOSED: $CLOSED
+FAILED: (none; 944/949/950 hit a rate limit once, succeeded on retry after 90s backoff)
+counts: closed=154 failed=0
+## doom-rs (worker W3, $(date -u +%FT%TZ))
+CLOSED: $CLOSED
+FAILED: (none; 944/949/950 hit a rate limit once, succeeded on retry after 90s backoff)
+counts: closed=154 failed=0
+
+## autumn (worker W4, $TS)
+CLOSED: 874,880,894,901,904,910,913,924,925,932,933,942,951,955,962,963,965,985,994,998,1064,1065,1078,1087,1089,1100,1104,1108,1110,1132,1165,1170,1179,1181,1197,1211,1212,1213,1218,1222,1227,1257,1258,1282,1283,1287,1289,1291,1295,1299,1305,1329,1339,1357,1363,1365,1370,1411,1419,1420,1423,1424,1433,1434,1447,1449,1454,1462,1463,1465,1467,1476,1478,1484,1489,1496,1502,1504,1510,1519,1532,1535,1541,1552,1554,1555,1565
+FAILED: (none)
+closed=87 failed=0 planned=89
+note: 872 and 873 were already closed (unmerged, Jules-marked) before this run - verified during pre-check, counted as already-closed; all 89 planned PRs are now in closed state
+
+
+## autumn (worker W4, $TS)
+CLOSED: 874,880,894,901,904,910,913,924,925,932,933,942,951,955,962,963,965,985,994,998,1064,1065,1078,1087,1089,1100,1104,1108,1110,1132,1165,1170,1179,1181,1197,1211,1212,1213,1218,1222,1227,1257,1258,1282,1283,1287,1289,1291,1295,1299,1305,1329,1339,1357,1363,1365,1370,1411,1419,1420,1423,1424,1433,1434,1447,1449,1454,1462,1463,1465,1467,1476,1478,1484,1489,1496,1502,1504,1510,1519,1532,1535,1541,1552,1554,1555,1565
+FAILED: (none)
+closed=87 failed=0 planned=89
+note: 872 and 873 were already closed (unmerged, Jules-marked) before this run - verified during pre-check, counted as already-closed; all 89 planned PRs are now in closed state
+
+
+## logos (worker W2, $TS)
+CLOSED: $CLOSED
+FAILED: (none)
+Counts: closed=157 failed=0 planned=157
+
+
+## logos (worker W2, $TS)
+CLOSED: $CLOSED
+FAILED: (none)
+Counts: closed=157 failed=0 planned=157
+
+## glossa (worker W3, $(date -u +%FT%TZ))
+CLOSED: $CLOSED
+FAILED: (none)
+counts: closed=120 failed=0
+## glossa (worker W3, $(date -u +%FT%TZ))
+CLOSED: $CLOSED
+FAILED: (none)
+counts: closed=120 failed=0
+
+## autumn-harvest (worker W4, $TS)
+CLOSED: 323,329,368,397,400,401,404,410,416,422,430,434,435,442,447,458,459,461,464,465,468,470,471,505,547,558,569,576,584,589,602,627,637,638,639,644,646,647,648,653,657,658,660,674,675,683,713,715,716,718,723,726,732,741,820,825,836,837,845,853,864,870,873,877,885,886,892,896,900,903,910,916
+FAILED: (none)
+closed=72 failed=0 planned=72
+
+
+## autumn-harvest (worker W4, $TS)
+CLOSED: 323,329,368,397,400,401,404,410,416,422,430,434,435,442,447,458,459,461,464,465,468,470,471,505,547,558,569,576,584,589,602,627,637,638,639,644,646,647,648,653,657,658,660,674,675,683,713,715,716,718,723,726,732,741,820,825,836,837,845,853,864,870,873,877,885,886,892,896,900,903,910,916
+FAILED: (none)
+closed=72 failed=0 planned=72
+
+
+## skunkworks (worker W4, $TS)
+CLOSED: 1729,2061,2417,2423,2444,2553,2679,2712,2718,2722,2905,2911,2915,2919,2931,2940,2944,2948,2962,2969,2970,2980,2985,2994,3004,3030,3187,3456,3597
+FAILED: (none)
+closed=29 failed=0 planned=29
+
+
+## skunkworks (worker W4, $TS)
+CLOSED: 1729,2061,2417,2423,2444,2553,2679,2712,2718,2722,2905,2911,2915,2919,2931,2940,2944,2948,2962,2969,2970,2980,2985,2994,3004,3030,3187,3456,3597
+FAILED: (none)
+closed=29 failed=0 planned=29
+
+
+## rust-interview-practice (worker W4, $TS)
+CLOSED: 325,345,363,373,400,401,407,411,419
+FAILED: (none)
+closed=9 failed=0 planned=9
+
+## W4 WAVE COMPLETE ($TS)
+scale=57 orpheus=116 aletheiadb=105 autumn=87(+2 already closed) autumn-harvest=72 skunkworks=29 rust-interview-practice=9
+total closed by W4: 475; total planned PRs now closed: 477; failed: 0; skipped repos: none
+
+
+## rust-interview-practice (worker W4, $TS)
+CLOSED: 325,345,363,373,400,401,407,411,419
+FAILED: (none)
+closed=9 failed=0 planned=9
+
+## W4 WAVE COMPLETE ($TS)
+scale=57 orpheus=116 aletheiadb=105 autumn=87(+2 already closed) autumn-harvest=72 skunkworks=29 rust-interview-practice=9
+total closed by W4: 475; total planned PRs now closed: 477; failed: 0; skipped repos: none
+
+
+## hitz (worker W2, $TS)
+CLOSED: $CLOSED
+FAILED: (none)
+Counts: closed=154 failed=0 planned=154 (note: 9 PRs hit transient MCP token expiry, all succeeded on retry after 90s)
+
+
+## hitz (worker W2, $TS)
+CLOSED: $CLOSED
+FAILED: (none)
+Counts: closed=154 failed=0 planned=154 (note: 9 PRs hit transient MCP token expiry, all succeeded on retry after 90s)
+
+## nes (worker W3, $(date -u +%FT%TZ))
+CLOSED: $CLOSED
+FAILED: (none; 1125/1134/1135/1140/1148 hit a transient MCP token expiry once, all succeeded on retry)
+counts: closed=117 failed=0
+## nes (worker W3, $(date -u +%FT%TZ))
+CLOSED: $CLOSED
+FAILED: (none; 1125/1134/1135/1140/1148 hit a transient MCP token expiry once, all succeeded on retry)
+counts: closed=117 failed=0
