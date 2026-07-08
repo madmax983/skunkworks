@@ -5,10 +5,10 @@ edition = "2021"
 
 [dependencies]
 flocking = { path = "../../crates/flocking" }
-platter = { path = "../../crates/platter" }
 locus = { path = "../../crates/locus" }
+platter = { path = "../../crates/platter" }
 tui-shared = { path = "../../crates/tui-shared" }
-anyhow = { workspace = true }
-crossterm = { workspace = true }
-rand = { workspace = true }
-ratatui = { workspace = true }
+ratatui.workspace = true
+crossterm.workspace = true
+anyhow.workspace = true
+rand = "0.8"

@@ -1,16 +1,20 @@
-# Flock Platter 🕊️🔥
+# Flock Platter
 
-A genetic recombination experiment demonstrating Swarm Thermal Deposition.
-
-## Lineage
-
-**Parents:** `crates/flocking` × `crates/platter`
-
-This hybrid inherits traits from two distinct lineages to create an emergent thermal visualization:
-*   **From `flocking` (Parent A):** The continuous swarm intelligence algorithm (Boids). This provides the autonomous navigation, separation, alignment, and cohesion behaviors that drive the entities across the 2D plane.
-*   **From `platter` (Parent B):** The continuous thermodynamic scalar heat field. This provides the underlying physical grid that can accumulate and dissipate field values.
-*   **Novel Emergent Trait:** As the swarm navigates the space, the physical presence of each boid deposits thermal energy ("heat") onto the platter grid. Groups of boids flying in tight cohesion create glowing hot trails that slowly dissipate over time, leaving a persistent thermodynamic history of the swarm's movement patterns.
+A visualization of swarm dynamics crossing the swarm intelligence of `flocking` with the continuous topological field of `platter`.
 
 ## Concept
+Pheromone Swarming / Swarm Heatmaps. The continuous physical swarming of boids acts as moving emitters that continuously saturate a 2D scalar field (`platter`). The field acts as a fading visual heatmap or "pheromone trail" for the swarm's activity over time.
 
-"Swarm Thermal Deposition" merges biological swarm behavior with physical thermodynamics. You can visually observe the history and density of the swarm through the residual heat map they leave behind.
+## Traits
+- **Novel Trait:** Boids act as moving emitters that continuously saturate a 2D scalar field. The field acts as a fading visual heatmap or "pheromone trail" for the swarm's activity over time.
+- **Predicted Phenotype:** A swarm of entities that leaves behind a fading trail, showing the "memory" or "heat" of the swarm's previous paths, visualizing dense activity areas over time.
+
+## Execution
+```bash
+cargo run -p flock-platter
+```
+
+To run in CI/headless mode, append `--headless`.
+```bash
+cargo run -p flock-platter -- --headless
+```
