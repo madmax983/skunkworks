@@ -51,3 +51,6 @@
 ## 2026-07-06 - [Fixing Headless Flag in Examples and Private Facade imports]
 **Confusion:** TUI examples might hang indefinitely in headless/CI environments if they don't explicitly parse and handle the `--headless` flag. Also, users were directed to import private facade modules directly.
 **Clarification:** Examples that launch TUIs should explicitly handle the `--headless` argument (e.g. `if std::env::args().any(|arg| arg == "--headless")`) by either running their logic directly without `run_tui` or exiting immediately, to prevent hanging in non-interactive environments. Additionally, example code in READMEs should import from the public facade instead of private internal modules.
+## 2026-07-06 - [Module-Level Docs and README Sync for Executables]
+**Confusion:** Building documentation for a binary crate using strict rustdoc flags (`-W rustdoc::missing_crate_level_docs -D warnings`) will fail if the `src/main.rs` file does not include a `//!` crate-level doc comment block.
+**Clarification:** To satisfy `cargo doc` for binary crates, parse the `README.md` contents and inject them as `//!` block comments at the very top of `src/main.rs`. This ensures the overarching story for the executable is documented and the documentation build passes.

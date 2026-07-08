@@ -9,3 +9,13 @@
 **Phenotype**: A robust interactive structural playground showing continuous topological deformation of chains, where the abstract GUI directly influences the physical parameters of the environment.
 
 **Status**: Attempted Cross
+
+## Quick Start
+
+```sh
+# Run interactively (GUI)
+cargo run -p arthropod-physics --release
+
+# Run headlessly (CI/Non-interactive)
+cargo run -p arthropod-physics --release -- --headless
+```
