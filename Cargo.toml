@@ -37,6 +37,7 @@ members = [
     "experiments/myco-resonance",
     "experiments/quipu-flock",
     "experiments/flock-physics",
+    "experiments/flock-platter",
     "experiments/origami-poincare",
     "experiments/flock-market",
     "experiments/neuro-quipu",
