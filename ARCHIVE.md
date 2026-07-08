@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **arthropod-physics**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Grace period: 24h.
 - **clockwork-concerto**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`E0277` in `bevy_animation`). Grace period: 24h.
 
 
