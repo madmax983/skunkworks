@@ -20,4 +20,4 @@ An emergent, interactive playground. The chaotic swarming behavior can be instan
 cargo run -p arthropod-flock --release
 ```
 
-*(Note: Use `--headless` to safely bypass X11 UI panics in CI environments.)*
+*(Note: Use `cargo run -p arthropod-flock --release -- --headless` to safely bypass X11 UI panics in CI environments.)*
