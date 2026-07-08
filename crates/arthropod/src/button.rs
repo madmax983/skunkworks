@@ -138,13 +138,19 @@ impl Button {
             self.text_color
         };
 
+        // Shadow (drawn fixed behind the button)
+        draw_rectangle(self.rect.x, self.rect.y + 4.0, self.rect.w, self.rect.h, BLACK);
+
+        // Offset when clicked
+        let offset_y = if is_down { 4.0 } else { 0.0 };
+
         // Background
-        draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, bg_color);
+        draw_rectangle(self.rect.x, self.rect.y + offset_y, self.rect.w, self.rect.h, bg_color);
 
         // Border
         draw_rectangle_lines(
             self.rect.x,
-            self.rect.y,
+            self.rect.y + offset_y,
             self.rect.w,
             self.rect.h,
             2.0,
@@ -156,7 +162,7 @@ impl Button {
         let text_dims = measure_text(&self.text, None, font_size as u16, 1.0);
 
         let text_x = self.rect.x + (self.rect.w - text_dims.width) / 2.0;
-        let text_y = self.rect.y + (self.rect.h + text_dims.height) / 2.0;
+        let text_y = self.rect.y + offset_y + (self.rect.h + text_dims.height) / 2.0;
 
         draw_text(&self.text, text_x, text_y, font_size, text_color);
 
