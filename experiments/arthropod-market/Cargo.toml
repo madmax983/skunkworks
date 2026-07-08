@@ -1,0 +1,10 @@
+[package]
+name = "arthropod-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arthropod = { path = "../../crates/arthropod" }
+market-sim = { path = "../../crates/market-sim" }
+macroquad = "0.4.15"
+rand = "0.8"
