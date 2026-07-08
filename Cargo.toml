@@ -45,6 +45,7 @@ members = [
     "experiments/neuro-market",
     "experiments/neuro-physics",
     "experiments/arthropod-physics",
+    "experiments/arthropod-market",
     "graveyard/arthropod-lattice",
     "experiments/origami-market",
     "experiments/arthropod-flock",

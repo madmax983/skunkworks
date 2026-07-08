@@ -167,6 +167,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### arthropod-market
+- **Parents**: crates/arthropod + crates/market-sim
+- **Concept**: Interactive Market Injection.
+- **Novel trait**: The immediate mode UI of `arthropod` acts as manual liquidity injection for the continuous physical Double Auction order book of `market-sim`. Abstract button clicks spawn physical Buy/Sell particles into the simulation.
+- **Predicted Phenotype**: An interactive financial laboratory where discrete UI inputs create biological physical market pressure, allowing users to actively drive the physics of price discovery.
+- **Status**: experiments/arthropod-market
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Market particles bubble up and fall correctly based on button presses.
+
 ### arthropod-origami
 - **Parents**: crates/arthropod + crates/origami
 - **Concept**: Interactive Topological Folding.
