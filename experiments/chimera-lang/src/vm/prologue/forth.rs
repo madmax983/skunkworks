@@ -167,7 +167,9 @@ pub fn process_forth_agent(
                     // Write Gene: [strand, gene, op, arg] -> []
                     if updated_agent.stack.len() >= 4 {
                         // 🔒 Warden: Replaced unwrap with safe pop
-                        let Some(arg_val) = updated_agent.stack.pop() else { return Some((updated_agent, None)); };
+                        let Some(arg_val) = updated_agent.stack.pop() else {
+                            return Some((updated_agent, None));
+                        };
                         let Some(op_val) = updated_agent.stack.pop() else {
                             updated_agent.stack.push(arg_val);
                             return Some((updated_agent, None));

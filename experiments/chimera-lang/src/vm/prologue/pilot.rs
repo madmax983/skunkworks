@@ -153,7 +153,9 @@ pub fn process_pilot_logic(
                     // Pop val, Pop direction, Write neighbor
                     if updated_agent.stack.len() >= 2 {
                         // 🔒 Warden: Replaced unwrap with safe pop
-                        let Some(dir_val) = updated_agent.stack.pop() else { return Some((updated_agent, None)); };
+                        let Some(dir_val) = updated_agent.stack.pop() else {
+                            return Some((updated_agent, None));
+                        };
                         let Some(val) = updated_agent.stack.pop() else {
                             updated_agent.stack.push(dir_val);
                             return Some((updated_agent, None));

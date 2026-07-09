@@ -19,3 +19,7 @@
 **[quantum-boids: Removing O(N) Allocations on the Hot Path]**
 **Learning:** In simulations involving physical updates (like flocking algorithms), calculating fields iteratively and creating multiple `Vec` buffers via `.collect()` (e.g. `let positions = self.boids.iter().map(|b| b.position).collect();`) and allocating a new `Vec` via `self.boids.clone()` per tick causes immense heap allocation churn (O(N) allocations per frame).
 **Action:** Replace `self.boids.clone()` with a persistent `self.boids_buffer` (cleared and extended each frame, then swapped using `std::mem::swap`). Pre-allocate separate persistent buffers for computed values like `positions_buffer`, `velocities_buffer`, and `forces_buffer`, clearing and refilling them on the hot path. This drops allocations per frame to zero.
+
+**[celestial-rhythms: Removing O(N) Allocations on the Physics Hot Path]**
+**Learning:** In N-body physics simulations, initializing accumulator vectors (like forces or accelerations) inside the inner `update` loop (e.g., `let mut acc = vec![Vec2::ZERO; n];`) causes excessive heap allocation churn, especially when sub-stepping is used (e.g., 4 steps per frame).
+**Action:** Move the accumulator into the struct as a persistent buffer (`pub acc_buffer: Vec<Vec2>`). During the update, use `.clear()` and `.resize(n, Vec2::ZERO)` to reuse the existing capacity, dropping the per-tick allocations to zero.
