@@ -60,10 +60,10 @@ impl crate::vm::ChimeraVM {
                         .push("Error: Stack underflow for transcribe".to_string());
                     return None;
                 }
-                let val = self.stack.pop().unwrap();
-                let arg_idx_val = self.stack.pop().unwrap();
-                let gene_idx_val = self.stack.pop().unwrap();
-                let strand_idx_val = self.stack.pop().unwrap();
+                let val = self.stack.pop()?;
+                let arg_idx_val = self.stack.pop()?;
+                let gene_idx_val = self.stack.pop()?;
+                let strand_idx_val = self.stack.pop()?;
 
                 match (val, arg_idx_val, gene_idx_val, strand_idx_val) {
                     (Value::Int(v), Value::Int(ai), Value::Int(gi), Value::Int(si)) => {

@@ -37,8 +37,8 @@ where
             .push("Error: Stack underflow for Hyper op".to_string());
         return;
     }
-    let b = vm.stack.pop().unwrap();
-    let a = vm.stack.pop().unwrap();
+    let Some(b) = vm.stack.pop() else { return };
+    let Some(a) = vm.stack.pop() else { return };
 
     let a_list = as_list(a);
     let b_list = as_list(b);
@@ -106,8 +106,8 @@ fn exec_reduce(vm: &mut ChimeraVM) {
             .push("Error: Stack underflow for Reduce".to_string());
         return;
     }
-    let op_val = vm.stack.pop().unwrap();
-    let list_val = vm.stack.pop().unwrap();
+    let Some(op_val) = vm.stack.pop() else { return };
+    let Some(list_val) = vm.stack.pop() else { return };
 
     if let Value::Str(op_str) = op_val {
         let list = as_list(list_val);
@@ -146,9 +146,9 @@ fn exec_cross(vm: &mut ChimeraVM) {
             .push("Error: Stack underflow for Cross".to_string());
         return;
     }
-    let op_val = vm.stack.pop().unwrap();
-    let b = vm.stack.pop().unwrap();
-    let a = vm.stack.pop().unwrap();
+    let Some(op_val) = vm.stack.pop() else { return };
+    let Some(b) = vm.stack.pop() else { return };
+    let Some(a) = vm.stack.pop() else { return };
 
     if let Value::Str(op_str) = op_val {
         let a_list = as_list(a);
@@ -192,9 +192,9 @@ fn exec_zip_with(vm: &mut ChimeraVM) {
             .push("Error: Stack underflow for ZipWith".to_string());
         return;
     }
-    let op_val = vm.stack.pop().unwrap();
-    let b = vm.stack.pop().unwrap();
-    let a = vm.stack.pop().unwrap();
+    let Some(op_val) = vm.stack.pop() else { return };
+    let Some(b) = vm.stack.pop() else { return };
+    let Some(a) = vm.stack.pop() else { return };
 
     if let Value::Str(op_str) = op_val {
         let a_list = as_list(a);

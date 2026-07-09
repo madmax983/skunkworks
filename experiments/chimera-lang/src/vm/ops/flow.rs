@@ -84,8 +84,8 @@ impl crate::vm::ChimeraVM {
             }
             OpCode::BrzS => {
                 if self.stack.len() >= 2 {
-                    let target_val = self.stack.pop().unwrap();
-                    let cond_val = self.stack.pop().unwrap();
+                    let target_val = self.stack.pop()?;
+                    let cond_val = self.stack.pop()?;
 
                     match (target_val, cond_val) {
                         (Value::Int(target), Value::Int(cond)) => {

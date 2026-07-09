@@ -1404,8 +1404,8 @@ pub fn exec_fractal_op(
         }
         OpCode::Julia => {
             if vm.stack.len() >= 2 {
-                let im_val = vm.stack.pop().unwrap();
-                let re_val = vm.stack.pop().unwrap();
+                let im_val = vm.stack.pop()?;
+                let re_val = vm.stack.pop()?;
                 if let (Value::Int(re), Value::Int(im)) = (re_val, im_val) {
                     vm.fractal.mode = FractalMode::Julia;
                     vm.fractal.c_re = (re as f64) / 1000.0; // Scale down
@@ -1431,8 +1431,8 @@ pub fn exec_fractal_op(
         }
         OpCode::Pan => {
             if vm.stack.len() >= 2 {
-                let dy_val = vm.stack.pop().unwrap();
-                let dx_val = vm.stack.pop().unwrap();
+                let dy_val = vm.stack.pop()?;
+                let dx_val = vm.stack.pop()?;
                 if let (Value::Int(dx), Value::Int(dy)) = (dx_val, dy_val) {
                     // Pan amount depends on zoom
                     let scale = 0.1 / vm.fractal.zoom;
@@ -1444,10 +1444,10 @@ pub fn exec_fractal_op(
         OpCode::Iterate => {
             // z = z^2 + c
             if vm.stack.len() >= 4 {
-                let cim_val = vm.stack.pop().unwrap();
-                let cre_val = vm.stack.pop().unwrap();
-                let zim_val = vm.stack.pop().unwrap();
-                let zre_val = vm.stack.pop().unwrap();
+                let cim_val = vm.stack.pop()?;
+                let cre_val = vm.stack.pop()?;
+                let zim_val = vm.stack.pop()?;
+                let zre_val = vm.stack.pop()?;
 
                 // Expecting fixed point (x1000) or float encoded as Int?
                 // Let's assume standard integer arithmetic for now, or use floats if Value supported them (it doesn't).
@@ -1473,9 +1473,9 @@ pub fn exec_fractal_op(
             // Compute escape time for c (Mandelbrot) or z (Julia)
             // But opcode takes c_re, c_im, max_iter.
             if vm.stack.len() >= 3 {
-                let max_val = vm.stack.pop().unwrap();
-                let im_val = vm.stack.pop().unwrap();
-                let re_val = vm.stack.pop().unwrap();
+                let max_val = vm.stack.pop()?;
+                let im_val = vm.stack.pop()?;
+                let re_val = vm.stack.pop()?;
 
                 if let (Value::Int(re), Value::Int(im), Value::Int(max)) = (re_val, im_val, max_val)
                 {
