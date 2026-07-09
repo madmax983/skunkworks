@@ -825,3 +825,575 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `arthropod-physics` experiment. The README tells me it's a hybrid but doesn't tell me how to run it."
 *   🕵️ **The Reality:** "Turns out the README is just a conceptual document and lacks basic `cargo run` commands or examples."
 *   💡 **The Fix:** "Add a 'Quick Start' or 'Usage' section with the `cargo run -p arthropod-physics` command."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/neuro-physics/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `neuro-physics` experiment headlessly."
+**Action:** Copy and pasted the Quick Start command `cargo run -p neuro-physics --headless` from the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `neuro-physics` experiment using the exact command in the README. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to run `cargo run -p neuro-physics --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the Quick Start command in the README to be `cargo run -p neuro-physics -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/origami-market/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `origami-market` experiment headlessly."
+**Action:** Copy and pasted the Quick Start command `cargo run -p origami-market --headless` from the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `origami-market` experiment using the exact command in the README. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to run `cargo run -p origami-market --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the Quick Start command in the README to be `cargo run -p origami-market -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/physics-pbd/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for `physics-pbd`."
+**Action:** Copy and pasted the Quick Start example from `crates/physics-pbd/README.md` into a new binary project.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused Result Warning:** The `system.add_distance_constraint(anchor, bob, 1.0);` method call returns a `Result` that is not handled in the example code, causing a compiler warning `unused Result that must be used`.
+    - *Impact:* While the code compiles, the warning clutters the output and teaches bad practices to new users.
+    - *Fix:* Handle the `Result` or unwrap it.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start example generates warnings
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the basic pendulum example from `physics-pbd`'s README. The compiler gave me a warning about an unused `Result`."
+*   🕵️ **The Reality:** "Turns out `system.add_distance_constraint` returns a `Result` and the example code just drops it."
+*   💡 **The Fix:** "Update the example code to handle the `Result`, e.g., using `unwrap()`."
+
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/resonance-audio/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for `resonance-audio`."
+**Action:** Copy and pasted the Quick Start example from `crates/resonance-audio/README.md` into a new binary project.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused Variable Warning:** The example code declares `let (snap_tx, snap_rx) = bounded(1);` but never uses `snap_rx`.
+    - *Impact:* Causes a compiler warning `unused variable: snap_rx`.
+    - *Fix:* Prefix the variable with an underscore (`_snap_rx`) or handle it if it's meant to be used.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start example generates warnings
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the basic FDTD example from `resonance-audio`'s README. The compiler gave me a warning about an unused variable."
+*   🕵️ **The Reality:** "Turns out the example creates a `snap_rx` channel receiver but never uses it."
+*   💡 **The Fix:** "Update the example code to use `_snap_rx` instead to avoid the warning."
+
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/tui-shared/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for `tui-shared`."
+**Action:** Copy and pasted the Quick Start example from `crates/tui-shared/README.md` into a new binary project.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused Import Warning:** The example code imports `thread` and `time::Duration` but comments out the `thread::sleep` call, generating an unused import warning.
+    - *Impact:* Causes compiler warnings (`unused imports`).
+    - *Fix:* Remove the unused imports if the code using them is commented out, or uncomment the code.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start example generates warnings
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the basic TUI example from `tui-shared`'s README. The compiler gave me a warning about unused imports."
+*   🕵️ **The Reality:** "Turns out the example code imports `thread` and `Duration` but comments out the line that uses them."
+*   💡 **The Fix:** "Remove the unused imports or uncomment the `thread::sleep` line in the example."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/gray-miller/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to figure out what the `gray-miller` experiment does."
+**Action:** Look for a `README.md` in `experiments/gray-miller/`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Headless Execution Flag:** The README tells me to run `cargo run -p gray-miller --release` but fails to mention how to run the experiment in CI or headless environments using the `--headless` flag.
+    - *Impact:* The user doesn't know how to run the experiment in headless setups.
+    - *Fix:* Provide clear headless instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing headless instructions for gray-miller experiment
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `gray-miller` experiment in a CI environment. The README tells me to use `cargo run` but my environment panics without a window manager."
+*   🕵️ **The Reality:** "Turns out the experiment supports a `--headless` flag, but it's not documented."
+*   💡 **The Fix:** "Update the README to include instructions for headless execution (`cargo run -p gray-miller --release -- --headless`)."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-lattice/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-lattice` experiment headlessly."
+**Action:** Copy and pasted the Quick Start command `cargo run -p arthropod-lattice --headless` from the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-lattice` experiment using the exact command in the README. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to run `cargo run -p arthropod-lattice --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the Quick Start command in the README to be `cargo run -p arthropod-lattice --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-origami/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-origami` experiment headlessly."
+**Action:** Copy and pasted the Quick Start command `cargo run -p arthropod-origami --headless` from the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-origami` experiment using the exact command in the README. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to run `cargo run -p arthropod-origami --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the Quick Start command in the README to be `cargo run -p arthropod-origami --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-physics/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-physics` experiment headlessly."
+**Action:** Copy and pasted the Quick Start command `cargo run -p arthropod-physics --headless` from the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-physics` experiment using the exact command in the README. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to run `cargo run -p arthropod-physics --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the Quick Start command in the README to be `cargo run -p arthropod-physics --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/quipu-market/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `quipu-market` experiment headlessly."
+**Action:** Copy and pasted the Quick Start command `cargo run -p quipu-market --headless` from the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `quipu-market` experiment using the exact command in the README. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to run `cargo run -p quipu-market --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the Quick Start command in the README to be `cargo run -p quipu-market -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/chimera-tardis/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to figure out what the `chimera-tardis` experiment does."
+**Action:** Look for a `README.md` in `experiments/chimera-tardis/`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Headless Execution Flag:** The README tells me to run `cargo run -p chimera-tardis` but fails to mention how to run the experiment in CI or headless environments using the `--headless` flag.
+    - *Impact:* The user doesn't know how to run the experiment in headless setups.
+    - *Fix:* Provide clear headless instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing headless instructions for chimera-tardis experiment
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `chimera-tardis` experiment in a CI environment. The README tells me to use `cargo run` but my environment panics without a window manager."
+*   🕵️ **The Reality:** "Turns out the experiment supports a `--headless` flag, but it's not documented."
+*   💡 **The Fix:** "Update the README to include instructions for headless execution (`cargo run -p chimera-tardis -- --headless`)."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/arthropod/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to use the `Button` UI component from `arthropod`."
+**Action:** Copy and pasted the Quick Start example from `crates/arthropod/README.md` into a new binary project.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing `macroquad` Dependency:** The example uses `macroquad::prelude::*` and `#[macroquad::main]`, but the installation instructions only tell me to add `arthropod`.
+    - *Impact:* Compilation error (`use of undeclared crate or module macroquad`).
+    - *Fix:* Users must explicitly add `macroquad` to their dependencies to use the UI components, as they are tightly coupled with it.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start example is broken (missing macroquad)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the basic `Button` example from `arthropod`'s README. The compiler immediately complained that `macroquad` was an undeclared crate."
+*   🕵️ **The Reality:** "Turns out the example relies on the `macroquad` game engine to run, but the `Installation` section completely omits it."
+*   💡 **The Fix:** "Update the `Cargo.toml` snippet in the `Installation` section to include `macroquad = "0.4"` alongside `arthropod`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to figure out what this repository is and how to use it."
+**Action:** Read the root `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Jargon Overload:** The root README describes itself as a "biological VM" containing a "Grid-based Visual Logic Language" with "Chaos Runes" and "Automaton Agents". It uses terms like `Orca`, `Silicon`, and `Life` modes without explaining them.
+    - *Impact:* Complete cognitive overload. A user doesn't know if this is a game, a programming language, a physics simulation, or a piece of art.
+    - *Fix:* Provide a simple, one-sentence plain-English summary at the very top. e.g. "Chimera is a visual programming language and simulation environment."
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Root README is incomprehensible due to jargon
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to read the main README to understand what the project is. It started talking about 'Chaos Runes', 'Genetic Machinery', and 'Automaton Agents' on a 'Petri Dish'. I have no idea what this software actually does."
+*   🕵️ **The Reality:** "Turns out the project is heavily themed around biology and esoteric logic, but it sacrifices clarity for flavor."
+*   💡 **The Fix:** "Add a 'What is this, actually?' section right below the title that explains the project in plain English, stripping away the biological and magical metaphors."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/chimera-lang/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to understand the enzymes/instructions in `chimera-lang`."
+**Action:** Read the `Enzymes` section in `experiments/chimera-lang/README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Type Information:** Many enzymes list arguments but don't specify their expected types. For example, `splice(strand_a, strand_b, method)`. Are `strand_a` and `strand_b` strings (names) or integers (indices)?
+    - *Impact:* Trial and error is required to write valid ChimeraScript.
+    - *Fix:* Explicitly document the expected type for each argument (e.g. `splice(index_a: Int, index_b: Int, method: Int)`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Enzyme documentation is missing argument types
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to write a script using the `splice` enzyme. The docs say `splice(strand_a, strand_b, method)`, but when I passed strand names, it crashed. It doesn't tell me what types these arguments should be."
+*   🕵️ **The Reality:** "Turns out some arguments require integer indices, some require strings, and it's completely undocumented."
+*   💡 **The Fix:** "Update the `Enzymes` list in the README to explicitly state the expected types for all instruction arguments."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `AGENTS.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to understand how to contribute or use the agent guidelines."
+**Action:** Read `AGENTS.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Excessive Jargon:** The document uses terms like "Stigmergy", "Pheromone Trails", and "Emergent Standards". This "Slang Check" fails.
+    - *Impact:* Confusion. A new user might not understand what "Stigmergy" is or how to leave "Pheromone Trails" in a markdown file.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: AGENTS.md is full of confusing jargon
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to read `AGENTS.md` to understand how to contribute. It started talking about 'Stigmergy' and 'Pheromone Trails'."
+*   🕵️ **The Reality:** "Turns out 'Stigmergy' is just a fancy biological term for 'indirect coordination' and 'Pheromone Trails' just means 'leave notes in GUESTBOOK.md'."
+*   💡 **The Fix:** "Simplify the language in `AGENTS.md`. Replace 'Stigmergy' with 'Indirect Coordination' or explain it clearly right away. Replace 'Pheromone Trails' with 'Status Updates' or 'Notes'."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/chimera-lang/examples/story_demo.rs`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to use the Story feature API."
+**Action:** Try to use the API based *only* on the public docs/examples by reading `story_demo.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Massive Dependency Boilerplate:** The README mentions needing to import `16` workspace dependencies manually when using this outside the workspace, making it incredibly tedious for a new user just to run a demo.
+2.  **Manual Grid Manipulation:** Instead of a clean API like `vm.write_story("Once upon...")`, I have to manually assign values to coordinates: `vm.grid[0][0] = Value::Str(...)`. This is tedious and low-level.
+3.  **Esoteric Jargon:** The API requires me to construct an AST manually using weird terms like `Nucleotide::Number(3)` inside `Gene` structs, rather than using intuitive builders or plain macros.
+4.  **Reverse Argument Pushing:** The example pushes arguments in reverse order because of a stack structure (`len, y, x`), which is highly counter-intuitive for narrative generation.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Story feature API is too low-level and jargon-heavy
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to understand how to use the `story_demo` programmatically. It requires manually building abstract syntax trees, pushing stack arguments backwards, and assigning memory directly to grid coordinates using terms like `Nucleotide`."
+*   🕵️ **The Reality:** "Turns out the API is not designed for storytelling. It's designed for mad scientists manually splicing genes at memory addresses."
+*   💡 **The Fix:** "Create a high-level `NarrativeBuilder` or wrapper API that hides the AST/Nucleotide jargon and lets users just write a story without worrying about stack ordering or grid memory."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/chimera-tardis/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to figure out what the `chimera-tardis` experiment does."
+**Action:** Try to run it using a fresh crate.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Library Target:** The crate cannot be included as a library dependency because it only has a binary target, despite the prompt in other examples telling me to use it that way.
+    - *Impact:* Compilation error when trying to use it as a dependency.
+    - *Fix:* If it's meant to be an executable, the README should clearly state to `cargo run` it directly, or it should expose a library target.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing library target
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to use `chimera-tardis` as a library dependency. Cargo complained about a missing lib target."
+*   🕵️ **The Reality:** "Turns out the experiment is purely a binary executable and doesn't expose any reusable code."
+*   💡 **The Fix:** "Clarify in the README that this is an executable-only experiment or add a `src/lib.rs` to expose its internals."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/spectral-scribe/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to figure out what the `spectral-scribe` experiment does."
+**Action:** Try to compile the codebase.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Broken example/main compilation:** The `src/main.rs` file fails to compile because it attempts to use private modules (`decoder` and `encoder`) from the library.
+    - *Impact:* Total failure to run the experiment.
+    - *Fix:* The `src/lib.rs` file needs to expose `pub mod decoder;` and `pub mod encoder;` instead of `pub(crate) mod`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: spectral-scribe main.rs fails to compile
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to compile `spectral-scribe` in the workspace. Cargo failed with `error[E0603]: module 'decoder' is private`."
+*   🕵️ **The Reality:** "Turns out the library declares its modules as `pub(crate)` making them inaccessible to the binary target in `main.rs`."
+*   💡 **The Fix:** "Change `pub(crate) mod decoder;` and `pub(crate) mod encoder;` to `pub mod decoder;` and `pub mod encoder;` in `experiments/spectral-scribe/src/lib.rs`."
+
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `graveyard/chaos-pendulum/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to compile the workspace."
+**Action:** Try to compile the codebase (`cargo test --workspace`).
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Broken compilation in graveyard experiment:** The `chaos-pendulum` experiment fails to compile because it attempts to use methods `add_node` and `add_link` on `PendulumSystem` which do not exist.
+    - *Impact:* Total failure to compile the workspace.
+    - *Fix:* Remove the experiment from the workspace or fix the API.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: chaos-pendulum fails to compile
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to compile the workspace. Cargo failed with `error[E0599]: no method named 'add_node' found for struct 'PendulumSystem'`."
+*   🕵️ **The Reality:** "Turns out the experiment in the graveyard is broken and prevents workspace compilation."
+*   💡 **The Fix:** "Fix `graveyard/chaos-pendulum/src/loader.rs` or remove it from the root `Cargo.toml` workspace members."
+
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/crystal-fs/README.md`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to compile the workspace."
+**Action:** Try to compile the codebase (`cargo test --workspace`).
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Broken example/main compilation:** The `src/main.rs` file fails to compile because it attempts to use a private module (`scanner`) from the library.
+    - *Impact:* Total failure to run the experiment or compile the workspace.
+    - *Fix:* The `src/lib.rs` file needs to expose `pub mod scanner;` instead of `pub(crate) mod scanner;`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: crystal-fs main.rs fails to compile
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to compile `crystal-fs` in the workspace. Cargo failed with `error[E0603]: module 'scanner' is private`."
+*   🕵️ **The Reality:** "Turns out the library declares its modules as `pub(crate)` making them inaccessible to the binary target in `main.rs`."
+*   💡 **The Fix:** "Change `pub(crate) mod scanner;` to `pub mod scanner;` in `experiments/crystal-fs/src/lib.rs`."
+
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/chimera-lang/src/tui/views/misc.rs`
+**Date:** 2026-07-09
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to compile the workspace."
+**Action:** Try to compile the codebase (`cargo test --workspace`).
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Import:** The `experiments/chimera-lang` fails to compile because of a missing `Bobber` import in `src/tui/views/misc.rs`.
+    - *Impact:* Total failure to compile the workspace.
+    - *Fix:* Import `Bobber` from `tui_shared`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: chimera-lang fails to compile (missing Bobber import)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to compile `chimera-lang` in the workspace. Cargo failed with `error[E0433]: failed to resolve: use of undeclared type 'Bobber'`."
+*   🕵️ **The Reality:** "Turns out the view uses `Bobber::new()` but never imports it from `tui_shared`."
+*   💡 **The Fix:** "Add `Bobber` to the `use tui_shared::{...};` import in `experiments/chimera-lang/src/tui/views/misc.rs`."
