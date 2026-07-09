@@ -825,3 +825,114 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `arthropod-physics` experiment. The README tells me it's a hybrid but doesn't tell me how to run it."
 *   🕵️ **The Reality:** "Turns out the README is just a conceptual document and lacks basic `cargo run` commands or examples."
 *   💡 **The Fix:** "Add a 'Quick Start' or 'Usage' section with the `cargo run -p arthropod-physics` command."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/poincare-disk/README.md`
+**Date:** 2026-07-06
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to use the Tiling constants from `poincare-disk`."
+**Action:** Copy and pasted the `Tiling` example from the README into my project.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing main function in Tiling example:** The example code snippet fails to compile because it lacks a `fn main() { ... }` block.
+    - *Impact:* The `Tiling` code snippet cannot be directly copy-pasted and run.
+    - *Fix:* Wrap the `Tiling` code block in a `fn main() { ... }`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Tiling example in poincare-disk is broken (missing main function)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `Tiling` code snippet from `poincare-disk`. The compiler threw an error about statements outside a function."
+*   🕵️ **The Reality:** "Turns out the example code is just floating code and not wrapped in a `fn main() { ... }` block."
+*   💡 **The Fix:** "Update the Tiling example block to include the `fn main() {` wrapper around the code."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/physics-pbd/README.md`
+**Date:** 2026-07-06
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `physics-pbd` crate."
+**Action:** Copy and pasted the quickstart example code from the README into a fresh `src/main.rs` file.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused `Result` warning:** The example code calls `system.add_distance_constraint(anchor, bob, 1.0);` without handling the `Result` or unwrapping it.
+    - *Impact:* Compiler warning (`unused Result that must be used`). It may hide potential errors in the constraint addition.
+    - *Fix:* Use `.unwrap()` or explicitly ignore it with `let _ = ...`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example has unhandled Result warning
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `physics-pbd` pendulum example. The compiler complained about an `unused Result that must be used`."
+*   🕵️ **The Reality:** "Turns out `system.add_distance_constraint` returns a `Result` that is completely ignored in the example."
+*   💡 **The Fix:** "Add `.unwrap()` to the constraint creation in the README snippet to properly handle the Result."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/resonance-audio/README.md`
+**Date:** 2026-07-06
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `resonance-audio` crate."
+**Action:** Copy and pasted the quickstart example code from the README into a fresh `src/main.rs` file.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing `crossbeam-channel` Dependency:** The example uses `crossbeam_channel::bounded`, but there is no instruction on how to add it to `Cargo.toml`.
+    - *Impact:* Compilation error (`use of undeclared crate or module crossbeam_channel`).
+    - *Fix:* Provide an `Installation` section specifying that `crossbeam-channel` is needed or re-export it inside `resonance-audio`.
+2.  **Unused variable `snap_rx`:** The example creates `snap_rx` but never uses it.
+    - *Impact:* Compiler warning (`unused variable`).
+    - *Fix:* Prefix it with an underscore (`_snap_rx`) or omit it if unnecessary.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (missing crossbeam-channel dependency and unused variable)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `resonance-audio` basic example. The compiler complained about an undeclared module `crossbeam_channel` and gave me unused variable warnings."
+*   🕵️ **The Reality:** "Turns out the example relies on the `crossbeam-channel` crate which is not mentioned anywhere in an installation section, and it leaves `snap_rx` completely unused."
+*   💡 **The Fix:** "Add an `Installation` section that includes `crossbeam-channel` in the `Cargo.toml` snippet, and prefix `snap_rx` with an underscore (`_snap_rx`) to suppress warnings."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/quipu/README.md`
+**Date:** 2026-07-06
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `quipu` crate quickstart example."
+**Action:** Copy and pasted the quickstart example code from the README into a fresh `src/main.rs` file.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused Import:** The example uses `quipu::{Quipu, Cord, Knot}`, but `Knot` is never used.
+    - *Impact:* Compiler warning (`unused import`).
+    - *Fix:* Remove `Knot` from the `use` statement if it's not needed in the example code.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example has unused import
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `quipu` accounting example. The compiler complained about an unused import for `Knot`."
+*   🕵️ **The Reality:** "Turns out the example code imports `Knot` but never actually uses it in the simulation."
+*   💡 **The Fix:** "Remove `Knot` from the `use quipu::{Quipu, Cord, Knot};` statement in the README example."
