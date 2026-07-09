@@ -6301,15 +6301,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "neuro-gray"
-version = "0.1.0"
-dependencies = [
- "clap",
- "gray-scott",
- "neuro-sim",
-]
-
-[[package]]
 name = "neuro-hologram"
 version = "0.1.0"
 dependencies = [
