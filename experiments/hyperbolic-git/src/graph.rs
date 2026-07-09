@@ -46,7 +46,11 @@ impl CommitGraph {
         }
 
         let commit = self.repo.find_commit(oid)?;
-        let message = commit.summary().unwrap_or(Some("")).unwrap_or("").to_string();
+        let message = commit
+            .summary()
+            .unwrap_or(Some(""))
+            .unwrap_or("")
+            .to_string();
         let author = commit.author().name().unwrap_or("").to_string();
 
         let parents: Vec<Oid> = commit.parents().map(|p| p.id()).collect();

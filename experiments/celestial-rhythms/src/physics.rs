@@ -41,6 +41,8 @@ impl Body {
 pub struct System {
     pub bodies: Vec<Body>,
     pub g_const: f32,
+    /// Pre-allocated buffer for acceleration vectors to avoid O(N) heap allocations per physics update tick.
+    pub acc_buffer: Vec<Vec2>,
 }
 
 impl System {
@@ -48,6 +50,7 @@ impl System {
         Self {
             bodies: Vec::new(),
             g_const: 1000.0,
+            acc_buffer: Vec::new(),
         }
     }
 
@@ -57,7 +60,9 @@ impl System {
 
     pub fn update(&mut self, dt: f32) {
         let n = self.bodies.len();
-        let mut acc = vec![Vec2::ZERO; n];
+
+        self.acc_buffer.clear();
+        self.acc_buffer.resize(n, Vec2::ZERO);
 
         // Calculate forces
         for i in 0..n {
@@ -74,15 +79,15 @@ impl System {
                     self.g_const * self.bodies[i].mass * self.bodies[j].mass / effective_dist_sq;
                 let force = diff / dist * f; // Direction is normalized diff
 
-                acc[i] += force / self.bodies[i].mass;
-                acc[j] -= force / self.bodies[j].mass;
+                self.acc_buffer[i] += force / self.bodies[i].mass;
+                self.acc_buffer[j] -= force / self.bodies[j].mass;
             }
         }
 
         // Symplectic Euler Integration
         // 1. Update Velocity
         for i in 0..n {
-            self.bodies[i].vel += acc[i] * dt;
+            self.bodies[i].vel += self.acc_buffer[i] * dt;
         }
 
         // 2. Update Position
@@ -130,5 +135,17 @@ mod tests {
         println!("Final distance: {}, Error: {}", final_dist, error);
 
         assert!(error < 5.0, "Orbit drifted too much!");
+    }
+
+    #[test]
+    fn test_acc_buffer_reuse() {
+        let mut system = System::new();
+        system.add_body(Body::new(Vec2::ZERO, Vec2::ZERO, 1000.0, 10.0, WHITE));
+        system.add_body(Body::new(vec2(100.0, 0.0), vec2(0.0, 100.0), 1.0, 5.0, RED));
+
+        system.update(0.01);
+
+        // After an update, the acc_buffer should be sized correctly and kept around.
+        assert_eq!(system.acc_buffer.len(), 2);
     }
 }

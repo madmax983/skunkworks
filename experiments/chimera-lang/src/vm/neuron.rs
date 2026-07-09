@@ -231,7 +231,9 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
             // Popping order: y_target, x_target, y_source, x_source
             if vm.stack.len() >= 4 {
                 // 🔒 Warden: Replaced unwrap with safe pop
-                let Some(y_tgt_val) = vm.stack.pop() else { return; };
+                let Some(y_tgt_val) = vm.stack.pop() else {
+                    return;
+                };
                 let Some(x_tgt_val) = vm.stack.pop() else {
                     vm.stack.push(y_tgt_val);
                     return;

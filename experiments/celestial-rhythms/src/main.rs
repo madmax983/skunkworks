@@ -217,7 +217,7 @@ async fn async_main() -> anyhow::Result<()> {
         draw_text("CELESTIAL RHYTHMS", 10.0, 30.0, 30.0, WHITE);
         draw_text("Space: Pause | Up/Down: Tune Scale", 10.0, 50.0, 20.0, GRAY);
         draw_text(
-            &format!("Scale: {:.1}", scale_factor),
+            format!("Scale: {:.1}", scale_factor).as_str(),
             10.0,
             70.0,
             20.0,
@@ -225,13 +225,13 @@ async fn async_main() -> anyhow::Result<()> {
         );
 
         // Visualize frequencies
-        if let Some(_) = &audio_engine {
+        if audio_engine.is_some() {
             let mut y = 100.0;
             for (i, body) in system.bodies.iter().skip(1).enumerate() {
                 let omega = body.angular_velocity(sun_pos).abs();
                 let freq = omega * scale_factor;
                 draw_text(
-                    &format!("Planet {}: {:.1} Hz", i + 1, freq),
+                    format!("Planet {}: {:.1} Hz", i + 1, freq).as_str(),
                     10.0,
                     y,
                     20.0,
