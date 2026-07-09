@@ -7280,6 +7280,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "platter-market"
+version = "0.1.0"
+dependencies = [
+ "comfy-table",
+ "crossterm 0.28.1",
+ "glam 0.25.0",
+ "market-sim",
+ "platter",
+ "rand 0.8.6",
+ "ratatui",
+ "tui-shared",
+]
+
+[[package]]
 name = "platter-resonance"
 version = "0.1.0"
 dependencies = [
