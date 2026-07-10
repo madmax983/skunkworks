@@ -45,7 +45,6 @@ members = [
     "experiments/quipu-market",
     "experiments/neuro-market",
     "experiments/neuro-physics",
-    "experiments/arthropod-physics",
     "experiments/arthropod-market",
     "experiments/platter-market",
     "graveyard/arthropod-lattice",
