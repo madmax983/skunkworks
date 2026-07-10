@@ -1,9 +1,10 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **arthropod-physics**: Specimen condemned. Diagnosis: Skeletal Implementation (126 LOC), Lack of Bidirectional Emergence, and Terminal Genericism. Grace period: 24h.
+- **platter-market**: Specimen condemned. Diagnosis: Documentation Void, Skeletal Execution (randomized spatial interaction). Grace period: 24h.
 
 
 
 ## ☠️ Executed
+- **arthropod-physics**: Specimen executed. Diagnosis: Skeletal Implementation (126 LOC), Lack of Bidirectional Emergence, and Terminal Genericism. Grace period expired. Moved to graveyard.
 - **memetic-market**: Specimen executed. Diagnosis: Terminal Compilation Failure (`error[E0603]`) and Skeletal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **neuro-gray**: Specimen executed. Diagnosis: Skeletal Implementation and Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **clockwork-concerto**: Specimen executed. Diagnosis: Terminal Compilation Failure (`E0277` in `bevy_animation`). Failed to improve during grace period. Moved to graveyard.
