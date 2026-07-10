@@ -202,8 +202,8 @@ pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: spore_id, strand_idx (top)
     if vm.stack.len() >= 2 {
-        let s_val = vm.stack.pop().unwrap(); // strand_idx
-        let id_val = vm.stack.pop().unwrap(); // spore_id
+        let s_val = vm.stack.pop()?; // strand_idx
+        let id_val = vm.stack.pop()?; // spore_id
 
         if let (Value::Int(spore_id), Value::Int(s_idx)) = (id_val, s_val) {
             let id = spore_id as usize;
@@ -281,9 +281,9 @@ pub fn exec_frankenstein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let stitches_val = vm.stack.pop().unwrap();
-    let strand_b_val = vm.stack.pop().unwrap();
-    let strand_a_val = vm.stack.pop().unwrap();
+    let stitches_val = vm.stack.pop()?;
+    let strand_b_val = vm.stack.pop()?;
+    let strand_a_val = vm.stack.pop()?;
 
     let (Value::Int(s_a), Value::Int(s_b), Value::Int(stitches)) =
         (strand_a_val, strand_b_val, stitches_val)
@@ -423,8 +423,8 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let b_val = vm.stack.pop().unwrap();
-    let a_val = vm.stack.pop().unwrap();
+    let b_val = vm.stack.pop()?;
+    let a_val = vm.stack.pop()?;
 
     let (Value::Int(idx_a), Value::Int(idx_b)) = (a_val, b_val) else {
         vm.output.push("CROSSOVER ERROR: Type mismatch".to_string());
@@ -528,9 +528,9 @@ pub fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let method_val = vm.stack.pop().unwrap();
-    let strand_b_val = vm.stack.pop().unwrap();
-    let strand_a_val = vm.stack.pop().unwrap();
+    let method_val = vm.stack.pop()?;
+    let strand_b_val = vm.stack.pop()?;
+    let strand_a_val = vm.stack.pop()?;
 
     let (Value::Int(s_a), Value::Int(s_b), Value::Int(method)) =
         (strand_a_val, strand_b_val, method_val)
@@ -664,9 +664,9 @@ pub fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let split_val = vm.stack.pop().unwrap();
-    let strand_b_val = vm.stack.pop().unwrap();
-    let strand_a_val = vm.stack.pop().unwrap();
+    let split_val = vm.stack.pop()?;
+    let strand_b_val = vm.stack.pop()?;
+    let strand_a_val = vm.stack.pop()?;
 
     let (Value::Int(sa), Value::Int(sb), Value::Int(split)) =
         (strand_a_val, strand_b_val, split_val)
@@ -757,8 +757,8 @@ pub fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: guide_idx, target_idx (bottom)
     if vm.stack.len() >= 2 {
-        let guide_val = vm.stack.pop().unwrap();
-        let target_val = vm.stack.pop().unwrap();
+        let guide_val = vm.stack.pop()?;
+        let target_val = vm.stack.pop()?;
 
         if let (Value::Int(g_idx), Value::Int(t_idx)) = (guide_val, target_val) {
             let g_idx = g_idx as usize;
@@ -831,8 +831,8 @@ pub fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: cut_index, strand_idx (bottom)
     if vm.stack.len() >= 2 {
-        let cut_val = vm.stack.pop().unwrap();
-        let strand_val = vm.stack.pop().unwrap();
+        let cut_val = vm.stack.pop()?;
+        let strand_val = vm.stack.pop()?;
 
         if let (Value::Int(cut), Value::Int(s_idx)) = (cut_val, strand_val) {
             let s_idx = s_idx as usize;
@@ -918,9 +918,9 @@ pub fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: len, y, x (top)
     if vm.stack.len() >= 3 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        let len_val = vm.stack.pop().unwrap();
+        let x_val = vm.stack.pop()?;
+        let y_val = vm.stack.pop()?;
+        let len_val = vm.stack.pop()?;
 
         if let (Value::Int(x), Value::Int(y), Value::Int(len)) = (x_val, y_val, len_val) {
             if len > 0 {
@@ -1094,8 +1094,8 @@ pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_methylate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let gene_val = vm.stack.pop().unwrap();
-        let strand_val = vm.stack.pop().unwrap();
+        let gene_val = vm.stack.pop()?;
+        let strand_val = vm.stack.pop()?;
         if let (Value::Int(g_idx), Value::Int(s_idx)) = (gene_val, strand_val) {
             if vm.epigenome.len() < MAX_EPIGENOME_SIZE {
                 vm.epigenome.insert((s_idx as usize, g_idx as usize));
@@ -1124,8 +1124,8 @@ pub fn exec_methylate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// ```
 pub fn exec_demethylate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
-        let gene_val = vm.stack.pop().unwrap();
-        let strand_val = vm.stack.pop().unwrap();
+        let gene_val = vm.stack.pop()?;
+        let strand_val = vm.stack.pop()?;
         if let (Value::Int(g_idx), Value::Int(s_idx)) = (gene_val, strand_val) {
             vm.epigenome.remove(&(s_idx as usize, g_idx as usize));
             vm.output.push(format!("DEMETHYLATED: {}:{}", s_idx, g_idx));
@@ -1204,8 +1204,8 @@ pub fn exec_ligase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let donor_val = vm.stack.pop().unwrap();
-    let recipient_val = vm.stack.pop().unwrap();
+    let donor_val = vm.stack.pop()?;
+    let recipient_val = vm.stack.pop()?;
 
     let (Value::Int(d_idx_int), Value::Int(r_idx_int)) = (donor_val, recipient_val) else {
         vm.output
@@ -1395,10 +1395,10 @@ pub fn exec_integrase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let arg_val = vm.stack.pop().unwrap();
-    let name_val = vm.stack.pop().unwrap();
-    let gene_idx_val = vm.stack.pop().unwrap();
-    let strand_idx_val = vm.stack.pop().unwrap();
+    let arg_val = vm.stack.pop()?;
+    let name_val = vm.stack.pop()?;
+    let gene_idx_val = vm.stack.pop()?;
+    let strand_idx_val = vm.stack.pop()?;
 
     let (Value::Int(s), Value::Int(g), Value::Str(name), arg) =
         (strand_idx_val, gene_idx_val, name_val, arg_val)
@@ -1482,8 +1482,8 @@ pub fn exec_integrase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_excision(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: gene_idx, strand_idx (bottom)
     if vm.stack.len() >= 2 {
-        let gene_idx_val = vm.stack.pop().unwrap();
-        let strand_idx_val = vm.stack.pop().unwrap();
+        let gene_idx_val = vm.stack.pop()?;
+        let strand_idx_val = vm.stack.pop()?;
 
         match (strand_idx_val, gene_idx_val) {
             (Value::Int(s), Value::Int(g)) => {
@@ -2067,4 +2067,58 @@ fn helix_to_script(helix: &crate::ast::Helix) -> String {
         s.push_str("}\n\n");
     }
     s
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_stack_underflow_safety() {
+        let mut vm = ChimeraVM::new(crate::ast::Dna {
+            helix: crate::ast::Helix { strands: vec![] },
+            evolution_config: None,
+        });
+        // Ensure stack is empty
+        vm.stack.clear();
+
+        // Testing chronos_splice (requires 2)
+        assert!(exec_chronos_splice(&mut vm).is_none());
+
+        // Testing frankenstein (requires 3)
+        assert!(exec_frankenstein(&mut vm).is_none());
+
+        // Testing crossover (requires 2)
+        assert!(exec_crossover(&mut vm).is_none());
+
+        // Testing splice (requires 3)
+        assert!(exec_splice(&mut vm).is_none());
+
+        // Testing recombine (requires 3)
+        assert!(exec_recombine(&mut vm).is_none());
+
+        // Testing crispr_scan (requires 2)
+        assert!(exec_crispr_scan(&mut vm).is_none());
+
+        // Testing cas9_cut (requires 2)
+        assert!(exec_cas9_cut(&mut vm).is_none());
+
+        // Testing incubate (requires 3)
+        assert!(exec_incubate(&mut vm).is_none());
+
+        // Testing methylate (requires 2)
+        assert!(exec_methylate(&mut vm).is_none());
+
+        // Testing demethylate (requires 2)
+        assert!(exec_demethylate(&mut vm).is_none());
+
+        // Testing ligase (requires 2)
+        assert!(exec_ligase(&mut vm).is_none());
+
+        // Testing integrase (requires 4)
+        assert!(exec_integrase(&mut vm).is_none());
+
+        // Testing excision (requires 2)
+        assert!(exec_excision(&mut vm).is_none());
+    }
 }
