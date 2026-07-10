@@ -9,10 +9,10 @@ pub struct AudioEngine {
     state: Arc<Mutex<AudioState>>,
 }
 
-struct AudioState {
-    frequency: f32,
-    volume: f32,
-    modulation: f32,
+pub struct AudioState {
+    pub frequency: f32,
+    pub volume: f32,
+    pub modulation: f32,
 }
 
 impl AudioEngine {
