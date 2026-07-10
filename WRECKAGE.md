@@ -64,3 +64,19 @@ Because the `Node` structure has a `Mutex<NodeDynamicState>` and threads (ants) 
 * 📉 **The Result:** The Loom model explorer accurately detects this deadlock permutation and intentionally panics, aborting the process (SIGABRT/panic in destructor) to prove the synchronization is broken.
 * 🧪 **Reproduction:** Run `cargo test -p colony-concerto --test havoc_deadlock --features loom`
 * 😈 **Comment:** "You thought your ants were building a concerto. But without lock ordering, they just built a traffic jam. Thread-safe is a lie until proven by loom."
+
+## The Weak Point: Mutex Starvation in `cosmic-strings`, `cymatic-ocean`, `hydro-soundscapes`
+
+In several audio-driven experiments (`cosmic-strings`, `cymatic-ocean`, `hydro-soundscapes`), a `std::sync::Mutex` is used to share parameters between the main thread (writer) and the high-frequency audio callback thread (reader).
+
+## The Attack: Lock Contention and Thread Starvation
+
+`std::sync::Mutex` lacks fairness guarantees. When the high-priority audio callback thread repeatedly and rapidly locks the mutex to read parameters for every sample or buffer, it can completely starve the main thread (writer). If the writer thread cannot acquire the lock, the UI and simulation freeze indefinitely.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads (mimicking an aggressive audio callback loop) repeatedly locking the shared parameters (`SharedData` in `cosmic-strings`, `Params` in `cymatic-ocean`, `AudioState` in `hydro-soundscapes`), causing the "writer" thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress in all three experiments.
+* 🧪 **Reproduction:**
+  - `cargo test -p cosmic-strings --test havoc_contention --features audio`
+  - `cargo test -p cymatic-ocean --test havoc_contention --features audio`
+  - `cargo test -p hydro-soundscapes --test havoc_contention --features audio`
+* 😈 **Comment:** "You thought standard Mutexes were fair. You thought your audio thread would yield. You were wrong. High-frequency callbacks eat writers for breakfast."
