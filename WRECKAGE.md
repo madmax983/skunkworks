@@ -64,3 +64,15 @@ Because the `Node` structure has a `Mutex<NodeDynamicState>` and threads (ants) 
 * 📉 **The Result:** The Loom model explorer accurately detects this deadlock permutation and intentionally panics, aborting the process (SIGABRT/panic in destructor) to prove the synchronization is broken.
 * 🧪 **Reproduction:** Run `cargo test -p colony-concerto --test havoc_deadlock --features loom`
 * 😈 **Comment:** "You thought your ants were building a concerto. But without lock ordering, they just built a traffic jam. Thread-safe is a lie until proven by loom."
+👺 Havoc: Mutex Starvation in `gravitational-orchestra`
+
+In `experiments/gravitational-orchestra`, the application uses a `std::sync::Mutex` to share state (`SharedState`) between the main thread (writer) and the audio thread (reader).
+
+## The Attack: Reader Starvation
+
+`std::sync::Mutex` under high contention with readers holding the lock (even briefly) can completely starve a single background writer thread.
+
+* 🧨 **The Trigger:** 100 "reader" threads repeatedly lock `SharedState` while keeping the lock held for brief durations (10ms), causing the "writer" thread to hang indefinitely trying to get a lock to push updates.
+* 📉 **The Result:** The test `havoc_test_mutex_starvation` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p gravitational-orchestra --test havoc_contention`
+* 😈 **Comment:** "You thought standard Mutexes were fair. You were wrong."
