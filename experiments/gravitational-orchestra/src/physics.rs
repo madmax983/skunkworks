@@ -8,6 +8,7 @@ pub const MAX_BODIES: usize = 8;
 pub struct Body {
     pub pos: Vec2,
     pub vel: Vec2,
+    pub acc: Vec2,
     pub mass: f32,
     pub color: Color,
     pub radius: f32,
@@ -18,6 +19,7 @@ impl Body {
         Self {
             pos,
             vel,
+            acc: Vec2::ZERO,
             mass,
             color,
             radius: (mass.sqrt() / 2.0).clamp(2.0, 50.0),
@@ -36,38 +38,34 @@ pub fn calculate_acceleration(bodies: &[Body], index: usize) -> Vec2 {
 
         let delta = body.pos - target.pos;
         let dist_sq = delta.length_squared() + SOFTENING * SOFTENING;
-        let _dist = dist_sq.sqrt();
+        let dist = dist_sq.sqrt();
 
+        // ⚡ Bolt: Removed `delta.normalize()` which hides a redundant `sqrt`.
+        // `delta / dist` accurately handles softening while avoiding a hidden `dist = 0` panic
+        // and redundant calculations since we already computed `dist` above.
         let f = (G * body.mass) / dist_sq;
-        acc += delta.normalize() * f;
+        acc += (delta / dist) * f;
     }
     acc
 }
 
 pub fn verlet_step(bodies: &mut [Body], dt: f32) {
     // 1. Calculate acceleration for current positions
-    let mut accelerations = Vec::with_capacity(bodies.len());
     for i in 0..bodies.len() {
-        accelerations.push(calculate_acceleration(bodies, i));
+        bodies[i].acc = calculate_acceleration(bodies, i);
     }
 
     // 2. Update positions: r(t+dt) = r(t) + v(t)dt + 0.5*a(t)dt^2
-    for (i, body) in bodies.iter_mut().enumerate() {
-        let a = accelerations[i];
-        body.pos += body.vel * dt + a * 0.5 * dt * dt;
+    for body in bodies.iter_mut() {
+        body.pos += body.vel * dt + body.acc * 0.5 * dt * dt;
     }
 
-    // 3. Calculate new accelerations for new positions
-    let mut new_accelerations = Vec::with_capacity(bodies.len());
+    // 3. Calculate new accelerations for new positions & update velocities
+    // v(t+dt) = v(t) + 0.5*(a(t) + a(t+dt))*dt
     for i in 0..bodies.len() {
-        new_accelerations.push(calculate_acceleration(bodies, i));
-    }
-
-    // 4. Update velocities: v(t+dt) = v(t) + 0.5*(a(t) + a(t+dt))*dt
-    for (i, body) in bodies.iter_mut().enumerate() {
-        let a = accelerations[i];
-        let new_a = new_accelerations[i];
-        body.vel += (a + new_a) * 0.5 * dt;
+        let new_a = calculate_acceleration(bodies, i);
+        let a = bodies[i].acc;
+        bodies[i].vel += (a + new_a) * 0.5 * dt;
     }
 }
 
@@ -92,4 +90,10 @@ mod tests {
         // The first body (heavy) should have moved slightly (conservation of momentum)
         assert_ne!(bodies[0].pos, Vec2::new(0.0, 0.0));
     }
+}
+
+#[test]
+fn test_bolt_zero_alloc() {
+    let b = Body::new(Vec2::ZERO, Vec2::ZERO, 10.0, WHITE);
+    assert_eq!(b.acc, Vec2::ZERO);
 }

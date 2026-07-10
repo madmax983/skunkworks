@@ -24,6 +24,7 @@ impl Default for SharedState {
     }
 }
 
+#[allow(dead_code)]
 pub struct AudioEngine {
     _stream: cpal::Stream,
     shared_state: Arc<Mutex<SharedState>>,
@@ -85,10 +86,11 @@ where
             for frame in data.chunks_mut(channels) {
                 let mut sample_sum: f32 = 0.0;
 
-                for i in 0..state_snapshot.count {
-                    if i >= MAX_BODIES {
-                        break;
-                    }
+                for (i, phase) in phases
+                    .iter_mut()
+                    .enumerate()
+                    .take(state_snapshot.count.min(MAX_BODIES))
+                {
                     let body = state_snapshot.bodies[i];
 
                     // Frequency mapping
@@ -100,9 +102,9 @@ where
                     let dist = body.dist_sq_from_center.sqrt().max(10.0);
                     let amp = (body.mass.sqrt() * 50.0 / dist).clamp(0.0, 0.5);
 
-                    phases[i] = (phases[i] + freq / sample_rate) % 1.0;
+                    *phase = (*phase + freq / sample_rate) % 1.0;
 
-                    let wave = (phases[i] * 2.0 * std::f32::consts::PI).sin();
+                    let wave = (*phase * 2.0 * std::f32::consts::PI).sin();
 
                     sample_sum += wave * amp;
                 }

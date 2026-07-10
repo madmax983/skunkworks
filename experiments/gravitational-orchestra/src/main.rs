@@ -125,7 +125,7 @@ async fn main() {
 
         // UI
         draw_text(
-            &format!("Bodies: {}", bodies.len()),
+            format!("Bodies: {}", bodies.len()).as_str(),
             10.0,
             20.0,
             20.0,

@@ -23,3 +23,6 @@
 **[celestial-rhythms: Removing O(N) Allocations on the Physics Hot Path]**
 **Learning:** In N-body physics simulations, initializing accumulator vectors (like forces or accelerations) inside the inner `update` loop (e.g., `let mut acc = vec![Vec2::ZERO; n];`) causes excessive heap allocation churn, especially when sub-stepping is used (e.g., 4 steps per frame).
 **Action:** Move the accumulator into the struct as a persistent buffer (`pub acc_buffer: Vec<Vec2>`). During the update, use `.clear()` and `.resize(n, Vec2::ZERO)` to reuse the existing capacity, dropping the per-tick allocations to zero.
+**[Verlet Integration Allocation Elimination]**
+**Learning:** Verlet integration often computes current and "next" accelerations. Naive implementations allocate `Vec` buffers per frame to hold these calculations.
+**Action:** By modifying the foundational struct (e.g., `Body`) to include an inline `acc: Vec2` field, you can completely eliminate these per-frame heap allocations without breaking the algorithm. Also, watch out for `.normalize()` which hides a `sqrt()` calculation; if you already computed the magnitude, perform the division manually.
