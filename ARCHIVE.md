@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **arthropod-physics**: Specimen condemned. Diagnosis: Skeletal Implementation (126 LOC), Lack of Bidirectional Emergence, and Terminal Genericism. Grace period: 24h.
+- **platter-market**: Specimen condemned. Diagnosis: Documentation Void and Skeletal Execution (randomized spatial interaction). Grace period: 24h.
 
 
 
