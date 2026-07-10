@@ -1,3 +1,4 @@
+use tui_shared::Bobber;
 use crate::tui::get_all_views;
 use crate::tui::panel_block;
 use crate::tui::state::AppState;
