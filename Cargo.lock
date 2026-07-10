@@ -348,6 +348,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-resonance"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "crossbeam-channel",
+ "macroquad",
+ "resonance-audio",
+]
+
+[[package]]
 name = "as-raw-xcb-connection"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

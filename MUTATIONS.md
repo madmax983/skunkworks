@@ -137,6 +137,8 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. The recent `arthropod-origami`, `arthropod-lattice`, and `arthropod-physics` crosses compiled seamlessly and display incredible hybrid vigor. Grafting the discrete GUI components of `arthropod` onto continuous simulation engines continues to be a highly viable breeding strategy. Because the "Proposed Crosses" section is empty, I am autonomously inventing a new hybrid: `arthropod-flock`. Crossing the immediate mode UI library `arthropod` with the swarm intelligence of `flocking` will allow users to dynamically modulate the DNA parameters (cohesion, alignment, separation) of a live swarm.
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. I verified that `neuro-physics` and `git-quipu` compiled perfectly and displayed strong hybrid vigor. I am autonomously inventing a new hybrid: `arthropod-physics`. Crossing the immediate mode UI library `arthropod` with the Position Based Dynamics engine `physics-pbd` will allow us to observe discrete GUI inputs directly modifying continuous soft-body constraints, bridging abstract interface paradigms with structural rendering.
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. I verified that `arthropod-lattice`, `arthropod-flock`, and `arthropod-physics` compiled perfectly and displayed strong hybrid vigor with proper headless modes. I am autonomously inventing a new hybrid: `arthropod-resonance`. Crossing the immediate mode UI library `arthropod` with the 2D wave physics of `resonance-audio` allows us to manipulate an interactive acoustic sandbox directly through abstract GUI controls.
+
 
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated all previous hybrids. I verified that `market-poincare` and `neuro-market` compiled perfectly and displayed strong hybrid vigor. I am now evaluating the proposed crosses. The "Proposed Crosses" section contains `git-locus` which was already moved. Thus I will autonomously invent a new hybrid to push the continuous physics environment with neural data: `neuro-physics`. Crossing the biological Spiking Neural Network of `neuro-sim` with the soft-body Position Based Dynamics of `physics-pbd` will allow us to observe how spiking behavior contracts distance constraints, mimicking muscle tissue in a continuous 3D simulation.
@@ -222,6 +224,8 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/arthropod-flock
 - **Evaluation**: Success. Compiled. The TUI correctly manipulates continuous swarm intelligence behavior. Headless bypass correctly implemented.
 
+
+
 ### arthropod-physics
 - **Parents**: crates/arthropod + crates/physics-pbd
 - **Concept**: Interactive Structural Rigging.
@@ -229,6 +233,14 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: A robust interactive structural playground showing continuous topological deformation of chains, where the abstract GUI directly influences the physical parameters of the environment.
 - **Status**: experiments/arthropod-physics
 - **Evaluation**: Success. Compiled. The TUI correctly modifies the continuous PBD constraints. Headless bypass correctly implemented.
+
+### arthropod-resonance
+- **Parents**: crates/arthropod + crates/resonance-audio
+- **Concept**: Interactive Acoustic Sandbox.
+- **Novel trait**: Mapping abstract immediate-mode GUI components onto an acoustic wave propagation grid, where button clicks and slider interactions act as active audio exciters or dynamic physical boundaries in the wave simulation.
+- **Predicted Phenotype**: An interactive synthesizer sandbox where manipulating GUI widgets visibly splashes waves across the 2D grid and alters acoustic standing wave patterns.
+- **Status**: experiments/arthropod-resonance
+- **Evaluation**: Success. Compiled. The TUI buttons actively inject impulses into the FDTD wave grid. Headless bypass correctly implemented.
 
 ### git-quipu
 - **Parents**: crates/git-associates + crates/quipu

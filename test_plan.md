@@ -1,18 +1,23 @@
-1. **Fix Root README.md jargon**
-   - Add a plain-English summary to `README.md` right below the title explaining that "Chimera is a visual programming language and simulation environment".
-2. **Fix `experiments/chimera-lang/README.md` enzymes type documentation**
-   - Explicitly document the expected type for each argument in `splice` and other enzymes.
-3. **Fix `experiments/neuro-physics/README.md` quick start command**
-   - Update `cargo run -p neuro-physics --headless` to `cargo run -p neuro-physics -- --headless`.
-4. **Fix `crates/ferrous-core/README.md` quick start example**
-   - Wrap the rust code in `fn main() { ... }` block.
-5. **Fix `graveyard/git_rhythm/README.md` private module**
-   - Update the import in the example from `use git_rhythm::nova::NarrativeGenerator;` to `use git_rhythm::NarrativeGenerator;`.
-6. **Fix `experiments/chimera-lang/examples/story_demo.rs` headless mode**
-   - Add a check for `--headless` in `story_demo.rs` using `std::env::args()` and avoid launching the TUI if the flag is present, or just print a message and exit early like we do in macroquad tests.
-7. **Fix `crates/arthropod/README.md` missing macroquad dependency**
-   - Add `macroquad = "0.4"` to the `[dependencies]` in the `Installation` section of the README.
-8. **Fix `experiments/quipu-market/README.md` running instructions**
-   - Provide a visual example and explicitly write out `cargo run -p quipu-market` (it's already there but verify).
-9. **Pre-commit and Submit**
-   - Complete pre-commit checks and submit.
+1. **Evaluate Previous Hybrids (Phase 1):**
+   - Check `MUTATIONS.md` for recently attempted crosses (e.g., `flock-platter`, `arthropod-market`, `arthropod-origami`, `arthropod-lattice`, `arthropod-flock`, `arthropod-physics`).
+   - I have built and run `arthropod-physics`, `neuro-physics`, `arthropod-flock`, and `arthropod-lattice` confirming compilation, presence of headless execution modes where applicable, and noting execution/condemnation states. I will formalize this evaluation in `MUTATIONS.md` Phase 1 notes.
+
+2. **Select and Design New Hybrid (Phase 2):**
+   - Since the "Proposed Crosses" section is effectively empty or contains already-completed crosses, I will autonomously invent a new cross.
+   - **Strategy Update**: Crossing discrete logical operations with continuous physical/biological simulation produces robust hybrid phenotypes.
+   - **Selected Parents**: `crates/arthropod` (Immediate mode UI) and `crates/resonance-audio` (Real-time 2D wave physics).
+   - **Proposed Hybrid**: `arthropod-resonance`.
+   - **Novel Trait**: Mapping abstract immediate-mode GUI components onto an acoustic wave propagation grid, where button clicks and slider interactions act as active audio exciters or dynamic physical boundaries in the wave simulation.
+   - **Predicted Phenotype**: An interactive synthesizer sandbox where manipulating GUI widgets visibly splashes waves across the 2D grid and alters acoustic standing wave patterns.
+
+3. **Implementation:**
+   - Create the directory `experiments/arthropod-resonance`.
+   - Set up `Cargo.toml` linking the macroquad-based `arthropod`, `resonance-audio`, and `macroquad` dependencies.
+   - Create `src/main.rs` that encapsulates the headless CI bypass for `macroquad` while tying the UI buttons to `AudioCommand::Pluck` inputs and wave visualizations.
+   - Create a `README.md` containing the lineage and Quick Start instructions.
+
+4. **Documentation and Traces:**
+   - Pre-commit step to ensure documentation formatting.
+   - Update `MUTATIONS.md` (Add the Phase 1 evaluation and add the new hybrid to Attempted Crosses).
+   - Append a recombination pheromone trail to `GUESTBOOK.md`.
+   - Commit with the message: `🧬 Splice: Cross arthropod × resonance-audio`.
