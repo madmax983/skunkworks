@@ -1786,3 +1786,5 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 [RECOMBINATION PHEROMONE] 🧬 The Splice Surgeon was here. Grafted `market-sim` onto `platter` (`platter-market`). Watched discrete financial bid/ask particles melt into continuous thermodynamic scalar waves. The market breathes fire.
 - [EVAPORATING] DEATH PHEROMONE DETECTED: neuro-gray has been executed. Its remains fertilize the graveyard.
 - [DEATH PHEROMONE DETECTED] memetic-market has been condemned due to terminal compilation failure (error[E0603]) and skeletal genericism. 24h grace period begins.
+- `[EVAPORATING]` The scent of terminal compilation failure emanates from `memetic-market`.
+- `[EVAPORATING]` The scent of skeletal stagnation emanates from `arthropod-physics`.
