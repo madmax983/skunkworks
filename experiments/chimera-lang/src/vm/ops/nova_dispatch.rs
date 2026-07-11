@@ -69,12 +69,7 @@ impl crate::vm::ChimeraVM {
         args: &[Nucleotide],
     ) -> crate::vm::ops::Dispatch {
         match op {
-            OpCode::Remap | OpCode::Restore | OpCode::Mirror => {
-                match self.exec_prion_op(op, args) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
-            }
+            OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args).into(),
             OpCode::AkashicWrite
             | OpCode::AkashicRead
             | OpCode::AkashicSave
@@ -89,44 +84,20 @@ impl crate::vm::ChimeraVM {
                 self.stack.push(Value::Str(dump));
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Invoke => match nova_sigil::exec_invoke(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Inscribe => match nova_sigil::exec_inscribe(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Ward => match nova_ward::exec_ward(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::AutoCast => match nova_sigil::exec_auto_cast(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Invoke => nova_sigil::exec_invoke(self, op, args).into(),
+            OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args).into(),
+            OpCode::Ward => nova_ward::exec_ward(self, op, args).into(),
+            OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args).into(),
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
-                match nova_security::exec_security_op(self, op, args) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
+                nova_security::exec_security_op(self, op, args).into()
             }
             OpCode::Morph => {
                 nova_morphogenesis::exec_morph(self);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Morphogen => match nova_cambrian::exec_morphogen(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::HoxSwitch => match nova_cambrian::exec_hox_switch(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Adhere => match nova_cambrian::exec_adhere(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Morphogen => nova_cambrian::exec_morphogen(self, op, args).into(),
+            OpCode::HoxSwitch => nova_cambrian::exec_hox_switch(self, op, args).into(),
+            OpCode::Adhere => nova_cambrian::exec_adhere(self, op, args).into(),
             OpCode::Grow => {
                 nova_morphogenesis::exec_grow(self);
                 crate::vm::ops::Dispatch::Handled
@@ -135,20 +106,11 @@ impl crate::vm::ChimeraVM {
                 nova_botany::exec_plant(self);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Signal | OpCode::Receive => match nova::exec_nova_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Signal | OpCode::Receive => nova::exec_nova_op(self, op, args).into(),
             OpCode::Define | OpCode::Undefine | OpCode::Dictionary => {
-                match meta::exec_meta_op(self, op, args) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
+                meta::exec_meta_op(self, op, args).into()
             }
-            OpCode::Operator => match nova::exec_operator(self, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Operator => nova::exec_operator(self, args).into(),
             OpCode::Grammar
             | OpCode::Parse
             | OpCode::ParserMatch
@@ -166,31 +128,19 @@ impl crate::vm::ChimeraVM {
             | OpCode::GridGrammar
             | OpCode::BabelLive
             | OpCode::DefineRule
-            | OpCode::Ouroboros => match babel::exec_babel_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            | OpCode::Ouroboros => babel::exec_babel_op(self, op, args).into(),
             OpCode::Superpose
             | OpCode::Collapse
             | OpCode::Observe
             | OpCode::Interfere
             | OpCode::Project
-            | OpCode::Refract => match nova::exec_nova_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            | OpCode::Refract => nova::exec_nova_op(self, op, args).into(),
             OpCode::Levenshtein
             | OpCode::Soundex
             | OpCode::Anagram
             | OpCode::Cipher
-            | OpCode::Pangram => match nova::exec_nova_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Transposon => match self.exec_transposon() {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            | OpCode::Pangram => nova::exec_nova_op(self, op, args).into(),
+            OpCode::Transposon => self.exec_transposon().into(),
             OpCode::Horcrux
             | OpCode::Rebirth
             | OpCode::Resonate
@@ -406,10 +356,7 @@ impl crate::vm::ChimeraVM {
             | OpCode::HoloSpeak
             | OpCode::Luciferin
             | OpCode::Photophore
-            | OpCode::Etymology => match nova::exec_nova_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            | OpCode::Etymology => nova::exec_nova_op(self, op, args).into(),
             OpCode::EvoPopSize
             | OpCode::EvoLoad
             | OpCode::EvoStore
@@ -418,10 +365,7 @@ impl crate::vm::ChimeraVM {
             | OpCode::EvoMutate
             | OpCode::EvoReplace
             | OpCode::EvoClear
-            | OpCode::EvoSave => match evolution::exec_evo_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            | OpCode::EvoSave => evolution::exec_evo_op(self, op, args).into(),
             #[cfg(feature = "nova")]
             OpCode::Codex => {
                 if let Some(Value::Int(id)) = self.stack.pop() {
@@ -438,40 +382,19 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Handled
             }
             OpCode::Fluid => crate::vm::ops::Dispatch::Handled,
-            OpCode::Weave | OpCode::Unravel => match nova_weaver::exec_weave_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Mutagen => match self.exec_mutagen_op() {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Scavenge => match self.exec_scavenge_op() {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Digest => match self.exec_digest_op() {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Weave | OpCode::Unravel => nova_weaver::exec_weave_op(self, op, args).into(),
+            OpCode::Mutagen => self.exec_mutagen_op().into(),
+            OpCode::Scavenge => self.exec_scavenge_op().into(),
+            OpCode::Digest => self.exec_digest_op().into(),
             OpCode::EntropySurge => {
                 nova_flux::exec_entropy_surge(self);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::QuantumTunnel => match nova_flux::exec_quantum_tunnel(self) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::QuantumTunnel => nova_flux::exec_quantum_tunnel(self).into(),
             OpCode::Chain | OpCode::Curry | OpCode::Quote => {
-                match nova_functional::exec_functional_op(self, op, args) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
+                nova_functional::exec_functional_op(self, op, args).into()
             }
-            OpCode::Crossover => match nova_genetics::exec_crossover(self) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Crossover => nova_genetics::exec_crossover(self).into(),
             OpCode::Orca => {
                 self.orca_mode = !self.orca_mode;
                 let status = if self.orca_mode { "ON" } else { "OFF" };
@@ -487,18 +410,9 @@ impl crate::vm::ChimeraVM {
                 alchemy::exec_crucible_op(self, op, args);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Chr => match self.exec_char_op() {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Guild => match nova_guild::exec_guild(self) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Charter => match nova_guild::exec_charter(self) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Chr => self.exec_char_op().into(),
+            OpCode::Guild => nova_guild::exec_guild(self).into(),
+            OpCode::Charter => nova_guild::exec_charter(self).into(),
             OpCode::Logos => {
                 self.logos_mode = !self.logos_mode;
                 let status = if self.logos_mode { "ON" } else { "OFF" };
@@ -514,10 +428,7 @@ impl crate::vm::ChimeraVM {
                 nova_cartography::exec_cartography_op(self, op, args);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Pocket | OpCode::Unpocket => match nova::exec_nova_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Pocket | OpCode::Unpocket => nova::exec_nova_op(self, op, args).into(),
             OpCode::Quake
             | OpCode::Erode
             | OpCode::Sediment
@@ -527,10 +438,7 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Handled
             }
             OpCode::LeySense | OpCode::LeyTap | OpCode::LeyWarp | OpCode::LeyShift => {
-                match nova_ley::exec_ley_op(self, op, args) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
+                nova_ley::exec_ley_op(self, op, args).into()
             }
             OpCode::Nucleate | OpCode::Accrete | OpCode::Shatter | OpCode::Anneal => {
                 nova_crystal::exec_crystal_op(self, op, args);
@@ -541,27 +449,12 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Handled
             }
             OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
-                match nova_strings::exec_string_op(self, op, args) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
+                nova_strings::exec_string_op(self, op, args).into()
             }
-            OpCode::Bond => match nova_metazoa::exec_bond(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Unbond => match nova_metazoa::exec_unbond(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Signify => match nova_metazoa::exec_signify(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Tissue => match nova_metazoa::exec_tissue(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Bond => nova_metazoa::exec_bond(self, op, args).into(),
+            OpCode::Unbond => nova_metazoa::exec_unbond(self, op, args).into(),
+            OpCode::Signify => nova_metazoa::exec_signify(self, op, args).into(),
+            OpCode::Tissue => nova_metazoa::exec_tissue(self, op, args).into(),
             OpCode::MeshNet
             | OpCode::MeshGrow
             | OpCode::MeshPrune
@@ -575,16 +468,10 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Handled
             }
             OpCode::AbsorbGeometry => {
-                match nova_alchemy_prime::exec_absorb_geometry(self, op, args) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
+                nova_alchemy_prime::exec_absorb_geometry(self, op, args).into()
             }
             OpCode::ProjectGeometry => {
-                match nova_alchemy_prime::exec_project_geometry(self, op, args) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
+                nova_alchemy_prime::exec_project_geometry(self, op, args).into()
             }
             OpCode::HyperAdd
             | OpCode::HyperSub
@@ -728,10 +615,7 @@ impl crate::vm::ChimeraVM {
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             #[cfg(feature = "oracle")]
-            OpCode::Divergence => match nova::exec_nova_op(self, op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Divergence => nova::exec_nova_op(self, op, args).into(),
             _ => crate::vm::ops::Dispatch::Unhandled,
         }
     }
