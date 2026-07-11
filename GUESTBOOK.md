@@ -1808,3 +1808,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: crates/quipu/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Getting Started example has unused `Knot` import. Mosaic/Bard polish required.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/locus-origami
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** New recombination complete. Non-Euclidean bounds wrapped around soft body mesh.

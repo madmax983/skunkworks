@@ -119,8 +119,8 @@ I have checked all previous hybrids in this list.
 - **Concept**: Thermodynamic Market Liquidity.
 - **Novel trait**: The discrete financial order book grid successfully maps into the continuous scalar heat field. Bids and asks generate low heat, while trades burst with massive kinetic thermal energy.
 - **Predicted Phenotype**: An emergent financial visualizer. The market liquidity forms glowing thermal zones on the continuous field, boiling when massive trading volume occurs.
-- **Status**: experiments/platter-market
-- **Evaluation**: Success. Compiled. The discrete financial particle interactions effectively bleed into and perturb the surrounding scalar heat fields. Headless CI bypass confirmed working.
+- **Status**: graveyard/platter-market
+- **Evaluation**: Condemned by the Reaper due to documentation void and skeletal execution.
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all recent crosses including `gray-miller` and the `arthropod` lineage (`arthropod-origami`, `arthropod-lattice`, `arthropod-physics`, `arthropod-flock`, `arthropod-market`). I have also evaluated `flock-platter`. They all compile beautifully. The GUI hybrids and topological swarm spaces are highly robust phenotypes, fully headless-capable without panics. The Reaper has only claimed `neuro-origami` due to an incompatible dependency gene (`glam` version mismatch), demonstrating the brutal reality of architectural divergence. Today, I have implemented `platter-market` from the Proposed Crosses to map the kinetic energy of financial trades into thermodynamic scalar fields.
 
@@ -1665,3 +1665,11 @@ I have checked all previous hybrids in this list.
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Continuous morphogenetic pattern growth correctly mapped to continuous non-Euclidean geometry.
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all recent Attempted Crosses. The strategy of mapping abstract datasets (like git histories or codebase structures) into biological domains (`neuro-git`, `neuro-lattice`) and continuous geometries (`poincare-lattice`) has proved stable. However, the `neuro-origami` cross failed catastrophically due to a `glam` dependency version mismatch during structural rendering. My new breeding strategy will pivot back to pure morphogenetic simulation. We will cross the thermodynamic reaction-diffusion patterns of `gray-scott` with the continuous boundary geometry of `poincare-disk` to observe how Turing patterns stretch and compress in hyperbolic space.
+
+### locus-origami
+- **Parents**: crates/locus + crates/origami
+- **Concept**: Topological Soft-Body Manifold.
+- **Novel trait**: The continuous soft-body mesh of `origami` is draped across the non-Euclidean boundary space of `locus`. When the continuous surface of the Miura-ori mesh pushes into the topological boundaries, its vertices wrap around the domain.
+- **Predicted Phenotype**: An organic, breathing visualization where physical structural topology naturally wraps through continuous geometric mathematical bounds.
+- **Status**: experiments/locus-origami
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Mesh vertex displacement functions within Torus boundary wrapping logic.
