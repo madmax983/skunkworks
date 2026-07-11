@@ -15,6 +15,16 @@ boundaries (walls), and listeners.
 - **Audio Commands**: Instructions to modify the simulation state, such as plucking a string,
   adding a wall, or moving the listener.
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+resonance-audio = "0.1.0"
+crossbeam-channel = "0.5"
+```
+
 ## Usage
 
 The main entry point is the [`AudioModel`]. It runs on the audio thread, processing
@@ -26,7 +36,7 @@ use crossbeam_channel::bounded;
 
 // 1. Create channels for communication
 let (cmd_tx, cmd_rx) = bounded(128);
-let (snap_tx, snap_rx) = bounded(1);
+let (snap_tx, _snap_rx) = bounded(1);
 
 // 2. Initialize the audio model
 // Width: 100, Height: 100

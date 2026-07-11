@@ -27,7 +27,7 @@ There are three types of knots used to represent numbers:
 Imagine you are a *Quipucamayoc* (Keeper of the Quipu), recording the harvest of potatoes and maize.
 
 ```
-use quipu::{Quipu, Cord, Knot};
+use quipu::{Quipu, Cord};
 
 // 1. Create a new Quipu to record the harvest.
 let mut harvest_record = Quipu::new();
