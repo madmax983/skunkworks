@@ -4056,3 +4056,167 @@ classDiagram
     GrayMiller --> LatticeGenerator : 3D Crystalline Structure
     GrayMiller --> ReactionDiffusionGrid : 2D Morphogenetic Patterns
 ```
+
+## Experiment: Gray-Poincare (ADR 150)
+
+**Gray-Poincare** explores "Hyperbolic Morphogenesis" by crossing the thermodynamic reaction-diffusion patterns of `gray-scott` with the continuous non-Euclidean geometry of `poincare-disk`.
+
+### Hybrid Architecture
+
+The hybrid maps biological field patterns into hyperbolic space boundaries.
+
+```mermaid
+classDiagram
+    direction TB
+    class GrayPoincare {
+        +ReactionDiffusionGrid grid
+        +PoincareDisk disk
+        +run()
+    }
+
+    class ReactionDiffusionGrid {
+        <<Library: gray-scott>>
+        +Vec~f32~ u
+        +Vec~f32~ v
+        +step()
+    }
+
+    class PoincareDisk {
+        <<Library: poincare-disk>>
+        +project()
+    }
+
+    GrayPoincare --> ReactionDiffusionGrid : Continuous Biological Growth
+    GrayPoincare --> PoincareDisk : Non-Euclidean Warping
+```
+
+## Experiment: Locus-Origami (ADR 151)
+
+**Locus-Origami** explores "Topological Soft-Body Manifold" by crossing the continuous soft-body mesh of `origami` with the non-Euclidean boundary space of `locus`.
+
+### Hybrid Architecture
+
+The hybrid maps soft-body topology into mathematical bounds.
+
+```mermaid
+classDiagram
+    direction TB
+    class LocusOrigami {
+        +OrigamiMesh mesh
+        +BoundarySpace space
+        +run()
+    }
+
+    class OrigamiMesh {
+        <<Library: origami>>
+        +Vec~Vertex~ vertices
+        +fold()
+    }
+
+    class BoundarySpace {
+        <<Library: locus>>
+        +wrap_bounds()
+    }
+
+    LocusOrigami --> OrigamiMesh : Physical Structural Topology
+    LocusOrigami --> BoundarySpace : Continuous Geometric Bounds
+```
+
+## Experiment: Arthropod-Market (ADR 152)
+
+**Arthropod-Market** explores mapping by crossing the abstract GUI interactions of `arthropod` with the continuous Double Auction physical particle system of `market-sim`.
+
+### Hybrid Architecture
+
+The hybrid injects discrete interactions into continuous market logic.
+
+```mermaid
+classDiagram
+    direction TB
+    class ArthropodMarket {
+        +ArthropodUI ui
+        +MarketSystem market
+        +run()
+    }
+
+    class ArthropodUI {
+        <<Library: arthropod>>
+        +Vec~Widget~ widgets
+        +update_state()
+    }
+
+    class MarketSystem {
+        <<Library: market-sim>>
+        +Vec~Order~ orders
+        +tick()
+    }
+
+    ArthropodMarket --> ArthropodUI : Discrete UI Actions
+    ArthropodMarket --> MarketSystem : Physical Liquidity Injection
+```
+
+## Experiment: Flock-Platter (ADR 153)
+
+**Flock-Platter** explores mapping by crossing the biological swarm intelligence of `flocking` with the continuous scalar heat field of `platter`.
+
+### Hybrid Architecture
+
+The hybrid maps discrete boids onto continuous thermal scalars.
+
+```mermaid
+classDiagram
+    direction TB
+    class FlockPlatter {
+        +SwarmSystem swarm
+        +ScalarField heat
+        +run()
+    }
+
+    class SwarmSystem {
+        <<Library: flocking>>
+        +Vec~Boid~ boids
+        +update()
+    }
+
+    class ScalarField {
+        <<Library: platter>>
+        +Vec~f32~ field
+        +dissipate()
+    }
+
+    FlockPlatter --> SwarmSystem : Swarm Intelligence
+    FlockPlatter --> ScalarField : Pheromone Trail Deposition
+```
+
+## Experiment: Arthropod-Resonance (ADR 154)
+
+**Arthropod-Resonance** explores crossing the immediate mode UI library `arthropod` with the continuous 2D wave physics of `resonance-audio`.
+
+### Hybrid Architecture
+
+The hybrid maps immediate mode interactions into resonant acoustics.
+
+```mermaid
+classDiagram
+    direction TB
+    class ArthropodResonance {
+        +ArthropodUI ui
+        +WaveSimulation audio
+        +run()
+    }
+
+    class ArthropodUI {
+        <<Library: arthropod>>
+        +Vec~Widget~ widgets
+        +update_state()
+    }
+
+    class WaveSimulation {
+        <<Library: resonance-audio>>
+        +Grid space
+        +step()
+    }
+
+    ArthropodResonance --> ArthropodUI : Abstract GUI Actions
+    ArthropodResonance --> WaveSimulation : Acoustic Excitation
+```

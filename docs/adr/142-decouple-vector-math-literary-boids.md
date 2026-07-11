@@ -3,7 +3,7 @@
 Date: 2026-07-02
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The experimental crate `alleles/literary-boids` (along with several graveyard crates) failed to compile due to a structural tangle: it was incorrectly referencing `tui_shared::math::Vec2`, a module that had been previously extracted out to `locus::Vec2` during a prior architectural refactoring. Additionally, it was discovered that `literary-boids/src/main.rs` was leaking its internal submodules (`boid`, `critic`, `syntax_physics`, `traces`, `world`) directly via `pub mod`, breaking the intended Facade pattern.
