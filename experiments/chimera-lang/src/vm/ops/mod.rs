@@ -37,3 +37,12 @@ pub(crate) enum Dispatch {
     Jump(usize, usize),
     Unhandled,
 }
+
+impl From<Option<(usize, usize)>> for Dispatch {
+    fn from(opt: Option<(usize, usize)>) -> Self {
+        match opt {
+            Some((i, j)) => Dispatch::Jump(i, j),
+            None => Dispatch::Handled,
+        }
+    }
+}
