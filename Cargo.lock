@@ -5302,6 +5302,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "locus-origami"
+version = "0.1.0"
+dependencies = [
+ "locus",
+ "origami",
+]
+
+[[package]]
 name = "locus-resonance"
 version = "0.1.0"
 dependencies = [
