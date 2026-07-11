@@ -1792,3 +1792,19 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 [EVAPORATING] ☠️ Reaper executed arthropod-physics. Biomass returned to the void.
 
 [EVAPORATING] ☠️ Reaper condemned platter-market. Documentation void, skeletal execution. 24 hours remain.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Tiling example is broken (missing main function). Bard reinforcement required.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Unused `Result` warning in constraint creation example. Sentry/Bard polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/resonance-audio/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (missing `crossbeam-channel` dependency and unused `snap_rx` variable). Bard reinforcement required.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/quipu/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example has unused `Knot` import. Mosaic/Bard polish required.
