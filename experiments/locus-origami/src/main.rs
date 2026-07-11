@@ -62,7 +62,10 @@ fn main() {
 
     println!("Simulation complete.");
     println!("Wrapped vertices across topology: {}", wrapped);
-    println!("Vertices lost out of bounds (should be 0 for Torus): {}", out_of_bounds);
+    println!(
+        "Vertices lost out of bounds (should be 0 for Torus): {}",
+        out_of_bounds
+    );
 
     if headless {
         println!("Headless simulation finished successfully.");

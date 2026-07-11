@@ -20,6 +20,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use ratatui::text::{Line, Span};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -27,7 +28,6 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Terminal,
 };
-use ratatui::text::{Line, Span};
 use std::io::{self, stdout};
 use std::time::{Duration, Instant};
 
@@ -187,9 +187,10 @@ impl MarketSim {
                     let nx = rx as isize + dx;
                     let ny = ry as isize + dy;
                     if nx >= 0 && nx < self.width as isize && ny >= 0 && ny < self.height as isize {
-                        let dist = (dx*dx + dy*dy) as f64;
+                        let dist = (dx * dx + dy * dy) as f64;
                         if dist > 0.0 {
-                            self.platter.accumulate(nx as usize, ny as usize, 2.0 / dist);
+                            self.platter
+                                .accumulate(nx as usize, ny as usize, 2.0 / dist);
                         }
                     }
                 }

@@ -52,6 +52,7 @@ async fn main() {
         vel: vec2(0.0, 0.0),
         mass: 10000.0,
         radius: 20.0,
+        acc: Vec2::ZERO,
         color: YELLOW,
     });
 
@@ -60,6 +61,7 @@ async fn main() {
         vel: vec2(0.0, (G * 10000.0 / 200.0).sqrt()),
         mass: 100.0,
         radius: 10.0,
+        acc: Vec2::ZERO,
         color: BLUE,
     });
 
@@ -68,6 +70,7 @@ async fn main() {
         vel: vec2(2.0, -4.0),
         mass: 200.0,
         radius: 12.0,
+        acc: Vec2::ZERO,
         color: RED,
     });
 
@@ -93,6 +96,7 @@ async fn main() {
                 vel: vec2(rand::gen_range(-10.0, 10.0), rand::gen_range(-10.0, 10.0)),
                 mass: rand::gen_range(500.0, 5000.0),
                 radius: rand::gen_range(10.0, 30.0),
+                acc: Vec2::ZERO,
                 color: Color::new(
                     rand::gen_range(0.5, 1.0),
                     rand::gen_range(0.5, 1.0),
@@ -111,6 +115,7 @@ async fn main() {
                 vel: vec2(0.0, 0.0),
                 mass: -5000.0,
                 radius: 15.0,
+                acc: Vec2::ZERO,
                 color: PURPLE,
             });
         }
@@ -170,7 +175,7 @@ async fn main() {
 
         draw_text("Genesis: Lensing Poetry", 10.0, 30.0, 30.0, WHITE);
         draw_text(
-            &format!("Bodies: {}", bodies.len()),
+            format!("Bodies: {}", bodies.len()),
             10.0,
             50.0,
             20.0,

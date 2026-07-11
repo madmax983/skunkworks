@@ -8,6 +8,7 @@ fn test_earth_orbit_stability() {
         vel: vec2(0.0, 0.0),
         mass: 1.0,
         radius: 10.0,
+        acc: Vec2::ZERO,
         color: YELLOW,
     };
     let earth = Body {
@@ -15,6 +16,7 @@ fn test_earth_orbit_stability() {
         vel: vec2(0.0, 1.0), // v = sqrt(GM/r) for circular orbit with M=1, G=1, r=1
         mass: 0.000001,
         radius: 1.0,
+        acc: Vec2::ZERO,
         color: BLUE,
     };
 

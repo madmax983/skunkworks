@@ -1,4 +1,3 @@
-use tui_shared::Bobber;
 use crate::tui::get_all_views;
 use crate::tui::panel_block;
 use crate::tui::state::AppState;
@@ -11,6 +10,7 @@ use ratatui::{
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph},
     Frame,
 };
+use tui_shared::Bobber;
 #[cfg(feature = "nova")]
 use tui_shared::{Button, TensionBar};
 
