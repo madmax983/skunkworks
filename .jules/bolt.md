@@ -23,3 +23,7 @@
 **[celestial-rhythms: Removing O(N) Allocations on the Physics Hot Path]**
 **Learning:** In N-body physics simulations, initializing accumulator vectors (like forces or accelerations) inside the inner `update` loop (e.g., `let mut acc = vec![Vec2::ZERO; n];`) causes excessive heap allocation churn, especially when sub-stepping is used (e.g., 4 steps per frame).
 **Action:** Move the accumulator into the struct as a persistent buffer (`pub acc_buffer: Vec<Vec2>`). During the update, use `.clear()` and `.resize(n, Vec2::ZERO)` to reuse the existing capacity, dropping the per-tick allocations to zero.
+
+**[Lensing Poetry Allocation Elimination]**
+**Learning:** `vec![Vec2::ZERO; n]` allocations on a per-frame basis inside physics integrators introduce significant O(N) heap allocation overhead. Moving the intermediate acceleration buffer into the object struct itself (e.g., `acc: Vec2` on `Body`) allows the allocator to be bypassed entirely. Also, prefer `[Vec2::ZERO; n]` stack arrays in tests when size is fixed, as clippy will flag small static vecs as `useless_vec`.
+**Action:** When inspecting physics hot-paths, look for temporary vectors used for acceleration accumulation and try to move them into the entity struct.
