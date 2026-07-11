@@ -50,7 +50,7 @@ members = [
     "experiments/platter-market",
     "graveyard/arthropod-lattice",
     "experiments/origami-market",
-    "experiments/arthropod-flock",
+    "experiments/arthropod-flock", "hyper_test",
 
 
 ]

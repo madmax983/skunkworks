@@ -936,3 +936,81 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `quipu` accounting example. The compiler complained about an unused import for `Knot`."
 *   🕵️ **The Reality:** "Turns out the example code imports `Knot` but never actually uses it in the simulation."
 *   💡 **The Fix:** "Remove `Knot` from the `use quipu::{Quipu, Cord, Knot};` statement in the README example."
+# Echo DX Audit Log 🗣️\n\n**Target:** `crates/hyper-system/README.md`\n**Date:** 2026-07-11\n\n## 🔍 Experience - The Walkthrough\n\n**Scenario:** "I am a new user trying to use the `SystemMonitor`."\n**Action:** Copy and pasted the `SystemMonitor` example from `crates/hyper-system/README.md` into my project.\n\n## 🚧 Stumble - The Friction Points\n\n1.  **Unused mutable variable warning:** The example code creates `mut monitor` but the update methods are commented out, causing a compiler warning `variable does not need to be mutable`.\n    - *Impact:* Compiler warning (`unused_mut`).\n    - *Fix:* Uncomment an update line or remove `mut`.\n\n## 📢 Report - The Complaint\n\n**Title:** 🗣️ Echo: SystemMonitor example has unused mut warning\n\n**Description:**\n*   🤦 **The Confusion:** "Tried to run the `SystemMonitor` example. The compiler complained about an unused `mut`."\n*   🕵️ **The Reality:** "Turns out the example code comments out the `.update()` method call, so the compiler notices that `monitor` does not need to be mutable."\n*   💡 **The Fix:** "Uncomment `monitor.update();` in the example, or remove `mut` from `let mut monitor`."\n
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/hyper-system/README.md`
+**Date:** 2026-07-11
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to use the `SystemMonitor`."
+**Action:** Copy and pasted the `SystemMonitor` example from `crates/hyper-system/README.md` into my project.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused mutable variable warning:** The example code creates `mut monitor` but the update methods are commented out, causing a compiler warning `variable does not need to be mutable`.
+    - *Impact:* Compiler warning (`unused_mut`).
+    - *Fix:* Uncomment an update line or remove `mut`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: SystemMonitor example has unused mut warning
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `SystemMonitor` example. The compiler complained about an unused `mut`."
+*   🕵️ **The Reality:** "Turns out the example code comments out the `.update()` method call, so the compiler notices that `monitor` does not need to be mutable."
+*   💡 **The Fix:** "Uncomment `monitor.update();` in the example, or remove `mut` from `let mut monitor`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/physics-pbd/README.md`
+**Date:** 2026-07-11
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `physics-pbd` crate."
+**Action:** Copy and pasted the quickstart example code from the README into a fresh `src/main.rs` file.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Unused `Result` warning:** The example code calls `system.add_distance_constraint(anchor, bob, 1.0);` without handling the `Result` or unwrapping it.
+    - *Impact:* Compiler warning (`unused Result that must be used`). It may hide potential errors in the constraint addition.
+    - *Fix:* Use `.unwrap()` or explicitly ignore it with `let _ = ...`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example has unhandled Result warning
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `physics-pbd` pendulum example. The compiler complained about an `unused Result that must be used`."
+*   🕵️ **The Reality:** "Turns out `system.add_distance_constraint` returns a `Result` that is completely ignored in the example."
+*   💡 **The Fix:** "Add `.unwrap()` to the constraint creation in the README snippet to properly handle the Result."
+
+---
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/poincare-disk/README.md`
+**Date:** 2026-07-11
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to use the Tiling constants from `poincare-disk`."
+**Action:** Copy and pasted the `Tiling` example from the README into my project.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing main function in Tiling example:** The example code snippet fails to compile because it lacks a `fn main() { ... }` block.
+    - *Impact:* The `Tiling` code snippet cannot be directly copy-pasted and run.
+    - *Fix:* Wrap the `Tiling` code block in a `fn main() { ... }`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Tiling example in poincare-disk is broken (missing main function)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `Tiling` code snippet from `poincare-disk`. The compiler threw an error about statements outside a function."
+*   🕵️ **The Reality:** "Turns out the example code is just floating code and not wrapped in a `fn main() { ... }` block."
+*   💡 **The Fix:** "Update the Tiling example block to include the `fn main() {` wrapper around the code."

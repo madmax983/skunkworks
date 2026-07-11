@@ -4539,6 +4539,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper_test"
+version = "0.1.0"
+dependencies = [
+ "hyper-system",
+]
+
+[[package]]
 name = "hyperbolic-ants"
 version = "0.1.0"
 dependencies = [
