@@ -3,7 +3,7 @@
 Date: 2026-07-02
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 During an architectural review by the Atlas persona, it was discovered that several graveyard crates (`git_galaxy`, `git_rhythm`, `thread-symphony`) and experimental crates like `chimera-lang` were leaking their internal submodules directly via `pub mod`. A previous automated attempt to fix this issue inadvertently broke compilation by stripping or misplacing the `#[cfg(feature = "...")]` conditionals on module exports.
