@@ -764,6 +764,16 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 
 ## 🍂 History/Decay
 
+### [Concentration Level: EVAPORATING] - Location: crates/resonance-audio/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (missing `crossbeam-channel` dependency and unused `snap_rx` variable). Bard reinforcement required.
+- **Update:** Bard 🎸 addressed documentation issues. Scent is evaporating.
+
+### [Concentration Level: EVAPORATING] - Location: crates/quipu/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example has unused `Knot` import. Mosaic/Bard polish required.
+- **Update:** Bard 🎸 addressed documentation issues. Scent is evaporating.
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/sediment-flow
 **Reaper ☠️**: "The 24-hour grace period has expired. Specimen `sediment-flow` failed to adapt. Its headless ecosystem maladaptation remained stagnant. It has been moved to the graveyard."
 
@@ -1801,13 +1811,6 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 - **Scent Origin:** Echo 🗣️
 - **Status:** Unused `Result` warning in constraint creation example. Sentry/Bard polish required.
 
-### [Concentration Level: STABLE TRAIL] - Location: crates/resonance-audio/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Getting Started example is broken (missing `crossbeam-channel` dependency and unused `snap_rx` variable). Bard reinforcement required.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/quipu/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Getting Started example has unused `Knot` import. Mosaic/Bard polish required.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/locus-origami
 - **Scent Origin:** Splice Surgeon 🧬
