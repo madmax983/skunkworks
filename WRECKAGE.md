@@ -65,6 +65,110 @@ Because the `Node` structure has a `Mutex<NodeDynamicState>` and threads (ants) 
 * 🧪 **Reproduction:** Run `cargo test -p colony-concerto --test havoc_deadlock --features loom`
 * 😈 **Comment:** "You thought your ants were building a concerto. But without lock ordering, they just built a traffic jam. Thread-safe is a lie until proven by loom."
 
+## The Weak Point: Mutex Starvation in `sonic-glacier`
+
+In `experiments/sonic-glacier/src/audio.rs`, the application uses an `Arc<Mutex<FftPlanner<f32>>>` within `SonicEngine` for real-time FFT processing.
+
+## The Attack: Thread Starvation via Lock Contention
+
+`std::sync::Mutex` lacks fairness guarantees. When high-priority audio generation rapidly and repeatedly locks the mutex (e.g. for every block of audio samples), it can severely starve other threads needing access to the planner, or be starved itself under contention.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads repeatedly locking the `FftPlanner`, causing the main/writer thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p sonic-glacier --test havoc_contention`
+* 😈 **Comment:** "You wrapped your FFT planner in a Mutex in the hot path. You were asking for a freeze."
+
+## The Weak Point: Mutex Starvation in `physics-resonance`
+
+In `experiments/physics-resonance/src/main.rs`, the application wraps its main `AudioModel` in a `std::sync::Mutex` and shares it with the CPAL audio stream.
+
+## The Attack: Thread Starvation via Lock Contention
+
+`std::sync::Mutex` lacks fairness guarantees. When high-priority audio generation rapidly and repeatedly locks the mutex (e.g. for every block of audio samples), it can severely starve other threads, or be starved itself under contention.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads repeatedly locking the `AudioModel`, causing the main/writer thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p physics-resonance --test havoc_contention`
+* 😈 **Comment:** "You put a giant physics and audio model inside a single Mutex in the audio thread. You were asking for a freeze."
+
+## The Weak Point: Mutex Starvation in `neuro-resonance`
+
+In `experiments/neuro-resonance/src/main.rs`, the application wraps its main `AudioModel` in a `std::sync::Mutex` and shares it with the CPAL audio stream.
+
+## The Attack: Thread Starvation via Lock Contention
+
+`std::sync::Mutex` lacks fairness guarantees. When high-priority audio generation rapidly and repeatedly locks the mutex (e.g. for every block of audio samples), it can severely starve other threads, or be starved itself under contention.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads repeatedly locking the `AudioModel`, causing the main/writer thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p neuro-resonance --test havoc_contention`
+* 😈 **Comment:** "You put a giant physics and audio model inside a single Mutex in the audio thread. You were asking for a freeze."
+
+## The Weak Point: Mutex Starvation in `gravitational-orchestra`
+
+In `experiments/gravitational-orchestra/src/audio.rs`, the application uses a `std::sync::Mutex` to share state (`SharedState`) between the main thread (writer) and the high-frequency audio callback thread (reader).
+
+## The Attack: Thread Starvation via Lock Contention
+
+`std::sync::Mutex` lacks fairness guarantees. When the high-priority audio callback thread repeatedly and rapidly locks the mutex to read parameters for every sample or buffer, it can completely starve the main thread (writer). If the writer thread cannot acquire the lock, the UI and simulation freeze indefinitely.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads (mimicking an aggressive audio callback loop) repeatedly locking the shared parameters (`SharedState`), causing the "writer" thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p gravitational-orchestra --test havoc_contention`
+* 😈 **Comment:** "You thought standard Mutexes were fair. You thought your audio thread would yield. You were wrong. High-frequency callbacks eat writers for breakfast."
+
+## The Weak Point: Mutex Starvation in `gravitational-orchestra`
+
+In `experiments/gravitational-orchestra/src/audio.rs`, the application uses a `std::sync::Mutex` to share state (`SharedState`) between the main thread (writer) and the high-frequency audio callback thread (reader).
+
+## The Attack: Thread Starvation via Lock Contention
+
+`std::sync::Mutex` lacks fairness guarantees. When the high-priority audio callback thread repeatedly and rapidly locks the mutex to read parameters for every sample or buffer, it can completely starve the main thread (writer). If the writer thread cannot acquire the lock, the UI and simulation freeze indefinitely.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads (mimicking an aggressive audio callback loop) repeatedly locking the shared parameters (`SharedState`), causing the "writer" thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p gravitational-orchestra --test havoc_contention`
+* 😈 **Comment:** "You thought standard Mutexes were fair. You thought your audio thread would yield. You were wrong. High-frequency callbacks eat writers for breakfast."
+
+## The Weak Point: Mutex Starvation in `sonic-glacier`
+
+In `experiments/sonic-glacier/src/audio.rs`, the application uses an `Arc<Mutex<FftPlanner<f32>>>` within `SonicEngine` for real-time FFT processing.
+
+## The Attack: Thread Starvation via Lock Contention
+
+`std::sync::Mutex` lacks fairness guarantees. When high-priority audio generation rapidly and repeatedly locks the mutex (e.g. for every block of audio samples), it can severely starve other threads needing access to the planner, or be starved itself under contention.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads repeatedly locking the `FftPlanner`, causing the main/writer thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p sonic-glacier --test havoc_contention`
+* 😈 **Comment:** "You wrapped your FFT planner in a Mutex in the hot path. You were asking for a freeze."
+
+## The Weak Point: Mutex Starvation in `physics-resonance`
+
+In `experiments/physics-resonance/src/main.rs`, the application wraps its main `AudioModel` in a `std::sync::Mutex` and shares it with the CPAL audio stream.
+
+## The Attack: Thread Starvation via Lock Contention
+
+`std::sync::Mutex` lacks fairness guarantees. When high-priority audio generation rapidly and repeatedly locks the mutex (e.g. for every block of audio samples), it can severely starve other threads, or be starved itself under contention.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads repeatedly locking the `AudioModel`, causing the main/writer thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p physics-resonance --test havoc_contention`
+* 😈 **Comment:** "You put a giant physics and audio model inside a single Mutex in the audio thread. You were asking for a freeze."
+
+## The Weak Point: Mutex Starvation in `neuro-resonance`
+
+In `experiments/neuro-resonance/src/main.rs`, the application wraps its main `AudioModel` in a `std::sync::Mutex` and shares it with the CPAL audio stream.
+
+## The Attack: Thread Starvation via Lock Contention
+
+`std::sync::Mutex` lacks fairness guarantees. When high-priority audio generation rapidly and repeatedly locks the mutex (e.g. for every block of audio samples), it can severely starve other threads, or be starved itself under contention.
+
+* 🧨 **The Trigger:** 100 simulated "reader" threads repeatedly locking the `AudioModel`, causing the main/writer thread to hang trying to acquire the lock.
+* 📉 **The Result:** The test `havoc_test_contention` accurately simulates this starvation, successfully causing the write thread to timeout and fail to progress.
+* 🧪 **Reproduction:** Run `cargo test -p neuro-resonance --test havoc_contention`
+* 😈 **Comment:** "You put a giant physics and audio model inside a single Mutex in the audio thread. You were asking for a freeze."
+
 ## The Weak Point: Mutex Starvation in `cosmic-strings`, `cymatic-ocean`, `hydro-soundscapes`
 
 In several audio-driven experiments (`cosmic-strings`, `cymatic-ocean`, `hydro-soundscapes`), a `std::sync::Mutex` is used to share parameters between the main thread (writer) and the high-frequency audio callback thread (reader).
