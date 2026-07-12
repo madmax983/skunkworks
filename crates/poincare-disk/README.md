@@ -61,12 +61,14 @@ The library includes constants for generating regular hyperbolic tilings, such a
 ```rust
 use poincare_disk::{TilingConsts, neighbor_transform_a};
 
-let consts = TilingConsts::new_4_5();
+fn main() {
+    let consts = TilingConsts::new_4_5();
 
-// Get the translation required to move to the neighbor on the right (index 0)
-let _right_step = neighbor_transform_a(0, &consts);
+    // Get the translation required to move to the neighbor on the right (index 0)
+    let _right_step = neighbor_transform_a(0, &consts);
 
-// To render the tiling, you would recursively apply these translations to your view.
+    // To render the tiling, you would recursively apply these translations to your view.
+}
 ```
 
 ## License
