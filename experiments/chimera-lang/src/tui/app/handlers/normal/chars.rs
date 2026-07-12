@@ -787,12 +787,6 @@ fn handle_space_fishing(vm: &mut ChimeraVM, app_state: &mut AppState) {
             app_state.fishing_cast = false;
             app_state.status_msg = "Reeled in empty.".to_string();
         }
-    } else {
-        // Cast
-        app_state.fishing_cast = true;
-        app_state.fishing_bobber_y = 50.0;
-        app_state.fishing_tension = 0.0;
-        app_state.status_msg = "Casted line...".to_string();
     }
 }
 

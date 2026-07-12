@@ -8,6 +8,19 @@ pub(crate) fn handle_action_input(
     _vm: &mut ChimeraVM,
     app_state: &mut AppState,
 ) -> Result<bool> {
+
+    #[cfg(feature = "nova")]
+    if key_code == KeyCode::Enter && app_state.view_mode == ViewMode::Fishing {
+        if !app_state.fishing_cast {
+            // Cast
+            app_state.fishing_cast = true;
+            app_state.fishing_bobber_y = 50.0;
+            app_state.fishing_tension = 0.0;
+            app_state.status_msg = "Casted line...".to_string();
+        }
+        return Ok(true);
+    }
+
     if key_code == KeyCode::Tab {
         if let ViewMode::Evolution = app_state.view_mode {
             use crate::vm::evolution::Challenge;
