@@ -8,6 +8,7 @@ const TRAIL_LENGTH: usize = 200;
 pub struct Body {
     pub pos: Vec2,
     pub vel: Vec2,
+    pub acc: Vec2,
     pub mass: f32,
     pub radius: f32,
     pub color: Color,
@@ -19,6 +20,7 @@ impl Body {
         Self {
             pos,
             vel,
+            acc: Vec2::ZERO,
             mass,
             radius,
             color,
@@ -29,35 +31,32 @@ impl Body {
 
 pub fn update(bodies: &mut [Body], dt: f32) {
     // 1. Calculate Forces & Update Velocity
-    // We can't mutate bodies while iterating easily.
-    // Symplectic Euler: update v based on current pos, then p based on new v.
+    let n = bodies.len();
+    for i in 0..n {
+        let mut acc = Vec2::ZERO;
+        let p_i = bodies[i].pos;
+        let r_i = bodies[i].radius;
 
-    // We need to store accelerations or just update v in a nested loop?
-    // Nested loop requires sharing.
-    // Let's compute accelerations first.
-
-    let mut accelerations = vec![Vec2::ZERO; bodies.len()];
-
-    for i in 0..bodies.len() {
-        for j in 0..bodies.len() {
+        for (j, b_j) in bodies.iter().enumerate().take(n) {
             if i == j {
                 continue;
             }
 
-            let r = bodies[j].pos - bodies[i].pos;
+            let r = b_j.pos - p_i;
             let dist_sq = r.length_squared();
             let dist = dist_sq.sqrt();
 
             // Softening to avoid singularity
-            if dist < bodies[i].radius + bodies[j].radius {
+            if dist < r_i + b_j.radius {
                 continue;
             }
 
-            let f = (G * bodies[j].mass) / dist_sq;
+            let f = (G * b_j.mass) / dist_sq;
             let dir = r / dist;
 
-            accelerations[i] += dir * f;
+            acc += dir * f;
         }
+        bodies[i].acc = acc;
     }
 
     // 2. Apply Acceleration and Velocity
@@ -68,7 +67,7 @@ pub fn update(bodies: &mut [Body], dt: f32) {
             continue;
         }
 
-        body.vel += accelerations[i] * dt;
+        body.vel += body.acc * dt;
         body.pos += body.vel * dt;
 
         // Update trail
@@ -126,4 +125,22 @@ pub fn check_crossings(bodies: &[Body], old_positions: &[Vec2]) -> Vec<f32> {
     }
 
     events
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_bolt_zero_alloc() {
+        let mut bodies = vec![
+            Body::new(Vec2::new(0.0, 0.0), Vec2::ZERO, 1000.0, 10.0, WHITE),
+            Body::new(Vec2::new(100.0, 0.0), Vec2::new(0.0, 10.0), 1.0, 2.0, WHITE),
+        ];
+
+        update(&mut bodies, 0.1);
+
+        // Assert some behavior to make sure it ran and vel changed
+        assert_ne!(bodies[1].vel.x, 0.0);
+    }
 }
