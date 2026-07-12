@@ -209,7 +209,13 @@ async fn main() {
             20.0,
             WHITE,
         );
-        draw_text(format!("FPS: {}", get_fps()).as_str(), 10.0, 70.0, 20.0, WHITE);
+        draw_text(
+            format!("FPS: {}", get_fps()).as_str(),
+            10.0,
+            70.0,
+            20.0,
+            WHITE,
+        );
         if harmony_mode {
             draw_text(
                 "Harmony Mode: ON (Snapping to Resonant Orbits)",

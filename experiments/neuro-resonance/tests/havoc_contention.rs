@@ -1,7 +1,7 @@
+use crossbeam_channel::bounded;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use crossbeam_channel::bounded;
 
 use resonance_audio::AudioModel;
 
