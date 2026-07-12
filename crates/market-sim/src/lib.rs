@@ -106,6 +106,8 @@ pub enum Particle {
 ///     buyer: 1,
 ///     seller: 2,
 ///     price: 100.0,
+///     x: 5,
+///     y: 5,
 /// };
 /// ```
 pub struct TradeEvent {
@@ -118,6 +120,8 @@ pub struct TradeEvent {
     /// Calculated from the Y-coordinate of the collision:
     /// $Price = Height - 1 - Y$
     pub price: f32,
+    pub x: usize,
+    pub y: usize,
 }
 
 /// The simulation environment.
@@ -405,6 +409,8 @@ impl Grid {
             buyer: owner,
             seller,
             price: (self.height - 1 - (y - 1)) as f32,
+            x,
+            y: y - 1,
         })
     }
 
@@ -447,6 +453,8 @@ impl Grid {
             buyer,
             seller: owner,
             price: (self.height - 1 - (y + 1)) as f32,
+            x,
+            y: y + 1,
         })
     }
 

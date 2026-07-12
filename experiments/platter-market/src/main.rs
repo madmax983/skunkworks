@@ -174,10 +174,8 @@ impl MarketSim {
 
         // Trades generate massive burst of heat
         for _trade in trades {
-            // we approximate the trade location by scattering heat in a random location
-            // for simplicity since trade events don't carry coords right now.
-            let rx = rand::random::<usize>() % self.width;
-            let ry = rand::random::<usize>() % self.height;
+            let rx = _trade.x;
+            let ry = _trade.y;
             self.platter.accumulate(rx, ry, 5.0);
 
             // spread it out

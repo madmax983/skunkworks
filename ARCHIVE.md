@@ -1,7 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **platter-market**: Specimen condemned. Diagnosis: Documentation Void, Skeletal Execution (randomized spatial interaction). Grace period: 24h.
-
-
+- **locus-origami**: Specimen condemned. Diagnosis: Skeletal Implementation (73 LOC), Execution Void (No visual rendering/GUI framework), Terminal Genericism. Grace period: 24h.
 
 ## ☠️ Executed
 - **arthropod-physics**: Specimen executed. Diagnosis: Skeletal Implementation (126 LOC), Lack of Bidirectional Emergence, and Terminal Genericism. Grace period expired. Moved to graveyard.
