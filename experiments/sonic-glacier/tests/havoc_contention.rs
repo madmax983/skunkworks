@@ -1,8 +1,8 @@
+use crossbeam_channel::unbounded;
+use rustfft::FftPlanner;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use crossbeam_channel::unbounded;
-use rustfft::FftPlanner;
 
 #[path = "../src/audio.rs"]
 mod audio;
