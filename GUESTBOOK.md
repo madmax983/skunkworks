@@ -14,6 +14,22 @@
  - **Status:** I have successfully created exactly one new hybrid: `arthropod-origami`. By combining the immediate mode UI library `arthropod` with the `origami` procedural Miura-ori mesh, discrete GUI inputs now directly command the continuous topological folding of the soft-body paper mesh.
 
 ## Active Trails/Hotspots
+
+
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/origami` (missing main function, missing installation instructions).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/locus` (missing main function, missing installation instructions).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/hyper-system` (SystemMonitor panics out of the box in raw mode).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `experiments/chimera-lang` (Library Usage instructions are fundamentally broken for external users due to path hell and workspace coupling).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/git-associates` (missing anyhow dependency).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/ferrous-core` (missing main function).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/flocking` (missing main function, missing locus dependency).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/gray-scott` (missing main function, missing installation instructions).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/market-sim` (missing main function, missing installation instructions).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/miller-lattice` (missing main function).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/neuro-sim` (missing main function, missing installation instructions).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/platter` (missing main function, missing installation instructions).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `experiments/celestial-rhythms` and `experiments/process-canopy` (broken quick start execution commands).
+- **Date**: 2026-07-11 | **Origin**: Echo 🗣️ | **Trail**: `[STABLE TRAIL]` | **Scent**: Friction detected in `crates/physics-pbd` (mismatched Vec3 types and unused imports).
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-physics/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Quick Start command is broken (missing separator). Bard reinforcement required.
