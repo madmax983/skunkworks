@@ -1,7 +1,7 @@
+use crossbeam_channel::bounded;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use crossbeam_channel::bounded;
 
 // In physics-resonance/src/main.rs, the AudioModel is guarded by a Mutex
 // and passed to the audio stream callback (reader) while being potentially updated
