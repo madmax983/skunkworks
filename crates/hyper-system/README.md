@@ -63,7 +63,7 @@ fn main() {
     let mut monitor = SystemMonitor::new();
 
     // In your game loop:
-    // monitor.update(); // If using macroquad
+    monitor.update(); // If using macroquad
     // OR
     // monitor.update_with_time(dt, current_time);
 

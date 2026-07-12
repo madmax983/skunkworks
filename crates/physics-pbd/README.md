@@ -46,7 +46,7 @@ fn main() {
 
     // 3. Connect them
     // This creates a rigid rod of length ~2.82 (calculated automatically)
-    system.add_distance_constraint(anchor, bob, 1.0);
+    system.add_distance_constraint(anchor, bob, 1.0).unwrap();
 
     // 4. Simulate
     // Step forward 16ms, running the constraint solver 5 times per frame.
