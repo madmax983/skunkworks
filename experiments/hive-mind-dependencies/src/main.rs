@@ -3,7 +3,7 @@ mod graph;
 mod simulation;
 
 use graph::DependencyGraph;
-use rand::prelude::*;
+
 use simulation::Simulation;
 use std::io;
 use std::time::{Duration, Instant};
@@ -36,7 +36,16 @@ fn main() -> io::Result<()> {
     // Create a larger graph: 8 layers, 6 nodes per layer
     dep_graph.generate_layered_dag(8, 6, &mut rng);
     dep_graph.calculate_layout();
-    let mut sim = Simulation::new(dep_graph, 200, &mut rng);
+    let mut sim = match Simulation::new(dep_graph, 200, &mut rng) {
+        Some(s) => s,
+        None => {
+            disable_raw_mode()?;
+            execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+            terminal.show_cursor()?;
+            eprintln!("Failed to initialize simulation: graph has no root node");
+            return Ok(());
+        }
+    };
 
     // Loop
     let mut last_tick = Instant::now();

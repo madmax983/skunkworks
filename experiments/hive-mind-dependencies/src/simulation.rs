@@ -13,24 +13,23 @@ pub struct Simulation {
 }
 
 impl Simulation {
-    pub fn new(graph: DependencyGraph, num_ants: usize, _rng: &mut impl Rng) -> Self {
+    pub fn new(graph: DependencyGraph, num_ants: usize, _rng: &mut impl Rng) -> Option<Self> {
         // Find a root node (layer 0). If multiple, pick first.
         let root_node = graph
             .graph
             .node_indices()
-            .find(|&i| graph.graph[i].layer == 0)
-            .expect("Graph must have a layer 0 node");
+            .find(|&i| graph.graph[i].layer == 0)?;
 
         let mut ants = Vec::new();
         for _ in 0..num_ants {
             ants.push(Ant::new(root_node));
         }
 
-        Self {
+        Some(Self {
             graph,
             ants,
             pheromones: HashMap::new(),
-        }
+        })
     }
 
     pub fn step(&mut self, rng: &mut impl Rng) {
@@ -104,5 +103,19 @@ impl Simulation {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rand::rngs::StdRng;
+    use rand::SeedableRng;
+
+    #[test]
+    fn should_return_none_when_empty_graph() {
+        let mut rng = StdRng::seed_from_u64(42);
+        let graph = DependencyGraph { graph: petgraph::Graph::new() };
+        assert!(Simulation::new(graph, 5, &mut rng).is_none());
     }
 }
