@@ -8,10 +8,7 @@ impl crate::vm::ChimeraVM {
         args: &[Nucleotide],
     ) -> crate::vm::ops::Dispatch {
         match op {
-            OpCode::Push => match self.exec_stack_op(op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Push => self.exec_stack_op(op, args).into(),
             OpCode::Add
             | OpCode::Sub
             | OpCode::Mul
@@ -29,49 +26,23 @@ impl crate::vm::ChimeraVM {
                 self.exec_math_op(op);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Dup | OpCode::Swap | OpCode::Drop => match self.exec_stack_op(op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Dup | OpCode::Swap | OpCode::Drop => self.exec_stack_op(op, args).into(),
             OpCode::Print => {
                 self.exec_io_op(op);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Jump | OpCode::Brz => match self.exec_flow_op(op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Photosynthesize | OpCode::Consume => match self.exec_bio_op(op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Jump | OpCode::Brz => self.exec_flow_op(op, args).into(),
+            OpCode::Photosynthesize | OpCode::Consume => self.exec_bio_op(op, args).into(),
             OpCode::GRead | OpCode::GWrite | OpCode::Radiate | OpCode::Siphon => {
-                match self.exec_grid_op(op) {
-                    Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                    None => crate::vm::ops::Dispatch::Handled,
-                }
+                self.exec_grid_op(op).into()
             }
-            OpCode::Genome | OpCode::Transcribe => match self.exec_bio_op(op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::Virus => match self.exec_grid_op(op) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::JumpS | OpCode::BrzS => match self.exec_flow_op(op, args) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::SLen | OpCode::HelixLen | OpCode::GeneLen => match self.exec_stack_op(op, args)
-            {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
-            OpCode::HavocRate | OpCode::HavocScope => match self.exec_havoc_op(op) {
-                Some((i, j)) => crate::vm::ops::Dispatch::Jump(i, j),
-                None => crate::vm::ops::Dispatch::Handled,
-            },
+            OpCode::Genome | OpCode::Transcribe => self.exec_bio_op(op, args).into(),
+            OpCode::Virus => self.exec_grid_op(op).into(),
+            OpCode::JumpS | OpCode::BrzS => self.exec_flow_op(op, args).into(),
+            OpCode::SLen | OpCode::HelixLen | OpCode::GeneLen => {
+                self.exec_stack_op(op, args).into()
+            }
+            OpCode::HavocRate | OpCode::HavocScope => self.exec_havoc_op(op).into(),
             _ => crate::vm::ops::Dispatch::Unhandled,
         }
     }
