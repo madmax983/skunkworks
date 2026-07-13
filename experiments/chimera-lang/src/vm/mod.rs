@@ -3680,106 +3680,18 @@ impl std::fmt::Display for ChimeraVM {
                 .set_content_arrangement(ContentArrangement::Dynamic)
                 .set_header(vec!["Index", "Content"]);
             for (i, v) in self.tablet.iter().enumerate() {
-                let v_str = if v.to_lowercase() == "true" {
+                let v_str = if v.to_lowercase() == "true" || v == "1" {
                     "True"
+                } else if v.to_lowercase() == "false" || v == "0" {
+                    "False"
                 } else {
                     v.as_str()
                 };
-                let cell = if v.to_lowercase() == "true" {
+
+                let cell = if v_str == "True" {
                     comfy_table::Cell::new(v_str).fg(Color::Green)
-                } else {
-                    comfy_table::Cell::new(v_str)
-                };
-                tablet_inner.add_row(vec![comfy_table::Cell::new(format!("{}", i)), cell]);
-            }
-            table.add_row(vec![
-                comfy_table::Cell::new("Tablet"),
-                comfy_table::Cell::new(tablet_inner.to_string()),
-            ]);
-        }
-
-        // Remap Table
-        if !self.remap_table.is_empty() {
-            let mut remap_inner = Table::new();
-            remap_inner
-                .load_preset(UTF8_FULL)
-                .apply_modifier(UTF8_ROUND_CORNERS)
-                .set_content_arrangement(ContentArrangement::Dynamic)
-                .set_header(vec!["From", "To"]);
-            for (k, v) in &self.remap_table {
-                remap_inner.add_row(vec![
-                    comfy_table::Cell::new(format!("{:?}", k)),
-                    comfy_table::Cell::new(format!("{:?}", v)),
-                ]);
-            }
-            table.add_row(vec![
-                comfy_table::Cell::new("Remap Table"),
-                comfy_table::Cell::new(remap_inner.to_string()),
-            ]);
-        }
-
-        // Tablet
-        if !self.tablet.is_empty() {
-            let mut tablet_inner = Table::new();
-            tablet_inner
-                .load_preset(UTF8_FULL)
-                .apply_modifier(UTF8_ROUND_CORNERS)
-                .set_content_arrangement(ContentArrangement::Dynamic)
-                .set_header(vec!["Index", "Content"]);
-            for (i, v) in self.tablet.iter().enumerate() {
-                let v_str = if v.to_lowercase() == "true" {
-                    "True"
-                } else {
-                    v.as_str()
-                };
-                let cell = if v.to_lowercase() == "true" {
-                    comfy_table::Cell::new(v_str).fg(Color::Green)
-                } else {
-                    comfy_table::Cell::new(v_str)
-                };
-                tablet_inner.add_row(vec![comfy_table::Cell::new(format!("{}", i)), cell]);
-            }
-            table.add_row(vec![
-                comfy_table::Cell::new("Tablet"),
-                comfy_table::Cell::new(tablet_inner.to_string()),
-            ]);
-        }
-
-        // Remap Table
-        if !self.remap_table.is_empty() {
-            let mut remap_inner = Table::new();
-            remap_inner
-                .load_preset(UTF8_FULL)
-                .apply_modifier(UTF8_ROUND_CORNERS)
-                .set_content_arrangement(ContentArrangement::Dynamic)
-                .set_header(vec!["From", "To"]);
-            for (k, v) in &self.remap_table {
-                remap_inner.add_row(vec![
-                    comfy_table::Cell::new(format!("{:?}", k)),
-                    comfy_table::Cell::new(format!("{:?}", v)),
-                ]);
-            }
-            table.add_row(vec![
-                comfy_table::Cell::new("Remap Table"),
-                comfy_table::Cell::new(remap_inner.to_string()),
-            ]);
-        }
-
-        // Tablet
-        if !self.tablet.is_empty() {
-            let mut tablet_inner = Table::new();
-            tablet_inner
-                .load_preset(UTF8_FULL)
-                .apply_modifier(UTF8_ROUND_CORNERS)
-                .set_content_arrangement(ContentArrangement::Dynamic);
-            for (i, v) in self.tablet.iter().enumerate() {
-                let v_str = if v.to_lowercase() == "true" {
-                    "True"
-                } else {
-                    v.as_str()
-                };
-                let cell = if v.to_lowercase() == "true" {
-                    comfy_table::Cell::new(v_str).fg(Color::Green)
+                } else if v_str == "False" {
+                    comfy_table::Cell::new(v_str).fg(Color::Yellow)
                 } else {
                     comfy_table::Cell::new(v_str)
                 };
@@ -3834,120 +3746,6 @@ impl std::fmt::Display for ChimeraVM {
 /// assert_eq!(vm.stack.len(), 1);
 /// ```
 #[derive(Clone, Debug)]
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
-/// Represents a `ChimeraVM`.
 /// Represents a `ChimeraVM`.
 pub struct ChimeraVM {
     /// The read-only DNA program.
