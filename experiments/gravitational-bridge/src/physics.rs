@@ -8,6 +8,7 @@ const TRAIL_LENGTH: usize = 200;
 pub struct Body {
     pub pos: Vec2,
     pub vel: Vec2,
+    pub acc: Vec2,
     pub mass: f32,
     pub radius: f32,
     pub color: Color,
@@ -19,6 +20,7 @@ impl Body {
         Self {
             pos,
             vel,
+            acc: Vec2::ZERO,
             mass,
             radius,
             color,
@@ -27,37 +29,37 @@ impl Body {
     }
 }
 
+/// Updates the physical state of the bodies in the system.
+/// Uses an inline accumulator and an `acc` field on the `Body` struct to
+/// avoid a per-frame `vec![Vec2::ZERO; n]` allocation in the hot path.
 pub fn update(bodies: &mut [Body], dt: f32) {
-    let mut accelerations = vec![Vec2::ZERO; bodies.len()];
+    for i in 1..bodies.len() {
+        let mut acc = Vec2::ZERO;
+        let pos_i = bodies[i].pos;
+        let radius_i = bodies[i].radius;
 
-    for i in 0..bodies.len() {
-        for j in 0..bodies.len() {
+        for (j, body_j) in bodies.iter().enumerate() {
             if i == j {
                 continue;
             }
 
-            let r = bodies[j].pos - bodies[i].pos;
+            let r = body_j.pos - pos_i;
             let dist_sq = r.length_squared();
-            let dist = dist_sq.sqrt();
 
             // Softening
-            if dist < bodies[i].radius + bodies[j].radius {
+            if dist_sq < (radius_i + body_j.radius) * (radius_i + body_j.radius) {
                 continue;
             }
 
-            let f = (G * bodies[j].mass) / dist_sq;
-            let dir = r / dist;
-
-            accelerations[i] += dir * f;
+            let dist = dist_sq.sqrt();
+            let f = (G * body_j.mass) / (dist_sq * dist);
+            acc += r * f;
         }
+        bodies[i].acc = acc;
     }
 
-    for (i, body) in bodies.iter_mut().enumerate() {
-        if i == 0 {
-            continue;
-        } // Pin the central star
-
-        body.vel += accelerations[i] * dt;
+    for body in bodies.iter_mut().skip(1) {
+        body.vel += body.acc * dt;
         body.pos += body.vel * dt;
 
         if body.trail.len() >= TRAIL_LENGTH {
@@ -70,7 +72,6 @@ pub fn update(bodies: &mut [Body], dt: f32) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use macroquad::prelude::*;
 
     #[test]
     fn test_physics_update() {

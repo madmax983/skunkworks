@@ -8,7 +8,6 @@ pub(crate) fn handle_action_input(
     _vm: &mut ChimeraVM,
     app_state: &mut AppState,
 ) -> Result<bool> {
-
     #[cfg(feature = "nova")]
     if key_code == KeyCode::Enter && app_state.view_mode == ViewMode::Fishing {
         if !app_state.fishing_cast {

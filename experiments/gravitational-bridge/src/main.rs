@@ -312,13 +312,19 @@ async fn main() {
         set_default_camera();
         draw_text("Left Click: Spawn Planet", 10.0, 20.0, 20.0, WHITE);
         draw_text(
-            &format!("Bridges: {}", bridges.len()),
+            format!("Bridges: {}", bridges.len()).as_str(),
             10.0,
             40.0,
             20.0,
             WHITE,
         );
-        draw_text(&format!("Ants: {}", ants.len()), 10.0, 60.0, 20.0, WHITE);
+        draw_text(
+            format!("Ants: {}", ants.len()).as_str(),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await;
     }
