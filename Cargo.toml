@@ -39,7 +39,7 @@ members = [
     "experiments/flock-physics",
     "experiments/flock-platter",
     "experiments/origami-poincare",
-    "experiments/locus-origami",
+
     "experiments/flock-market",
     "experiments/neuro-quipu",
 

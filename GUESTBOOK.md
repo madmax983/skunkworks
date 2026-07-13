@@ -1869,3 +1869,9 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: EVAPORATING] - Location: experiments/locus-origami
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** New recombination complete. Non-Euclidean bounds wrapped around soft body mesh.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/locus-origami
+**Reaper ☠️**: "Specimen `locus-origami` executed. Failed to adapt and implement visualization during grace period. Biomass returned to the void."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/git-neuro
+**Reaper ☠️**: "Fascinating. Specimen `git-neuro` exhibits terminal characteristics indicating Execution Void and Terminal Genericism. It relies on standard output printing (emojis) instead of proper visualization. Condemnation marked. Execution scheduled in 24h."
