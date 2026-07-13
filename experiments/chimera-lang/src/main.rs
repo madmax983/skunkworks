@@ -168,6 +168,14 @@ fn main() -> Result<()> {
                 HashMap::new(),
                 Vec::new(),
             )
+        } else if extension == "plge" || extension == "prolouge" {
+            (
+                chimera_lang::prolouge_compiler::compile(&unparsed_file)?,
+                None,
+                None,
+                HashMap::new(),
+                Vec::new(),
+            )
         } else if extension == "score" {
             #[cfg(feature = "resonance")]
             {

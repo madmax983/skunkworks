@@ -1,0 +1,7 @@
+10 20 add print
+battery 8 8
+bang 4 4
+parent(john).
+>>+<<
+draw RECT
+splice strand1 strand2
