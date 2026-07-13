@@ -110,6 +110,11 @@
 
 ## 🧫 Current Pheromone Map
 
+### [STABLE TRAIL] - Location: experiments/arthropod-resonance
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** New hybrid bridging immediate mode UI elements (`arthropod`) with continuous acoustic waves (`resonance-audio`). Structural UI buttons successfully act as acoustic exciters.
+
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/cosmic-strings
 - **Scent Origin:** Havoc 👹
 - **Status:** Havoc sensed severe Mutex starvation in the audio callbacks. The main thread is starved. Sentry reinforcement required to balance lock contention.
