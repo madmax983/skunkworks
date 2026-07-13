@@ -784,7 +784,7 @@ classDiagram
 
 **Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
 
-### ChimeraVM Execution Engine (ADR 074, ADR 076, ADR 078, ADR 079, ADR 083, ADR 090, ADR 097)
+### ChimeraVM Execution Engine (ADR 074, ADR 076, ADR 078, ADR 079, ADR 083, ADR 090, ADR 097, ADR 155)
 
 The `ChimeraVM` execution logic is decoupled into domain-specific submodules within the `vm::ops` module.
 
@@ -4219,4 +4219,21 @@ classDiagram
 
     ArthropodResonance --> ArthropodUI : Abstract GUI Actions
     ArthropodResonance --> WaveSimulation : Acoustic Excitation
+```
+
+## Flatten Math Operations (ADR 155)
+
+The math execution module in `chimera-lang/src/vm/ops/math.rs` was refactored to flatten deeply nested match structures by extracting logical blocks into discrete helper methods (`apply_cmp`, `apply_eq`, etc.).
+
+```mermaid
+classDiagram
+    direction TB
+    class MathOps {
+        <<Module: ops/math.rs>>
+        +exec_math_op()
+        -apply_cmp()
+        -apply_eq()
+        -binary_op()
+    }
+    MathOps ..> ChimeraVM : Extends (impl)
 ```
