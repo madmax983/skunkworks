@@ -181,6 +181,14 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+### arthropod-gray
+- **Parents**: crates/arthropod + crates/gray-scott
+- **Concept**: Interactive Morphogenetic Engineering.
+- **Novel trait**: The immediate mode UI of `arthropod` acts as manual chemical V injection and parameter control for the continuous thermodynamic Turing pattern simulation of `gray-scott`. Abstract UI clicks spawn morphogenetic growth seeds in real time.
+- **Predicted Phenotype**: An interactive laboratory where discrete UI inputs create chemical morphogenetic pressure, allowing users to manually sculpt Turing patterns.
+- **Status**: experiments/arthropod-gray
+
+
 ### flock-platter
 - **Parents**: crates/flocking + crates/platter
 - **Concept**: Pheromone Swarming / Swarm Heatmaps.
