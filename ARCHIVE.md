@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **arthropod-origami**: Specimen condemned. Diagnosis: Skeletal Implementation (110 LOC) and Execution Void (lack of bidirectional emergence). Grace period: 24h.
+- **chimera-ddos**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (headless panic) and Skeletal Implementation. Grace period: 24h.
 ## ☠️ Executed
+- **arthropod-origami**: Specimen executed. Diagnosis: Skeletal Implementation (110 LOC) and Execution Void (lack of bidirectional emergence). Grace period expired. Moved to graveyard.
 - **git-neuro**: Specimen executed. Diagnosis: Execution Void and Terminal Genericism (TUI misuse/emoji printing). Failed to improve during grace period. Moved to graveyard.
 - **locus-origami**: Specimen executed. Diagnosis: Skeletal Implementation (73 LOC) / Execution Void / Terminal Genericism. Lacked visual output and simulation loop. Grace period expired. Moved to graveyard.
 - **arthropod-physics**: Specimen executed. Diagnosis: Skeletal Implementation (126 LOC), Lack of Bidirectional Emergence, and Terminal Genericism. Grace period expired. Moved to graveyard.
@@ -43,13 +44,9 @@
 - **chimera-genesis**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Failed to adapt to headless environments. Biomass returned to the void.
 - **mandala-cipher**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation (missing `--headless` bypass for `macroquad`) and Terminal Genericism. Resolved issues and demonstrated vigor.
 - **origami-resonance**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation. The specimen has proven its capability to adapt and execute properly in an environment with the correct dependencies, showing resilience. A headless execution test passes cleanly.
-
 - **hyperbolic-ants**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Execution Quality Decay. Fails to run due to immediate `RefCell already borrowed` panics. Resolved issues and demonstrated vigor.
-
 - **git-cantata**: Specimen pardoned. Diagnosis: Terminal Compilation Failure. Fails to compile due to private module exposure (`error[E0603]`). Resolved issues and demonstrated vigor.
-
 - **swap-meet**: Specimen executed. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Moved to graveyard.
-
 - **thermo-termites**: Specimen executed. Diagnosis: Terminal Compilation Failure. Fails to compile due to a private module issue (`error[E0603]`). Moved to graveyard.
 - **origami-lattice**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `Vec3` mismatch and panics headlessly. Moved to graveyard.
 - **neuro-origami**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `glam` version mismatch (`expected glam::f32::vec3::Vec3, found Vec3`). Moved to graveyard.
@@ -104,7 +101,6 @@
 - **flock-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. It lacked a `main.rs` binary executable and visualizer, remaining an unrealized data structure without true emergent complexity. Grace period expired. Moved to graveyard.
 - **clockwork-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Panics in headless environments due to missing WAYLAND_DISPLAY/DISPLAY. Grace period expired. Moved to graveyard.
 - **gray-poincare**: Specimen executed. Diagnosis: Skeletal Implementation / Minimal Execution Quality. The specimen remained a trivial UI wrapper around existing math, failing to demonstrate true emergence or novel physics interaction. Grace period expired. Moved to graveyard.
-
 - **chimera-choreography**: Specimen pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by excising unused Laban Effort parameters and dancer fields. Vigor demonstrated.
 - **turbulent-rhythms**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by environment stabilization allowing successful compilation. Vigor demonstrated.
 - **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
@@ -136,16 +132,12 @@
 - **chrontext**: Specimen pardoned. Diagnosis: Layer Lasagna / Terminal Genericism. Resolved by Razor flattening the architecture into a single `main.rs` file and removing speculative generality. The timeline wrapper is pure again.
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
 - **rigid-origami**: Specimen pardoned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Resolved compilation and API issues. Generating valid spatial deployable payloads.
-
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
-
 ## Salvageable Components
 - [Code/ideas worth recycling]
-
 ## Graveyard Tours
 - [Interesting failures worth studying]
-
 ## Executed
 - **ferrous-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. The core bidirectional feedback loop was severed, failing to resolve unused method `magnetize_platter` during its grace period. Biomass returned to the void.
 - **neuro-beats**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Minimal Execution Quality. Panics in headless environments (`XOpenDisplay()`) and relies on deterministic, hardcoded topology rather than true emergence. Grace period expired. Moved to graveyard.
