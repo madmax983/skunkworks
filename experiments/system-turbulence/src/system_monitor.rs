@@ -1,5 +1,5 @@
-use std::io::Read;
 use bevy::prelude::*;
+use std::io::Read;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;

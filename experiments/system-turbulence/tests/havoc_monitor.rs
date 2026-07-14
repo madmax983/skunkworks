@@ -24,7 +24,10 @@ fn havoc_test_monitor_starvation() {
             "👺 Havoc: WRECKAGE! system_monitor logic suffered severe starvation under contention!"
         );
     } else {
-        panic!("Havoc failed to cause a crash/starvation! Exit code: {:?}", status.code());
+        panic!(
+            "Havoc failed to cause a crash/starvation! Exit code: {:?}",
+            status.code()
+        );
     }
 }
 
