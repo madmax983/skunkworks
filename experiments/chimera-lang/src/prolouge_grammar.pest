@@ -1,0 +1,31 @@
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ ("#" ~ (!"\n" ~ ANY)*) }
+
+program = { SOI ~ instruction* ~ EOI }
+
+instruction = {
+    prolog_instruction |
+    hyper_instruction |
+    orca_instruction |
+    elektra_instruction |
+    genetics_instruction |
+    tui_instruction |
+    forth_instruction
+}
+
+prolog_instruction = { identifier ~ "(" ~ identifier ~ ")" ~ "." }
+hyper_instruction = { ">>" ~ operator ~ "<<" }
+orca_instruction = { orca_op ~ number ~ number }
+elektra_instruction = { elektra_op ~ number ~ number }
+genetics_instruction = { genetics_op ~ identifier ~ identifier? }
+tui_instruction = { tui_op }
+forth_instruction = { string | number | identifier }
+
+orca_op = { "bang" | "jumper" | "warp" }
+elektra_op = { "battery" | "capacitor" | "resistor" }
+genetics_op = { "splice" | "recombine" | "mutate" | "cross" }
+tui_op = { "draw" | "tui_draw" | "render" }
+operator = { "+" | "-" | "*" | "/" | identifier }
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+number = @{ "-"? ~ ASCII_DIGIT+ }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
