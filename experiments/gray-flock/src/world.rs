@@ -85,13 +85,15 @@ impl World {
                     let ny = (by + dy).rem_euclid(h_int as isize) as usize;
 
                     let idx = self.gray_scott.get_index(nx, ny);
-                    if idx < gs_v.len() {
+                    if let Some(idx) = idx {
+                        if idx < gs_v.len() {
                         let val = gs_v[idx];
                         if val > max_v {
                             max_v = val;
                             best_dx = dx;
                             best_dy = dy;
                         }
+                    }
                     }
                 }
             }

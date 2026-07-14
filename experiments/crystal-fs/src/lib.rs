@@ -1,2 +1,2 @@
-pub(crate) mod scanner;
+pub mod scanner;
 pub use scanner::*;

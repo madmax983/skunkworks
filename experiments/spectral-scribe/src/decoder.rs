@@ -5,7 +5,6 @@
 
 use font8x8::{UnicodeFonts, BASIC_FONTS};
 use rustfft::{num_complex::Complex, FftPlanner};
-use std::io::Read;
 
 /// Configuration parameters for extracting text from the audio spectrum.
 ///

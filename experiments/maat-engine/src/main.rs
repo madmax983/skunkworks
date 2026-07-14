@@ -15,7 +15,6 @@ use ratatui::{
     Frame, Terminal,
 };
 use std::io;
-use std::io::Read;
 
 struct App {
     scales: ScalesOfMaat,

@@ -7,7 +7,6 @@ use crate::font;
 use rand::prelude::*;
 use rustfft::{num_complex::Complex, FftPlanner};
 use std::f32::consts::PI;
-use std::io::Read;
 
 /// Configuration parameters for embedding text into the audio spectrum.
 ///
