@@ -22,3 +22,6 @@ sysinfo = "0.30"
 bytemuck = { version = "1.16", features = ["derive"] }
 rand = "0.8"
 wgpu = "0.19"
+
+[dev-dependencies]
+loom = "0.7"
