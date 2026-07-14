@@ -91,7 +91,7 @@ pub fn get_repo_statuses(root: &Path) -> HashMap<PathBuf, GitStatus> {
     if let Ok(repo) = Repository::discover(root) {
         if let Ok(statuses) = repo.statuses(None) {
             for entry in statuses.iter() {
-                if let Some(path_str) = entry.path() {
+                if let Ok(path_str) = entry.path() {
                     // entry.path() is relative to repo workdir
                     if let Some(workdir) = repo.workdir() {
                         let full_path = workdir.join(path_str);

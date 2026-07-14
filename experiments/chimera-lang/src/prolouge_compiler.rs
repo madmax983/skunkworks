@@ -52,7 +52,10 @@ pub fn compile(source: &str) -> Result<Dna> {
                     "*" | "mul" => genes.push(Gene::new(OpCode::HyperMul, vec![])),
                     "/" | "div" => genes.push(Gene::new(OpCode::HyperDiv, vec![])),
                     _ => {
-                        genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op_str.to_string())]));
+                        genes.push(Gene::new(
+                            OpCode::Push,
+                            vec![Nucleotide::String(op_str.to_string())],
+                        ));
                         genes.push(Gene::new(OpCode::Unknown(op_str.to_string()), vec![]));
                     }
                 }
@@ -65,13 +68,28 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
                 if op == "bang" {
-                    genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String("bang".to_string())])); genes.push(Gene::new(OpCode::Orca, vec![]));
+                    genes.push(Gene::new(
+                        OpCode::Push,
+                        vec![Nucleotide::String("bang".to_string())],
+                    ));
+                    genes.push(Gene::new(OpCode::Orca, vec![]));
                 } else if op == "jumper" {
-                    genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String("jumper".to_string())])); genes.push(Gene::new(OpCode::Orca, vec![]));
+                    genes.push(Gene::new(
+                        OpCode::Push,
+                        vec![Nucleotide::String("jumper".to_string())],
+                    ));
+                    genes.push(Gene::new(OpCode::Orca, vec![]));
                 } else if op == "warp" {
-                    genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String("warp".to_string())])); genes.push(Gene::new(OpCode::Orca, vec![]));
+                    genes.push(Gene::new(
+                        OpCode::Push,
+                        vec![Nucleotide::String("warp".to_string())],
+                    ));
+                    genes.push(Gene::new(OpCode::Orca, vec![]));
                 } else {
-                    genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op.to_string())]));
+                    genes.push(Gene::new(
+                        OpCode::Push,
+                        vec![Nucleotide::String(op.to_string())],
+                    ));
                     genes.push(Gene::new(OpCode::Orca, vec![]));
                 }
             }
@@ -82,16 +100,25 @@ pub fn compile(source: &str) -> Result<Dna> {
                 let x: i64 = e_inner.next().unwrap().as_str().parse()?;
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op.to_string())]));
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(op.to_string())],
+                ));
                 genes.push(Gene::new(OpCode::Battery, vec![]));
             }
             Rule::genetics_instruction => {
                 let mut g_inner = inner.into_inner();
                 let op = g_inner.next().unwrap().as_str();
                 let ident1 = g_inner.next().unwrap().as_str();
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(ident1.to_string())]));
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(ident1.to_string())],
+                ));
                 if let Some(ident2) = g_inner.next() {
-                    genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(ident2.as_str().to_string())]));
+                    genes.push(Gene::new(
+                        OpCode::Push,
+                        vec![Nucleotide::String(ident2.as_str().to_string())],
+                    ));
                 }
 
                 if op == "splice" {
@@ -103,13 +130,19 @@ pub fn compile(source: &str) -> Result<Dna> {
                 } else if op == "cross" {
                     genes.push(Gene::new(OpCode::Cross, vec![]));
                 } else {
-                    genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op.to_string())]));
+                    genes.push(Gene::new(
+                        OpCode::Push,
+                        vec![Nucleotide::String(op.to_string())],
+                    ));
                 }
             }
             Rule::tui_instruction => {
                 let mut t_inner = inner.into_inner();
                 let op = t_inner.next().unwrap().as_str();
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op.to_string())]));
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(op.to_string())],
+                ));
                 genes.push(Gene::new(OpCode::TuiDraw, vec![]));
             }
             Rule::forth_instruction => {
@@ -183,7 +216,8 @@ mod tests {
         // bang 8 8
         assert_eq!(genes[6].op, OpCode::Push);
         assert_eq!(genes[7].op, OpCode::Push);
-        assert_eq!(genes[8].op, OpCode::Push); assert_eq!(genes[9].op, OpCode::Orca);
+        assert_eq!(genes[8].op, OpCode::Push);
+        assert_eq!(genes[9].op, OpCode::Orca);
 
         // battery 2 2
         assert_eq!(genes[11].op, OpCode::Push);

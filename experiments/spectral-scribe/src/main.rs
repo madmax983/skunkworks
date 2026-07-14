@@ -133,7 +133,7 @@ async fn main() {
                     }
                 }
 
-                draw_text(&format!("BROADCASTING: {}", text), 20.0, 40.0, 30.0, RED);
+                draw_text(format!("BROADCASTING: {}", text), 20.0, 40.0, 30.0, RED);
                 draw_line(center_x, 0.0, center_x, screen_height(), 2.0, RED);
 
                 if is_key_pressed(KeyCode::Escape) {

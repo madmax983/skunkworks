@@ -1,2 +1,2 @@
-pub(crate) mod ser;
+pub mod ser;
 pub use ser::*;
