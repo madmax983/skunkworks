@@ -1,7 +1,0 @@
-1. Read MUTATIONS.md and evaluate the previous hybrids (`neuro-physics`, `arthropod-lattice`, `arthropod-origami`, `arthropod-physics`, `arthropod-flock`).
-2. Add a new hybrid `arthropod-market` by combining the immediate mode UI library `arthropod` with the Continuous Double Auction simulation of `market-sim`.
-3. Create `experiments/arthropod-market` and implement the hybrid visualization.
-4. Update MUTATIONS.md to move evaluated hybrids to "Attempted Crosses" and document the new `arthropod-market` hybrid.
-5. Leave a recombination pheromone in GUESTBOOK.md.
-6. Verify compilation and execution (headless).
-7. Ensure pre-commit checks pass and submit.
