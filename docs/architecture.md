@@ -784,7 +784,7 @@ classDiagram
 
 **Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
 
-### ChimeraVM Execution Engine (ADR 074, ADR 076, ADR 078, ADR 079, ADR 083, ADR 090, ADR 097)
+### ChimeraVM Execution Engine (ADR 074, ADR 076, ADR 078, ADR 079, ADR 083, ADR 090, ADR 097, ADR 155, ADR 156, ADR 157)
 
 The `ChimeraVM` execution logic is decoupled into domain-specific submodules within the `vm::ops` module.
 
@@ -811,6 +811,12 @@ classDiagram
     class MathOps {
         <<Module: ops/math.rs>>
         +exec_math_op()
+        +apply_eq()
+        +apply_cmp()
+        +apply_add_str_concat()
+        +apply_div()
+        +apply_mod()
+        +apply_bit_not()
         -binary_op()
     }
 
@@ -827,6 +833,11 @@ classDiagram
     class GridOps {
         <<Module: ops/grid.rs>>
         +exec_grid_op()
+        +apply_g_read()
+        +apply_g_write()
+        +apply_radiate()
+        +apply_siphon()
+        +apply_virus()
     }
 
     class IoOps {
@@ -860,7 +871,16 @@ classDiagram
         +exec_nova_dispatch()
     }
 
+    class Dispatch {
+        <<Enum: ops/mod.rs>>
+        +Handled
+        +Jump(usize, usize)
+        +Unhandled
+    }
+
     CoreOps ..> ChimeraVM : Extends (impl)
+    CoreOps ..> Dispatch : Returns
+    NovaDispatchOps ..> Dispatch : Returns
     MiscOps ..> ChimeraVM : Extends (impl)
     MathOps ..> ChimeraVM : Extends (impl)
     StackOps ..> ChimeraVM : Extends (impl)
