@@ -1,7 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-neuro**: Specimen condemned. Diagnosis: Execution Void (TUI misuse/emoji printing) / Terminal Genericism. Grace period: 24h.
-
+- **arthropod-origami**: Specimen condemned. Diagnosis: Skeletal Implementation (110 LOC) and Execution Void (lack of bidirectional emergence). Grace period: 24h.
 ## ☠️ Executed
+- **git-neuro**: Specimen executed. Diagnosis: Execution Void and Terminal Genericism (TUI misuse/emoji printing). Failed to improve during grace period. Moved to graveyard.
 - **locus-origami**: Specimen executed. Diagnosis: Skeletal Implementation (73 LOC) / Execution Void / Terminal Genericism. Lacked visual output and simulation loop. Grace period expired. Moved to graveyard.
 - **arthropod-physics**: Specimen executed. Diagnosis: Skeletal Implementation (126 LOC), Lack of Bidirectional Emergence, and Terminal Genericism. Grace period expired. Moved to graveyard.
 - **memetic-market**: Specimen executed. Diagnosis: Terminal Compilation Failure (`error[E0603]`) and Skeletal Genericism. Failed to improve during grace period. Moved to graveyard.
