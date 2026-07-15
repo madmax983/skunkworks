@@ -270,33 +270,6 @@ impl Snapshot {
         writeln!(f, "\n{}", metrics_table)
     }
 
-    fn format_entity_props(props: &std::collections::BTreeMap<String, PropValue>) -> String {
-        if props.is_empty() {
-            return "".to_string();
-        }
-        use crossterm::style::Stylize;
-        use std::fmt::Write;
-        let mut props_str = String::with_capacity(props.len() * 16);
-        let mut is_first = true;
-        for (k, v) in props {
-            if !is_first {
-                props_str.push_str(", ");
-            }
-            let v_str = match v {
-                PropValue::Bool(true) => "True".green().to_string(),
-                PropValue::Bool(false) => "False".yellow().to_string(),
-                _ => "".to_string(),
-            };
-            if !v_str.is_empty() {
-                let _ = write!(&mut props_str, "{}: {}", k, v_str);
-            } else {
-                let _ = write!(&mut props_str, "{}: {}", k, v);
-            }
-            is_first = false;
-        }
-        props_str
-    }
-
     fn fmt_entities(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.entities.is_empty() {
             return Ok(());
@@ -318,14 +291,40 @@ impl Snapshot {
             };
             let fallback_id = i.to_string();
             let entity_id = entity.id.as_deref().unwrap_or(&fallback_id);
-            let props_str = Self::format_entity_props(&entity.props);
+
+            let props_cell = if entity.props.is_empty() {
+                Cell::new("")
+            } else {
+                let mut props_table = Table::new();
+                props_table.load_preset(comfy_table::presets::NOTHING);
+                for (k, v) in &entity.props {
+                    let v_str = match v {
+                        PropValue::Bool(true) => "True".to_string(),
+                        PropValue::Bool(false) => "False".to_string(),
+                        _ => v.to_string(),
+                    };
+                    let mut v_cell = Cell::new(&v_str);
+                    v_cell = match v {
+                        PropValue::Bool(true) => v_cell.fg(Color::Green),
+                        PropValue::Bool(false) => v_cell.fg(Color::Yellow),
+                        PropValue::Text(_) => v_cell.fg(Color::Magenta),
+                        _ => v_cell.fg(Color::Blue),
+                    };
+                    props_table.add_row(vec![
+                        Cell::new(k).fg(Color::Cyan),
+                        Cell::new(":").fg(Color::DarkGrey),
+                        v_cell,
+                    ]);
+                }
+                Cell::new(props_table)
+            };
 
             entities_table.add_row(vec![
                 Cell::new(entity_id).fg(Color::Yellow),
                 Cell::new(&entity.kind).fg(Color::Magenta),
                 Cell::new(pos),
                 Cell::new(entity.display.as_deref().unwrap_or("")),
-                Cell::new(props_str),
+                props_cell,
             ]);
         }
         writeln!(f, "\n{}", entities_table)
