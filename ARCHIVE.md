@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **arthropod-origami**: Specimen condemned. Diagnosis: Skeletal Implementation (110 LOC) and Execution Void (lack of bidirectional emergence). Grace period: 24h.
+- **hyperbolic-dungeon**: Specimen condemned. Diagnosis: Vestigial Organs (dead code for entities/combat) and Execution Void (missing core roguelike gameplay). Grace period: 24h.
 ## ☠️ Executed
+- **arthropod-origami**: Specimen executed. Diagnosis: Skeletal Implementation (110 LOC) and Execution Void (lack of bidirectional emergence). Grace period expired. Moved to graveyard.
 - **git-neuro**: Specimen executed. Diagnosis: Execution Void and Terminal Genericism (TUI misuse/emoji printing). Failed to improve during grace period. Moved to graveyard.
 - **locus-origami**: Specimen executed. Diagnosis: Skeletal Implementation (73 LOC) / Execution Void / Terminal Genericism. Lacked visual output and simulation loop. Grace period expired. Moved to graveyard.
 - **arthropod-physics**: Specimen executed. Diagnosis: Skeletal Implementation (126 LOC), Lack of Bidirectional Emergence, and Terminal Genericism. Grace period expired. Moved to graveyard.

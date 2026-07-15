@@ -22,7 +22,7 @@ fn main() -> std::io::Result<()> {
     let world = Rc::new(RefCell::new(World::new(world_width, world_height)));
 
     let backend = DomBackend::new()?;
-    let terminal = Terminal::new(backend)?;
+    let mut terminal = Terminal::new(backend)?;
 
     // Handle keyboard input
     let world_clone = world.clone();
