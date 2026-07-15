@@ -41,6 +41,9 @@ impl World {
         self.boids_buffer.clear();
         self.boids_buffer.extend_from_slice(&self.boids);
 
+        // ⚡ Bolt: Precalculate squared radius to avoid expensive O(N^2) square roots in inner loop.
+        let entanglement_radius_sq = ENTANGLEMENT_RADIUS * ENTANGLEMENT_RADIUS;
+
         for i in 0..n {
             let boid = &mut self.boids_buffer[i];
 
@@ -57,9 +60,9 @@ impl World {
 
                 let pos_i = boid.position();
                 let pos_j = self.boids[j].position();
-                let dist = pos_i.distance(pos_j);
+                let dist_sq = pos_i.distance_squared(pos_j);
 
-                if dist < ENTANGLEMENT_RADIUS {
+                if dist_sq < entanglement_radius_sq {
                     // Close proximity: Interact
                     // If not entangled, entangle
                     if boid.entangled_partner.is_none()

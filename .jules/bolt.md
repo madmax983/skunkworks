@@ -7,3 +7,7 @@
 ## Cleaning Up Scratchpads
 **Learning:** Do not leave temporary test files like `test_borrow.rs`, `test_perf.rs`, or compiled executable binaries hanging in the repository before requesting a review.
 **Action:** Always delete scratchpad files (`rm temp.rs` or simply use a more transient tool, like keeping tests inside the crate properly) before running tests or preparing for merge, otherwise PRs will be blocked.
+
+## Distance Checks in Hot Loops
+**Learning:** Checking distances between entities in an O(N^2) loop (e.g. `pos_i.distance(pos_j) < RADIUS`) introduces a costly square root operation for every comparison. This overhead dominates CPU time in physics or proximity interactions.
+**Action:** Always use squared distances (`distance_squared`) and compare against a precalculated squared radius (`RADIUS * RADIUS`) when determining if entities are within a threshold.
