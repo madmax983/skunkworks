@@ -87,13 +87,13 @@ impl World {
                     let idx = self.gray_scott.get_index(nx, ny);
                     if let Some(idx) = idx {
                         if idx < gs_v.len() {
-                        let val = gs_v[idx];
-                        if val > max_v {
-                            max_v = val;
-                            best_dx = dx;
-                            best_dy = dy;
+                            let val = gs_v[idx];
+                            if val > max_v {
+                                max_v = val;
+                                best_dx = dx;
+                                best_dy = dy;
+                            }
                         }
-                    }
                     }
                 }
             }
