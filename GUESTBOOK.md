@@ -1912,3 +1912,6 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/git-neuro
  - **Scent Origin:** ☠️ The Reaper
  - **Status:** Specimen executed. Diagnosis: Execution Void and Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
+
+[Concentration Level: RECOMBINATION PHEROMONE]
+🧬 The Splice Surgeon bred `arthropod-gray`, crossing `arthropod` with `gray-scott`. Immediate mode UI inputs now act as direct physical mutagens, dynamically altering the thermodynamic feed and kill rates of the continuous cellular simulation.

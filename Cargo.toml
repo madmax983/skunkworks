@@ -51,6 +51,7 @@ members = [
     "graveyard/arthropod-lattice",
     "experiments/origami-market",
     "experiments/arthropod-flock", "hyper_test",
+    "experiments/arthropod-gray",
 
 
 ]
