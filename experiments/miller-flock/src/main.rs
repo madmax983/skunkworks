@@ -67,8 +67,8 @@ async fn async_main() {
     let mut boid_velocities = vec![];
 
     for _ in 0..num_boids {
-        let px = rand::gen_range(0.0, WIDTH as f64);
-        let py = rand::gen_range(0.0, HEIGHT as f64);
+        let px = rand::gen_range(0.0, WIDTH);
+        let py = rand::gen_range(0.0, HEIGHT);
         boid_positions.push(locus::Vec2::new(px, py));
 
         let vx = rand::gen_range(-1.0, 1.0);
@@ -117,13 +117,16 @@ async fn async_main() {
             let flock_force = compute_force(&boid_positions, &boid_velocities, i, &params);
 
             // Attract towards nearest crystal node
-            let mut nearest_dist = f64::MAX;
+            let mut nearest_dist_sq = f64::MAX;
             let mut node_force = locus::Vec2::new(0.0, 0.0);
 
             for node in &nodes_2d {
-                let dist = boid_positions[i].distance(*node);
-                if dist < nearest_dist && dist < 150.0 {
-                    nearest_dist = dist;
+                // PERFORMANCE: Using squared distance for comparisons to avoid
+                // expensive sqrt() calls inside the O(N*M) inner loop.
+                let dist_sq = boid_positions[i].distance_squared(*node);
+                if dist_sq < nearest_dist_sq && dist_sq < 22500.0 {
+                    nearest_dist_sq = dist_sq;
+                    let dist = dist_sq.sqrt();
                     let mut dir = *node - boid_positions[i];
                     let mag = (dir.x * dir.x + dir.y * dir.y).sqrt();
                     if mag > 0.0001 {
