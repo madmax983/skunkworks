@@ -790,6 +790,7 @@ pub mod compiler;
 /// The `constants` module.
 /// The `constants` module.
 pub(crate) mod constants;
+pub mod helix_compiler;
 /// The `lisp` module.
 /// The `lisp` module.
 /// The `lisp` module.
@@ -1371,7 +1372,6 @@ pub mod prologue_compiler;
 /// The `prologue_esolang_compiler` module.
 pub mod prologue_esolang_compiler;
 pub mod prolouge_compiler;
-pub mod helix_compiler;
 /// The `tui` module.
 /// The `tui` module.
 /// The `tui` module.
