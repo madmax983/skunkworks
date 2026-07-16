@@ -14,7 +14,10 @@ pub mod helixparser_mod {
 pub use helixparser_mod::HelixParser;
 pub use helixparser_mod::Rule;
 
-fn compile_instruction(instruction_pair: pest::iterators::Pair<Rule>, genes: &mut Vec<Gene>) -> Result<()> {
+fn compile_instruction(
+    instruction_pair: pest::iterators::Pair<Rule>,
+    genes: &mut Vec<Gene>,
+) -> Result<()> {
     match instruction_pair.as_rule() {
         Rule::prolog_instruction => {
             let mut p_inner = instruction_pair.into_inner();
@@ -177,7 +180,6 @@ pub fn compile(source: &str) -> Result<Dna> {
         }
 
         if line_pair.as_rule() == Rule::line {
-
             let mut line_inner = line_pair.into_inner();
 
             let strand_a_pair = line_inner.next().unwrap();
@@ -198,8 +200,12 @@ pub fn compile(source: &str) -> Result<Dna> {
         evolution_config: None,
         helix: crate::ast::Helix {
             strands: vec![
-                crate::ast::Strand { genes: strand_a_genes },
-                crate::ast::Strand { genes: strand_b_genes }
+                crate::ast::Strand {
+                    genes: strand_a_genes,
+                },
+                crate::ast::Strand {
+                    genes: strand_b_genes,
+                },
             ],
         },
     })
