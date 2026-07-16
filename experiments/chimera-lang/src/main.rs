@@ -160,6 +160,14 @@ fn main() -> Result<()> {
                 prog.custom_runes,
                 prog.alchemy_book,
             )
+        } else if extension == "hlx" || extension == "helix" {
+            (
+                chimera_lang::helix_compiler::compile(&unparsed_file)?,
+                None,
+                None,
+                HashMap::new(),
+                Vec::new(),
+            )
         } else if extension == "plge" || extension == "prolouge" {
             (
                 chimera_lang::prolouge_compiler::compile(&unparsed_file)?,
