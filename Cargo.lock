@@ -4654,19 +4654,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hyperbolic-dungeon"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "num-complex",
- "poincare-disk",
- "rand 0.8.7",
- "ratatui",
- "tui-shared",
-]
-
-[[package]]
 name = "hyperbolic-finder"
 version = "0.1.0"
 dependencies = [
