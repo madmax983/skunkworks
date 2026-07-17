@@ -63,6 +63,12 @@ use crate::vm::nova_weaver;
 
 impl crate::vm::ChimeraVM {
     #[cfg(feature = "nova")]
+    fn apply_simulation_log(&mut self, msg: &str) -> crate::vm::ops::Dispatch {
+        self.output.push(msg.to_string());
+        crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+    }
+
+    #[cfg(feature = "nova")]
     pub(crate) fn exec_nova_dispatch(
         &mut self,
         op: OpCode,
@@ -483,32 +489,22 @@ impl crate::vm::ChimeraVM {
                 nova_raku::exec_raku_op(self, op, args);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Flock => {
-                self.output.push("Flocking step simulated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Poincare => {
-                self.output
-                    .push("Poincare hyperbolic geometry evaluated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-
-            OpCode::GrayScott => {
-                self.output
-                    .push("Gray-Scott diffusion evaluated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Locus => {
-                self.output.push("Locus topology evaluated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Neuro => {
-                self.output.push("Neural network simulated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Platter => {
-                self.output.push("Platter heatmap simulated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+            OpCode::Flock
+            | OpCode::Poincare
+            | OpCode::GrayScott
+            | OpCode::Locus
+            | OpCode::Neuro
+            | OpCode::Platter => {
+                let msg = match op {
+                    OpCode::Flock => "Flocking step simulated.",
+                    OpCode::Poincare => "Poincare hyperbolic geometry evaluated.",
+                    OpCode::GrayScott => "Gray-Scott diffusion evaluated.",
+                    OpCode::Locus => "Locus topology evaluated.",
+                    OpCode::Neuro => "Neural network simulated.",
+                    OpCode::Platter => "Platter heatmap simulated.",
+                    _ => unreachable!(),
+                };
+                self.apply_simulation_log(msg)
             }
             OpCode::MillerLattice => {
                 self.output
