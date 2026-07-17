@@ -1040,3 +1040,56 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found."
 *   🕵️ **The Reality:** "Turns out I needed to enable feature `nova`."
 *   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES FEATURE NOVA'."
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/gray-scott/README.md`
+**Date:** 2026-07-17
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `gray-scott` crate."
+**Action:** Copy and pasted the Quick Start example code from the README into a fresh `src/main.rs` file.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Top-Level Declaration Error:** The example code fails to compile immediately with `error: expected item, found keyword 'let'`.
+    - *Impact:* Total compilation failure.
+    - *Cause:* The code block in the README is just a sequence of statements and lacks the necessary `fn main() { ... }` wrapper to make it a valid, runnable Rust program.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start example is broken (missing main function)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the basic example from `gray-scott`'s README. The compiler immediately threw a fit about 'expected item, found keyword `let`'."
+*   🕵️ **The Reality:** "Turns out the example code isn't wrapped in a `fn main() { ... }` block, so it's invalid Rust syntax when copy-pasted directly into a new binary project."
+*   💡 **The Fix:** "Update the Quick Start example block to include the `fn main() {` wrapper around the code."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/market-sim/README.md`
+**Date:** 2026-07-17
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `market-sim` crate."
+**Action:** Copy and pasted the Quick Start example code from the README into a fresh `src/main.rs` file.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Top-Level Declaration Error:** The example code fails to compile immediately with `error: expected item, found keyword 'let'`.
+    - *Impact:* Total compilation failure.
+    - *Cause:* The code block in the README is just a sequence of statements and lacks the necessary `fn main() { ... }` wrapper to make it a valid, runnable Rust program.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Quick Start example is broken (missing main function)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the basic example from `market-sim`'s README. The compiler immediately threw a fit about 'expected item, found keyword `let`'."
+*   🕵️ **The Reality:** "Turns out the example code isn't wrapped in a `fn main() { ... }` block, so it's invalid Rust syntax when copy-pasted directly into a new binary project."
+*   💡 **The Fix:** "Update the Quick Start example block to include the `fn main() {` wrapper around the code."
