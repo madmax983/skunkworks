@@ -1,15 +1,10 @@
-use crate::agents::{AgentState, Locks};
-use crate::biology::Worms;
-use crate::fluid::FluidSim;
-use crate::grid::{CellType, Grid};
-use crate::particles::ParticleSystem;
+use hydrothermal_locks::agents::{AgentState, Locks};
+use hydrothermal_locks::biology::Worms;
+use hydrothermal_locks::fluid::FluidSim;
+use hydrothermal_locks::grid::{CellType, Grid};
+use hydrothermal_locks::particles::ParticleSystem;
 use macroquad::prelude::*;
 
-mod agents;
-mod biology;
-mod fluid;
-mod grid;
-mod particles;
 
 const GRID_WIDTH: usize = 120;
 const GRID_HEIGHT: usize = 80;
