@@ -79,3 +79,24 @@ Run `cargo test -p system-turbulence --test havoc_monitor`
 
 **Comment:**
 You assumed the readers would graciously share the lock. You were wrong. They hog it and starve the poor writer.
+
+### FluidSim Underflow Panic
+
+**Target:** `experiments/hydrothermal-locks/src/fluid.rs` - `diffuse_heat`
+**Victims:**
+- `hydrothermal-locks`
+
+**The Trigger:**
+Passing a grid with `width < 2` or `height < 2` into `FluidSim` causes an integer underflow in the `diffuse_heat` iteration bounds (`1..self.width - 1`).
+
+**The Stack Trace / Crash Output:**
+```
+thread 'test_havoc_fluid_underflow' panicked at experiments/hydrothermal-locks/src/fluid.rs:45:21:
+attempt to subtract with overflow
+```
+
+**Reproduction:**
+Run `cargo test -p hydrothermal-locks --test havoc_crash`
+
+**Comment:**
+You assumed the grid would always be large enough. You didn't sanitize edge cases. It panicked.
