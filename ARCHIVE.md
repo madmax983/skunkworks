@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyperbolic-dungeon**: Specimen condemned. Diagnosis: Vestigial Organs (dead code for entities/combat) and Execution Void (missing core roguelike gameplay). Grace period: 24h.
+- **chimera-mycelium**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (macroquad without headless bypass) and Technical Debt Burden (dead code warnings). Grace period: 24h.
 ## ☠️ Executed
+- **hyperbolic-dungeon**: Specimen executed. Diagnosis: Vestigial Organs (dead code for entities/combat) and Execution Void (missing core roguelike gameplay). Grace period expired. Moved to graveyard.
 - **arthropod-origami**: Specimen executed. Diagnosis: Skeletal Implementation (110 LOC) and Execution Void (lack of bidirectional emergence). Grace period expired. Moved to graveyard.
 - **git-neuro**: Specimen executed. Diagnosis: Execution Void and Terminal Genericism (TUI misuse/emoji printing). Failed to improve during grace period. Moved to graveyard.
 - **locus-origami**: Specimen executed. Diagnosis: Skeletal Implementation (73 LOC) / Execution Void / Terminal Genericism. Lacked visual output and simulation loop. Grace period expired. Moved to graveyard.
