@@ -4250,3 +4250,36 @@ classDiagram
     ArthropodResonance --> ArthropodUI : Abstract GUI Actions
     ArthropodResonance --> WaveSimulation : Acoustic Excitation
 ```
+
+## Experiment: Arthropod-Gray (ADR 159)
+
+**Arthropod-Gray** explores "Interactive Chemical Morphogenesis" by crossing the immediate mode UI library `arthropod` with the continuous thermodynamic reaction-diffusion simulation of `gray-scott`.
+
+### Hybrid Architecture
+
+The hybrid wraps the continuous morphogenetic simulation with an interactive layer, allowing discrete button clicks to dynamically modulate continuous thermodynamic rules.
+
+```mermaid
+classDiagram
+    direction TB
+    class ArthropodGray {
+        +ArthropodUI ui
+        +GrayScottSim gs
+        +run()
+    }
+
+    class ArthropodUI {
+        <<Library: arthropod>>
+        +Vec~Widget~ widgets
+        +update_state()
+    }
+
+    class GrayScottSim {
+        <<Library: gray-scott>>
+        +Grid chemicals
+        +update(feed, kill)
+    }
+
+    ArthropodGray --> ArthropodUI : Abstract GUI Actions
+    ArthropodGray --> GrayScottSim : Modulates feed/kill rates
+```
