@@ -1,0 +1,10 @@
+
+[package]
+name = "arthropod-gray"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arthropod = { path = "../../crates/arthropod" }
+gray-scott = { path = "../../crates/gray-scott" }
+macroquad = "0.4"

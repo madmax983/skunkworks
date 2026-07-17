@@ -181,6 +181,20 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `arthropod` hybrid lineage, confirming `arthropod-market` and `arthropod-flock` as successes, while verifying `arthropod-lattice`, `arthropod-origami`, and `arthropod-physics` were condemned by the Reaper. Created a new hybrid `arthropod-gray` that integrates `arthropod` immediate mode UI to manually drive chemical V parameters into the `gray-scott` continuous thermodynamic Turing pattern simulation. Implemented headless bypass, documented lineage, and left a recombination pheromone in `GUESTBOOK.md`.
+
+
+### arthropod-gray
+- **Parents**: crates/arthropod + crates/gray-scott
+- **Concept**: Interactive Chemical Morphogenesis.
+- **Novel trait**: The continuous morphogenetic simulation is wrapped with `arthropod`'s interactive layer. The thermodynamic rules aren't static; by clicking discrete buttons, the user dynamically modulates the `feed` and `kill` chemical rates in real-time.
+- **Predicted Phenotype**: An emergent, interactive playground. The continuous biological patterns can be instantly forced to change from spots to stripes, or dissipate entirely, through pure UI interaction, blending abstract graphical controls directly with morphogenetic biological models.
+- **Status**: experiments/arthropod-gray
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented. UI buttons correctly alter the reaction-diffusion rate.
+
+
+
+
 ### flock-platter
 - **Parents**: crates/flocking + crates/platter
 - **Concept**: Pheromone Swarming / Swarm Heatmaps.
