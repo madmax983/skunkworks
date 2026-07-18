@@ -1040,3 +1040,30 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found."
 *   🕵️ **The Reality:** "Turns out I needed to enable feature `nova`."
 *   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES FEATURE NOVA'."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/locus/README.md`
+**Date:** 2026-07-11
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the 'Hero's Journey' example from the locus crate."
+**Action:** Copy and pasted the quickstart example code from the README into a fresh `src/main.rs` file.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Misleading markdown hiding syntax:** The example code contains `# fn main() {` which when literally copy-pasted causes a compilation error `error: expected one of '!' or '[', found keyword 'fn'`. This `#` syntax is meant for `cargo test` doc tests to hide the line, but it breaks the code for standard users trying to learn from it.
+    - *Impact:* Compilation error (`expected one of '!' or '[', found keyword 'fn'`).
+    - *Fix:* Remove the `# ` from `# fn main() {` and `# }`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (locus missing main function syntax)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `locus` example. I copied the code directly from the README but got a weird error about `expected one of '!' or '[', found keyword 'fn'`."
+*   🕵️ **The Reality:** "Turns out the example code uses `# fn main() {` and `# }`. The `#` hides the `main` function in generated rustdoc, but breaks the code for anyone literally copy-pasting from the `README.md` markdown file."
+*   💡 **The Fix:** "Remove the `# ` prefix from the `fn main() {` and `}` lines in the README example so the code compiles when copied directly."
