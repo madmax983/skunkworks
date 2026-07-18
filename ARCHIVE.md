@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-chaos**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (headless bypass failure). Grace period: 24h.
+- **gray-chimera**: Specimen condemned. Diagnosis: Terminal Compilation Failure (API Drift / `E0277`). Grace period: 24h.
 ## ☠️ Executed
+- **chimera-chaos**: Specimen executed. Diagnosis: Ecosystem Maladaptation (headless bypass failure). Failed to improve during grace period. Moved to graveyard.
 - **chimera-mycelium**: Specimen executed. Diagnosis: Ecosystem Maladaptation (headless bypass failure) and Technical Debt Burden (dead code). Failed to improve during grace period. Moved to graveyard.
 - **hyperbolic-dungeon**: Specimen executed. Diagnosis: Vestigial Organs (dead code for entities/combat) and Execution Void (missing core roguelike gameplay). Failed to improve during grace period. Moved to graveyard.
 - **arthropod-origami**: Specimen executed. Diagnosis: Skeletal Implementation (110 LOC) and Execution Void (lack of bidirectional emergence). Grace period expired. Moved to graveyard.
