@@ -21,8 +21,14 @@ fn compile_instruction(
     match instruction_pair.as_rule() {
         Rule::prolog_instruction => {
             let mut p_inner = instruction_pair.into_inner();
-            let name = p_inner.next().unwrap().as_str();
-            let arg = p_inner.next().unwrap().as_str();
+            let name = p_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str();
+            let arg = p_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str();
             genes.push(Gene::new(
                 OpCode::Push,
                 vec![Nucleotide::Junction(
@@ -37,7 +43,10 @@ fn compile_instruction(
         }
         Rule::hyper_instruction => {
             let mut h_inner = instruction_pair.into_inner();
-            let op_str = h_inner.next().unwrap().as_str();
+            let op_str = h_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str();
             match op_str {
                 "+" | "add" => genes.push(Gene::new(OpCode::HyperAdd, vec![])),
                 "-" | "sub" => genes.push(Gene::new(OpCode::HyperSub, vec![])),
@@ -54,9 +63,20 @@ fn compile_instruction(
         }
         Rule::orca_instruction => {
             let mut o_inner = instruction_pair.into_inner();
-            let op = o_inner.next().unwrap().as_str();
-            let y: i64 = o_inner.next().unwrap().as_str().parse()?;
-            let x: i64 = o_inner.next().unwrap().as_str().parse()?;
+            let op = o_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str();
+            let y: i64 = o_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str()
+                .parse()?;
+            let x: i64 = o_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str()
+                .parse()?;
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
             if op == "bang" {
@@ -87,9 +107,20 @@ fn compile_instruction(
         }
         Rule::elektra_instruction => {
             let mut e_inner = instruction_pair.into_inner();
-            let op = e_inner.next().unwrap().as_str();
-            let y: i64 = e_inner.next().unwrap().as_str().parse()?;
-            let x: i64 = e_inner.next().unwrap().as_str().parse()?;
+            let op = e_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str();
+            let y: i64 = e_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str()
+                .parse()?;
+            let x: i64 = e_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str()
+                .parse()?;
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
             genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
             genes.push(Gene::new(
@@ -100,8 +131,14 @@ fn compile_instruction(
         }
         Rule::genetics_instruction => {
             let mut g_inner = instruction_pair.into_inner();
-            let op = g_inner.next().unwrap().as_str();
-            let ident1 = g_inner.next().unwrap().as_str();
+            let op = g_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str();
+            let ident1 = g_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str();
             genes.push(Gene::new(
                 OpCode::Push,
                 vec![Nucleotide::String(ident1.to_string())],
@@ -130,7 +167,10 @@ fn compile_instruction(
         }
         Rule::tui_instruction => {
             let mut t_inner = instruction_pair.into_inner();
-            let op = t_inner.next().unwrap().as_str();
+            let op = t_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?
+                .as_str();
             genes.push(Gene::new(
                 OpCode::Push,
                 vec![Nucleotide::String(op.to_string())],
@@ -138,7 +178,10 @@ fn compile_instruction(
             genes.push(Gene::new(OpCode::TuiDraw, vec![]));
         }
         Rule::forth_instruction => {
-            let f_inner = instruction_pair.into_inner().next().unwrap();
+            let f_inner = instruction_pair
+                .into_inner()
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?;
             match f_inner.as_rule() {
                 Rule::identifier => {
                     let id = f_inner.as_str().to_ascii_lowercase();
@@ -182,15 +225,25 @@ pub fn compile(source: &str) -> Result<Dna> {
         if line_pair.as_rule() == Rule::line {
             let mut line_inner = line_pair.into_inner();
 
-            let strand_a_pair = line_inner.next().unwrap();
+            let strand_a_pair = line_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?;
             for instr in strand_a_pair.into_inner() {
-                let inner_instr = instr.into_inner().next().unwrap();
+                let inner_instr = instr
+                    .into_inner()
+                    .next()
+                    .ok_or_else(|| anyhow!("Unexpected end of input"))?;
                 compile_instruction(inner_instr, &mut strand_a_genes)?;
             }
 
-            let strand_b_pair = line_inner.next().unwrap();
+            let strand_b_pair = line_inner
+                .next()
+                .ok_or_else(|| anyhow!("Unexpected end of input"))?;
             for instr in strand_b_pair.into_inner() {
-                let inner_instr = instr.into_inner().next().unwrap();
+                let inner_instr = instr
+                    .into_inner()
+                    .next()
+                    .ok_or_else(|| anyhow!("Unexpected end of input"))?;
                 compile_instruction(inner_instr, &mut strand_b_genes)?;
             }
         }
