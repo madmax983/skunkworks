@@ -168,6 +168,14 @@ fn main() -> Result<()> {
                 HashMap::new(),
                 Vec::new(),
             )
+        } else if extension == "tap" || extension == "tapestry" {
+            (
+                chimera_lang::tapestry_compiler::compile(&unparsed_file)?,
+                None,
+                None,
+                HashMap::new(),
+                Vec::new(),
+            )
         } else if extension == "plge" || extension == "prolouge" {
             (
                 chimera_lang::prolouge_compiler::compile(&unparsed_file)?,
