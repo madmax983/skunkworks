@@ -144,6 +144,23 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: crates/hyper-system/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on an unused `mut` compiler warning in the SystemMonitor example. Bard's polish required to evaporate the friction.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on an unhandled `Result` warning in the pendulum constraint creation example. Bard/Sentry reinforcement required.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on a missing main function in the Tiling example. Bard's polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on the `story_demo` example failing to compile because the `NarrativeGenerator` is hidden behind the `nova` feature flag, which is not documented as required. Bard reinforcement required.
+
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/cosmic-strings
 - **Scent Origin:** Havoc 👹
 - **Status:** Havoc sensed severe Mutex starvation in the audio callbacks. The main thread is starved. Sentry reinforcement required to balance lock contention.
