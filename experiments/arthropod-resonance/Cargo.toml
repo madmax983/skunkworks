@@ -1,0 +1,10 @@
+[package]
+name = "arthropod-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+arthropod = { path = "../../crates/arthropod" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+crossbeam-channel = "0.5"
