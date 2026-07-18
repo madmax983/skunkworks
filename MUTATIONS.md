@@ -1687,3 +1687,11 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An organic, breathing visualization where physical structural topology naturally wraps through continuous geometric mathematical bounds.
 - **Status**: experiments/locus-origami
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Mesh vertex displacement functions within Torus boundary wrapping logic.
+
+### arthropod-resonance
+- **Parents**: crates/arthropod + crates/resonance-audio
+- **Concept**: Interactive Acoustic Space.
+- **Novel trait**: The continuous acoustic FDTD wave simulation is wrapped with `arthropod`'s interactive layer. The acoustic environment is no longer a passive, hard-coded simulation. Users dynamically modulate the acoustic parameters (plucks, continuous oscillators) and dynamically alter the room geometry by painting reflective walls in real-time.
+- **Predicted Phenotype**: An emergent, interactive sonic sandbox. The abstract continuous physical acoustics engine becomes an interactive instrument where geometry can be tweaked live to witness shifting standing waves.
+- **Status**: experiments/arthropod-resonance
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented. UI buttons correctly alter the acoustic sources and room geometry.
