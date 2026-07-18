@@ -1,18 +1,18 @@
-1. **Fix Root README.md jargon**
-   - Add a plain-English summary to `README.md` right below the title explaining that "Chimera is a visual programming language and simulation environment".
-2. **Fix `experiments/chimera-lang/README.md` enzymes type documentation**
-   - Explicitly document the expected type for each argument in `splice` and other enzymes.
-3. **Fix `experiments/neuro-physics/README.md` quick start command**
-   - Update `cargo run -p neuro-physics --headless` to `cargo run -p neuro-physics -- --headless`.
-4. **Fix `crates/ferrous-core/README.md` quick start example**
-   - Wrap the rust code in `fn main() { ... }` block.
-5. **Fix `graveyard/git_rhythm/README.md` private module**
-   - Update the import in the example from `use git_rhythm::nova::NarrativeGenerator;` to `use git_rhythm::NarrativeGenerator;`.
-6. **Fix `experiments/chimera-lang/examples/story_demo.rs` headless mode**
-   - Add a check for `--headless` in `story_demo.rs` using `std::env::args()` and avoid launching the TUI if the flag is present, or just print a message and exit early like we do in macroquad tests.
-7. **Fix `crates/arthropod/README.md` missing macroquad dependency**
-   - Add `macroquad = "0.4"` to the `[dependencies]` in the `Installation` section of the README.
-8. **Fix `experiments/quipu-market/README.md` running instructions**
-   - Provide a visual example and explicitly write out `cargo run -p quipu-market` (it's already there but verify).
-9. **Pre-commit and Submit**
-   - Complete pre-commit checks and submit.
+1. **Execute chimera-chaos**
+   - Verify `chimera-chaos` is in `experiments/` and move it to `graveyard/chimera-chaos`.
+   - Update `ARCHIVE.md`: move `chimera-chaos` from "Condemned" to "Executed" section.
+   - Update `GUESTBOOK.md`: update the death pheromone for `chimera-chaos` to indicate it has been executed.
+   - Run `cargo check --workspace` to ensure nothing breaks from its removal.
+   - Commit the execution with message `⚰️ Reaper: Execute chimera-chaos`.
+
+2. **Condemn gray-chimera**
+   - Create forensic report `experiments/gray-chimera/.reaper-report.md` detailing the compilation failure (`E0277` and `E0282`).
+   - Update `ARCHIVE.md`: add `gray-chimera` to the "Condemned (Awaiting Execution)" section.
+   - Update `GUESTBOOK.md`: leave a death pheromone for `gray-chimera`.
+   - Commit the condemnation with message `⚰️ Reaper: Condemn gray-chimera`.
+
+3. **Complete pre-commit steps**
+   - Run `pre_commit_instructions` to ensure proper testing, verification, review, and reflection are done.
+
+4. **Submit changes**
+   - Submit the PR with a relevant branch name and description.
