@@ -5,7 +5,6 @@ use hydrothermal_locks::grid::{CellType, Grid};
 use hydrothermal_locks::particles::ParticleSystem;
 use macroquad::prelude::*;
 
-
 const GRID_WIDTH: usize = 120;
 const GRID_HEIGHT: usize = 80;
 const CELL_SIZE: f32 = 8.0;

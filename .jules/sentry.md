@@ -9,3 +9,7 @@
 **[Title] Macroquad vs Glam versions**
 **Learning:** You can get compilation errors like `mismatched types` due to `macroquad::math::Vec3` and `physics_pbd::glam::Vec3` if dependencies use different `glam` versions (e.g. 0.27 vs 0.28). In this Sentry mission, we did not touch `magnetic-sediment` or `chaos-pendulum` directly. This compilation error in the main repo prevents us from pushing Sentry's PR successfully if `cargo test` runs everything. We will selectively test our targeted crates.
 **Action:** Selectively run Sentry's `cargo test` and `cargo clippy` commands with `-p <crate_name>` rather than the entire workspace to avoid preexisting regressions.
+
+**[Title] Pest Iterator Option Handling in Helix Compiler**
+**Learning:** `pest` parse trees yield iterators (e.g., `pair.into_inner()`) that return `Option<Pair<Rule>>`. Extracting variables from these iterators using `.next().unwrap()` assumes the input exactly matched the grammar's expected token count. When users provide structurally invalid esoteric languages (e.g., missing strand separators `|` or insufficient arguments for `bang`), the parser might successfully parse an incomplete segment but fail during AST extraction, causing a panic.
+**Action:** Always extract values from `pest` iterators using `.ok_or_else(|| anyhow!("Unexpected end of input"))?` instead of `.unwrap()` to ensure gracefully failing parsing for invalid esoteric language structures.
