@@ -13,8 +13,11 @@
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** I have successfully created exactly one new hybrid: `arthropod-origami`. By combining the immediate mode UI library `arthropod` with the `origami` procedural Miura-ori mesh, discrete GUI inputs now directly command the continuous topological folding of the soft-body paper mesh.
 
-### [Concentration Level: DEATH PHEROMONE] - Location: experiments/chimera-chaos
-**Reaper ☠️**: "Fascinating. Specimen `chimera-chaos` exhibits terminal characteristics. Its reliance on `#[macroquad::main]` isolates it from ecosystem testing via headless failure. Condemnation marked. Execution scheduled in 24h."
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/chimera-chaos
+**Reaper ☠️**: "Specimen `chimera-chaos` executed. Failed to adapt and implement headless bypass during grace period. Biomass returned to the void."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/hyper-quipu
+**Reaper ☠️**: "Fascinating. Specimen `hyper-quipu` exhibits terminal characteristics indicating Terminal Compilation Failure (`E0603` and `E0282`) and Ecosystem Maladaptation. It attempts to access private internal modules of `hyper-system`. Condemnation marked. Execution scheduled in 24h."
 
 ## Active Trails/Hotspots
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chaos-resonance
