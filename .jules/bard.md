@@ -54,3 +54,7 @@
 ## 2026-07-06 - [Module-Level Docs and README Sync for Executables]
 **Confusion:** Building documentation for a binary crate using strict rustdoc flags (`-W rustdoc::missing_crate_level_docs -D warnings`) will fail if the `src/main.rs` file does not include a `//!` crate-level doc comment block.
 **Clarification:** To satisfy `cargo doc` for binary crates, parse the `README.md` contents and inject them as `//!` block comments at the very top of `src/main.rs`. This ensures the overarching story for the executable is documented and the documentation build passes.
+
+## 2026-07-11 - [Fixing DX Audit Log Friction Points (July 2026)]
+**Confusion:** Examples in README files generated warnings (e.g. unused `mut`, unhandled `Result`) or failed to compile entirely (e.g. missing `fn main()`, missing `crossbeam-channel` dependency) when users copy-pasted them directly.
+**Clarification:** Addressed issues logged in DX_AUDIT_LOG by removing unnecessary `mut` keywords, calling `.unwrap()` on `Result` returns in examples, explicitly declaring missing dependencies in comments, and wrapping top-level code examples in `fn main() { ... }` where necessary.
