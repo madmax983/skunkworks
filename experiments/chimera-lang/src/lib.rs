@@ -2118,3 +2118,5 @@ pub use prologue_esolang_compiler::*;
 pub use tui::*;
 pub use value::*;
 pub use vm::*;
+
+pub mod tapestry_compiler;
