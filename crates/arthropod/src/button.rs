@@ -105,6 +105,8 @@ impl Button {
             || self.rect.h <= 0.0
             || self.rect.x > 100_000.0 // Arbitrary reasonable bound to prevent geometry explosion
             || self.rect.y > 100_000.0
+            || self.rect.w > 100_000.0
+            || self.rect.h > 100_000.0
         {
             return false;
         }
@@ -147,8 +149,8 @@ impl Button {
             BLACK,
         );
 
-        // Offset when clicked
-        let offset_y = if is_down { 4.0 } else { 0.0 };
+        // Offset when clicked or hovered
+        let offset_y = if is_down { 4.0 } else if is_hover { -2.0 } else { 0.0 };
 
         // Background
         draw_rectangle(
