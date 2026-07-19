@@ -1,0 +1,9 @@
+[package]
+name = "arthropod-poincare"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.15"
+arthropod = { path = "../../crates/arthropod" }
+poincare-disk = { path = "../../crates/poincare-disk" }
