@@ -1,5 +1,5 @@
-use hydrothermal_locks::fluid::FluidSim;
-use hydrothermal_locks::grid::Grid;
+use hydrothermal_locks::FluidSim;
+use hydrothermal_locks::Grid;
 use std::process;
 
 // We simulate the underflow crash using an inner subprocess.

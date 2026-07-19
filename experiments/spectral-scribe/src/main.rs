@@ -1,8 +1,8 @@
 use macroquad::audio::{load_sound, play_sound_once};
 use macroquad::prelude::*;
 
-use spectral_scribe::decoder::{audio_to_spectrogram, recover_text, DecoderConfig};
-use spectral_scribe::encoder::{generate_audio, save_wav, EncoderConfig};
+use spectral_scribe::{audio_to_spectrogram, recover_text, DecoderConfig};
+use spectral_scribe::{generate_audio, save_wav, EncoderConfig};
 
 enum AppState {
     Editor,

@@ -119,3 +119,9 @@ impl Worms {
         }
     }
 }
+
+impl Default for Worms {
+    fn default() -> Self {
+        Self::new()
+    }
+}

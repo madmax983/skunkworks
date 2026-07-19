@@ -45,16 +45,21 @@ async fn amain() {
         loop {
             model.process(&mut buffer);
             // Throttle to approximate realtime (very rough approximation for non-real audio thread)
-            thread::sleep(Duration::from_micros(256 * 1_000_000 / AUDIO_SAMPLE_RATE as u64));
+            thread::sleep(Duration::from_micros(
+                256 * 1_000_000 / AUDIO_SAMPLE_RATE as u64,
+            ));
         }
     });
 
     let mut latest_snapshot: Option<AudioSnapshot> = None;
 
     // Define interactive buttons
-    let pluck_btn = Button::new("Pluck Center", 10.0, 10.0, 200.0, 50.0).with_colors(BLUE, LIGHTGRAY, DARKGRAY);
-    let tone_btn = Button::new("Sustain Tone (440Hz)", 10.0, 70.0, 200.0, 50.0).with_colors(GREEN, LIME, DARKGREEN);
-    let wall_btn = Button::new("Toggle Wall", 10.0, 130.0, 200.0, 50.0).with_colors(RED, ORANGE, MAROON);
+    let pluck_btn =
+        Button::new("Pluck Center", 10.0, 10.0, 200.0, 50.0).with_colors(BLUE, LIGHTGRAY, DARKGRAY);
+    let tone_btn = Button::new("Sustain Tone (440Hz)", 10.0, 70.0, 200.0, 50.0)
+        .with_colors(GREEN, LIME, DARKGREEN);
+    let wall_btn =
+        Button::new("Toggle Wall", 10.0, 130.0, 200.0, 50.0).with_colors(RED, ORANGE, MAROON);
 
     let mut is_tone_active = false;
     let mut is_wall_active = false;
@@ -93,7 +98,13 @@ async fn amain() {
                         _ => color,
                     };
 
-                    draw_rectangle(x as f32 * cell_w, y as f32 * cell_h, cell_w, cell_h, final_color);
+                    draw_rectangle(
+                        x as f32 * cell_w,
+                        y as f32 * cell_h,
+                        cell_w,
+                        cell_h,
+                        final_color,
+                    );
                 }
             }
         }
@@ -122,7 +133,11 @@ async fn amain() {
         // Wall Button Logic (Toggle Wall)
         if wall_btn.draw() {
             is_wall_active = !is_wall_active;
-            let material = if is_wall_active { Material::Wall } else { Material::Air };
+            let material = if is_wall_active {
+                Material::Wall
+            } else {
+                Material::Air
+            };
 
             // Draw a wall in the center
             for i in 20..80 {

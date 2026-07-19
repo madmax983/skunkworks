@@ -15,7 +15,7 @@ use std::f32::consts::PI;
 /// # Examples
 ///
 /// ```
-/// use spectral_scribe::encoder::EncoderConfig;
+/// use spectral_scribe::EncoderConfig;
 ///
 /// let config = EncoderConfig::default();
 /// assert_eq!(config.sample_rate, 44100);
@@ -57,7 +57,7 @@ impl Default for EncoderConfig {
 /// # Examples
 ///
 /// ```
-/// use spectral_scribe::encoder::{EncoderConfig, generate_audio};
+/// use spectral_scribe::{EncoderConfig, generate_audio};
 ///
 /// let config = EncoderConfig::default();
 /// let samples = generate_audio("Hello", &config);

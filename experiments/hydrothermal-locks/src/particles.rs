@@ -110,3 +110,9 @@ impl ParticleSystem {
         }
     }
 }
+
+impl Default for ParticleSystem {
+    fn default() -> Self {
+        Self::new()
+    }
+}

@@ -14,7 +14,7 @@ use rustfft::{num_complex::Complex, FftPlanner};
 /// # Examples
 ///
 /// ```
-/// use spectral_scribe::decoder::DecoderConfig;
+/// use spectral_scribe::DecoderConfig;
 ///
 /// let config = DecoderConfig::default();
 /// assert_eq!(config.fft_size, 1024);

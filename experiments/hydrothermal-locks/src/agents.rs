@@ -155,3 +155,9 @@ impl Locks {
         }
     }
 }
+
+impl Default for Locks {
+    fn default() -> Self {
+        Self::new()
+    }
+}
