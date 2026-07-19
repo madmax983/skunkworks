@@ -181,7 +181,8 @@ I have checked all previous hybrids in this list.
 
 ## 🌿 Attempted Crosses
 
-**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `arthropod` hybrid lineage, confirming `arthropod-market` and `arthropod-flock` as successes, while verifying `arthropod-lattice`, `arthropod-origami`, and `arthropod-physics` were condemned by the Reaper. Created a new hybrid `arthropod-gray` that integrates `arthropod` immediate mode UI to manually drive chemical V parameters into the `gray-scott` continuous thermodynamic Turing pattern simulation. Implemented headless bypass, documented lineage, and left a recombination pheromone in `GUESTBOOK.md`.
+
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the `arthropod` hybrid lineage, confirming `arthropod-flock`, `arthropod-gray`, `arthropod-market`, and `arthropod-resonance` all successfully compiled and correctly bypass the macroquad UI in headless mode. The strategy of mapping abstract datasets and geometries to immediate-mode interfaces continues to yield great interaction possibilities. Created a new hybrid `arthropod-poincare` that allows interactive navigation of the hyperbolic Poincaré disk using Möbius transformations. Implemented headless bypass, documented lineage, and left a recombination pheromone in `GUESTBOOK.md`.
 
 
 ### arthropod-gray
@@ -1687,6 +1688,15 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An organic, breathing visualization where physical structural topology naturally wraps through continuous geometric mathematical bounds.
 - **Status**: experiments/locus-origami
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Mesh vertex displacement functions within Torus boundary wrapping logic.
+
+
+### arthropod-poincare
+- **Parents**: crates/arthropod + crates/poincare-disk
+- **Concept**: Interactive Hyperbolic Navigation.
+- **Novel trait**: The abstract continuous geometry is now interactively explorable. Discrete UI button clicks apply continuous Möbius transformations (translations and rotations) to the view center, allowing the user to navigate the hyperbolic plane in real time.
+- **Predicted Phenotype**: An interactive non-Euclidean kaleidoscope. As the user clicks the UI buttons to move around, the underlying Euclidean representation squashes and stretches according to hyperbolic metrics, bridging discrete GUI actions to non-Euclidean continuous spaces.
+- **Status**: experiments/arthropod-poincare
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented. UI buttons seamlessly apply Möbius transformations to non-Euclidean coordinates.
 
 ### arthropod-resonance
 - **Parents**: crates/arthropod + crates/resonance-audio
