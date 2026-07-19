@@ -63,6 +63,12 @@ use crate::vm::nova_weaver;
 
 impl crate::vm::ChimeraVM {
     #[cfg(feature = "nova")]
+    fn apply_simulation_log(&mut self, msg: &str) -> crate::vm::ops::Dispatch {
+        self.output.push(msg.to_string());
+        crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+    }
+
+    #[cfg(feature = "nova")]
     pub(crate) fn exec_nova_dispatch(
         &mut self,
         op: OpCode,
@@ -483,47 +489,38 @@ impl crate::vm::ChimeraVM {
                 nova_raku::exec_raku_op(self, op, args);
                 crate::vm::ops::Dispatch::Handled
             }
-            OpCode::Flock => {
-                self.output.push("Flocking step simulated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Poincare => {
-                self.output
-                    .push("Poincare hyperbolic geometry evaluated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-
-            OpCode::GrayScott => {
-                self.output
-                    .push("Gray-Scott diffusion evaluated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Locus => {
-                self.output.push("Locus topology evaluated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Neuro => {
-                self.output.push("Neural network simulated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Platter => {
-                self.output.push("Platter heatmap simulated.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::MillerLattice => {
-                self.output
-                    .push("Miller Lattice simulation triggered.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::HyperSystem => {
-                self.output
-                    .push("Hyper System monitoring triggered.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::PhysicsPbd => {
-                self.output
-                    .push("Physics PBD position-based dynamics triggered.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
+            OpCode::Flock
+            | OpCode::Poincare
+            | OpCode::GrayScott
+            | OpCode::Locus
+            | OpCode::Neuro
+            | OpCode::Platter
+            | OpCode::MillerLattice
+            | OpCode::HyperSystem
+            | OpCode::PhysicsPbd
+            | OpCode::FerrousCore
+            | OpCode::Verge
+            | OpCode::CymaticOcean
+            | OpCode::QuantumGarden
+            | OpCode::Hologram => {
+                let msg = match op {
+                    OpCode::Flock => "Flocking step simulated.",
+                    OpCode::Poincare => "Poincare hyperbolic geometry evaluated.",
+                    OpCode::GrayScott => "Gray-Scott diffusion evaluated.",
+                    OpCode::Locus => "Locus topology evaluated.",
+                    OpCode::Neuro => "Neural network simulated.",
+                    OpCode::Platter => "Platter heatmap simulated.",
+                    OpCode::MillerLattice => "Miller Lattice simulation triggered.",
+                    OpCode::HyperSystem => "Hyper System monitoring triggered.",
+                    OpCode::PhysicsPbd => "Physics PBD position-based dynamics triggered.",
+                    OpCode::FerrousCore => "Ferrous Core magnetic field triggered.",
+                    OpCode::Verge => "Verge Computer logic triggered.",
+                    OpCode::CymaticOcean => "Cymatic Ocean simulation triggered.",
+                    OpCode::QuantumGarden => "Quantum Garden simulation triggered.",
+                    OpCode::Hologram => "Hologram logic triggered.",
+                    _ => unreachable!(),
+                };
+                self.apply_simulation_log(msg)
             }
             OpCode::Tardis => {
                 crate::vm::nova_pachinko::exec_tardis(self);
@@ -541,32 +538,12 @@ impl crate::vm::ChimeraVM {
                 crate::vm::nova_pachinko::exec_syncopation(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
-            OpCode::FerrousCore => {
-                self.output
-                    .push("Ferrous Core magnetic field triggered.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
             OpCode::Choreography => {
                 crate::vm::nova_pachinko::exec_choreography(self);
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::Runes => {
                 crate::vm::nova_pachinko::exec_runes(self);
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Verge => {
-                self.output
-                    .push("Verge Computer logic triggered.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::CymaticOcean => {
-                self.output
-                    .push("Cymatic Ocean simulation triggered.".to_string());
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::QuantumGarden => {
-                self.output
-                    .push("Quantum Garden simulation triggered.".to_string());
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             OpCode::EntropicRain => {
@@ -608,10 +585,6 @@ impl crate::vm::ChimeraVM {
             }
             OpCode::HologramText => {
                 crate::vm::nova::exec_hologram_text(self);
-                crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
-            }
-            OpCode::Hologram => {
-                self.output.push("Hologram logic triggered.".to_string());
                 crate::vm::ops::Dispatch::Jump(self.ip.0, self.ip.1 + 1)
             }
             #[cfg(feature = "oracle")]
