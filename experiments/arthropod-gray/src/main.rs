@@ -50,10 +50,14 @@ async fn async_main() {
     let mut feed = 0.055;
     let mut kill = 0.062;
 
-    let btn_spots = Button::new("Spots", 20.0, 20.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
-    let btn_stripes = Button::new("Stripes", 20.0, 70.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
-    let btn_solitons = Button::new("Solitons", 20.0, 120.0, 100.0, 40.0).with_colors(RED, ORANGE, DARKGRAY);
-    let btn_reset = Button::new("Reset Seed", 20.0, 170.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, BLACK);
+    let btn_spots =
+        Button::new("Spots", 20.0, 20.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
+    let btn_stripes =
+        Button::new("Stripes", 20.0, 70.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
+    let btn_solitons =
+        Button::new("Solitons", 20.0, 120.0, 100.0, 40.0).with_colors(RED, ORANGE, DARKGRAY);
+    let btn_reset =
+        Button::new("Reset Seed", 20.0, 170.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, BLACK);
 
     let mut texture = Texture2D::empty();
     texture.set_filter(FilterMode::Nearest);

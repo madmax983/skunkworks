@@ -1,5 +1,10 @@
-pub mod agents;
-pub mod biology;
-pub mod fluid;
-pub mod grid;
-pub mod particles;
+pub(crate) mod agents;
+pub use agents::*;
+pub(crate) mod biology;
+pub use biology::*;
+pub(crate) mod fluid;
+pub use fluid::*;
+pub(crate) mod grid;
+pub use grid::*;
+pub(crate) mod particles;
+pub use particles::*;

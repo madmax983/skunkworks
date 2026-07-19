@@ -1,5 +1,5 @@
-use spectral_scribe::decoder::{audio_to_spectrogram, recover_text, DecoderConfig};
-use spectral_scribe::encoder::{generate_audio, EncoderConfig};
+use spectral_scribe::{audio_to_spectrogram, recover_text, DecoderConfig};
+use spectral_scribe::{generate_audio, EncoderConfig};
 
 #[test]
 fn test_round_trip() {
