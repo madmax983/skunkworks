@@ -4250,3 +4250,61 @@ classDiagram
     ArthropodResonance --> ArthropodUI : Abstract GUI Actions
     ArthropodResonance --> WaveSimulation : Acoustic Excitation
 ```
+
+## Hydrothermal Locks, Spectral Scribe, and Quipu Serializer Facade (ADR 159, 160, & 161)
+
+Enforcing the Facade pattern in `hydrothermal-locks`, `spectral-scribe`, and `quipu-serializer` prevents the leakage of their internal module structures, ensuring consumers rely only on the explicitly exported API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class HydrothermalLocksFacade {
+            <<Facade>>
+            +agents::*
+            +biology::*
+            +fluid::*
+            +grid::*
+            +particles::*
+        }
+
+        class SpectralScribeFacade {
+            <<Facade>>
+            +decoder::*
+            +encoder::*
+            +font::*
+        }
+
+        class QuipuSerializerFacade {
+            <<Facade>>
+            +ser::*
+        }
+    }
+
+    namespace InternalModules {
+        class HydrothermalLocksInternal {
+            <<Private Modules>>
+            mod agents
+            mod biology
+            mod fluid
+            mod grid
+            mod particles
+        }
+
+        class SpectralScribeInternal {
+            <<Private Modules>>
+            mod decoder
+            mod encoder
+            mod font
+        }
+
+        class QuipuSerializerInternal {
+            <<Private Modules>>
+            mod ser
+        }
+    }
+
+    HydrothermalLocksFacade ..> HydrothermalLocksInternal : encapsulates
+    SpectralScribeFacade ..> SpectralScribeInternal : encapsulates
+    QuipuSerializerFacade ..> QuipuSerializerInternal : encapsulates
+```
