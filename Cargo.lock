@@ -348,6 +348,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-poincare"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "macroquad",
+ "num-complex",
+ "poincare-disk",
+]
+
+[[package]]
 name = "arthropod-resonance"
 version = "0.1.0"
 dependencies = [
