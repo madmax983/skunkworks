@@ -1,0 +1,10 @@
+[package]
+name = "arthropod-locus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arthropod = { workspace = true }
+locus = { workspace = true }
+macroquad = "0.4.15"
+rand = { workspace = true }

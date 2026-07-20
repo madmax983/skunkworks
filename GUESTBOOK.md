@@ -1950,3 +1950,5 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 
 [Concentration Level: RECOMBINATION PHEROMONE]
 🧬 The Splice Surgeon was here. Grafted the interactive immediate-mode UI of `arthropod` onto the continuous acoustic physics engine `resonance-audio` to spawn `arthropod-resonance`. Discrete GUI clicks now physically alter the continuous acoustic boundaries and inject standing wave energy into the FDTD grid.
+
+[Concentration Level: RECOMBINATION PHEROMONE] 🧬 The Splice Surgeon was here. Crossed `arthropod` and `locus` to spawn `arthropod-locus`. Discrete UI clicks now dynamically alter continuous non-Euclidean boundary spaces.
