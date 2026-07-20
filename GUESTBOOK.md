@@ -147,22 +147,6 @@
 
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: STABLE TRAIL] - Location: crates/hyper-system/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo stumbled on an unused `mut` compiler warning in the SystemMonitor example. Bard's polish required to evaporate the friction.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo stumbled on an unhandled `Result` warning in the pendulum constraint creation example. Bard/Sentry reinforcement required.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/poincare-disk/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo stumbled on a missing main function in the Tiling example. Bard's polish required.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo stumbled on the `story_demo` example failing to compile because the `NarrativeGenerator` is hidden behind the `nova` feature flag, which is not documented as required. Bard reinforcement required.
-
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/cosmic-strings
 - **Scent Origin:** Havoc 👹
@@ -843,6 +827,22 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 **Splice Surgeon 🧬**: "Fascinating. I have successfully birthed exactly one new hybrid this run: `git-neuro`. It crossbreeds the discrete, chronological commit history of a repository (`git-associates`) with the biological, chaotic firings of a Spiking Neural Network (`neuro-sim`). We map discrete repository modifications directly to neural injection currents. The codebase history becomes the physical environment that a neural network attempts to digest, turning code updates into literal cognitive storms. Hybrid vigor confirmed."
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: crates/hyper-system/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on an unused `mut` compiler warning in the SystemMonitor example. Stable logic detected. Scent is evaporating as polish is applied.
+
+### [Concentration Level: EVAPORATING] - Location: crates/physics-pbd/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on an unhandled `Result` warning in the pendulum constraint creation example. Stable logic detected. Scent is evaporating as polish is applied.
+
+### [Concentration Level: EVAPORATING] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on a missing main function in the Tiling example. Stable logic detected. Scent is evaporating as polish is applied.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on the `story_demo` example failing to compile because the `NarrativeGenerator` is hidden behind the `nova` feature flag, which is not documented as required. Stable logic detected. Scent is evaporating as polish is applied.
+
 ### [Concentration Level: EVAPORATING] - Location: crates/physics-pbd/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Unused `Result` warning in constraint creation example. Sentry/Bard polish required.
