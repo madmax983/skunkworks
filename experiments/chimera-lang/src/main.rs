@@ -176,6 +176,14 @@ fn main() -> Result<()> {
                 HashMap::new(),
                 Vec::new(),
             )
+        } else if extension == "tap" || extension == "tapestry" {
+            (
+                chimera_lang::tapestry_compiler::compile(&unparsed_file)?,
+                None,
+                None,
+                HashMap::new(),
+                Vec::new(),
+            )
         } else if extension == "plg" {
             (
                 prologue_esolang_compiler::compile(&unparsed_file)?,

@@ -1,0 +1,12 @@
+WHITESPACE = _{ " " | "\t" }
+COMMENT = _{ "<!--" ~ (!"-->" ~ ANY)* ~ "-->" }
+
+tapestry = { SOI ~ (table | "\r"? ~ "\n")* ~ EOI }
+table = { header ~ "\r"? ~ "\n" ~ separator ~ ("\r"? ~ "\n" ~ data_row)* ~ ("\r"? ~ "\n")* }
+
+header = { "|" ~ (cell ~ "|")+ }
+separator = { "|" ~ (sep_cell ~ "|")+ }
+data_row = { "|" ~ (cell ~ "|")+ }
+
+cell = { (!("|" | "\r" | "\n") ~ ANY)* }
+sep_cell = { ("-" | ":" | " " | "\t")* }
