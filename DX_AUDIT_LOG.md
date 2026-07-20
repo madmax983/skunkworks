@@ -1121,3 +1121,246 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `Tiling` code snippet from `poincare-disk`. The compiler threw an error about statements outside a function."
 *   🕵️ **The Reality:** "Turns out the example code is just floating code and not wrapped in a `fn main() { ... }` block."
 *   💡 **The Fix:** "Update the Tiling example block to include the `fn main() {` wrapper around the code."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-locus/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-locus` experiment headlessly in a CI environment."
+**Action:** Copy and pasted the headless command `cargo run -p arthropod-locus --release --headless` implied by the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Headless execution command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-locus` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-locus --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-locus --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-market/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-market` experiment headlessly in a CI environment."
+**Action:** Copy and pasted the headless command `cargo run -p arthropod-market --release --headless` implied by the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Headless execution command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-market` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-market --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-market --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-poincare/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-poincare` experiment."
+**Action:** Try to run the experiment based *only* on the public docs in `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Running Instructions:** The README describes the concept and traits but lacks any instructions on how to actually compile and run the experiment.
+    - *Impact:* The user doesn't know the entry point (e.g. `cargo run -p arthropod-poincare`).
+    - *Fix:* Provide clear "Quick Start" or "Running" instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing execution instructions for arthropod-poincare
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-poincare` experiment. The README tells me it's a hybrid but doesn't tell me how to run it."
+*   🕵️ **The Reality:** "Turns out the README is just a conceptual document and lacks basic `cargo run` commands or examples."
+*   💡 **The Fix:** "Add a 'Quick Start' or 'Usage' section with the `cargo run -p arthropod-poincare` command."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-resonance/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-resonance` experiment."
+**Action:** Try to run the experiment based *only* on the public docs in `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Headless Instructions:** The README describes how to run the simulation, but does not provide instructions on how to run it headlessly for CI environments, despite implementing headless support.
+    - *Impact:* Users or automated systems will hit X11 panics if run without a display.
+    - *Fix:* Provide clear headless bypass instructions.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing headless execution instructions for arthropod-resonance
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-resonance` experiment in a headless CI environment. The process crashed with X11 display errors."
+*   🕵️ **The Reality:** "Turns out the experiment supports `--headless`, but the README completely omits this crucial instruction."
+*   💡 **The Fix:** "Add a note in the 'Running' section explaining how to run headlessly using `cargo run -p arthropod-resonance -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-origami/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-origami` experiment headlessly in a CI environment."
+**Action:** Copy and pasted the headless command `cargo run -p arthropod-origami --release --headless` implied by the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Headless execution command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-origami` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-origami --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-origami --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-lattice/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-lattice` experiment headlessly in a CI environment."
+**Action:** Copy and pasted the headless command `cargo run -p arthropod-lattice --release --headless` implied by the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Headless execution command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-lattice` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-lattice --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-lattice --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-physics/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-physics` experiment headlessly in a CI environment."
+**Action:** Copy and pasted the headless command `cargo run -p arthropod-physics --release --headless` implied by the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Headless execution command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-physics` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-physics --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-physics --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-flock/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-flock` experiment headlessly in a CI environment."
+**Action:** Copy and pasted the headless command `cargo run -p arthropod-flock --release --headless` implied by the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Headless execution command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-flock` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-flock --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-flock --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/arthropod-gray/README.md`
+**Date:** 2026-07-20
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `arthropod-gray` experiment headlessly in a CI environment."
+**Action:** Copy and pasted the headless command `cargo run -p arthropod-gray --release --headless` implied by the README directly into my terminal.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Cargo Argument Error:** The command fails immediately with `error: unexpected argument '--headless' found`.
+    - *Impact:* Total failure to run the example.
+    - *Cause:* When passing arguments to the underlying binary instead of `cargo` itself, you must use the `--` separator.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Headless execution command is broken (missing separator)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod-gray` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
+*   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-gray --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
+*   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-gray --release -- --headless`."
