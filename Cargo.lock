@@ -348,6 +348,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-physics"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "glam 0.28.0",
+ "macroquad",
+ "physics-pbd",
+]
+
+[[package]]
 name = "arthropod-platter"
 version = "0.1.0"
 dependencies = [

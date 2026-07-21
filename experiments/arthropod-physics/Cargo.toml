@@ -1,0 +1,10 @@
+[package]
+name = "arthropod-physics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arthropod = { path = "../../crates/arthropod" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+macroquad = "0.4.15"
+glam = "0.28"
