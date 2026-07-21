@@ -1,9 +1,9 @@
 use anyhow::{anyhow, Result};
 use pest::Parser;
 
-pub(crate) mod ast;
-pub(crate) mod parser;
-pub(crate) mod compiler;
+pub mod ast;
+pub mod parser;
+pub mod compiler;
 
 use ast::ast::*;
 use parser::{EsolangParser, Rule};
