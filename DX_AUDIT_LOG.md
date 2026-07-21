@@ -1364,3 +1364,16 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `arthropod-gray` experiment headlessly. Cargo complained about an unexpected argument '--headless'."
 *   🕵️ **The Reality:** "Turns out the README tells me to use `--headless`, which implies `cargo run -p arthropod-gray --release --headless`, but Cargo thinks `--headless` is meant for it, not the binary. It's missing the `--` separator."
 *   💡 **The Fix:** "Update the headless instruction in the README to explicitly state `cargo run -p arthropod-gray --release -- --headless`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/gray-scott/README.md`
+
+**Title:** 🗣️ Echo: Usage example in gray-scott is broken (missing main function)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `Usage` code snippet from `gray-scott`. The compiler threw an error about `let` cannot be used for global variables."
+*   🕵️ **The Reality:** "Turns out the example code is just floating code and not wrapped in a `fn main() { ... }` block."
+*   💡 **The Fix:** "Update the Usage example block to include the `fn main() {` wrapper around the code."
