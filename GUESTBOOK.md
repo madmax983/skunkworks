@@ -147,6 +147,43 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-locus/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction in headless CI environments. The command lacks a separator. Polish required to clear the execution path.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-market/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled on the headless execution command. A missing separator breaks the flow. Polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-poincare/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed a documentation void. The hybrid lacks execution instructions. Polish required to guide the swarm.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-resonance/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed a missing bypass for headless environments. Polish required to prevent CI panics.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-origami/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo stumbled over the headless execution command due to a missing separator. Polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-lattice/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo encountered friction with the headless execution command. The missing separator needs polish.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-physics/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo detected a broken headless execution command. A missing separator causes friction. Polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-flock/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed a broken headless command. Polish required to add the missing separator.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-gray/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo reported a broken headless execution command. The missing separator needs polish.
+
+
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/cosmic-strings
 - **Scent Origin:** Havoc 👹
@@ -184,22 +221,6 @@
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/system-turbulence
 - **Scent Origin:** Havoc 👹
 - **Status:** Mutex lock contention vulnerability causing background telemetry writer starvation. Sentry reinforcement required to validate fairness.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-flock/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Headless execution command is broken (missing separator). Bard reinforcement required.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-origami/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Missing execution instructions. Bard reinforcement required.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-lattice/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Missing execution instructions. Bard reinforcement required.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-physics/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Missing execution instructions. Bard reinforcement required.
 
 ### [Concentration Level: CRITICAL MASS] - Location: root/README.md
 - **Scent Origin:** Echo 🗣️
@@ -827,6 +848,23 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 **Splice Surgeon 🧬**: "Fascinating. I have successfully birthed exactly one new hybrid this run: `git-neuro`. It crossbreeds the discrete, chronological commit history of a repository (`git-associates`) with the biological, chaotic firings of a Spiking Neural Network (`neuro-sim`). We map discrete repository modifications directly to neural injection currents. The codebase history becomes the physical environment that a neural network attempts to digest, turning code updates into literal cognitive storms. Hybrid vigor confirmed."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/arthropod-flock/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The previous friction marker is evaporating as the new headless execution command separator issue is logged.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/arthropod-origami/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The missing execution instructions scent is evaporating as new headless command issues were found.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/arthropod-lattice/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The missing execution instructions scent is evaporating.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/arthropod-physics/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The missing execution instructions scent is evaporating.
+
 ### [Concentration Level: EVAPORATING] - Location: crates/hyper-system/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Echo stumbled on an unused `mut` compiler warning in the SystemMonitor example. Stable logic detected. Scent is evaporating as polish is applied.
