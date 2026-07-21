@@ -1,0 +1,9 @@
+[package]
+name = "arthropod-platter"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+arthropod = { version = "0.1.0", path = "../../crates/arthropod" }
+macroquad = "0.4"
+platter = { version = "0.1.0", path = "../../crates/platter" }
