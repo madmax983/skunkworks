@@ -13,3 +13,5 @@ A hybrid experiment combining `arthropod`'s interactive UI components with the `
 ```bash
 cargo run -p arthropod-resonance
 ```
+
+*(Note: Use `cargo run -p arthropod-resonance -- --headless` to safely bypass X11 UI panics in CI environments.)*

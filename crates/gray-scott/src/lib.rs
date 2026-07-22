@@ -20,6 +20,40 @@
 //! - `U * V^2`: The reaction where two V molecules and one U molecule turn into three V molecules.
 //! - `f`: Feed rate (replenishes U).
 //! - `k`: Kill rate (removes V).
+//!
+//! ## Installation
+//!
+//! Add this to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! gray-scott = { path = "../gray-scott" }
+//! ```
+//!
+//! ## Features
+//! - **`parallel`**: (Optional) Enables multi-threaded updates using `rayon` for significant performance gains on large grids.
+//!
+//! ## Usage
+//!
+//! ```rust
+//! #![allow(clippy::needless_doctest_main)]
+//! fn main() {
+//!     use gray_scott::GrayScott;
+//!
+//!     // Create a small dish
+//!     let mut dish = GrayScott::new(100, 100);
+//!
+//!     // Drop a "spore" of chemical V in the center
+//!     dish.add_chemical(50, 50, 1.0);
+//!
+//!     // Simulate "Cell Division" parameters over time.
+//!     let (feed, kill) = (0.0367, 0.0649);
+//!
+//!     for _ in 0..100 {
+//!         dish.update(feed, kill, 1.0);
+//!     }
+//! }
+//! ```
 
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
