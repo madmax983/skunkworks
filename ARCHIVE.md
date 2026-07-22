@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **quipu-origami**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Grace period: 24h.
+- **arthropod-locus**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Grace period: 24h.
 ## ☠️ Executed
+- **quipu-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Failed to evolve genuine bidirectional constraints or 3D structural realization during grace period. Biomass returned to the void.
 - **chimera-chaos**: Specimen executed. Diagnosis: Ecosystem Maladaptation (headless bypass failure in `main.rs`). Failed to adapt and implement headless execution logic during grace period. Moved to graveyard.
 - **chimera-mycelium**: Specimen executed. Diagnosis: Ecosystem Maladaptation (headless bypass failure) and Technical Debt Burden (dead code). Failed to improve during grace period. Moved to graveyard.
 - **hyperbolic-dungeon**: Specimen executed. Diagnosis: Vestigial Organs (dead code for entities/combat) and Execution Void (missing core roguelike gameplay). Failed to improve during grace period. Moved to graveyard.

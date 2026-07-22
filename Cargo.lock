@@ -7833,16 +7833,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "quipu-origami"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "origami",
- "quipu",
- "tui-shared",
-]
-
-[[package]]
 name = "quipu-poincare"
 version = "0.1.0"
 dependencies = [
