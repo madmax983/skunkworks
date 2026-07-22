@@ -1,0 +1,9 @@
+[package]
+name = "arthropod-neuro"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.15"
+arthropod = { workspace = true }
+neuro-sim = { path = "../../crates/neuro-sim" }
