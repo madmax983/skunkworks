@@ -8,3 +8,11 @@ A hybrid created by The Splice Surgeon.
 
 ## Phenotype
 This hybrid creates an interactive mathematical sandbox. Abstract GUI buttons (Euclidean concepts) are seamlessly grafted into the continuous spatial constraints of the Poincaré disk. Pressing the buttons dynamically actuates Möbius translations and rotations, warping the visual field through hyperbolic perspective compression.
+
+## Running
+
+```bash
+cargo run -p arthropod-poincare
+```
+
+*(Note: Use `cargo run -p arthropod-poincare -- --headless` to safely bypass X11 UI panics in CI environments.)*
