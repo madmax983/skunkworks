@@ -1,6 +1,6 @@
-use chimera_lang::tapestry_compiler::compile;
-use chimera_lang::opcode::OpCode;
 use chimera_lang::ast::Nucleotide;
+use chimera_lang::opcode::OpCode;
+use chimera_lang::tapestry_compiler::compile;
 
 #[test]
 fn test_tapestry_basic_compilation() {

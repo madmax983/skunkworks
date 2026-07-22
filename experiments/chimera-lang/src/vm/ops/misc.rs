@@ -315,7 +315,8 @@ impl crate::vm::ChimeraVM {
                 if let Value::Int(n) = val {
                     self.havoc.rate = (n as f64) / 100.0;
                 } else {
-                    self.output.push("Error: HavocRate requires Int (0-100)".to_string());
+                    self.output
+                        .push("Error: HavocRate requires Int (0-100)".to_string());
                 }
             }
             OpCode::HavocScope => {
@@ -323,7 +324,8 @@ impl crate::vm::ChimeraVM {
                 if let Value::Int(n) = val {
                     self.havoc.scope = n as u8;
                 } else {
-                    self.output.push("Error: HavocScope requires Int".to_string());
+                    self.output
+                        .push("Error: HavocScope requires Int".to_string());
                 }
             }
             _ => {}

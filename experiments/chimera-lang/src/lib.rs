@@ -1371,8 +1371,8 @@ pub mod prologue_compiler;
 /// The `prologue_esolang_compiler` module.
 /// The `prologue_esolang_compiler` module.
 pub mod prologue_esolang_compiler;
-pub mod tapestry_compiler;
 pub mod prolouge_compiler;
+pub mod tapestry_compiler;
 /// The `tui` module.
 /// The `tui` module.
 /// The `tui` module.
