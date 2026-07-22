@@ -1,223 +1,121 @@
-#![allow(
-    clippy::too_many_lines,
-    clippy::future_not_send,
-    clippy::expect_used,
-    clippy::cast_precision_loss,
-    clippy::cast_possible_truncation
-)]
-
 use macroquad::prelude::*;
 use origami::{generate_miura_grid, MiuraParams, Orientation};
-use physics_pbd::PbdSystem;
-use quipu::{Cord, Knot, Quipu};
+use quipu::{Cord, Quipu};
 
-fn window_conf() -> macroquad::conf::Conf {
-    macroquad::conf::Conf {
-        miniquad_conf: miniquad::conf::Conf {
-            window_title: "Quipu Origami".to_owned(),
-            window_width: 800,
-            window_height: 600,
-            ..Default::default()
-        },
+fn window_conf() -> macroquad::window::Conf {
+    macroquad::window::Conf {
+        window_title: "Quipu Origami Morphogenesis".to_owned(),
+        window_width: 800,
+        window_height: 800,
+        high_dpi: true,
         ..Default::default()
     }
 }
 
+// Implement headless bypass
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    if args.iter().any(|arg| arg == "--headless") {
-        println!("🧬 quipu-origami running in headless mode for CI bypass.");
+    if args.contains(&"--headless".to_string()) {
+        println!("Headless mode enabled. Exiting.");
         return;
     }
-    macroquad::Window::from_config(window_conf(), run_macroquad());
+
+    macroquad::Window::from_config(window_conf(), async_main());
 }
 
-async fn run_macroquad() {
-    // 1. Initialize Quipu data
-    let mut quipu = Quipu::new();
-    quipu.add_cord(Cord::from(1048576));
-    quipu.add_cord(Cord::from(8192));
-    quipu.add_cord(Cord::from(256));
-    quipu.add_cord(Cord::from(42));
-    quipu.add_cord(Cord::from(65535));
-    quipu.add_cord(Cord::from(2048));
-    quipu.add_cord(Cord::from(314159));
+async fn async_main() {
+    // Generate some discrete data in a Quipu
+    let mut q = Quipu::new();
 
-    // 2. Initialize Origami Mesh
-    let cols = quipu.cords.len().max(2);
-    let rows = 10;
-    let w = cols + 1;
+    // Add cords with some data
+    q.add_cord(Cord::from(420)); // Extends folding range
+    q.add_cord(Cord::from(77)); // Extends folding range less
+    q.add_cord(Cord::from(108)); // Medium extension
 
-    let params = MiuraParams {
-        a: 1.0,
-        b: 1.0,
-        gamma: 1.2,
-        orientation: Orientation::Horizontal,
-    };
+    // Sum the data to determine base parameters
+    let total_value: u64 = q.cords.iter().map(|c| c.value()).sum();
 
-    let points = generate_miura_grid(params, (cols, rows), 0.5);
-    let mut system = PbdSystem::new();
-    let mut p_indices = Vec::with_capacity(points.len());
+    // Base parameters for the origami mesh
+    let base_a = 0.5 + (total_value as f32 % 100.0) / 200.0; // Varies slightly by sum
+    let base_b = 0.5;
 
-    for pos in &points {
-        let p_idx = system.add_particle(*pos, 1.0);
-        p_indices.push(p_idx);
-
-        let is_corner = p_indices.len() - 1 == 0
-            || p_indices.len() - 1 == cols
-            || p_indices.len() - 1 == rows * w
-            || p_indices.len() - 1 == rows * w + cols;
-
-        if is_corner {
-            let _ = system.add_pin_constraint(p_idx, *pos);
-        }
-    }
-
-    let stiffness = 0.5;
-    for y in 0..=rows {
-        for x in 0..=cols {
-            let idx = y * w + x;
-
-            if x < cols {
-                let r_idx = idx + 1;
-                let _ = system.add_distance_constraint(p_indices[idx], p_indices[r_idx], stiffness);
-            }
-
-            if y < rows {
-                let d_idx = idx + w;
-                let _ = system.add_distance_constraint(p_indices[idx], p_indices[d_idx], stiffness);
-            }
-
-            if x < cols && y < rows {
-                let br_idx = idx + w + 1;
-                let _ = system.add_distance_constraint(
-                    p_indices[idx],
-                    p_indices[br_idx],
-                    stiffness * 0.5,
-                );
-            }
-        }
-    }
-
-    // 3. Map Quipu knots to structural constraints
-    for (i, cord) in quipu.cords.iter().enumerate() {
-        let x = i.min(cols);
-        let cluster_count = cord.clusters.len();
-        if cluster_count == 0 {
-            continue;
-        }
-
-        let row_spacing = rows / cluster_count;
-        for (j, cluster) in cord.clusters.iter().enumerate() {
-            let y = (j * row_spacing).min(rows);
-            let idx = y * w + x;
-
-            for knot in cluster {
-                let weight = match knot {
-                    Knot::Simple => 0.1,
-                    Knot::Long(v) => 0.1 * (*v as f32),
-                    Knot::FigureEight => 0.3,
-                };
-
-                // Add a pinning constraint that pulls the knot down heavily
-                let p = system.particles[p_indices[idx]].pos;
-                let target = p + macroquad::math::vec3(0.0, -weight * 2.0, 0.0);
-                let _ = system.add_pin_constraint(p_indices[idx], target);
-            }
-        }
-    }
-
-    let mut cam = Camera3D {
-        position: vec3(cols as f32 * 0.5, 10.0, 15.0),
-        up: vec3(0.0, 1.0, 0.0),
-        target: vec3(cols as f32 * 0.5, 0.0, 0.0),
-        ..Default::default()
-    };
-
-    let mut time = 0.0f32;
+    let mut time = 0.0;
 
     loop {
-        clear_background(BLACK);
-        time += 0.016;
+        clear_background(Color::new(0.05, 0.05, 0.05, 1.0));
 
-        // Apply a gentle breathing force
-        for i in 0..system.particles.len() {
-            let pulse = (time * 2.0 + (i as f32) * 0.1).sin();
-            system.particles[i].vel.y += pulse * 0.02;
-        }
+        time += get_frame_time();
 
-        system.step(0.016, 10);
+        let center_x = screen_width() / 2.0;
+        let center_y = screen_height() / 2.0;
 
-        set_camera(&cam);
+        // Loop through each cord to render an independent origami patch
+        // The discrete data (knots) determines the folding extension
+        for (i, cord) in q.cords.iter().enumerate() {
+            let val = cord.value() as f32;
 
-        for y in 0..rows {
-            for x in 0..cols {
-                let idx = y * w + x;
-                let r_idx = idx + 1;
-                let d_idx = idx + w;
+            // Map the integer value to a breathing extension factor
+            // A higher value pulses faster and larger
+            let speed = 1.0 + (val % 10.0) / 5.0;
+            let extension_factor = 0.4 + (val % 100.0) / 300.0 + (time * speed).sin() * 0.3;
 
-                let p0 = system.particles[p_indices[idx]].pos;
-                let p1 = system.particles[p_indices[r_idx]].pos;
-                let p2 = system.particles[p_indices[d_idx]].pos;
+            let params = MiuraParams {
+                a: base_a,
+                b: base_b,
+                gamma: 70.0f32.to_radians(),
+                orientation: Orientation::Horizontal,
+            };
 
-                let mq_p0 = vec3(p0.x, p0.y, p0.z);
-                let mq_p1 = vec3(p1.x, p1.y, p1.z);
-                let mq_p2 = vec3(p2.x, p2.y, p2.z);
+            let points = generate_miura_grid(params, (15, 15), extension_factor);
 
-                draw_line_3d(mq_p0, mq_p1, Color::new(0.5, 0.5, 1.0, 0.5));
-                draw_line_3d(mq_p0, mq_p2, Color::new(0.5, 0.5, 1.0, 0.5));
+            // Layout multiple patches in a circle
+            let angle = (i as f32 / q.cords.len() as f32) * std::f32::consts::PI * 2.0;
+            let radius = 200.0;
+            let offset_x = center_x + angle.cos() * radius;
+            let offset_y = center_y + angle.sin() * radius;
+
+            let scale = 100.0;
+
+            for p in points.iter() {
+                let screen_x = offset_x + p.x * scale;
+                let screen_y = offset_y + p.y * scale;
+
+                // Color based on cord index and z-depth
+                let base_color = match i % 3 {
+                    0 => Color::new(0.8, 0.2, 0.2, 1.0),
+                    1 => Color::new(0.2, 0.8, 0.2, 1.0),
+                    _ => Color::new(0.2, 0.2, 0.8, 1.0),
+                };
+
+                // Whiten the mountain folds, darken the valleys
+                let intensity = (p.z + 1.0) / 2.0; // Map roughly -1..1 to 0..1
+                let point_color = Color::new(
+                    base_color.r * intensity,
+                    base_color.g * intensity,
+                    base_color.b * intensity,
+                    1.0,
+                );
+
+                draw_circle(screen_x, screen_y, 2.0, point_color);
             }
+
+            draw_text(
+                &format!("Cord {}: {}", i, val),
+                offset_x - 40.0,
+                offset_y - 120.0,
+                20.0,
+                WHITE,
+            );
         }
-
-        // Visualize Quipu Knots
-        for (i, cord) in quipu.cords.iter().enumerate() {
-            let x = i.min(cols);
-            let cluster_count = cord.clusters.len();
-            if cluster_count == 0 {
-                continue;
-            }
-
-            let row_spacing = rows / cluster_count;
-            for (j, cluster) in cord.clusters.iter().enumerate() {
-                let y = (j * row_spacing).min(rows);
-                let idx = y * w + x;
-                let p = system.particles[p_indices[idx]].pos;
-                let mq_pos = vec3(p.x, p.y + 0.2, p.z);
-
-                for knot in cluster {
-                    let (color, size) = match knot {
-                        Knot::Simple => (RED, 0.1),
-                        Knot::Long(v) => (YELLOW, 0.1 * (*v as f32)),
-                        Knot::FigureEight => (ORANGE, 0.2),
-                    };
-                    draw_sphere(mq_pos, size, None, color);
-                }
-            }
-        }
-
-        set_default_camera();
 
         draw_text(
-            "Quipu Origami: Knotted Morphogenesis",
-            10.0,
+            "Quipu Origami - Knotted Data Morphogenesis",
+            20.0,
             30.0,
-            30.0,
+            20.0,
             WHITE,
         );
-        draw_text(
-            "Knots dynamically constrain and warp the physical soft-body mesh.",
-            10.0,
-            60.0,
-            20.0,
-            GRAY,
-        );
 
-        if is_mouse_button_down(MouseButton::Right) {
-            let delta = mouse_position();
-            cam.position.x += (delta.0 - 400.0) * 0.01;
-            cam.position.y += (delta.1 - 300.0) * 0.01;
-        }
-
-        next_frame().await
+        next_frame().await;
     }
 }
