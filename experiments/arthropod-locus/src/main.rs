@@ -66,20 +66,38 @@ async fn async_main() {
         });
     }
 
-    let btn_torus = Button::new("Torus", 20.0, 20.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
-    let btn_klein = Button::new("Klein", 20.0, 70.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
-    let btn_mobius = Button::new("Mobius", 20.0, 120.0, 100.0, 40.0).with_colors(RED, ORANGE, MAROON);
-    let btn_plane = Button::new("Plane", 20.0, 170.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, BLACK);
+    let btn_torus =
+        Button::new("Torus", 20.0, 20.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
+    let btn_klein =
+        Button::new("Klein", 20.0, 70.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
+    let btn_mobius =
+        Button::new("Mobius", 20.0, 120.0, 100.0, 40.0).with_colors(RED, ORANGE, MAROON);
+    let btn_plane =
+        Button::new("Plane", 20.0, 170.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, BLACK);
 
     loop {
         clear_background(color_u8!(20, 20, 30, 255));
 
-        if btn_torus.draw() { current_topo = Topology::Torus; }
-        if btn_klein.draw() { current_topo = Topology::Klein; }
-        if btn_mobius.draw() { current_topo = Topology::Mobius; }
-        if btn_plane.draw() { current_topo = Topology::Plane; }
+        if btn_torus.draw() {
+            current_topo = Topology::Torus;
+        }
+        if btn_klein.draw() {
+            current_topo = Topology::Klein;
+        }
+        if btn_mobius.draw() {
+            current_topo = Topology::Mobius;
+        }
+        if btn_plane.draw() {
+            current_topo = Topology::Plane;
+        }
 
-        draw_text(&format!("Current Topology: {:?}", current_topo), 20.0, 250.0, 20.0, WHITE);
+        draw_text(
+            &format!("Current Topology: {:?}", current_topo),
+            20.0,
+            250.0,
+            20.0,
+            WHITE,
+        );
 
         for p in &mut particles {
             p.pos += p.vel;
@@ -92,8 +110,12 @@ async fn async_main() {
                 p.pos.x = nx as f64;
             } else {
                 // If it goes out of bounds and doesn't wrap, we bounce it to keep it visible
-                if p.pos.x < 0.0 || p.pos.x > w as f64 { p.vel.x *= -1.0; }
-                if p.pos.y < 0.0 || p.pos.y > h as f64 { p.vel.y *= -1.0; }
+                if p.pos.x < 0.0 || p.pos.x > w as f64 {
+                    p.vel.x *= -1.0;
+                }
+                if p.pos.y < 0.0 || p.pos.y > h as f64 {
+                    p.vel.y *= -1.0;
+                }
 
                 // Clamp
                 p.pos.x = p.pos.x.clamp(0.0, w as f64);

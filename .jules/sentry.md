@@ -9,3 +9,6 @@
 **[Title] Macroquad vs Glam versions**
 **Learning:** You can get compilation errors like `mismatched types` due to `macroquad::math::Vec3` and `physics_pbd::glam::Vec3` if dependencies use different `glam` versions (e.g. 0.27 vs 0.28). In this Sentry mission, we did not touch `magnetic-sediment` or `chaos-pendulum` directly. This compilation error in the main repo prevents us from pushing Sentry's PR successfully if `cargo test` runs everything. We will selectively test our targeted crates.
 **Action:** Selectively run Sentry's `cargo test` and `cargo clippy` commands with `-p <crate_name>` rather than the entire workspace to avoid preexisting regressions.
+**[Quipu Formatting Coverage]**
+**Learning:** Standard library `write!(f, ...)?` macros create implicit early return branches that show up as missing line coverage (e.g., `^0` markers) in `cargo llvm-cov` output. Attempting to test these requires mocking `fmt::Formatter`, which is not natively possible and often considered testing the standard library.
+**Action:** Focus on testing all logical branches (different node types, colors, nested subsidiaries) rather than attempting to achieve 100% line coverage on `fmt::Display` implementations when the remaining lines are purely the error propagation of `write!`.

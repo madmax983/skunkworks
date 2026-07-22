@@ -24,11 +24,10 @@ fn main() {
 async fn async_main() {
     let mut platter = Platter::new(80, 60);
 
-    let btn_heat = Button::new("Heat +", 20.0, 20.0, 100.0, 40.0)
-        .with_colors(RED, ORANGE, YELLOW);
+    let btn_heat = Button::new("Heat +", 20.0, 20.0, 100.0, 40.0).with_colors(RED, ORANGE, YELLOW);
 
-    let btn_clear = Button::new("Clear", 20.0, 70.0, 100.0, 40.0)
-        .with_colors(GRAY, LIGHTGRAY, WHITE);
+    let btn_clear =
+        Button::new("Clear", 20.0, 70.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, WHITE);
 
     loop {
         clear_background(BLACK);

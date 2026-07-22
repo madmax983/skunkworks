@@ -1,6 +1,6 @@
 use arthropod::Button;
 use macroquad::prelude::*;
-use physics_pbd::{PbdSystem, Constraint};
+use physics_pbd::{Constraint, PbdSystem};
 
 fn window_conf() -> Conf {
     Conf {
@@ -48,29 +48,35 @@ async fn async_main() {
 
             // Right
             if x < w - 1 {
-                system.add_distance_constraint(particles[i], particles[i + 1], spacing).unwrap();
+                system
+                    .add_distance_constraint(particles[i], particles[i + 1], spacing)
+                    .unwrap();
             }
             // Down
             if y < h - 1 {
-                system.add_distance_constraint(particles[i], particles[i + w], spacing).unwrap();
+                system
+                    .add_distance_constraint(particles[i], particles[i + w], spacing)
+                    .unwrap();
             }
         }
     }
 
-    let btn_push = Button::new("Push", 20.0, 20.0, 100.0, 40.0)
-        .with_colors(RED, ORANGE, YELLOW);
+    let btn_push = Button::new("Push", 20.0, 20.0, 100.0, 40.0).with_colors(RED, ORANGE, YELLOW);
 
-    let btn_pull = Button::new("Pull", 20.0, 70.0, 100.0, 40.0)
-        .with_colors(BLUE, Color::new(0.5, 0.5, 1.0, 1.0), WHITE);
+    let btn_pull = Button::new("Pull", 20.0, 70.0, 100.0, 40.0).with_colors(
+        BLUE,
+        Color::new(0.5, 0.5, 1.0, 1.0),
+        WHITE,
+    );
 
     loop {
         clear_background(BLACK);
 
         // Add some gravity
         for i in 0..system.particles.len() {
-             if system.particles[i].inv_mass > 0.0 {
-                  system.particles[i].vel += physics_pbd::glam::Vec3::new(0.0, -9.8 * 0.016, 0.0);
-             }
+            if system.particles[i].inv_mass > 0.0 {
+                system.particles[i].vel += physics_pbd::glam::Vec3::new(0.0, -9.8 * 0.016, 0.0);
+            }
         }
 
         system.step(0.016, 5);
@@ -91,15 +97,20 @@ async fn async_main() {
                     draw_line_3d(
                         vec3(p1_pos.x, p1_pos.y, p1_pos.z),
                         vec3(p2_pos.x, p2_pos.y, p2_pos.z),
-                        Color::new(0.5, 0.5, 1.0, 1.0)
+                        Color::new(0.5, 0.5, 1.0, 1.0),
                     );
-                },
+                }
                 _ => {}
             }
         }
 
         for p in &system.particles {
-            draw_sphere(vec3(p.pos.x, p.pos.y, p.pos.z), 0.1, None, Color::new(1.0, 1.0, 1.0, 1.0));
+            draw_sphere(
+                vec3(p.pos.x, p.pos.y, p.pos.z),
+                0.1,
+                None,
+                Color::new(1.0, 1.0, 1.0, 1.0),
+            );
         }
 
         set_default_camera();

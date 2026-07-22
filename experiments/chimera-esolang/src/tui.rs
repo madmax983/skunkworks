@@ -38,24 +38,21 @@ pub fn run_tui(mut vm: ChimeraVM) -> Result<()> {
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, vm: &mut ChimeraVM) -> Result<()>
 where
-    <B as ratatui::backend::Backend>::Error: std::fmt::Debug + std::fmt::Display + Send + Sync + std::error::Error + 'static,
+    <B as ratatui::backend::Backend>::Error:
+        std::fmt::Debug + std::fmt::Display + Send + Sync + std::error::Error + 'static,
 {
     loop {
         terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .margin(1)
-                .constraints(
-                    [
-                        Constraint::Percentage(50),
-                        Constraint::Percentage(50),
-                    ]
-                    .as_ref(),
-                )
+                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
                 .split(f.area());
 
             // Stack view
-            let stack_str = vm.stack.iter()
+            let stack_str = vm
+                .stack
+                .iter()
                 .map(|v| format!("{:?}", v))
                 .collect::<Vec<_>>()
                 .join("\n");

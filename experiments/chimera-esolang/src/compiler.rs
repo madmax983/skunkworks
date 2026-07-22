@@ -46,9 +46,15 @@ pub fn compile(program: &Program) -> Result<Dna> {
                     };
 
                     if opcode == OpCode::Push {
-                        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::String(op.clone())] });
+                        genes.push(Gene {
+                            op: OpCode::Push,
+                            args: vec![Nucleotide::String(op.clone())],
+                        });
                     } else {
-                        genes.push(Gene { op: opcode, args: vec![] });
+                        genes.push(Gene {
+                            op: opcode,
+                            args: vec![],
+                        });
                     }
                 }
                 Instruction::Identifier(id) => genes.push(Gene {
@@ -57,25 +63,34 @@ pub fn compile(program: &Program) -> Result<Dna> {
                 }),
                 Instruction::Call(id) => {
                     // Jump/call logic could go here
-                     genes.push(Gene {
+                    genes.push(Gene {
                         op: OpCode::Push,
                         args: vec![Nucleotide::Identifier(id.clone())],
                     });
-                    genes.push(Gene { op: OpCode::Call, args: vec![] });
+                    genes.push(Gene {
+                        op: OpCode::Call,
+                        args: vec![],
+                    });
                 }
                 Instruction::Spawn(id) => {
                     genes.push(Gene {
                         op: OpCode::Push,
                         args: vec![Nucleotide::Identifier(id.clone())],
                     });
-                    genes.push(Gene { op: OpCode::Spawn, args: vec![] });
+                    genes.push(Gene {
+                        op: OpCode::Spawn,
+                        args: vec![],
+                    });
                 }
                 Instruction::Query(q) => {
-                     genes.push(Gene {
+                    genes.push(Gene {
                         op: OpCode::Push,
                         args: vec![Nucleotide::String(q.clone())],
                     });
-                    genes.push(Gene { op: OpCode::Rule, args: vec![] });
+                    genes.push(Gene {
+                        op: OpCode::Rule,
+                        args: vec![],
+                    });
                 }
             }
         }

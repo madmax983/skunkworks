@@ -150,7 +150,13 @@ impl Button {
         );
 
         // Offset when clicked or hovered
-        let offset_y = if is_down { 4.0 } else if is_hover { -2.0 } else { 0.0 };
+        let offset_y = if is_down {
+            4.0
+        } else if is_hover {
+            -2.0
+        } else {
+            0.0
+        };
 
         // Background
         draw_rectangle(

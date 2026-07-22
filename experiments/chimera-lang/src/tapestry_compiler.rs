@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use pest::Parser;
 
-use crate::ast::{Dna, Gene, Helix, Strand, Nucleotide};
+use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 
 #[allow(missing_docs)]
@@ -12,14 +12,15 @@ pub mod tapestryparser_mod {
     #[grammar = "tapestry_grammar.pest"]
     pub struct TapestryParser;
 }
-pub use tapestryparser_mod::TapestryParser;
 pub use tapestryparser_mod::Rule;
+pub use tapestryparser_mod::TapestryParser;
 
 pub fn compile(source: &str) -> Result<Dna> {
     let mut pairs = TapestryParser::parse(Rule::tapestry, source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;
 
-    let mut strands_map: std::collections::HashMap<usize, Vec<Gene>> = std::collections::HashMap::new();
+    let mut strands_map: std::collections::HashMap<usize, Vec<Gene>> =
+        std::collections::HashMap::new();
 
     for table in program.into_inner() {
         if table.as_rule() == Rule::EOI {
@@ -38,31 +39,36 @@ pub fn compile(source: &str) -> Result<Dna> {
                         continue;
                     }
 
-                    let op = match text {
-                        "+" => OpCode::Add,
-                        "-" => OpCode::Sub,
-                        "*" => OpCode::Mul,
-                        "p" => OpCode::Print,
-                        _ => {
-                            if let Ok(num) = text.parse::<i64>() {
-                                strands_map.entry(col_idx).or_insert_with(Vec::new).push(Gene {
-                                    op: OpCode::Push,
-                                    args: vec![Nucleotide::Number(num)],
-                                });
-                                continue;
-                            } else {
-                                strands_map.entry(col_idx).or_insert_with(Vec::new).push(Gene {
-                                    op: OpCode::Push,
-                                    args: vec![Nucleotide::String(text.to_string())],
-                                });
-                                continue;
+                    let op =
+                        match text {
+                            "+" => OpCode::Add,
+                            "-" => OpCode::Sub,
+                            "*" => OpCode::Mul,
+                            "p" => OpCode::Print,
+                            _ => {
+                                if let Ok(num) = text.parse::<i64>() {
+                                    strands_map.entry(col_idx).or_insert_with(Vec::new).push(
+                                        Gene {
+                                            op: OpCode::Push,
+                                            args: vec![Nucleotide::Number(num)],
+                                        },
+                                    );
+                                    continue;
+                                } else {
+                                    strands_map.entry(col_idx).or_insert_with(Vec::new).push(
+                                        Gene {
+                                            op: OpCode::Push,
+                                            args: vec![Nucleotide::String(text.to_string())],
+                                        },
+                                    );
+                                    continue;
+                                }
                             }
-                        }
-                    };
-                    strands_map.entry(col_idx).or_insert_with(Vec::new).push(Gene {
-                        op,
-                        args: vec![],
-                    });
+                        };
+                    strands_map
+                        .entry(col_idx)
+                        .or_insert_with(Vec::new)
+                        .push(Gene { op, args: vec![] });
                 }
             }
         }

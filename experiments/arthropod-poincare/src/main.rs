@@ -24,14 +24,26 @@ fn main() {
 }
 
 async fn async_main() {
-    let btn_forward = Button::new("Forward", 10.0, 10.0, 120.0, 40.0)
-        .with_colors(Color::new(0.2, 0.4, 0.8, 1.0), Color::new(0.3, 0.5, 0.9, 1.0), Color::new(0.1, 0.3, 0.7, 1.0));
-    let btn_backward = Button::new("Backward", 10.0, 60.0, 120.0, 40.0)
-        .with_colors(Color::new(0.2, 0.4, 0.8, 1.0), Color::new(0.3, 0.5, 0.9, 1.0), Color::new(0.1, 0.3, 0.7, 1.0));
-    let btn_left = Button::new("Rot Left", 10.0, 110.0, 120.0, 40.0)
-        .with_colors(Color::new(0.8, 0.4, 0.2, 1.0), Color::new(0.9, 0.5, 0.3, 1.0), Color::new(0.7, 0.3, 0.1, 1.0));
-    let btn_right = Button::new("Rot Right", 10.0, 160.0, 120.0, 40.0)
-        .with_colors(Color::new(0.8, 0.4, 0.2, 1.0), Color::new(0.9, 0.5, 0.3, 1.0), Color::new(0.7, 0.3, 0.1, 1.0));
+    let btn_forward = Button::new("Forward", 10.0, 10.0, 120.0, 40.0).with_colors(
+        Color::new(0.2, 0.4, 0.8, 1.0),
+        Color::new(0.3, 0.5, 0.9, 1.0),
+        Color::new(0.1, 0.3, 0.7, 1.0),
+    );
+    let btn_backward = Button::new("Backward", 10.0, 60.0, 120.0, 40.0).with_colors(
+        Color::new(0.2, 0.4, 0.8, 1.0),
+        Color::new(0.3, 0.5, 0.9, 1.0),
+        Color::new(0.1, 0.3, 0.7, 1.0),
+    );
+    let btn_left = Button::new("Rot Left", 10.0, 110.0, 120.0, 40.0).with_colors(
+        Color::new(0.8, 0.4, 0.2, 1.0),
+        Color::new(0.9, 0.5, 0.3, 1.0),
+        Color::new(0.7, 0.3, 0.1, 1.0),
+    );
+    let btn_right = Button::new("Rot Right", 10.0, 160.0, 120.0, 40.0).with_colors(
+        Color::new(0.8, 0.4, 0.2, 1.0),
+        Color::new(0.9, 0.5, 0.3, 1.0),
+        Color::new(0.7, 0.3, 0.1, 1.0),
+    );
 
     let mut current_transform = Mobius::identity();
     let mut grid_points: Vec<Point> = Vec::new();
@@ -78,7 +90,12 @@ async fn async_main() {
             let d_from_center = mapped.norm();
             let size = 3.0 * (1.0 - (d_from_center as f32)).max(0.1);
             let color_intensity = (1.0 - (d_from_center as f32)).max(0.2);
-            let color = Color::new(color_intensity, color_intensity * 0.8, color_intensity * 1.5, 1.0);
+            let color = Color::new(
+                color_intensity,
+                color_intensity * 0.8,
+                color_intensity * 1.5,
+                1.0,
+            );
             draw_circle(px, py, size, color);
         }
 

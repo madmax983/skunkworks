@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use arthropod::Button;
+use macroquad::prelude::*;
 use neuro_sim::Izhikevich;
 
 fn window_conf() -> Conf {
