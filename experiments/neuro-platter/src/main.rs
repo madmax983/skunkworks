@@ -187,3 +187,16 @@ fn main() {
         eprintln!("Error: {:?}", err);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_neuro_platter_initialization() {
+        let np = NeuroPlatter::new(10, 10, 5);
+        assert_eq!(np.platter.width(), 10);
+        assert_eq!(np.platter.height(), 10);
+        assert_eq!(np.positions.len(), 5);
+    }
+}
