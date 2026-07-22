@@ -328,16 +328,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "arthropod-locus"
-version = "0.1.0"
-dependencies = [
- "arthropod",
- "locus",
- "macroquad",
- "rand 0.8.7",
-]
-
-[[package]]
 name = "arthropod-market"
 version = "0.1.0"
 dependencies = [
