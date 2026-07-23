@@ -4308,3 +4308,97 @@ classDiagram
     SpectralScribeFacade ..> SpectralScribeInternal : encapsulates
     QuipuSerializerFacade ..> QuipuSerializerInternal : encapsulates
 ```
+
+## Encapsulate chimera-lang TUI, VM ops, VM systems, and Prologue submodules via Facade (ADR 162)
+
+Enforcing the Facade pattern within the nested modules of `chimera-lang` ensures internal structures remain hidden from the root API.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class ChimeraLangFacade {
+            <<Facade>>
+            +RealityMode
+            +AstralState
+            +GrammarRule
+            +LogosEngine
+            +SirenState
+        }
+    }
+
+    namespace InternalModules {
+        class ChimeraLangInternal {
+            <<Private Modules>>
+            mod tui
+            mod vm
+        }
+    }
+
+    ChimeraLangFacade ..> ChimeraLangInternal : encapsulates
+```
+
+## Encapsulate verge-computer, chaos-hologram, and hologram-text submodules via Facade (ADR 163)
+
+Enforcing the Facade pattern in these experimental crates prevents the leakage of their internal module structures.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class VergeComputerFacade {
+            <<Facade>>
+        }
+        class ChaosHologramFacade {
+            <<Facade>>
+        }
+        class HologramTextFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class VergeComputerInternal {
+            <<Private Modules>>
+        }
+        class ChaosHologramInternal {
+            <<Private Modules>>
+        }
+        class HologramTextInternal {
+            <<Private Modules>>
+        }
+    }
+
+    VergeComputerFacade ..> VergeComputerInternal : encapsulates
+    ChaosHologramFacade ..> ChaosHologramInternal : encapsulates
+    HologramTextFacade ..> HologramTextInternal : encapsulates
+```
+
+## Enforce Module Boundaries via Facade in arthropod, chimera-lang, and turbulent-rhythms (ADR 164)
+
+Enforcing the Facade pattern prevents leakage of internal module structures in `arthropod` and `turbulent-rhythms`, while maintaining the `compiler` structure in `chimera-lang`.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class ArthropodFacade {
+            <<Facade>>
+        }
+        class TurbulentRhythmsFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class ArthropodInternal {
+            <<Private Modules>>
+        }
+        class TurbulentRhythmsInternal {
+            <<Private Modules>>
+        }
+    }
+
+    ArthropodFacade ..> ArthropodInternal : encapsulates
+    TurbulentRhythmsFacade ..> TurbulentRhythmsInternal : encapsulates
+```
