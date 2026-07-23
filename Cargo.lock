@@ -376,6 +376,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-quipu"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "macroquad",
+ "quipu",
+]
+
+[[package]]
 name = "arthropod-resonance"
 version = "0.1.0"
 dependencies = [
