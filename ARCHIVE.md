@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-esolang**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Execution / Terminal Genericism. Grace period: 24h.
+- **quipu-lattice**: Specimen condemned. Diagnosis: Ecosystem Maladaptation (headless bypass failure) / Terminal Genericism. Grace period: 24h.
 ## ☠️ Executed
+- **chimera-esolang**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Execution / Terminal Genericism. Failed to evolve genuine biological computation during grace period. Biomass returned to the void.
 - **arthropod-locus**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to evolve genuine emergence or document its purpose during grace period. Biomass returned to the void.
 - **quipu-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Failed to evolve genuine bidirectional constraints or 3D structural realization during grace period. Biomass returned to the void.
 - **chimera-chaos**: Specimen executed. Diagnosis: Ecosystem Maladaptation (headless bypass failure in `main.rs`). Failed to adapt and implement headless execution logic during grace period. Moved to graveyard.

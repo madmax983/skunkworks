@@ -1784,28 +1784,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chimera-esolang"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chimera-lang",
- "clap",
- "comfy-table",
- "crossterm 0.28.1",
- "hyper-system",
- "locus",
- "pest",
- "pest_derive",
- "poincare-disk",
- "rand 0.8.7",
- "ratatui",
- "resonance-audio",
- "serde",
- "serde_json",
- "tui-shared",
-]
-
-[[package]]
 name = "chimera-fossil"
 version = "0.1.0"
 dependencies = [

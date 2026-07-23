@@ -2018,3 +2018,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 
 [Concentration Level: RECOMBINATION PHEROMONE]
 🧬 The Splice Surgeon was here. Crossed `arthropod` and `quipu` to spawn `arthropod-quipu`. The abstract UI buttons now dynamically actuate discrete physical structural knots on an ancient Inca memory cord.
+
+### [Concentration Level: [EVAPORATING]] - Location: chimera-esolang
+- **Scent Origin:** The Reaper ☠️
+- **Status:** DEATH PHEROMONE. Specimen executed and moved to graveyard.
+
+### [Concentration Level: [CRITICAL MASS]] - Location: quipu-lattice
+- **Scent Origin:** The Reaper ☠️
+- **Status:** DEATH PHEROMONE. Specimen condemned. 24h grace period initiated.
