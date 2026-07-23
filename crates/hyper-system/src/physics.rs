@@ -789,3 +789,47 @@ mod tests {
         assert_eq!(result, Err("Particle index out of bounds"));
     }
 }
+
+#[cfg(test)]
+mod tests_sentry_coverage {
+    use super::*;
+
+    #[test]
+    fn test_step_non_finite_new_pos() {
+        let mut system = PbdSystem4D::new();
+        let p = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        // Give particle infinite velocity
+        system.particles[p].vel = Vec4::new(f32::INFINITY, 0.0, 0.0, 0.0);
+
+        system.step(0.1, 1, 1.0);
+
+        // new_pos should be non-finite, so vel should be reset to zero
+        assert_eq!(system.particles[p].vel, Vec4::zero());
+        // position should not have changed
+        assert_eq!(system.particles[p].pos, Vec4::zero());
+    }
+
+    #[test]
+    fn test_step_nan_friction() {
+        let mut system = PbdSystem4D::new();
+        let p = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        system.particles[p].vel = Vec4::new(1.0, 0.0, 0.0, 0.0);
+
+        // Should return early
+        system.step(0.1, 1, f32::NAN);
+
+        // velocity should not have changed (no friction applied, no integration)
+        assert_eq!(system.particles[p].vel, Vec4::new(1.0, 0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    #[should_panic(expected = "NaN detected in constraint parameters")]
+    fn test_solve_distance_nan_parameters() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        let p2 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+
+        // Pass NaN target_len directly to the internal solver
+        PbdSystem4D::solve_distance(&mut system.particles, p1, p2, f32::NAN, 1.0);
+    }
+}
