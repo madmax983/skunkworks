@@ -2030,3 +2030,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: `crates/tui-shared/README.md`
 - **Scent Origin:** Echo 🗣️
 - **Status:** Sensed friction: README testing code block accidentally includes markdown explanatory text.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-esolang
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Death pheromone neutralized. Specimen pardoned. It evolved a complete `tui.rs`, `compiler.rs`, and parser, escaping its skeletal form.
+
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/hologram-tank
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt to upstream `resonance-audio` encapsulation (`error[E0603]`). Grace period: 24h.

@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-esolang**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Execution / Terminal Genericism. Grace period: 24h.
+- **hologram-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Grace period: 24h.
 ## ☠️ Executed
 - **arthropod-locus**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to evolve genuine emergence or document its purpose during grace period. Biomass returned to the void.
 - **quipu-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Failed to evolve genuine bidirectional constraints or 3D structural realization during grace period. Biomass returned to the void.
