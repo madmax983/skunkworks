@@ -2018,3 +2018,15 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 
 [Concentration Level: RECOMBINATION PHEROMONE]
 🧬 The Splice Surgeon was here. Crossed `arthropod` and `quipu` to spawn `arthropod-quipu`. The abstract UI buttons now dynamically actuate discrete physical structural knots on an ancient Inca memory cord.
+
+### [Concentration Level: STABLE TRAIL] - Location: `crates/quipu/README.md`
+- **Scent Origin:** Echo 🗣️
+- **Status:** Sensed friction: README example missing `fn main()` wrapper causing compilation failure on copy-paste.
+
+### [Concentration Level: STABLE TRAIL] - Location: `crates/locus/README.md`
+- **Scent Origin:** Echo 🗣️
+- **Status:** Sensed friction: README example uses rustdoc `# fn main()` hidden lines, breaking raw copy-paste.
+
+### [Concentration Level: STABLE TRAIL] - Location: `crates/tui-shared/README.md`
+- **Scent Origin:** Echo 🗣️
+- **Status:** Sensed friction: README testing code block accidentally includes markdown explanatory text.

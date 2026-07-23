@@ -1377,3 +1377,84 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `Usage` code snippet from `gray-scott`. The compiler threw an error about `let` cannot be used for global variables."
 *   🕵️ **The Reality:** "Turns out the example code is just floating code and not wrapped in a `fn main() { ... }` block."
 *   💡 **The Fix:** "Update the Usage example block to include the `fn main() {` wrapper around the code."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/quipu/README.md`
+**Date:** 2026-07-23
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the 'Accounting for the Harvest' example from `quipu`."
+**Action:** Copy-pasted the example code block directly into my `main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing main function:** The compiler threw `error: expected item, found keyword 'let'` complaining about global variables.
+    - *Impact:* The copy-pasted example fails to compile out-of-the-box.
+    - *Cause:* The code block is missing the `fn main() { ... }` wrapper.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Example in quipu README is broken (missing main function)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `quipu` harvest example. The compiler told me `let` cannot be used for global variables."
+*   🕵️ **The Reality:** "Turns out the example code is just floating code and not wrapped in a `fn main() { ... }` block."
+*   💡 **The Fix:** "Update the example block to include the `# fn main() {` and `# }` or explicit `fn main()` wrapper around the code."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/locus/README.md`
+**Date:** 2026-07-23
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the 'Moving on a Torus' example from `locus`."
+**Action:** Copy-pasted the example code block directly into my `main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Invalid Rust syntax `# fn main() {`:** The compiler threw `error: expected one of '!' or '[', found keyword 'fn'`.
+    - *Impact:* The copy-pasted example fails to compile.
+    - *Cause:* The README uses rustdoc's hidden line syntax (`# fn main() {`) which is useful for `cargo test` but completely breaks when a user copy-pastes the visible or raw text verbatim.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Example in locus README is broken (invalid syntax)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `locus` torus example. The compiler complained about an expected `!` or `[`."
+*   🕵️ **The Reality:** "Turns out the code uses `# fn main() {` to hide lines in rustdoc, but if I copy the raw text from GitHub it includes the `# ` which is invalid Rust syntax."
+*   💡 **The Fix:** "Remove the `# ` from the example block and show the actual `fn main() { ... }`."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/tui-shared/README.md`
+**Date:** 2026-07-23
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the 'Testing' example from `tui-shared`."
+**Action:** Copy-pasted the example code block directly into my `main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Grave accent syntax error:** The compiler complained about `error: unknown start of token: '` around `Tui::init`.
+    - *Impact:* The copy-pasted example fails to compile.
+    - *Cause:* The `Testing` example block starts with some markdown text `Because \`Tui::init\` modifies...` instead of just Rust code, but it's wrapped inside the ````rust ... ```` block.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Testing example in tui-shared README contains markdown text
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `tui-shared` testing example. The compiler got angry about grave accents \`."
+*   🕵️ **The Reality:** "Turns out the ````rust` block includes the markdown explanation text `Because \`Tui::init\` modifies...` which is obviously not valid Rust."
+*   💡 **The Fix:** "Move the explanatory markdown text outside of the ````rust` code block."
