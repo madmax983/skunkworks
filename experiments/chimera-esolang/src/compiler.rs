@@ -35,6 +35,8 @@ pub fn compile(program: &Program) -> Result<Dna> {
                         "dup" => OpCode::Dup,
                         "drop" => OpCode::Drop,
                         "swap" => OpCode::Swap,
+                        "mutate" => OpCode::PhaseMutate,
+                        "crossover" => OpCode::EvoBreed,
                         _ => {
                             if let Ok(chimera_op) = OpCode::from_str(op) {
                                 chimera_op
