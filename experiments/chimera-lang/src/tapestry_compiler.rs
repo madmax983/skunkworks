@@ -47,7 +47,7 @@ pub fn compile(source: &str) -> Result<Dna> {
                             "p" => OpCode::Print,
                             _ => {
                                 if let Ok(num) = text.parse::<i64>() {
-                                    strands_map.entry(col_idx).or_insert_with(Vec::new).push(
+                                    strands_map.entry(col_idx).or_default().push(
                                         Gene {
                                             op: OpCode::Push,
                                             args: vec![Nucleotide::Number(num)],
@@ -55,7 +55,7 @@ pub fn compile(source: &str) -> Result<Dna> {
                                     );
                                     continue;
                                 } else {
-                                    strands_map.entry(col_idx).or_insert_with(Vec::new).push(
+                                    strands_map.entry(col_idx).or_default().push(
                                         Gene {
                                             op: OpCode::Push,
                                             args: vec![Nucleotide::String(text.to_string())],
@@ -67,7 +67,7 @@ pub fn compile(source: &str) -> Result<Dna> {
                         };
                     strands_map
                         .entry(col_idx)
-                        .or_insert_with(Vec::new)
+                        .or_default()
                         .push(Gene { op, args: vec![] });
                 }
             }
