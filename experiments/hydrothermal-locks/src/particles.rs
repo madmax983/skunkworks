@@ -13,6 +13,12 @@ pub struct ParticleSystem {
     pub particles: Vec<Particle>,
 }
 
+impl Default for ParticleSystem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ParticleSystem {
     pub fn new() -> Self {
         Self {

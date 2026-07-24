@@ -5,8 +5,8 @@
 //! This hybrid visualizer explores what happens when we cross the immediate-mode UI library of `arthropod` with the ancient knotted cord storage system of `quipu`.
 
 use arthropod::Button;
-use quipu::{Cord, Quipu, Knot};
 use macroquad::prelude::*;
+use quipu::{Cord, Knot, Quipu};
 
 fn window_conf() -> Conf {
     Conf {
@@ -33,10 +33,14 @@ async fn async_main() {
     // Add a single cord to start visualizing
     quipu.add_cord(Cord::from(0u64));
 
-    let btn_add_1 = Button::new("Add 1", 20.0, 20.0, 100.0, 40.0).with_colors(RED, ORANGE, DARKGRAY);
-    let btn_add_10 = Button::new("Add 10", 20.0, 70.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
-    let btn_add_100 = Button::new("Add 100", 20.0, 120.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
-    let btn_clear = Button::new("Clear", 20.0, 170.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, BLACK);
+    let btn_add_1 =
+        Button::new("Add 1", 20.0, 20.0, 100.0, 40.0).with_colors(RED, ORANGE, DARKGRAY);
+    let btn_add_10 =
+        Button::new("Add 10", 20.0, 70.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
+    let btn_add_100 =
+        Button::new("Add 100", 20.0, 120.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
+    let btn_clear =
+        Button::new("Clear", 20.0, 170.0, 100.0, 40.0).with_colors(GRAY, LIGHTGRAY, BLACK);
 
     loop {
         clear_background(color_u8!(30, 25, 20, 255)); // dark brown background
@@ -90,22 +94,56 @@ async fn async_main() {
                         draw_circle(cord_x, y_offset, 10.0, BEIGE);
                         draw_circle_lines(cord_x, y_offset, 10.0, 2.0, BLACK);
                         y_offset += 25.0;
-                    },
+                    }
                     Knot::Long(n) => {
-                        draw_rectangle(cord_x - 15.0, y_offset - 10.0, 30.0, 20.0 + (*n as f32 * 5.0), BEIGE);
-                        draw_rectangle_lines(cord_x - 15.0, y_offset - 10.0, 30.0, 20.0 + (*n as f32 * 5.0), 2.0, BLACK);
+                        draw_rectangle(
+                            cord_x - 15.0,
+                            y_offset - 10.0,
+                            30.0,
+                            20.0 + (*n as f32 * 5.0),
+                            BEIGE,
+                        );
+                        draw_rectangle_lines(
+                            cord_x - 15.0,
+                            y_offset - 10.0,
+                            30.0,
+                            20.0 + (*n as f32 * 5.0),
+                            2.0,
+                            BLACK,
+                        );
                         // Draw individual turns
                         for i in 0..*n {
-                            draw_line(cord_x - 15.0, y_offset + (i as f32 * 5.0), cord_x + 15.0, y_offset + (i as f32 * 5.0), 2.0, BLACK);
+                            draw_line(
+                                cord_x - 15.0,
+                                y_offset + (i as f32 * 5.0),
+                                cord_x + 15.0,
+                                y_offset + (i as f32 * 5.0),
+                                2.0,
+                                BLACK,
+                            );
                         }
                         y_offset += 30.0 + (*n as f32 * 5.0);
-                    },
+                    }
                     Knot::FigureEight => {
                         draw_circle(cord_x, y_offset, 12.0, GOLD);
                         draw_circle_lines(cord_x, y_offset, 12.0, 2.0, BLACK);
                         // inner symbol
-                        draw_line(cord_x - 5.0, y_offset - 5.0, cord_x + 5.0, y_offset + 5.0, 2.0, BLACK);
-                        draw_line(cord_x + 5.0, y_offset - 5.0, cord_x - 5.0, y_offset + 5.0, 2.0, BLACK);
+                        draw_line(
+                            cord_x - 5.0,
+                            y_offset - 5.0,
+                            cord_x + 5.0,
+                            y_offset + 5.0,
+                            2.0,
+                            BLACK,
+                        );
+                        draw_line(
+                            cord_x + 5.0,
+                            y_offset - 5.0,
+                            cord_x - 5.0,
+                            y_offset + 5.0,
+                            2.0,
+                            BLACK,
+                        );
                         y_offset += 30.0;
                     }
                 }
@@ -113,7 +151,13 @@ async fn async_main() {
             y_offset += 40.0; // Space between clusters
         }
 
-        draw_text(&format!("Cord Value: {}", cord.value()), 20.0, 250.0, 30.0, WHITE);
+        draw_text(
+            &format!("Cord Value: {}", cord.value()),
+            20.0,
+            250.0,
+            30.0,
+            WHITE,
+        );
 
         next_frame().await;
     }

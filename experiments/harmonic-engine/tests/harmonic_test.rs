@@ -1,4 +1,4 @@
-use harmonic_engine::physics::PhysicsWorld;
+use harmonic_engine::PhysicsWorld;
 use nalgebra::Vector2;
 
 #[test]

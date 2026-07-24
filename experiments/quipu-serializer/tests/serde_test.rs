@@ -1,5 +1,5 @@
 use quipu::Color;
-use quipu_serializer::ser::to_quipu;
+use quipu_serializer::to_quipu;
 use serde::Serialize;
 
 #[derive(Serialize)]

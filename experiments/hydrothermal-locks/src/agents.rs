@@ -27,6 +27,12 @@ pub struct Locks {
     pub locks: Vec<Lock>,
 }
 
+impl Default for Locks {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Locks {
     pub fn new() -> Self {
         Self {

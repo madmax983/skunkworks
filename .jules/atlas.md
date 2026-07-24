@@ -51,3 +51,6 @@
 **[Title] Enforce Module Boundaries in Graveyard Crates**
 **Tangle:** The `graveyard/` crates (`git_galaxy`, `git_rhythm`, `thread-symphony`) and experimental crates like `chimera-lang` were leaking internal submodules via `pub mod`. The previous attempt to automate facade generation broke compilation by ignoring `#[cfg(feature = "...")]` conditionals on module exports.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` and explicitly added `pub use module::*;` while preserving all `#[cfg(feature = "...")]` flags above both the module declarations and their respective facade re-exports, safely hiding internal implementations without breaking conditional compilation.
+**[Title] Enforce Module Boundaries via Facade in Various Experiments**
+**Tangle:** Several experimental crates (`harmonic-engine`, `crystal-fs`, `hydrothermal-locks`, `spectral-scribe`, `quipu-serializer`, `chimera-esolang`, `lensing-poetry`) leaked their internal submodules directly via `pub mod`, breaking the Facade pattern and exposing implementation details.
+**Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` in library `lib.rs` files, and updated internal usages in `main.rs` binaries. This enforces strict structural boundaries while preserving the external API, ensuring high cohesion and low coupling.

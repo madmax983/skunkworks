@@ -1,8 +1,8 @@
-use hydrothermal_locks::agents::{AgentState, Locks};
-use hydrothermal_locks::biology::Worms;
-use hydrothermal_locks::fluid::FluidSim;
-use hydrothermal_locks::grid::{CellType, Grid};
-use hydrothermal_locks::particles::ParticleSystem;
+use hydrothermal_locks::FluidSim;
+use hydrothermal_locks::ParticleSystem;
+use hydrothermal_locks::Worms;
+use hydrothermal_locks::{AgentState, Locks};
+use hydrothermal_locks::{CellType, Grid};
 use macroquad::prelude::*;
 
 const GRID_WIDTH: usize = 120;

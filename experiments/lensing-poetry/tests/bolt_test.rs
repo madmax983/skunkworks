@@ -1,4 +1,4 @@
-use lensing_poetry::physics::{integrate, Body};
+use lensing_poetry::{integrate, Body};
 use macroquad::prelude::*;
 
 #[test]

@@ -1,5 +1,5 @@
 use crossterm::event::{self, Event, KeyCode};
-use harmonic_engine::{audio::MusicBox, physics::PhysicsWorld};
+use harmonic_engine::{MusicBox, PhysicsWorld};
 use nalgebra::Vector2;
 use ratatui::{prelude::*, widgets::*};
 use std::{error::Error, time::Duration};
@@ -72,7 +72,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     // Draw integrators
                     for integrator in &world.integrators {
                         if let Some(disk) = world.rigid_body_set.get(integrator.disk_handle) {
-                            let pos = disk.translation();
+                            let pos = *disk.translation();
                             ctx.draw(&ratatui::widgets::canvas::Circle {
                                 x: pos.x as f64,
                                 y: pos.y as f64,
@@ -81,7 +81,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                             });
                         }
                         if let Some(ball) = world.rigid_body_set.get(integrator.ball_handle) {
-                            let pos = ball.translation();
+                            let pos = *ball.translation();
                             ctx.draw(&ratatui::widgets::canvas::Circle {
                                 x: pos.x as f64,
                                 y: pos.y as f64,
@@ -90,7 +90,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                             });
                         }
                         if let Some(cyl) = world.rigid_body_set.get(integrator.output_handle) {
-                            let pos = cyl.translation();
+                            let pos = *cyl.translation();
                             let rot = cyl.rotation().angle();
                             // Draw Output Cylinder as a rotating line/bar
                             ctx.draw(&ratatui::widgets::canvas::Line {
