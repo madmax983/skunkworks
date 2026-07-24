@@ -8,8 +8,6 @@ use winit::{
     window::{Window, WindowBuilder},
 };
 
-use crystal_fs::scanner;
-
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 struct Vertex {
@@ -118,7 +116,7 @@ impl State {
         surface.configure(&device, &config);
 
         let path = std::env::current_dir().unwrap();
-        let points = scanner::scan(&path);
+        let points = crystal_fs::scan(&path);
         let vertices: Vec<Vertex> = points
             .iter()
             .map(|p| Vertex {

@@ -15,6 +15,12 @@ pub struct Worms {
     pub worms: Vec<Worm>,
 }
 
+impl Default for Worms {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Worms {
     pub fn new() -> Self {
         Self { worms: Vec::new() }

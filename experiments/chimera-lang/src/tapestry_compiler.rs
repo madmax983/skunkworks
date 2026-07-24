@@ -39,32 +39,27 @@ pub fn compile(source: &str) -> Result<Dna> {
                         continue;
                     }
 
-                    let op =
-                        match text {
-                            "+" => OpCode::Add,
-                            "-" => OpCode::Sub,
-                            "*" => OpCode::Mul,
-                            "p" => OpCode::Print,
-                            _ => {
-                                if let Ok(num) = text.parse::<i64>() {
-                                    strands_map.entry(col_idx).or_default().push(
-                                        Gene {
-                                            op: OpCode::Push,
-                                            args: vec![Nucleotide::Number(num)],
-                                        },
-                                    );
-                                    continue;
-                                } else {
-                                    strands_map.entry(col_idx).or_default().push(
-                                        Gene {
-                                            op: OpCode::Push,
-                                            args: vec![Nucleotide::String(text.to_string())],
-                                        },
-                                    );
-                                    continue;
-                                }
+                    let op = match text {
+                        "+" => OpCode::Add,
+                        "-" => OpCode::Sub,
+                        "*" => OpCode::Mul,
+                        "p" => OpCode::Print,
+                        _ => {
+                            if let Ok(num) = text.parse::<i64>() {
+                                strands_map.entry(col_idx).or_default().push(Gene {
+                                    op: OpCode::Push,
+                                    args: vec![Nucleotide::Number(num)],
+                                });
+                                continue;
+                            } else {
+                                strands_map.entry(col_idx).or_default().push(Gene {
+                                    op: OpCode::Push,
+                                    args: vec![Nucleotide::String(text.to_string())],
+                                });
+                                continue;
                             }
-                        };
+                        }
+                    };
                     strands_map
                         .entry(col_idx)
                         .or_default()

@@ -1,5 +1,5 @@
 use anyhow::Result;
-use chimera_esolang::compiler::compile;
+use chimera_esolang::compile;
 use chimera_esolang::parse;
 use chimera_lang::vm::ChimeraVM;
 use std::fs;

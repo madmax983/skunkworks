@@ -1,11 +1,11 @@
 use anyhow::{anyhow, Result};
 use pest::Parser;
 
-pub mod ast;
-pub mod compiler;
-pub mod parser;
+pub(crate) mod ast;
+pub(crate) mod compiler;
+pub(crate) mod parser;
 
-use ast::ast::*;
+use crate::ast::ast::*;
 use parser::{EsolangParser, Rule};
 
 pub fn parse(source: &str) -> Result<Program> {
@@ -73,6 +73,6 @@ fn parse_instruction(pair: pest::iterators::Pair<'_, Rule>) -> Result<Instructio
 }
 
 // Facade API
-pub use ast::*;
 pub use compiler::*;
+pub use ast::ast::*;
 pub use parser::*;

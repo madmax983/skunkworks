@@ -1,4 +1,4 @@
-pub mod physics;
+pub(crate) mod physics;
 pub(crate) mod shader;
 pub(crate) mod text_gen;
 
