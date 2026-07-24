@@ -4402,3 +4402,46 @@ classDiagram
     ArthropodFacade ..> ArthropodInternal : encapsulates
     TurbulentRhythmsFacade ..> TurbulentRhythmsInternal : encapsulates
 ```
+
+## Encapsulate harmonic-engine, crystal-fs, chimera-esolang, and lensing-poetry submodules via Facade (ADR 165)
+
+Enforcing the Facade pattern in these experimental crates prevents the leakage of their internal module structures.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class HarmonicEngineFacade {
+            <<Facade>>
+        }
+        class CrystalFsFacade {
+            <<Facade>>
+        }
+        class ChimeraEsolangFacade {
+            <<Facade>>
+        }
+        class LensingPoetryFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class HarmonicEngineInternal {
+            <<Private Modules>>
+        }
+        class CrystalFsInternal {
+            <<Private Modules>>
+        }
+        class ChimeraEsolangInternal {
+            <<Private Modules>>
+        }
+        class LensingPoetryInternal {
+            <<Private Modules>>
+        }
+    }
+
+    HarmonicEngineFacade ..> HarmonicEngineInternal : encapsulates
+    CrystalFsFacade ..> CrystalFsInternal : encapsulates
+    ChimeraEsolangFacade ..> ChimeraEsolangInternal : encapsulates
+    LensingPoetryFacade ..> LensingPoetryInternal : encapsulates
+```
