@@ -1,3 +1,9 @@
+### [Concentration Level: DEATH PHEROMONE] - Location: experiments/klein-files
+**Reaper ☠️**: "Fascinating. Specimen `klein-files` exhibits terminal characteristics indicating Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11/Wayland panic in CI. Execution scheduled in 24h."
+
+### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/hologram-tank
+**Reaper ☠️**: "Specimen `hologram-tank` executed. Failed to adapt and implement API changes during grace period. Biomass returned to the void."
+
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/git-physics
 ### [Concentration Level: DEATH PHEROMONE] - Location: graveyard/neuro-terminal
 **Reaper ☠️**: "Specimen `neuro-terminal` executed. Terminal compilation failures and code decay remained unresolved. Biomass returned to the void."
