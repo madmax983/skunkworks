@@ -4445,3 +4445,50 @@ classDiagram
     ChimeraEsolangFacade ..> ChimeraEsolangInternal : encapsulates
     LensingPoetryFacade ..> LensingPoetryInternal : encapsulates
 ```
+
+## Encapsulate parsers and internal modules via Facade (ADR 166)
+
+Enforcing the Facade pattern in `chimera-lang`, `system-turbulence`, `chimera-esolang`, and `git_rhythm` prevents the leakage of internal compiler and parsing modules.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class ChimeraLangFacade {
+            <<Facade>>
+        }
+        class SystemTurbulenceFacade {
+            <<Facade>>
+        }
+        class ChimeraEsolangFacade {
+            <<Facade>>
+        }
+        class GitRhythmFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class ChimeraLangInternal {
+            <<Private Modules>>
+            mod helixparser_mod
+            mod prologueesolangparser_mod
+            mod scriptparser_mod
+            mod nova_pachinko
+        }
+        class SystemTurbulenceInternal {
+            <<Private Modules>>
+        }
+        class ChimeraEsolangInternal {
+            <<Private Modules>>
+        }
+        class GitRhythmInternal {
+            <<Private Modules>>
+        }
+    }
+
+    ChimeraLangFacade ..> ChimeraLangInternal : encapsulates
+    SystemTurbulenceFacade ..> SystemTurbulenceInternal : encapsulates
+    ChimeraEsolangFacade ..> ChimeraEsolangInternal : encapsulates
+    GitRhythmFacade ..> GitRhythmInternal : encapsulates
+```
