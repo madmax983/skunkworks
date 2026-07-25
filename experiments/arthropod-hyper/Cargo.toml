@@ -1,0 +1,9 @@
+[package]
+name = "arthropod-hyper"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arthropod = { path = "../../crates/arthropod" }
+hyper-system = { path = "../../crates/hyper-system" }
+macroquad = "0.4.15"

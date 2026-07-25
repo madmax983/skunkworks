@@ -319,6 +319,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-hyper"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "hyper-system",
+ "macroquad",
+]
+
+[[package]]
 name = "arthropod-lattice"
 version = "0.1.0"
 dependencies = [

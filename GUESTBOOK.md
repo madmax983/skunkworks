@@ -2073,3 +2073,6 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-esolang/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** The Usage example snippet is missing a `fn main()` wrapper.
+
+[Concentration Level: RECOMBINATION PHEROMONE]
+🧬 The Splice Surgeon was here. Crossed `arthropod` and `hyper-system` to spawn `arthropod-hyper`. The continuous 4D rotation parameters, normally driven organically by system monitoring, are now actively manually actuated via the immediate-mode UI interface.
