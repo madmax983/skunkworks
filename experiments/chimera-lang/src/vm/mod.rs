@@ -37095,6 +37095,6 @@ mod prologue_symbiosis_test;
 #[cfg(test)]
 mod prologue_altar_test;
 
-pub mod nova_pachinko;
+pub(crate) mod nova_pachinko;
 #[cfg(test)]
 mod warden_overflow_test;

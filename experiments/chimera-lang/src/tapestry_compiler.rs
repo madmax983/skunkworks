@@ -5,7 +5,7 @@ use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 
 #[allow(missing_docs)]
-pub mod tapestryparser_mod {
+pub(crate) mod tapestryparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
     #[allow(missing_docs)]

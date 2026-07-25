@@ -5,7 +5,7 @@ use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use std::str::FromStr;
 
-pub mod prolougeparser_mod {
+pub(crate) mod prolougeparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
     #[grammar = "prolouge_grammar.pest"]

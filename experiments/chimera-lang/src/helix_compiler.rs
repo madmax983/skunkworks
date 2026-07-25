@@ -5,7 +5,7 @@ use crate::ast::{Dna, Gene, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use std::str::FromStr;
 
-pub mod helixparser_mod {
+pub(crate) mod helixparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
     #[grammar = "helix_grammar.pest"]

@@ -15,7 +15,7 @@ use crate::opcode::OpCode;
 /// Handles the syntax mapping for multiple esoteric blocks (like Forth, Orca, Lisp)
 /// into the unified AST based on rules within `prologue_esolang_grammar.pest`.
 #[allow(missing_docs)]
-pub mod prologueesolangparser_mod {
+pub(crate) mod prologueesolangparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
     #[allow(missing_docs)]
