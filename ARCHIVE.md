@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **klein-files**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Missing headless bypass causes fatal X11/Wayland panic in CI. Grace period: 24h.
+- **git-strings**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Grace period: 24h.
 ## ☠️ Executed
+- **klein-files**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Failed to implement headless bypass during grace period. Biomass returned to the void. Moved to graveyard.
 - **hologram-tank**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt and implement API changes during grace period. Moved to graveyard.
 - **arthropod-locus**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to evolve genuine emergence or document its purpose during grace period. Biomass returned to the void.
 - **quipu-origami**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Failed to evolve genuine bidirectional constraints or 3D structural realization during grace period. Biomass returned to the void.

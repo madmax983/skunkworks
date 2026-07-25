@@ -5128,22 +5128,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2db585e1d738fc771bf08a151420d3ed193d9d895a36df7f6f8a9456b911ddc"
 
 [[package]]
-name = "klein-files"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bytemuck",
- "cgmath",
- "env_logger",
- "log",
- "pollster",
- "rand 0.8.7",
- "walkdir",
- "wgpu",
- "winit",
-]
-
-[[package]]
 name = "klein-flock"
 version = "0.1.0"
 dependencies = [
