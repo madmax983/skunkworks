@@ -83,7 +83,7 @@
 /// via the `grammar.pest` file, mapping the physical layout of instructions
 /// into their structured counterparts.
 #[allow(missing_docs)]
-pub mod chimeraparser_mod {
+pub(crate) mod chimeraparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
     #[allow(missing_docs)]

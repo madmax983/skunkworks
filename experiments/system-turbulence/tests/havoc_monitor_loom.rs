@@ -1,6 +1,6 @@
 #[path = "../src/system_monitor.rs"]
 #[allow(dead_code)]
-pub mod system_monitor;
+pub(crate) mod system_monitor;
 
 use loom::sync::{Arc, Mutex};
 use loom::thread;

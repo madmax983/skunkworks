@@ -28,7 +28,7 @@ pub struct AlchemyRule {
 /// Responsible for reading the hybrid text/grid representations used by
 /// the Prologue system via the rules defined in `prologue_grammar.pest`.
 #[allow(missing_docs)]
-pub mod prologueparser_mod {
+pub(crate) mod prologueparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
     #[allow(missing_docs)]

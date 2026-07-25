@@ -1,4 +1,4 @@
-pub mod catalyst_test;
+pub(crate) mod catalyst_test;
 
 #[cfg(test)]
 mod tests {

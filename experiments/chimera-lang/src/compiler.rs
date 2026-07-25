@@ -40,7 +40,7 @@ use strum::IntoEnumIterator;
 /// Derived from `script_grammar.pest`. This handles the lexical analysis and parsing
 /// of the source text into a CST (Concrete Syntax Tree).
 #[allow(missing_docs)]
-pub mod scriptparser_mod {
+pub(crate) mod scriptparser_mod {
     use pest_derive::Parser;
     #[derive(Parser)]
     #[grammar = "script_grammar.pest"]

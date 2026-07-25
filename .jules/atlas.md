@@ -54,3 +54,7 @@
 **[Title] Enforce Module Boundaries via Facade in Various Experiments**
 **Tangle:** Several experimental crates (`harmonic-engine`, `crystal-fs`, `hydrothermal-locks`, `spectral-scribe`, `quipu-serializer`, `chimera-esolang`, `lensing-poetry`) leaked their internal submodules directly via `pub mod`, breaking the Facade pattern and exposing implementation details.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` combined with `pub use <mod>::*;` in library `lib.rs` files, and updated internal usages in `main.rs` binaries. This enforces strict structural boundaries while preserving the external API, ensuring high cohesion and low coupling.
+
+**[Title] Encapsulate parsers and internal modules in various crates**
+**Tangle:** The `experiments/chimera-lang`, `experiments/system-turbulence`, `experiments/chimera-esolang`, and `graveyard/git_rhythm` crates leaked various internal modules via `pub mod`. The `chimera-lang` crate specifically leaked compiler parser modules like `helixparser_mod`, `prologueesolangparser_mod`, `scriptparser_mod`, etc., and the `nova_pachinko` module.
+**Blueprint:** Replaced `pub mod` with `pub(crate) mod` for these modules to enforce strict boundaries and hide implementation details, while preserving the structural integrity and avoiding breaking integrations.
