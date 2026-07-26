@@ -1697,3 +1697,28 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `origami` example. The compiler told me `let` cannot be used for global variables."
 *   🕵️ **The Reality:** "Turns out the example code is just floating code and not wrapped in a `fn main() { ... }` block."
 *   💡 **The Fix:** "Update the example block to include the `fn main() {` wrapper around the code."
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/arthropod/README.md`
+**Date:** 2026-07-26
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the UI Example from `arthropod`."
+**Action:** Copy-pasted the example code block directly into my `main.rs` and ran `cargo run`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **X11/Wayland crash in headless environment:** Running the example in a headless terminal (e.g. CI, SSH session) results in `thread 'main' panicked at ... XOpenDisplay() failed!`.
+    - *Impact:* The user cannot run the simulation without a graphical display attached.
+    - *Cause:* The `macroquad::main` macro instantiates a graphical window immediately, requiring a valid display server. There's no instructions on how to run a "headless" or "simulation-only" mode.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Example in arthropod README crashes in headless environments
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `arthropod` UI example on my server/CI. The terminal spat out a panic saying `XOpenDisplay() failed!`."
+*   🕵️ **The Reality:** "Turns out the example hard-codes graphical UI components that require an active X11/Wayland display."
+*   💡 **The Fix:** "Add a note or headless test configuration in the README explaining how to test logic without a display server."
