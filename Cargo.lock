@@ -3909,18 +3909,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-strings"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "cpal",
- "crossbeam-channel",
- "ferrous-core",
- "macroquad",
- "rand 0.8.7",
-]
-
-[[package]]
 name = "git-tank"
 version = "0.1.0"
 dependencies = [
@@ -4553,15 +4541,6 @@ dependencies = [
  "rand 0.8.7",
  "ratatui",
  "tui-shared",
-]
-
-[[package]]
-name = "hydro-soundscapes"
-version = "0.1.0"
-dependencies = [
- "cpal",
- "macroquad",
- "rand 0.8.7",
 ]
 
 [[package]]

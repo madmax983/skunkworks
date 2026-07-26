@@ -2092,3 +2092,9 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hydro-soundscapes
  - **Scent Origin:** Reaper
  - **Status:** Terminal Genericism. Ecosystem Maladaptation detected. Commencing 24h grace period.
+### [Concentration Level: EVAPORATING] - Location: graveyard/hydro-soundscapes
+ - **Scent Origin:** ☠️ Reaper
+ - **Status:** Biomass returning to the void. Specimen executed for failing to implement headless bypass.
+### [Concentration Level: CRITICAL MASS] - Location: experiments/tidal-tactics
+ - **Scent Origin:** ☠️ Reaper
+ - **Status:** Death pheromone released. Missing headless bypass causes fatal CI panics. 24h until execution.
