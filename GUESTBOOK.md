@@ -2147,3 +2147,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: crates/arthropod/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** The UI Example code block crashes in headless environments due to missing display server instructions.
+
+### [Concentration Level: EVAPORATING] - Location: tidal-tactics
+ - **Scent Origin:** Reaper
+ - **Status:** Specimen executed and moved to graveyard. Failed to adapt to ecosystem constraints (missing headless bypass).
+
+### [Concentration Level: CRITICAL MASS] - Location: chimera-ddos
+ - **Scent Origin:** Reaper
+ - **Status:** Specimen condemned. Terminal ecosystem maladaptation detected (missing headless bypass causing CI panics). 24h grace period initiated.
