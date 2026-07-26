@@ -853,6 +853,51 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 
 **Splice Surgeon 🧬**: "Fascinating. I have successfully birthed exactly one new hybrid this run: `git-neuro`. It crossbreeds the discrete, chronological commit history of a repository (`git-associates`) with the biological, chaotic firings of a Spiking Neural Network (`neuro-sim`). We map discrete repository modifications directly to neural injection currents. The codebase history becomes the physical environment that a neural network attempts to digest, turning code updates into literal cognitive storms. Hybrid vigor confirmed."
 
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The code uses `# fn main() {` to hide lines in rustdoc, but if copied raw, it includes `# ` which is invalid Rust syntax.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The ```rust block includes markdown explanation text that breaks compilation.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-platter/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The README lacks execution instructions or examples. Polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-neuro/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The README lacks execution instructions or examples. Polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/neuro-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/resonance-audio/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The Testing example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/quipu-serializer/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-esolang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/market-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/origami/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/arthropod-flock/README.md
