@@ -25,12 +25,21 @@ pub fn compile(source: &str) -> Result<Dna> {
             break;
         }
 
-        let inner = instruction_pair.into_inner().next().unwrap();
+        let inner = instruction_pair
+            .into_inner()
+            .next()
+            .ok_or_else(|| anyhow!("Instruction missing inner rule"))?;
         match inner.as_rule() {
             Rule::prolog_instruction => {
                 let mut p_inner = inner.into_inner();
-                let name = p_inner.next().unwrap().as_str();
-                let arg = p_inner.next().unwrap().as_str();
+                let name = p_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Prolog instruction missing name"))?
+                    .as_str();
+                let arg = p_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Prolog instruction missing argument"))?
+                    .as_str();
                 genes.push(Gene::new(
                     OpCode::Push,
                     vec![Nucleotide::Junction(
@@ -45,7 +54,10 @@ pub fn compile(source: &str) -> Result<Dna> {
             }
             Rule::hyper_instruction => {
                 let mut h_inner = inner.into_inner();
-                let op_str = h_inner.next().unwrap().as_str();
+                let op_str = h_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Hyper instruction missing operator"))?
+                    .as_str();
                 match op_str {
                     "+" | "add" => genes.push(Gene::new(OpCode::HyperAdd, vec![])),
                     "-" | "sub" => genes.push(Gene::new(OpCode::HyperSub, vec![])),
@@ -62,9 +74,20 @@ pub fn compile(source: &str) -> Result<Dna> {
             }
             Rule::orca_instruction => {
                 let mut o_inner = inner.into_inner();
-                let op = o_inner.next().unwrap().as_str();
-                let y: i64 = o_inner.next().unwrap().as_str().parse()?;
-                let x: i64 = o_inner.next().unwrap().as_str().parse()?;
+                let op = o_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Orca instruction missing operator"))?
+                    .as_str();
+                let y: i64 = o_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Orca instruction missing Y argument"))?
+                    .as_str()
+                    .parse()?;
+                let x: i64 = o_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Orca instruction missing X argument"))?
+                    .as_str()
+                    .parse()?;
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
                 if op == "bang" {
@@ -95,9 +118,20 @@ pub fn compile(source: &str) -> Result<Dna> {
             }
             Rule::elektra_instruction => {
                 let mut e_inner = inner.into_inner();
-                let op = e_inner.next().unwrap().as_str();
-                let y: i64 = e_inner.next().unwrap().as_str().parse()?;
-                let x: i64 = e_inner.next().unwrap().as_str().parse()?;
+                let op = e_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Elektra instruction missing operator"))?
+                    .as_str();
+                let y: i64 = e_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Elektra instruction missing Y argument"))?
+                    .as_str()
+                    .parse()?;
+                let x: i64 = e_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Elektra instruction missing X argument"))?
+                    .as_str()
+                    .parse()?;
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
                 genes.push(Gene::new(
@@ -108,8 +142,14 @@ pub fn compile(source: &str) -> Result<Dna> {
             }
             Rule::genetics_instruction => {
                 let mut g_inner = inner.into_inner();
-                let op = g_inner.next().unwrap().as_str();
-                let ident1 = g_inner.next().unwrap().as_str();
+                let op = g_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Genetics instruction missing operator"))?
+                    .as_str();
+                let ident1 = g_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("Genetics instruction missing identifier"))?
+                    .as_str();
                 genes.push(Gene::new(
                     OpCode::Push,
                     vec![Nucleotide::String(ident1.to_string())],
@@ -138,7 +178,10 @@ pub fn compile(source: &str) -> Result<Dna> {
             }
             Rule::tui_instruction => {
                 let mut t_inner = inner.into_inner();
-                let op = t_inner.next().unwrap().as_str();
+                let op = t_inner
+                    .next()
+                    .ok_or_else(|| anyhow!("TUI instruction missing operator"))?
+                    .as_str();
                 genes.push(Gene::new(
                     OpCode::Push,
                     vec![Nucleotide::String(op.to_string())],
@@ -146,7 +189,10 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.push(Gene::new(OpCode::TuiDraw, vec![]));
             }
             Rule::forth_instruction => {
-                let f_inner = inner.into_inner().next().unwrap();
+                let f_inner = inner
+                    .into_inner()
+                    .next()
+                    .ok_or_else(|| anyhow!("Forth instruction missing inner rule"))?;
                 match f_inner.as_rule() {
                     Rule::identifier => {
                         let id = f_inner.as_str().to_ascii_lowercase();
