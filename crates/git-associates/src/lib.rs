@@ -453,16 +453,11 @@ impl GitModel {
     fn parse_line_change(line: &git2::DiffLine) -> Option<LineChange> {
         // Optimization: Do not allocate a String until we know the line origin is valid,
         // preventing unnecessary allocations for ignored line types (like file headers).
+        let content = || String::from_utf8_lossy(line.content()).into_owned();
         match line.origin() {
-            '+' => Some(LineChange::Added(
-                String::from_utf8_lossy(line.content()).into_owned(),
-            )),
-            '-' => Some(LineChange::Removed(
-                String::from_utf8_lossy(line.content()).into_owned(),
-            )),
-            ' ' => Some(LineChange::Context(
-                String::from_utf8_lossy(line.content()).into_owned(),
-            )),
+            '+' => Some(LineChange::Added(content())),
+            '-' => Some(LineChange::Removed(content())),
+            ' ' => Some(LineChange::Context(content())),
             _ => None,
         }
     }

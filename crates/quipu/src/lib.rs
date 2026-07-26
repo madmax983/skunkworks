@@ -276,7 +276,7 @@ impl Clone for Cord {
                     },
                 ));
             } else {
-                let (_, _, completed) = stack.pop().unwrap();
+                let Some((_, _, completed)) = stack.pop() else { unreachable!(); };
                 if let Some(parent) = stack.last_mut() {
                     parent.2.subsidiaries.push(completed);
                 } else {
