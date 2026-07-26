@@ -81,3 +81,7 @@
 **2026-04-18 - [DoS via Unsafe Unwraps in Git DAG Traversal]**
 **Threat:** The `git-rogue` experiment used `.unwrap()` and `.expect()` when traversing Git commit DAG nodes and casting user inputs (`to_digit(10).unwrap()`). This assumes the Git repository structure and inputs are perfectly aligned with internal logic, exposing the system to a panic/DoS if the repository state drifts, inputs are unhandled, or DAG structure is missing.
 **Defense:** Replaced panicking accessors with safe `Option` checking (`if let Some(digit) = ...`, `if let Some(node) = ...`) in `main.rs`, `game.rs`, and `ui.rs`, returning graceful defaults or errors instead of crashing the TUI application.
+
+**2026-07-26 - [quick-xml Namespace DoS]**
+**Threat:** The `quick-xml` crate versions before 0.41.0 were vulnerable to memory-exhaustion denial of service (DoS) due to unbounded namespace-declaration allocations and quadratic run time (RUSTSEC-2026-0194, RUSTSEC-2026-0195).
+**Defense:** Upgraded `quick-xml` to `0.41.0` by bumping `wayland-scanner` to version `0.31.11` via `cargo update -p wayland-scanner`.
