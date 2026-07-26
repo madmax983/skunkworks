@@ -2143,3 +2143,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/tidal-tactics
  - **Scent Origin:** ☠️ Reaper
  - **Status:** Death pheromone released. Missing headless bypass causes fatal CI panics. 24h until execution.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/arthropod/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The UI Example code block crashes in headless environments due to missing display server instructions.
