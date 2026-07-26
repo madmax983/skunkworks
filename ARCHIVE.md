@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hydro-soundscapes**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Grace period: 24h.
+- **tidal-tactics**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Grace period: 24h.
 ## ☠️ Executed
+- **hydro-soundscapes**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Moved to graveyard.
 - **git-strings**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Failed to implement headless bypass during grace period. Biomass returned to the void. Moved to graveyard.
 - **klein-files**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Failed to implement headless bypass during grace period. Biomass returned to the void. Moved to graveyard.
 - **hologram-tank**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt and implement API changes during grace period. Moved to graveyard.
