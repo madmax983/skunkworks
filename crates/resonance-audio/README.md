@@ -33,6 +33,7 @@ commands from a channel and filling an output buffer.
 ```rust
 use resonance_audio::{AudioModel, AudioCommand};
 use crossbeam_channel::bounded;
+// Requires `crossbeam-channel` in Cargo.toml
 
 // 1. Create channels for communication
 let (cmd_tx, cmd_rx) = bounded(128);
