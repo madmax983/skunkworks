@@ -54,3 +54,6 @@
 ## 2026-07-06 - [Module-Level Docs and README Sync for Executables]
 **Confusion:** Building documentation for a binary crate using strict rustdoc flags (`-W rustdoc::missing_crate_level_docs -D warnings`) will fail if the `src/main.rs` file does not include a `//!` crate-level doc comment block.
 **Clarification:** To satisfy `cargo doc` for binary crates, parse the `README.md` contents and inject them as `//!` block comments at the very top of `src/main.rs`. This ensures the overarching story for the executable is documented and the documentation build passes.
+## 2024-07-27 - [Noisy PrologueProgram docs]
+**Confusion:** The `prologue_compiler.rs` file had auto-generated noisy documentation, e.g. "The `dna` field." repeated 100+ times, and "Represents a `PrologueProgram`." repeated 100+ times, and noisy compile examples.
+**Clarification:** I removed the auto-generated noisy lines using a Python script.

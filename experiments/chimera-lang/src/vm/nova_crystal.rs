@@ -153,7 +153,7 @@ fn exec_anneal(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
         }
 
-        vm.energy = vm.energy.saturating_sub(r.abs() * 2);
+        vm.energy = vm.energy.saturating_sub(r.abs().saturating_mul(2));
         vm.output.push(format!(
             "ANNEAL: Sorted {} cells radius {}",
             values.len(),
