@@ -1,5 +1,5 @@
 use arthropod::Button;
-use hyper_system::{Vec4, SystemMonitor};
+use hyper_system::{SystemMonitor, Vec4};
 use macroquad::prelude::*;
 
 fn window_conf() -> Conf {
@@ -24,10 +24,10 @@ async fn async_main() {
     let mut monitor = SystemMonitor::new();
 
     // UI controls for rotating the 4D space
-    let btn_rot_xw = Button::new("Rot XW", 10.0, 10.0, 100.0, 40.0)
-        .with_colors(BLUE, SKYBLUE, DARKBLUE);
-    let btn_rot_yw = Button::new("Rot YW", 10.0, 60.0, 100.0, 40.0)
-        .with_colors(GREEN, LIME, DARKGREEN);
+    let btn_rot_xw =
+        Button::new("Rot XW", 10.0, 10.0, 100.0, 40.0).with_colors(BLUE, SKYBLUE, DARKBLUE);
+    let btn_rot_yw =
+        Button::new("Rot YW", 10.0, 60.0, 100.0, 40.0).with_colors(GREEN, LIME, DARKGREEN);
 
     let mut rot_xw_angle = 0.0;
     let mut rot_yw_angle = 0.0;
@@ -37,17 +37,14 @@ async fn async_main() {
         Vec4::new(1.0, -1.0, -1.0, -1.0),
         Vec4::new(1.0, 1.0, -1.0, -1.0),
         Vec4::new(-1.0, 1.0, -1.0, -1.0),
-
         Vec4::new(-1.0, -1.0, 1.0, -1.0),
         Vec4::new(1.0, -1.0, 1.0, -1.0),
         Vec4::new(1.0, 1.0, 1.0, -1.0),
         Vec4::new(-1.0, 1.0, 1.0, -1.0),
-
         Vec4::new(-1.0, -1.0, -1.0, 1.0),
         Vec4::new(1.0, -1.0, -1.0, 1.0),
         Vec4::new(1.0, 1.0, -1.0, 1.0),
         Vec4::new(-1.0, 1.0, -1.0, 1.0),
-
         Vec4::new(-1.0, -1.0, 1.0, 1.0),
         Vec4::new(1.0, -1.0, 1.0, 1.0),
         Vec4::new(1.0, 1.0, 1.0, 1.0),

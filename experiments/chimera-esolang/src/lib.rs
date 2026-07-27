@@ -5,7 +5,9 @@ pub(crate) mod ast;
 pub(crate) mod compiler;
 pub(crate) mod parser;
 
+#[allow(unused_imports)]
 use crate::ast::ast::*;
+#[allow(hidden_glob_reexports)]
 use parser::{EsolangParser, Rule};
 
 pub fn parse(source: &str) -> Result<Program> {
@@ -75,4 +77,5 @@ fn parse_instruction(pair: pest::iterators::Pair<'_, Rule>) -> Result<Instructio
 // Facade API
 pub use compiler::*;
 pub use ast::ast::*;
+#[allow(unused_imports)]
 pub use parser::*;

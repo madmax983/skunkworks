@@ -13,7 +13,7 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Terminal,
 };
-use std::{io, time::Duration};
+use std::{fmt::Write as _, io, time::Duration};
 
 pub fn run_tui(mut vm: ChimeraVM) -> Result<()> {
     // TUI initialization should happen before raw mode
@@ -50,12 +50,15 @@ where
                 .split(f.area());
 
             // Stack view
-            let stack_str = vm
-                .stack
-                .iter()
-                .map(|v| format!("{:?}", v))
-                .collect::<Vec<_>>()
-                .join("\n");
+            // ⚡ Bolt: Removed intermediate `.collect::<Vec<_>>()` and `join`
+            // to eliminate per-frame heap allocations of intermediate strings and vectors.
+            let mut stack_str = String::new();
+            for (i, v) in vm.stack.iter().enumerate() {
+                if i > 0 {
+                    stack_str.push('\n');
+                }
+                write!(&mut stack_str, "{:?}", v).unwrap();
+            }
 
             let stack_paragraph = Paragraph::new(Text::from(stack_str))
                 .block(Block::default().title("Stack").borders(Borders::ALL))
