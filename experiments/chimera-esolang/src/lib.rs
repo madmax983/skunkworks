@@ -75,7 +75,7 @@ fn parse_instruction(pair: pest::iterators::Pair<'_, Rule>) -> Result<Instructio
 }
 
 // Facade API
-pub use compiler::*;
 pub use ast::ast::*;
+pub use compiler::*;
 #[allow(unused_imports)]
 pub use parser::*;
