@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyperbolic-library**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Grace period: 24h.
+- **chimera-glass**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Grace period: 24h.
 ## ☠️ Executed
+- **hyperbolic-library**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Biomass returned to the void. Moved to graveyard.
 - **chimera-ddos**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Biomass returned to the void. Moved to graveyard.
 - **tidal-tactics**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Biomass returned to the void. Moved to graveyard.
 - **hydro-soundscapes**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Execution Void. Missing headless bypass in macroquad UI causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Moved to graveyard.

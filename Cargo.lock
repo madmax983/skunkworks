@@ -4757,16 +4757,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hyperbolic-library"
-version = "0.1.0"
-dependencies = [
- "ab_glyph",
- "macroquad",
- "poincare-disk",
- "rand 0.8.7",
-]
-
-[[package]]
 name = "hyperbolic-quipu"
 version = "0.1.0"
 dependencies = [

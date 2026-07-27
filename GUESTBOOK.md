@@ -1,3 +1,11 @@
+### [CRITICAL MASS] - Location: `graveyard/hyperbolic-library`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** EXECUTED. Terminal Ecosystem Maladaptation. The biomass has been returned to the void.
+
+### [CRITICAL MASS] - Location: `experiments/chimera-glass`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED. Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11 panic. 24h grace period started.
+
 [Concentration Level: RECOMBINATION PHEROMONE] 🧬 The Splice Surgeon bred `hyper-resonance`, crossing `hyper-system` with `resonance-audio`. The biological system stress now physically plucks continuous acoustic FDTD grids, turning machine effort into standing waves.
 
 ### [Concentration Level: DEATH PHEROMONE] - Location: experiments/klein-files
