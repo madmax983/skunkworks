@@ -85,3 +85,7 @@
 **2026-07-26 - [quick-xml Namespace DoS]**
 **Threat:** The `quick-xml` crate versions before 0.41.0 were vulnerable to memory-exhaustion denial of service (DoS) due to unbounded namespace-declaration allocations and quadratic run time (RUSTSEC-2026-0194, RUSTSEC-2026-0195).
 **Defense:** Upgraded `quick-xml` to `0.41.0` by bumping `wayland-scanner` to version `0.31.11` via `cargo update -p wayland-scanner`.
+
+**2026-10-10 - [Chimera-Tardis OpenGL Scissor UB]**
+**Threat:** The `with_scissor` function in `experiments/chimera-tardis/src/safe_gl.rs` failed to clamp the results of `intersect_rect` before passing them to the unsafe `glScissor` function. Since `intersect_rect` could return values up to `i32::MAX`, this allowed out-of-bounds coordinates to overflow the driver's internal 16-bit integers, causing Undefined Behavior and a Denial of Service (DoS) panic.
+**Defense:** Explicitly applied mathematical boundary clamping (`x.clamp(-16384, 16384)` and `w.clamp(0, 32768)`) to the final intersection coordinates *before* executing the unsafe `glScissor` block, neutralizing the integer overflow threat. Added a `havoc_tests` module to prove safety under fuzzed inputs.
