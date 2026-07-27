@@ -11,3 +11,6 @@
 ## Distance Checks in Hot Loops
 **Learning:** Checking distances between entities in an O(N^2) loop (e.g. `pos_i.distance(pos_j) < RADIUS`) introduces a costly square root operation for every comparison. This overhead dominates CPU time in physics or proximity interactions.
 **Action:** Always use squared distances (`distance_squared`) and compare against a precalculated squared radius (`RADIUS * RADIUS`) when determining if entities are within a threshold.
+**[TUI Render Loops and Intermediate Allocations]
+**Learning:** Using `.collect::<Vec<_>>().join("\n")` inside TUI render loops causes significant unnecessary intermediate heap allocations per frame, which violates zero-cost abstraction principles.
+**Action:** Replace `collect` and `join` with a pre-allocated `String` and `std::fmt::Write` loops to append directly, preventing intermediate vector allocations.

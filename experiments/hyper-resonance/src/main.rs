@@ -32,7 +32,11 @@ async fn main() {
         if cpu > 0.1 && macroquad::rand::gen_range(0.0, 1.0) < cpu * 0.1 {
             let x = macroquad::rand::gen_range(10, 90);
             let y = macroquad::rand::gen_range(10, 90);
-            let _ = cmd_tx.try_send(AudioCommand::Pluck { x, y, strength: cpu });
+            let _ = cmd_tx.try_send(AudioCommand::Pluck {
+                x,
+                y,
+                strength: cpu,
+            });
         }
 
         clear_background(BLACK);
@@ -51,7 +55,13 @@ async fn main() {
             }
         }
 
-        draw_text(format!("CPU Stress: {:.2}%", cpu * 100.0).as_str(), 10.0, 20.0, 20.0, RED);
+        draw_text(
+            format!("CPU Stress: {:.2}%", cpu * 100.0).as_str(),
+            10.0,
+            20.0,
+            20.0,
+            RED,
+        );
         next_frame().await;
     }
 }

@@ -40,17 +40,14 @@ async fn async_main() {
         Vec4::new(1.0, -1.0, -1.0, -1.0),
         Vec4::new(1.0, 1.0, -1.0, -1.0),
         Vec4::new(-1.0, 1.0, -1.0, -1.0),
-
         Vec4::new(-1.0, -1.0, 1.0, -1.0),
         Vec4::new(1.0, -1.0, 1.0, -1.0),
         Vec4::new(1.0, 1.0, 1.0, -1.0),
         Vec4::new(-1.0, 1.0, 1.0, -1.0),
-
         Vec4::new(-1.0, -1.0, -1.0, 1.0),
         Vec4::new(1.0, -1.0, -1.0, 1.0),
         Vec4::new(1.0, 1.0, -1.0, 1.0),
         Vec4::new(-1.0, 1.0, -1.0, 1.0),
-
         Vec4::new(-1.0, -1.0, 1.0, 1.0),
         Vec4::new(1.0, -1.0, 1.0, 1.0),
         Vec4::new(1.0, 1.0, 1.0, 1.0),
@@ -86,7 +83,10 @@ async fn async_main() {
 
         // Draw hypercube
         for p in &points {
-            let p_rot = p.rotate_xw(rot_xw_angle).rotate_yw(rot_yw_angle).rotate_zw(rot_zw_angle);
+            let p_rot = p
+                .rotate_xw(rot_xw_angle)
+                .rotate_yw(rot_yw_angle)
+                .rotate_zw(rot_zw_angle);
             // Camera dist 3.0
             let p3 = p_rot.project_to_3d(3.0);
 
@@ -99,21 +99,51 @@ async fn async_main() {
 
         // Connect the vertices of the hypercube
         let edges = [
-            (0, 1), (1, 2), (2, 3), (3, 0),
-            (4, 5), (5, 6), (6, 7), (7, 4),
-            (0, 4), (1, 5), (2, 6), (3, 7),
-
-            (8, 9), (9, 10), (10, 11), (11, 8),
-            (12, 13), (13, 14), (14, 15), (15, 12),
-            (8, 12), (9, 13), (10, 14), (11, 15),
-
-            (0, 8), (1, 9), (2, 10), (3, 11),
-            (4, 12), (5, 13), (6, 14), (7, 15),
+            (0, 1),
+            (1, 2),
+            (2, 3),
+            (3, 0),
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 4),
+            (0, 4),
+            (1, 5),
+            (2, 6),
+            (3, 7),
+            (8, 9),
+            (9, 10),
+            (10, 11),
+            (11, 8),
+            (12, 13),
+            (13, 14),
+            (14, 15),
+            (15, 12),
+            (8, 12),
+            (9, 13),
+            (10, 14),
+            (11, 15),
+            (0, 8),
+            (1, 9),
+            (2, 10),
+            (3, 11),
+            (4, 12),
+            (5, 13),
+            (6, 14),
+            (7, 15),
         ];
 
         for &(i, j) in &edges {
-            let p1 = points[i].rotate_xw(rot_xw_angle).rotate_yw(rot_yw_angle).rotate_zw(rot_zw_angle).project_to_3d(3.0);
-            let p2 = points[j].rotate_xw(rot_xw_angle).rotate_yw(rot_yw_angle).rotate_zw(rot_zw_angle).project_to_3d(3.0);
+            let p1 = points[i]
+                .rotate_xw(rot_xw_angle)
+                .rotate_yw(rot_yw_angle)
+                .rotate_zw(rot_zw_angle)
+                .project_to_3d(3.0);
+            let p2 = points[j]
+                .rotate_xw(rot_xw_angle)
+                .rotate_yw(rot_yw_angle)
+                .rotate_zw(rot_zw_angle)
+                .project_to_3d(3.0);
 
             let sx1 = p1.x * 100.0 + screen_width() / 2.0;
             let sy1 = p1.y * 100.0 + screen_height() / 2.0;
@@ -123,8 +153,25 @@ async fn async_main() {
             draw_line(sx1, sy1, sx2, sy2, 1.0, WHITE);
         }
 
-        draw_text("Hyper-dimensional Neural Morphogenesis", 10.0, 20.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Neurons Spiking: n1:{} n2:{} n3:{}", brain.is_spiking(n1), brain.is_spiking(n2), brain.is_spiking(n3)), 10.0, 40.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Hyper-dimensional Neural Morphogenesis",
+            10.0,
+            20.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!(
+                "Neurons Spiking: n1:{} n2:{} n3:{}",
+                brain.is_spiking(n1),
+                brain.is_spiking(n2),
+                brain.is_spiking(n3)
+            ),
+            10.0,
+            40.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }
