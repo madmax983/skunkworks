@@ -4626,6 +4626,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-resonance"
+version = "0.1.0"
+dependencies = [
+ "crossbeam-channel",
+ "hyper-system",
+ "macroquad",
+ "resonance-audio",
+]
+
+[[package]]
 name = "hyper-system"
 version = "0.1.0"
 dependencies = [
@@ -9276,15 +9286,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1ad99c4c6d32803332c548b1af0540b357b3f5fc0be8f6c6bfe8b2e6ae784070"
 dependencies = [
  "cfg-if",
-]
-
-[[package]]
-name = "tidal-tactics"
-version = "0.1.0"
-dependencies = [
- "arthropod",
- "macroquad",
- "rand 0.8.7",
 ]
 
 [[package]]
