@@ -2172,3 +2172,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: crates/arthropod/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Example in arthropod README crashes in headless environments.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-ddos
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation. Failed to implement headless bypass during grace period. Biomass returned to the void.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hyperbolic-library
+ - **Scent Origin:** ☠️ The Reaper
+ - **Status:** Specimen condemned. Terminal ecosystem maladaptation detected (missing headless bypass causing CI panics). 24h grace period initiated.
