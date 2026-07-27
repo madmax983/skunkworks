@@ -4604,6 +4604,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-neuro"
+version = "0.1.0"
+dependencies = [
+ "hyper-system",
+ "macroquad",
+ "neuro-sim",
+]
+
+[[package]]
 name = "hyper-pollination"
 version = "0.1.0"
 dependencies = [
