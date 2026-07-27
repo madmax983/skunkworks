@@ -78,16 +78,16 @@ pub fn with_scissor<F: FnOnce((i32, i32, i32, i32))>(
         )
     });
 
-    let (final_x, final_y, final_w, final_h) = if let Some(p) = safe_parent {
+    let (mut final_x, mut final_y, mut final_w, mut final_h) = if let Some(p) = safe_parent {
         intersect_rect((x, y, w, h), p)
     } else {
-        (
-            x.clamp(-16384, 16384),
-            y.clamp(-16384, 16384),
-            w.clamp(0, 32768),
-            h.clamp(0, 32768),
-        )
+        (x, y, w, h)
     };
+
+    final_x = final_x.clamp(-16384, 16384);
+    final_y = final_y.clamp(-16384, 16384);
+    final_w = final_w.clamp(0, 32768);
+    final_h = final_h.clamp(0, 32768);
 
     unsafe {
         gl::glEnable(gl::GL_SCISSOR_TEST);
@@ -142,5 +142,32 @@ mod tests {
         let intersection = intersect_rect(r1, r2);
         assert_eq!(intersection.0, i32::MAX - 50); // x1
         assert_eq!(intersection.2, 150); // width
+    }
+}
+
+#[cfg(test)]
+mod havoc_tests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        fn test_with_scissor_havoc(
+            x in any::<i32>(), y in any::<i32>(), w in any::<i32>(), h in any::<i32>(),
+            px in any::<i32>(), py in any::<i32>(), pw in any::<i32>(), ph in any::<i32>()
+        ) {
+            let result = std::panic::catch_unwind(|| {
+                with_scissor(x, y, w, h, Some((px, py, pw, ph)), |_| {});
+            });
+            // In headless testing environments, GL functions will unconditionally panic due to missing context (e.g. "gl function was not loaded").
+            // We just ensure it panics safely for that specific reason, and doesn't crash from integer bounds earlier in the function.
+            if let Err(err) = result {
+                if let Some(msg) = err.downcast_ref::<&str>() {
+                    assert!(msg.contains("Option::unwrap") || msg.contains("gl function was not loaded") || msg.contains("gl function") || msg.contains("glScissor"), "Unexpected panic: {}", msg);
+                } else if let Some(msg) = err.downcast_ref::<String>() {
+                    assert!(msg.contains("Option::unwrap") || msg.contains("gl function was not loaded") || msg.contains("gl function") || msg.contains("glScissor"), "Unexpected panic: {}", msg);
+                }
+            }
+        }
     }
 }
