@@ -6,6 +6,7 @@ use crate::opcode::OpCode;
 use std::str::FromStr;
 
 pub(crate) mod helixparser_mod {
+    #![allow(missing_docs)]
     use pest_derive::Parser;
     #[derive(Parser)]
     #[grammar = "helix_grammar.pest"]
@@ -167,6 +168,17 @@ fn compile_instruction(
     Ok(())
 }
 
+/// Compiles Helix source code into a `Dna` AST.
+///
+/// ## Examples
+///
+/// ```rust
+/// use chimera_lang::helix_compiler::compile;
+///
+/// // Example syntax compilation
+/// // let source = "...";
+/// // let dna = compile(source).unwrap();
+/// ```
 pub fn compile(source: &str) -> Result<Dna> {
     let mut pairs = HelixParser::parse(Rule::program, source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;

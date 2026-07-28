@@ -419,6 +419,7 @@ fn process_signal_char(
     }
 }
 
+/// Processes pending signal emissions for the VM.
 pub fn process_signals(vm: &mut ChimeraVM) {
     let size = GRID_SIZE;
     let mut ctx = SignalContext {

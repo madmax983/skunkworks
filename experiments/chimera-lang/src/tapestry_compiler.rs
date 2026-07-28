@@ -15,6 +15,17 @@ pub(crate) mod tapestryparser_mod {
 pub use tapestryparser_mod::Rule;
 pub use tapestryparser_mod::TapestryParser;
 
+/// Compiles Tapestry source code into a `Dna` AST.
+///
+/// ## Examples
+///
+/// ```rust
+/// use chimera_lang::tapestry_compiler::compile;
+///
+/// // Example syntax compilation
+/// // let source = "...";
+/// // let dna = compile(source).unwrap();
+/// ```
 pub fn compile(source: &str) -> Result<Dna> {
     let mut pairs = TapestryParser::parse(Rule::tapestry, source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;
