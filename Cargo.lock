@@ -1820,16 +1820,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chimera-glass"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "macroquad",
- "rand 0.8.7",
- "sysinfo",
-]
-
-[[package]]
 name = "chimera-hologram"
 version = "0.1.0"
 dependencies = [
