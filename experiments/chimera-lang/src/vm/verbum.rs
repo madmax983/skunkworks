@@ -61,7 +61,7 @@ pub struct Verbum {
 /// ```
 /// use chimera_lang::ast::{Gene, Nucleotide};
 /// use chimera_lang::opcode::OpCode;
-/// use chimera_lang::vm::verbum::VerbumForge;
+/// use chimera_lang::VerbumForge;
 ///
 /// let mut forge = VerbumForge::new();
 ///
@@ -114,7 +114,7 @@ impl VerbumForge {
     /// # Examples
     ///
     /// ```
-    /// use chimera_lang::vm::verbum::VerbumForge;
+    /// use chimera_lang::VerbumForge;
     /// let mut forge = VerbumForge::new();
     ///
     /// assert!(forge.forge("Test".to_string(), vec![], vec![]).is_ok());

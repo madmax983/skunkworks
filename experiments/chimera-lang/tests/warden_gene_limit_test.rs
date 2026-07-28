@@ -50,7 +50,7 @@ fn test_ligase_dos_protection() {
 
     // Execute Ligase
     // We call the inner execution directly to simulate the op
-    chimera_lang::vm::nova_genetics::exec_ligase(&mut vm);
+    chimera_lang::exec_ligase(&mut vm);
 
     // Check if it failed safely
     // The recipient strand (1) should NOT have grown
@@ -98,7 +98,7 @@ fn test_frankenstein_dos_protection() {
     vm.stack.push(Value::Int(1)); // B
     vm.stack.push(Value::Int(1)); // Stitches
 
-    chimera_lang::vm::nova_genetics::exec_frankenstein(&mut vm);
+    chimera_lang::exec_frankenstein(&mut vm);
 
     // Should fail. The fix should prevent creation of the new strand.
     // If successful, a new strand would be added at index 2.

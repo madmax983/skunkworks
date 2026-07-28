@@ -179,7 +179,7 @@ impl AkashicRecords {
     /// # Examples
     /// ```rust
     /// # fn main() {
-    /// # use chimera_lang::vm::akashic::AkashicRecords;
+    /// # use chimera_lang::AkashicRecords;
     /// // Attempt to load a custom save file
     /// let result = AkashicRecords::load_from("my_save.json");
     /// if let Ok(records) = result {
@@ -250,7 +250,7 @@ impl AkashicRecords {
     /// # Examples
     /// ```rust
     /// # fn main() {
-    /// # use chimera_lang::vm::akashic::AkashicRecords;
+    /// # use chimera_lang::AkashicRecords;
     /// # use chimera_lang::vm::Value;
     /// let mut records = AkashicRecords::new();
     /// records.storage.insert("Highscore".to_string(), Value::Int(9999));

@@ -1,5 +1,5 @@
 use chimera_lang::prelude::{Dna, Value};
-use chimera_lang::vm::{nova::Organelle, ChimeraVM};
+use chimera_lang::{Organelle, vm::ChimeraVM};
 
 #[test]
 fn test_botany_emoji_crash_prevented() {
@@ -11,7 +11,7 @@ fn test_botany_emoji_crash_prevented() {
         call_stack: vec![],
         recursion_depth: 0,
         halted: false,
-        kind: chimera_lang::vm::nova::OrganelleType::Seed,
+        kind: chimera_lang::OrganelleType::Seed,
         direction: (0, 1),
         ttl: Some(1000),
         name: "Test".to_string(),
@@ -33,7 +33,7 @@ fn test_botany_emoji_crash_prevented() {
     ];
 
     // Trigger tick
-    chimera_lang::vm::nova_botany::tick_seed(&mut vm, &mut organelle);
+    chimera_lang::tick_seed(&mut vm, &mut organelle);
 
     // Test passes if it does not panic.
 }

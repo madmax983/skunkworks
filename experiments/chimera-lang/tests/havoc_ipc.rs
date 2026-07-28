@@ -38,7 +38,7 @@ fn test_ipc_lock_stealing() {
     // Vulnerable behavior: Renames to "msg.json.lock.lock" and reads it.
     let mut vm = ChimeraVM::new(make_empty_dna());
     vm.stack.push(Value::Int(channel));
-    chimera_lang::vm::ipc::receive(&mut vm);
+    chimera_lang::receive(&mut vm);
 
     // 3. Verify
     let val = vm.stack.pop();

@@ -4,7 +4,7 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::nova::{Organelle, OrganelleType};
+    use chimera_lang::{Organelle, OrganelleType};
     use chimera_lang::vm::nova_signals;
     use chimera_lang::vm::ChimeraVM;
 
@@ -22,7 +22,7 @@ mod tests {
         };
         let mut vm = ChimeraVM::new(dna);
         // Ensure phase allows mutation
-        vm.phase = chimera_lang::vm::nova::Phase::Corporeal;
+        vm.phase = chimera_lang::Phase::Corporeal;
         vm
     }
 

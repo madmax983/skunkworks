@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::paradox::Paradox;
+    use chimera_lang::Paradox;
 
     #[test]
     fn test_havoc_paradox_out_of_bounds() {

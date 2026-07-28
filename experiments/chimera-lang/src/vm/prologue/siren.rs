@@ -36,7 +36,7 @@ impl SirenState {
     /// ## Examples
     ///
     /// ```
-    /// use chimera_lang::vm::prologue::SirenState;
+    /// use chimera_lang::SirenState;
     ///
     /// // Create a Siren playing a fast, quiet Sine wave moving East (1).
     /// let siren = SirenState::new(180, 2, 50, 0, 1);
@@ -78,7 +78,7 @@ impl SirenState {
     /// ## Examples
     ///
     /// ```
-    /// use chimera_lang::vm::prologue::SirenState;
+    /// use chimera_lang::SirenState;
     /// use chimera_lang::vm::Value;
     ///
     /// let siren = SirenState::new(120, 0, 100, 0, 1);

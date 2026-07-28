@@ -23,7 +23,7 @@ mod tests {
         vm.stack.push(Value::Str("metabolism(?E ?X)".to_string()));
 
         // Execute PrologCall
-        chimera_lang::vm::oracle::exec_oracle_op(&mut vm, OpCode::PrologCall, &[]);
+        chimera_lang::exec_oracle_op(&mut vm, OpCode::PrologCall, &[]);
 
         // Check output for errors
         println!("VM Output: {:?}", vm.output);
@@ -81,7 +81,7 @@ mod tests {
         vm.stack.push(transform);
 
         // Execute Manifest
-        chimera_lang::vm::oracle::exec_oracle_op(&mut vm, OpCode::Manifest, &[]);
+        chimera_lang::exec_oracle_op(&mut vm, OpCode::Manifest, &[]);
 
         println!("VM Output: {:?}", vm.output);
 

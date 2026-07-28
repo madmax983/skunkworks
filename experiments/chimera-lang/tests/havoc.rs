@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix, JunctionType, Strand};
 use chimera_lang::value::Value;
-use chimera_lang::vm::nova::{Organelle, OrganelleType};
+use chimera_lang::{Organelle, OrganelleType};
 use chimera_lang::vm::ChimeraVM;
 use proptest::prelude::*;
 
@@ -38,6 +38,6 @@ proptest! {
             stage: 0,
         };
 
-        chimera_lang::vm::nova_botany::tick_seed(&mut vm, &mut organelle);
+        chimera_lang::tick_seed(&mut vm, &mut organelle);
     }
 }

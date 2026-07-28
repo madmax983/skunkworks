@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::Dna;
-    use chimera_lang::vm::nova_babel_live::exec_live_parse;
+    use chimera_lang::exec_live_parse;
     use chimera_lang::vm::{ChimeraVM, Value, GRID_SIZE};
     use std::sync::mpsc;
     use std::thread;

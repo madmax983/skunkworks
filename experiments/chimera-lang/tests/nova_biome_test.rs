@@ -3,7 +3,7 @@
 mod tests {
     use chimera_lang::ast::{Dna, Helix, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::nova_biome::Biome;
+    use chimera_lang::Biome;
     use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
@@ -26,11 +26,11 @@ mod tests {
         vm.stack.push(Value::Int(1)); // Radius
 
         let op = OpCode::Terraform;
-        chimera_lang::vm::nova::exec_nova_op(&mut vm, op, &[]);
+        chimera_lang::exec_nova_op(&mut vm, op, &[]);
 
         // Verify via SenseBiome
         let op_sense = OpCode::SenseBiome;
-        chimera_lang::vm::nova::exec_nova_op(&mut vm, op_sense, &[]);
+        chimera_lang::exec_nova_op(&mut vm, op_sense, &[]);
 
         if let Some(Value::Int(id)) = vm.stack.pop() {
             assert_eq!(id, 1, "Expected Swamp (1)");
@@ -40,7 +40,7 @@ mod tests {
 
         // Verify Neighbor is Swamp too (radius 1)
         vm.context_loc = (8, 9);
-        chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::SenseBiome, &[]);
+        chimera_lang::exec_nova_op(&mut vm, OpCode::SenseBiome, &[]);
         if let Some(Value::Int(id)) = vm.stack.pop() {
             assert_eq!(id, 1, "Expected Swamp (1) at neighbor");
         } else {
@@ -49,7 +49,7 @@ mod tests {
 
         // Verify Far is Plains (0)
         vm.context_loc = (8, 12);
-        chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::SenseBiome, &[]);
+        chimera_lang::exec_nova_op(&mut vm, OpCode::SenseBiome, &[]);
         if let Some(Value::Int(id)) = vm.stack.pop() {
             assert_eq!(id, 0, "Expected Plains (0) at far");
         } else {
@@ -73,8 +73,8 @@ mod tests {
         // So we just need center to have different inertia.
         vm_swamp.hormone_grid[8][8][0] = 100;
 
-        chimera_lang::vm::nova_diffusion::diffuse_hormones(&mut vm_plains);
-        chimera_lang::vm::nova_diffusion::diffuse_hormones(&mut vm_swamp);
+        chimera_lang::diffuse_hormones(&mut vm_plains);
+        chimera_lang::diffuse_hormones(&mut vm_swamp);
 
         let plains_val = vm_plains.hormone_grid[8][8][0];
         let swamp_val = vm_swamp.hormone_grid[8][8][0];

@@ -58,3 +58,6 @@
 **[Title] Encapsulate parsers and internal modules in various crates**
 **Tangle:** The `experiments/chimera-lang`, `experiments/system-turbulence`, `experiments/chimera-esolang`, and `graveyard/git_rhythm` crates leaked various internal modules via `pub mod`. The `chimera-lang` crate specifically leaked compiler parser modules like `helixparser_mod`, `prologueesolangparser_mod`, `scriptparser_mod`, etc., and the `nova_pachinko` module.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` for these modules to enforce strict boundaries and hide implementation details, while preserving the structural integrity and avoiding breaking integrations.
+**[Title] Enforce Module Boundaries via Facade in chimera-lang VM**
+**Tangle:** The `experiments/chimera-lang/src/vm/mod.rs` leaked numerous internal modules directly via `pub mod`, breaking the Facade pattern and exposing all implementation details.
+**Blueprint:** Replaced `pub mod` with `pub(crate) mod` across internal VM modules to enforce strict boundaries. Re-exported needed modules using `pub use` to maintain the API surface required by integration tests and binaries, preserving structural integrity.

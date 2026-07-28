@@ -53,7 +53,7 @@ mod tests {
         // If Sigil struct fields are public, we can do it.
         // I made them public in my edit.
         let pattern = vec![(0, 1, Value::Int(5))];
-        let sigil = chimera_lang::vm::nova_sigil::Sigil {
+        let sigil = chimera_lang::Sigil {
             pattern,
             strand_idx: 1,
             auto_cast: false,

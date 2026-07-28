@@ -2,8 +2,8 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::prelude::*;
-    use chimera_lang::vm::prologue::exec_prologue_tick;
-    use chimera_lang::vm::prologue::RealityMode;
+    use chimera_lang::exec_prologue_tick;
+    use chimera_lang::RealityMode;
     use chimera_lang::vm::Value;
 
     #[test]

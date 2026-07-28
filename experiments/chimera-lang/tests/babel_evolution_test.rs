@@ -2,7 +2,7 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::JunctionType;
-    use chimera_lang::vm::babel::{generate_string, mutate_grammar};
+    use chimera_lang::{generate_string, mutate_grammar};
     use chimera_lang::vm::Value;
 
     #[test]

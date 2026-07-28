@@ -1,5 +1,5 @@
 use chimera_lang::prelude::*;
-use chimera_lang::vm::prologue;
+use chimera_lang::exec_prologue_tick;
 
 #[test]
 fn test_loom_push_to_warp() {
@@ -39,7 +39,7 @@ fn test_loom_push_to_warp() {
     vm.prologue_state.registers.insert((2, 7), Value::Int(0));
 
     // Tick 1: Shuttle moves to (5, 6). Picks up '('.
-    prologue::exec_prologue_tick(&mut vm);
+    exec_prologue_tick(&mut vm);
 
     // Verify Shuttle at (5, 6)
     assert_eq!(vm.grid[5][6], Value::Str("ð".to_string()));
@@ -54,7 +54,7 @@ fn test_loom_push_to_warp() {
     }
 
     // Tick 2: Shuttle processes '(', Tension -> 1. Moves to (5, 7). Picks up '8'.
-    prologue::exec_prologue_tick(&mut vm);
+    exec_prologue_tick(&mut vm);
 
     // Verify Shuttle at (5, 7)
     assert_eq!(vm.grid[5][7], Value::Str("ð".to_string()));
@@ -67,7 +67,7 @@ fn test_loom_push_to_warp() {
     }
 
     // Tick 3: Shuttle processes '8'. Push Payload (10). Moves to (5, 8).
-    prologue::exec_prologue_tick(&mut vm);
+    exec_prologue_tick(&mut vm);
 
     // Verify Warp at (2, 7) has 10
     let warp_val = vm.prologue_state.registers.get(&(2, 7)).unwrap();
@@ -111,7 +111,7 @@ fn test_loom_pull_from_warp() {
     vm.prologue_state.registers.insert((2, 7), Value::Int(42));
 
     // Tick 1: Shuttle moves to (5, 6). Picks up ')'.
-    prologue::exec_prologue_tick(&mut vm);
+    exec_prologue_tick(&mut vm);
 
     // Verify Shuttle at (5, 6)
     assert_eq!(vm.grid[5][6], Value::Str("ð".to_string()));
@@ -123,7 +123,7 @@ fn test_loom_pull_from_warp() {
     }
 
     // Tick 2: Shuttle processes ')', Tension -> -1. Moves to (5, 7). Picks up '8'.
-    prologue::exec_prologue_tick(&mut vm);
+    exec_prologue_tick(&mut vm);
 
     // Verify Shuttle at (5, 7)
     assert_eq!(vm.grid[5][7], Value::Str("ð".to_string()));
@@ -135,7 +135,7 @@ fn test_loom_pull_from_warp() {
     }
 
     // Tick 3: Shuttle processes '8'. Pulls Warp (42). Moves to (5, 8).
-    prologue::exec_prologue_tick(&mut vm);
+    exec_prologue_tick(&mut vm);
 
     // Check Shuttle Payload (should be 42) at (5, 8)
     let state = vm.prologue_state.registers.get(&(5, 8)).unwrap();
