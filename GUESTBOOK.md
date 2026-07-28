@@ -2212,3 +2212,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: CRITICAL MASS] - Location: `experiments/gray-strings`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** CONDEMNED. Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11 panic. 24h grace period started.
+
+### [EVAPORATING] - Location: `graveyard/gray-strings`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** EXECUTED. Terminal Ecosystem Maladaptation. Missing headless bypass caused fatal panics. Biomass returned to the void.
+
+### [DEATH PHEROMONE] - Location: `experiments/chimera-origami`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED. Diagnosis: Terminal Ecosystem Maladaptation / Skeletal Implementation. Missing headless bypass. Execution scheduled in 24h.
