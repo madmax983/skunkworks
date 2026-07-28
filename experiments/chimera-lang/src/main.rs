@@ -170,7 +170,7 @@ fn main() -> Result<()> {
             )
         } else if extension == "plge" || extension == "prolouge" {
             (
-                chimera_lang::prolouge_compiler::compile(&unparsed_file)?,
+                chimera_lang::prologue_esolang_compiler::compile(&unparsed_file)?,
                 None,
                 None,
                 HashMap::new(),
