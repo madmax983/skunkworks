@@ -4492,3 +4492,35 @@ classDiagram
     ChimeraEsolangFacade ..> ChimeraEsolangInternal : encapsulates
     GitRhythmFacade ..> GitRhythmInternal : encapsulates
 ```
+
+## Encapsulate chimera-lang VM Modules via Facade (ADR 167)
+
+Enforcing the Facade pattern in the `chimera-lang` VM prevents the leakage of its internal modules.
+
+```mermaid
+classDiagram
+    direction TB
+    namespace Facades {
+        class ChimeraLangVmFacade {
+            <<Facade>>
+        }
+    }
+
+    namespace InternalModules {
+        class ChimeraLangVmInternal {
+            <<Private Modules>>
+            mod organelles
+            mod systems
+            mod akashic
+            mod alchemy
+            mod babel
+            mod babel_chaos
+            mod bard
+            mod blackbox
+            mod catalyst
+            mod chimera_chaos
+        }
+    }
+
+    ChimeraLangVmFacade ..> ChimeraLangVmInternal : encapsulates
+```
