@@ -57,3 +57,6 @@
 ## 2024-07-27 - [Noisy PrologueProgram docs]
 **Confusion:** The `prologue_compiler.rs` file had auto-generated noisy documentation, e.g. "The `dna` field." repeated 100+ times, and "Represents a `PrologueProgram`." repeated 100+ times, and noisy compile examples.
 **Clarification:** I removed the auto-generated noisy lines using a Python script.
+## 2026-07-28 - [Pest Derive Macro Missing Docs Mitigation]
+**Confusion:** Using `pest_derive` directly on a public struct triggers `missing_docs` lints which cannot be easily suppressed with just `#[allow(missing_docs)]` on the struct itself due to macro expansion intricacies.
+**Clarification:** Wrap the pest-generated struct inside an inline submodule (`pub(crate) mod parser_impl`) adorned with `#![allow(missing_docs)]` at the top of the module, and then `pub use` the items to satisfy strict missing docs checking while hiding the macro internals.

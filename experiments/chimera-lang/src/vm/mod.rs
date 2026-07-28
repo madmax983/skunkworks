@@ -44,48 +44,78 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
+/// The absolute limit on how deeply a strand can recursively execute before facing forced termination (preventing stack overflows).
 pub const MAX_RECURSION_DEPTH: usize = 100;
+/// The maximum depth of nested nested simulations a VM can spawn (to prevent infinite nested realities).
 pub const MAX_SIMULATION_DEPTH: usize = 10;
+/// The peak capacity of the strand's execution stack.
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
+/// The maximum number of spores that can exist simultaneously in the environment.
 pub const MAX_SPORES: usize = 64;
+/// The absolute limit on organelles an organism can sustain before undergoing cytolysis.
 pub const MAX_ORGANELLES: usize = 256;
+/// The maximum number of voices that can harmonize in a single sequence.
 pub const MAX_CHORUS_SIZE: usize = 8;
+/// The peak capacity of a genetic junction.
 pub const MAX_JUNCTION_SIZE: usize = 1024;
+/// The maximum number of historical states retained in the memory buffer.
 pub const MAX_HISTORY_DEPTH: usize = 64;
+/// The uniform dimension (width and height) of the simulation space.
 pub const GRID_SIZE: usize = 16;
+/// The foundational energy given to an organism at the dawn of its creation.
 pub const INITIAL_ENERGY: i64 = 50;
+/// The upper bound on concurrent DNA strands executing in the environment.
 pub const MAX_STRANDS: usize = 1024;
 #[cfg(feature = "nova")]
+/// The peak capacity of dimensions available for traversal.
 pub const MAX_PLANES: usize = 64;
 #[cfg(feature = "nova")]
+/// The absolute limit on active projectiles within the simulation space.
 pub const MAX_PROJECTILES: usize = 1024;
 #[cfg(feature = "nova")]
+/// The maximum effective area of a spatial pocket.
 pub const MAX_POCKET_RADIUS: i64 = 32;
 #[cfg(feature = "nova")]
+/// The total byte limit (10MB) for the Akashic Records to prevent the universe from running out of memory.
 pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
 #[cfg(feature = "nova")]
+/// The maximum count of unique strings that can be processed concurrently.
 pub const MAX_STRINGS: usize = 256;
 #[cfg(feature = "nova")]
+/// The capacity of the graveyard before the dead must be forgotten entirely.
 pub const MAX_GRAVEYARD_SIZE: usize = 256;
 #[cfg(feature = "nova")]
+/// The peak limit on simultaneous ethereal communication frequencies.
 pub const MAX_ETHER_CHANNELS: usize = 1024;
 #[cfg(feature = "nova")]
+/// The maximum amount of autonomous reflexes an entity can maintain.
 pub const MAX_REFLEXES: usize = 256;
 #[cfg(feature = "nova")]
+/// The maximum number of chords that can be stored in the harmonic registry.
 pub const MAX_CHORD_REGISTRY: usize = 256;
+/// The upper bound on UI events queued before they are dropped to prevent input lag.
 pub const MAX_TUI_EVENTS: usize = 64;
 #[cfg(feature = "nova")]
+/// The peak capacity of unique memetic ideas circulating in the system.
 pub const MAX_MEMES: usize = 64;
 #[cfg(feature = "nova")]
+/// The absolute limit on concurrent viral entities infecting the grid.
 pub const MAX_VIRUSES: usize = 64;
 #[cfg(feature = "nova")]
+/// The maximum capacity of the void buffer before overflowing into reality.
 pub const MAX_VOID_BUFFER_SIZE: usize = 1024;
 #[cfg(feature = "nova")]
+/// The upper limit for characters produced by an esoteric output stream.
 pub const MAX_BRAINFUCK_OUTPUT: usize = 1024;
+/// The absolute limit on the length of a single string before it is truncated.
 pub const MAX_STRING_LEN: usize = 65536;
+/// The lower limit for triggering O(N^2) safety checks during string operations.
 pub const MAX_COMPLEX_STRING_LEN: usize = 1024; // Lower limit for O(N^2) or O(N log N) ops
+/// The maximum capacity of genetic instructions a single DNA strand can contain.
 pub const MAX_GENES_PER_STRAND: usize = 4096;
+/// The highest iteration depth allowed when traversing fractal structures.
 pub const MAX_FRACTAL_ITER: usize = 1000;
+/// The peak limit on an entity's structural complexity before spontaneous collapse.
 pub const MAX_COMPLEXITY: usize = 10000;
 
 #[cfg(feature = "nova")]
