@@ -2197,3 +2197,10 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [EVAPORATING] - Location: experiments/chimera-lang/src/prolouge_compiler.rs
 - **Scent Origin:** ⚛️ Prologue
 - **Status:** Integrated prolouge_compiler into prologue_esolang_compiler and removed duplicate files to evolve chimera-lang.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-tardis/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The experiment is purely a binary executable, but the README lacks clarity and leads users to believe it exposes a library target.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-miller/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** There is no README.md file for the gray-miller experiment.
