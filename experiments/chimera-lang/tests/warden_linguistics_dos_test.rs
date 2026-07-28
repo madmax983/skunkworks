@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 use chimera_lang::ast::{Dna, Helix, Strand};
 #[cfg(feature = "nova")]
-use chimera_lang::vm::{nova_linguistics, ChimeraVM, Value};
+use chimera_lang::{vm::ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
 fn make_vm() -> ChimeraVM {
@@ -26,7 +26,7 @@ fn test_levenshtein_dos_protection() {
     vm.stack.push(Value::Str(s1));
     vm.stack.push(Value::Str(s2));
 
-    nova_linguistics::exec_levenshtein(&mut vm);
+    chimera_lang::exec_levenshtein(&mut vm);
 
     // Should NOT put a result on the stack
     assert!(
@@ -61,7 +61,7 @@ fn test_prologue_levenshtein_dos_protection() {
     vm.grid[4][6] = Value::Str(large_s2); // North
 
     // Execute Tick
-    chimera_lang::vm::prologue::exec_prologue_tick(&mut vm);
+    chimera_lang::exec_prologue_tick(&mut vm);
 
     let res = &vm.prologue_state.signal_grid[5][6];
 

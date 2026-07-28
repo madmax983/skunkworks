@@ -63,7 +63,7 @@ mod tests {
         vm.stack.push(Value::Int(0));
         vm.stack.push(Value::Int(0));
 
-        chimera_lang::vm::nova_alchemy_prime::exec_absorb_geometry(
+        chimera_lang::exec_absorb_geometry(
             &mut vm,
             OpCode::AbsorbGeometry,
             &[],

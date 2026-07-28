@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::{Dna, Helix};
-    use chimera_lang::vm::nova_fluid;
+
     use chimera_lang::vm::ChimeraVM;
 
     #[test]
@@ -52,6 +52,6 @@ mod tests {
         // Now run process_fluid.
         // Many cells will add their decayed wind to new_wind[8][8].
         // This should panic in debug mode due to overflow if += is unchecked/default.
-        nova_fluid::process_fluid(&mut vm);
+        chimera_lang::vm::process_fluid(&mut vm);
     }
 }

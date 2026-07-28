@@ -1,4 +1,4 @@
-use chimera_lang::vm::paradox::Paradox;
+use chimera_lang::Paradox;
 
 #[test]
 #[ignore = "👺 HAVOC: Intended Panic"]

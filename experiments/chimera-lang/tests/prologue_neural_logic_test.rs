@@ -33,7 +33,7 @@ mod tests {
         vm.prologue_state.registers.insert((7, 6), Value::Int(50));
 
         // Tick 1: ! emits 100 to 7,5
-        chimera_lang::vm::prologue::exec_prologue_tick(&mut vm);
+        chimera_lang::exec_prologue_tick(&mut vm);
 
         // Tick 2: 100 moves to 7,6 (Synapse) -> becomes 50 -> moves to 7,7 ($)
         // Wait, propagation happens in loop within one tick.
@@ -43,7 +43,7 @@ mod tests {
         // $ writes to South (8,7).
 
         // Run tick
-        chimera_lang::vm::prologue::exec_prologue_tick(&mut vm);
+        chimera_lang::exec_prologue_tick(&mut vm);
 
         // Check grid[8][7]
         if let Value::Int(v) = vm.grid[8][7] {
@@ -76,7 +76,7 @@ mod tests {
         vm.prologue_state.registers.insert((7, 7), Value::Int(100));
 
         // Tick 1
-        chimera_lang::vm::prologue::exec_prologue_tick(&mut vm);
+        chimera_lang::exec_prologue_tick(&mut vm);
 
         // Check weight of • at 7,7
         if let Some(Value::Int(w)) = vm.prologue_state.registers.get(&(7, 7)) {
@@ -106,7 +106,7 @@ mod tests {
         vm.grid[7][6] = Value::Str("⇝".to_string());
 
         // Tick
-        chimera_lang::vm::prologue::exec_prologue_tick(&mut vm);
+        chimera_lang::exec_prologue_tick(&mut vm);
 
         // Check resistance at 7,6
         // Logic: Resistance = 100 - Signal = 100 - 20 = 80.

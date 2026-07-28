@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix};
 use chimera_lang::opcode::OpCode;
-use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::exec_prologue_tick;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
@@ -13,11 +13,11 @@ fn test_orca_mode_toggle() {
     assert!(!vm.prologue_state.orca_mode);
 
     // Toggle ON
-    chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::Orca, &[]);
+    chimera_lang::exec_nova_op(&mut vm, OpCode::Orca, &[]);
     assert!(vm.prologue_state.orca_mode);
 
     // Toggle OFF
-    chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::Orca, &[]);
+    chimera_lang::exec_nova_op(&mut vm, OpCode::Orca, &[]);
     assert!(!vm.prologue_state.orca_mode);
 }
 

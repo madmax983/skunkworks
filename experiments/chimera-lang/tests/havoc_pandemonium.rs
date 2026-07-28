@@ -33,7 +33,7 @@ fn test_fuse_explosion_capped() {
 
     // Run for 20 ticks. Without cap, 2^20 = 1,048,576 > 65536.
     for _ in 0..20 {
-        chimera_lang::vm::prologue::exec_prologue_tick(&mut vm);
+        chimera_lang::exec_prologue_tick(&mut vm);
 
         if let Some(output) = &vm.prologue_state.signal_grid[5][5] {
             if let Value::Str(_) = output {

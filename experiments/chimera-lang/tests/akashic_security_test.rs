@@ -104,7 +104,7 @@ fn test_akashic_read_limit() {
     }
 
     // Try to load the AkashicRecords
-    let result = chimera_lang::vm::akashic::AkashicRecords::load_from(filename);
+    let result = chimera_lang::AkashicRecords::load_from(filename);
 
     // Clean up
     let _ = std::fs::remove_file(filename);

@@ -2,9 +2,9 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::memetics;
-    use chimera_lang::vm::nova::Organelle;
-    use chimera_lang::vm::nova::OrganelleType;
+
+    use chimera_lang::Organelle;
+    use chimera_lang::OrganelleType;
     use chimera_lang::vm::ChimeraVM;
 
     fn make_vm() -> ChimeraVM {
@@ -58,7 +58,7 @@ mod tests {
         vm.organelles.push(organelle);
 
         // 3. Infect (5, 5) with Virus carrying Payload
-        let virus = memetics::Virus {
+        let virus = chimera_lang::Virus {
             name: "GeneTherapy".to_string(),
             color: (0, 255, 0),
             pattern: "X".to_string(),
@@ -67,17 +67,17 @@ mod tests {
             grammar: None,
             quorum_action: None,
             quorum_threshold: 0,
-            mode: memetics::VirusMode::Overwrite,
+            mode: chimera_lang::VirusMode::Overwrite,
         };
         vm.virus_library.push(virus);
 
-        vm.viral_grid[5][5] = Some(memetics::ViralState {
+        vm.viral_grid[5][5] = Some(chimera_lang::ViralState {
             infection_level: 100,
             virus_id: 0,
         });
 
         // 4. Run Outbreak
-        memetics::exec_memetics_op(&mut vm, OpCode::Outbreak, &[]);
+        chimera_lang::exec_memetics_op(&mut vm, OpCode::Outbreak, &[]);
 
         // 5. Verify Transduction
         let strand_0 = &vm.dna.helix.strands[0];

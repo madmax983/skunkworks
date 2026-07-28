@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
-use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::exec_prologue_tick;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn setup_signal(vm: &mut ChimeraVM, val: Value, target_y: usize, target_x: usize, from_dir: &str) {
@@ -57,7 +57,7 @@ fn test_logos_grammar_definition() {
     // Check structure
     let rule = engine.rules.get("noun").unwrap();
     match rule {
-        chimera_lang::vm::prologue::GrammarRule::Choice(opts) => {
+        chimera_lang::GrammarRule::Choice(opts) => {
             assert_eq!(opts.len(), 2);
         }
         _ => panic!("Expected Choice rule"),

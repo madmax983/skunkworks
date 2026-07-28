@@ -31,7 +31,7 @@ fn test_sigil_strand_oob() {
     vm.stack.push(Value::Str("CrashSigil".to_string())); // Name
 
     // Execute Inscribe
-    let _ = chimera_lang::vm::nova_sigil::exec_inscribe(&mut vm, OpCode::Inscribe, &[]);
+    let _ = chimera_lang::exec_inscribe(&mut vm, OpCode::Inscribe, &[]);
 
     // Check if Sigil was registered (if fix is NOT applied, it will be)
     // If fix IS applied, this should be None.
@@ -41,7 +41,7 @@ fn test_sigil_strand_oob() {
         // Enable AutoCast
         vm.stack.push(Value::Str("CrashSigil".to_string()));
         vm.stack.push(Value::Int(1)); // 1 = True
-        let _ = chimera_lang::vm::nova_sigil::exec_auto_cast(&mut vm, OpCode::AutoCast, &[]);
+        let _ = chimera_lang::exec_auto_cast(&mut vm, OpCode::AutoCast, &[]);
 
         // Step 1: Process passive sigils -> Spawns organelle with IP (1000, 0)
         vm.step();
@@ -78,12 +78,12 @@ fn test_babel_compile_stack_overflow() {
     // Build a deeply nested structure
     vm.stack.push(Value::Str("a".to_string()));
     // ParserMatch pops 1 item
-    let _ = chimera_lang::vm::babel::exec_babel_op(&mut vm, OpCode::ParserMatch, &[]);
+    let _ = chimera_lang::exec_babel_op(&mut vm, OpCode::ParserMatch, &[]);
 
     // Now loop to wrap (Linear depth using ParserMany)
     for _ in 0..100000 {
         // ParserMany: Pops 1 item. Pushes Junction(Many, item).
-        let _ = chimera_lang::vm::babel::exec_babel_op(&mut vm, OpCode::ParserMany, &[]);
+        let _ = chimera_lang::exec_babel_op(&mut vm, OpCode::ParserMany, &[]);
     }
 
     println!("Constructed huge parser. Compiling...");
@@ -92,6 +92,6 @@ fn test_babel_compile_stack_overflow() {
     vm.stack.push(Value::Int(0)); // Handler
 
     // This should crash with stack overflow
-    let _ = chimera_lang::vm::babel::exec_babel_op(&mut vm, OpCode::BabelCompile, &[]);
+    let _ = chimera_lang::exec_babel_op(&mut vm, OpCode::BabelCompile, &[]);
     println!("Compilation finished (Survived).");
 }

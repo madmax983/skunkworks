@@ -50,7 +50,7 @@ impl Retina {
     /// # Examples
     ///
     /// ```
-    /// use chimera_lang::vm::retina::Retina;
+    /// use chimera_lang::Retina;
     ///
     /// let retina = Retina::new();
     /// assert_eq!(retina.width, 64);
@@ -78,7 +78,7 @@ impl Retina {
     /// # Examples
     ///
     /// ```
-    /// use chimera_lang::vm::retina::Retina;
+    /// use chimera_lang::Retina;
     ///
     /// let mut retina = Retina::new();
     /// // Draw a red 'X' at (y: 5, x: 10)
@@ -99,7 +99,7 @@ impl Retina {
     /// # Examples
     ///
     /// ```
-    /// use chimera_lang::vm::retina::Retina;
+    /// use chimera_lang::Retina;
     ///
     /// let mut retina = Retina::new();
     /// // Clear screen to black

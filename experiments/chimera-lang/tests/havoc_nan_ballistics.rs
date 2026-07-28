@@ -3,7 +3,7 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::nova_ballistics::Projectile;
+    use chimera_lang::Projectile;
     use chimera_lang::vm::{ChimeraVM, Value};
 
     #[test]

@@ -234,7 +234,7 @@ mod tests {
         let initial_energy = vm.energy;
 
         // Execute OpCode::PrologueEsolang via dispatcher
-        let res = chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::PrologueEsolang, &[]);
+        let res = chimera_lang::exec_nova_op(&mut vm, OpCode::PrologueEsolang, &[]);
 
         assert!(res.is_none());
         assert!(vm.prologue_state.active);

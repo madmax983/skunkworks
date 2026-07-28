@@ -103,7 +103,7 @@ fn test_oracle_generate() {
     // Logic: generate(match("Oracle"), ?Output).
     // Should bind ?Output = "Oracle".
 
-    use chimera_lang::vm::oracle;
+
     use std::collections::HashMap;
 
     let dna = Dna {
@@ -130,7 +130,7 @@ fn test_oracle_generate() {
     );
 
     let mut solutions = Vec::new();
-    oracle::solve(
+    chimera_lang::solve(
         &[goal],
         HashMap::new(),
         &vm.knowledge_base,

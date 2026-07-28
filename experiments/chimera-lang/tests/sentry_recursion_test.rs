@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix};
 use chimera_lang::opcode::OpCode;
-use chimera_lang::vm::nova::exec_nova_op;
+use chimera_lang::exec_nova_op;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]

@@ -13,7 +13,7 @@
 //! ## Example
 //!
 //! ```
-//! use chimera_lang::vm::bard::{Note, score_to_abc};
+//! use chimera_lang::{Note, score_to_abc};
 //!
 //! // Simulate a simple melody (Twinkle Twinkle Little Star)
 //! let score = vec![

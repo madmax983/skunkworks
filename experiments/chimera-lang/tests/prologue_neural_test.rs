@@ -1,7 +1,7 @@
 #![cfg(feature = "biophysics")]
 
 use chimera_lang::ast::{Dna, Helix, Strand};
-use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::exec_prologue_tick;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn make_vm() -> ChimeraVM {

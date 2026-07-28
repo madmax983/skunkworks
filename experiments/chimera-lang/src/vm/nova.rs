@@ -2440,7 +2440,7 @@ impl ChimeraVM {
 /// ```rust
 /// use chimera_lang::vm::ChimeraVM;
 /// use chimera_lang::ast::Dna;
-/// use chimera_lang::vm::nova::exec_chromatic_code;
+/// use chimera_lang::exec_chromatic_code;
 ///
 /// let dna = Dna::from_genes(vec![]);
 /// let mut vm = ChimeraVM::new(dna);

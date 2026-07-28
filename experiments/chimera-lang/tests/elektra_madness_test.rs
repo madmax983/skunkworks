@@ -39,11 +39,11 @@ mod elektra_madness {
         // We need to manually add an organelle since Spawn is complex to setup via genes in a short test
         // But vm.organelles is pub.
 
-        // We need to use the Organelle struct. It's likely in `chimera_lang::vm::nova::Organelle`.
+        // We need to use the Organelle struct. It's likely in `chimera_lang::Organelle`.
         // But `nova` module might not be fully pub re-exported?
-        // `use chimera_lang::vm::nova::Organelle` should work if `pub mod nova` in `lib.rs` / `vm/mod.rs`.
+        // `use chimera_lang::Organelle` should work if `pub mod nova` in `lib.rs` / `vm/mod.rs`.
 
-        use chimera_lang::vm::nova::{Organelle, OrganelleType};
+        use chimera_lang::{Organelle, OrganelleType};
 
         let target_loc = (9, 8); // y=9, x=8. Distance 1.
 

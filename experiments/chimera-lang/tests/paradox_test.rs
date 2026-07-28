@@ -2,7 +2,7 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::{Dna, Helix};
-    use chimera_lang::vm::paradox::{Action, Paradox, Trigger};
+    use chimera_lang::{Action, Paradox, Trigger};
     use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_empty_vm() -> ChimeraVM {

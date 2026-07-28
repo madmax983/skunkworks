@@ -86,7 +86,7 @@ fn test_hermetic_alchemy() {
     // In `apply_elemental_runes`, we passed `&vm.prologue_state.alchemy_book`.
     // But `exec_prologue_tick` calls it.
 
-    chimera_lang::vm::prologue::exec_prologue_tick(&mut vm);
+    chimera_lang::exec_prologue_tick(&mut vm);
 
     // 6. Verify Result
     // Mercury at (1,1) should have transmuted to "Gold"
@@ -104,7 +104,7 @@ fn test_hermetic_alchemy() {
     vm.prologue_state.delayed_signals[0][1] = Some(Value::Str("A".to_string()));
     vm.prologue_state.delayed_signals[1][0] = Some(Value::Str("B".to_string()));
 
-    chimera_lang::vm::prologue::exec_prologue_tick(&mut vm);
+    chimera_lang::exec_prologue_tick(&mut vm);
 
     if let Some(val) = &vm.prologue_state.signal_grid[1][1] {
         assert_eq!(*val, Value::Str("Gold".to_string()));

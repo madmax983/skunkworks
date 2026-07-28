@@ -1,7 +1,7 @@
 #![cfg(all(feature = "nova", feature = "oracle"))]
 
 use chimera_lang::ast::{Dna, Helix, JunctionType, Strand};
-use chimera_lang::vm::nova_signals::process_signals;
+use chimera_lang::process_signals;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn make_vm() -> ChimeraVM {
