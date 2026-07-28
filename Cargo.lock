@@ -6314,16 +6314,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "neuro-circuit"
-version = "0.1.0"
-dependencies = [
- "macroquad",
- "rand 0.8.7",
- "rand_chacha 0.3.1",
- "sha2",
-]
-
-[[package]]
 name = "neuro-flock"
 version = "0.1.0"
 dependencies = [
