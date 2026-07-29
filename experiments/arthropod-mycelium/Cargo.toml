@@ -1,0 +1,9 @@
+[package]
+name = "arthropod-mycelium"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+arthropod = { workspace = true }
+myco-transit = { path = "../myco-transit" }

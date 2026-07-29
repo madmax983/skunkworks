@@ -347,6 +347,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-mycelium"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "macroquad",
+ "myco-transit",
+]
+
+[[package]]
 name = "arthropod-neuro"
 version = "0.1.0"
 dependencies = [
