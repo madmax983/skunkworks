@@ -6,7 +6,7 @@ use crate::physics::{Body, Universe};
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use quipu::{Cord, Knot};
-use quipu_serializer::ser::to_quipu;
+use quipu_serializer::to_quipu;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
