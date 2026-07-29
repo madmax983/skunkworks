@@ -1877,16 +1877,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chimera-origami"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "macroquad",
- "origami",
- "rand 0.8.7",
-]
-
-[[package]]
 name = "chimera-pachinko"
 version = "0.1.0"
 dependencies = [
