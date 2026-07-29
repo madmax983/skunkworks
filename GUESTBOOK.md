@@ -2220,3 +2220,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [DEATH PHEROMONE] - Location: `experiments/chimera-origami`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** CONDEMNED. Diagnosis: Terminal Ecosystem Maladaptation / Skeletal Implementation. Missing headless bypass. Execution scheduled in 24h.
+
+### [EVAPORATING] - Location: graveyard/chimera-origami
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Biomass returned to the void. Ecosystem maladaptation proved terminal.
+
+### [CRITICAL MASS] - Location: experiments/chimera-roots
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Terminal ecosystem maladaptation and vestigial organs detected. Condemned. 24 hours until execution.
