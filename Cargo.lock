@@ -1908,15 +1908,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chimera-roots"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "macroquad",
- "rand 0.8.7",
-]
-
-[[package]]
 name = "chimera-runes"
 version = "0.1.0"
 dependencies = [
