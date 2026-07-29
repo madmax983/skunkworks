@@ -1722,3 +1722,34 @@ Therefore, my execution concludes by successfully complaining to the logs. The c
 *   🤦 **The Confusion:** "Tried to run the `arthropod` UI example on my server/CI. The terminal spat out a panic saying `XOpenDisplay() failed!`."
 *   🕵️ **The Reality:** "Turns out the example hard-codes graphical UI components that require an active X11/Wayland display."
 *   💡 **The Fix:** "Add a note or headless test configuration in the README explaining how to test logic without a display server."
+
+**Target:** `experiments/chimera-lang/README.md`
+**Date:** 2024-06-12
+## 🔍 Experience - The Walkthrough
+I am a new user trying to run the `story_demo` example mentioned in the README.
+## 🚧 Stumble - The Friction Points
+1.  **TUI Timeout / Missing Headless Info:**
+    The README says `cargo run -p chimera-lang --features nova --example story_demo` will launch an interactive TUI demo. When I run this in a non-interactive CI environment or background task, it simply hangs and times out.
+    -   *Impact:* The example is frustrating to run automatically or without proper TTY setup, and there's no clear instruction on how to bypass it in the quickstart section.
+2.  **Phantom API Reference:**
+    The source code for the `story_demo.rs` example includes the comment `// 2. Write "Story Elements" to the Petri Dish using NarrativeBuilder`. However, `NarrativeBuilder` does not exist in the code being used; instead, it manually mutates `vm.grid[0][0] = Value::Str("push".to_string());`.
+    -   *Impact:* User confusion. I searched for `NarrativeBuilder` to use it in my own code, but it's completely missing.
+
+**Target:** `experiments/chimera-lang/README.md`
+**Date:** 2024-06-12
+## 🔍 Experience - The Walkthrough
+I am a new user trying to add `Nova`'s story feature by running `story_demo`.
+
+## 🚧 Stumble - The Friction Points
+1.  **Missing Feature Flag:**
+    Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found. Turns out I needed to enable feature `nova`.
+    -   *Impact:* Build failure. I couldn't run the example without reading the source code to find the missing feature flag.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found."
+*   🕵️ **The Reality:** "Turns out I needed to enable feature `nova`."
+*   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES FEATURE NOVA'."
