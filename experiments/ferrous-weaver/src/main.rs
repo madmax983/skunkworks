@@ -22,6 +22,14 @@ use std::{
 };
 use tui_shared::Tui;
 
+fn process_knot(knot: &Knot) -> (f32, f32) {
+    match knot {
+        Knot::Simple => (1.0, 1.0),
+        Knot::Long(v) => (*v as f32, -(*v as f32)),
+        Knot::FigureEight => (1.5, 0.0),
+    }
+}
+
 struct AppState {
     universe: Universe,
     playhead_y: f32,   // -100 to 100 (Physical Y)
@@ -88,20 +96,9 @@ impl AppState {
                 let mut knot_count = 0;
 
                 for knot in cluster {
-                    match knot {
-                        Knot::Simple => {
-                            total_mass += 1.0;
-                            total_charge += 1.0; // Positive Charge
-                        }
-                        Knot::Long(v) => {
-                            total_mass += *v as f32;
-                            total_charge -= *v as f32; // Negative Charge
-                        }
-                        Knot::FigureEight => {
-                            total_mass += 1.5;
-                            // Neutral charge
-                        }
-                    }
+                    let (mass, charge) = process_knot(knot);
+                    total_mass += mass;
+                    total_charge += charge;
                     knot_count += 1;
                 }
 
@@ -147,19 +144,9 @@ impl AppState {
                     let mut total_mass = 0.0;
                     let mut total_charge = 0.0;
                     for k in cluster {
-                        match k {
-                            Knot::Simple => {
-                                total_mass += 1.0;
-                                total_charge += 1.0;
-                            }
-                            Knot::Long(v) => {
-                                total_mass += *v as f32;
-                                total_charge -= *v as f32;
-                            }
-                            Knot::FigureEight => {
-                                total_mass += 1.5;
-                            }
-                        }
+                        let (mass, charge) = process_knot(k);
+                        total_mass += mass;
+                        total_charge += charge;
                     }
 
                     let parent_pos = self.universe.bodies[sub_prev].pos;
