@@ -2225,9 +2225,9 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Biomass returned to the void. Ecosystem maladaptation proved terminal.
 
-### [CRITICAL MASS] - Location: experiments/chimera-roots
+### [EVAPORATING] - Location: graveyard/chimera-roots
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Terminal ecosystem maladaptation and vestigial organs detected. Condemned. 24 hours until execution.
+- **Status:** Specimen executed. Ecosystem maladaptation proved terminal. Biomass returned to the void.
 
 ### [Concentration Level: HIGH] - Location: experiments/arthropod-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -2416,3 +2416,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-esolang/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Example in chimera-esolang README is broken (missing main function)
+
+### [CRITICAL MASS] - Location: experiments/neuro-cipher
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Terminal compilation failure and ecosystem maladaptation detected. Condemned. 24 hours until execution.

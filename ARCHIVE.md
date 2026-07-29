@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-roots**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation / Vestigial Organs. Missing headless bypass causes fatal X11 panic. Grace period: 24h.
+- **neuro-cipher**: Specimen condemned. Diagnosis: Terminal Compilation Failure (`glam` mismatch) / Ecosystem Maladaptation (missing headless bypass). Grace period: 24h.
 ## ☠️ Executed
+- **chimera-roots**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Vestigial Organs. Missing headless bypass causes fatal X11 panic. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **chimera-origami**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Panics in headless environments due to missing --headless bypass. Failed to improve during grace period. Moved to graveyard.
 - **gray-strings**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11 panic. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **neuro-circuit**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11 panic. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
