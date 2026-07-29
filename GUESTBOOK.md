@@ -2424,3 +2424,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [STABLE TRAIL] - Location: `experiments/chimera-lang/README.md`
 - **Scent Origin:** Echo 🗣️
 - **Status:** Missing explicit warning about `nova` feature requirement for `story_demo` in the README. Added report to `DX_AUDIT_LOG.md`.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-roots
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal Ecosystem Maladaptation / Vestigial Organs. Failed to adapt during grace period. Biomass returned to the void.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/gray-origami
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Ecosystem Maladaptation / Compilation Failure. Death approaches in 24 hours unless the type mismatch (`mismatched types`) is resolved.
