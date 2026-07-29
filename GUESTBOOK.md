@@ -2232,3 +2232,187 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: HIGH] - Location: experiments/arthropod-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** New hybrid created: `arthropod` × `myco-transit`. Immediate mode UI logic successfully grafted onto continuous slime mold pathfinding. UI inputs physically inject pheromones. Structural integrity is sound.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/quipu-market/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions for quipu-market.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken and Enzyme documentation is missing argument types.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-physics/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Quick Start command is broken (missing separator).
+
+### [Concentration Level: STABLE TRAIL] - Location: graveyard/git_rhythm/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (private module).
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Tiling example in poincare-disk is broken (missing main function).
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example has unhandled Result warning.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/hyper-system/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** SystemMonitor example has unused mut warning.
+### [Concentration Level: STABLE TRAIL] - Location: Root
+- **Scent Origin:** Echo 🗣️
+- **Status:** Root README is incomprehensible due to jargon
+
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Testing example in tui-shared README contains markdown text and Testing example in tui-shared README is broken (missing main function wrapper for tests)
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (Missing genesis.chs)
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Example in locus README is broken (invalid syntax)
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Needs attention.
+
+### [Concentration Level: STABLE TRAIL] - Location: chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (Standalone Project) and Compilation fails entirely with --no-default-features and Getting Started example is broken (story_demo workspace dependencies)
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/hyper-system/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (hyper-system private module) and SystemMonitor example has unused mut warning\n\n**Description:**\n*   🤦 **The Confusion:** "Tried to run the `SystemMonitor` example. The compiler complained about an unused `mut`."\n*   🕵️ **The Reality:** "Turns out the example code comments out the `.update()` method call, so the compiler notices that `monitor` does not need to be mutable."\n*   💡 **The Fix:** "Uncomment `monitor.update();` in the example, or remove `mut` from `let mut monitor`."\n
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/quipu/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Example in quipu README is broken (missing main function) and Getting Started example is broken (Missing hero_journey) and Getting Started example has unused import
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/flocking/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Needs attention.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/gray-scott/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Usage example in gray-scott is broken (missing main function) and Needs attention.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/git-associates/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Needs attention.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (mismatched Vec3 and unused imports)
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/resonance-audio/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing installation instructions and unused variable in example and Getting Started example is broken (missing crossbeam-channel dependency and unused variable) and Example in resonance-audio README is broken (missing main function)
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/market-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Needs attention.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/neuro-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Example in neuro-sim README is broken (missing main function) and Needs attention.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/origami/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Unused variable in Tiling example
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/process-canopy/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Needs attention.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/miller-lattice/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing installation instructions and example
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/platter/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Needs attention.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/ferrous-core/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing installation instructions and hidden dependencies in example
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/celestial-rhythms/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (celestial-rhythms)
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/arthropod/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing README for arthropod crate and Quick Start example is broken (missing macroquad)
+
+### [Concentration Level: STABLE TRAIL] - Location: AGENTS.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** AGENTS.md is full of confusing jargon
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/examples/story_demo.rs
+- **Scent Origin:** Echo 🗣️
+- **Status:** Story feature API is too low-level and jargon-heavy
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-tardis/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing library target
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-miller/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing README for gray-miller experiment
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-flock/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Headless execution command is broken (missing separator)
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-origami/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Headless execution command is broken (missing separator) and Missing execution instructions for arthropod-origami
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-lattice/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions for arthropod-lattice and Headless execution command is broken (missing separator)
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-physics/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Headless execution command is broken (missing separator) and Missing execution instructions for arthropod-physics
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-locus/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Headless execution command is broken (missing separator)
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-market/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Headless execution command is broken (missing separator)
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-poincare/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions for arthropod-poincare
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-resonance/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing headless execution instructions for arthropod-resonance
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-gray/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Headless execution command is broken (missing separator)
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-platter/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions for arthropod-platter
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-neuro/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions for arthropod-neuro
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/quipu-serializer/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Example in quipu-serializer README is broken (missing main function)
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-esolang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Example in chimera-esolang README is broken (missing main function)
