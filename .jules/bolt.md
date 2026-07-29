@@ -14,3 +14,6 @@
 **[TUI Render Loops and Intermediate Allocations]
 **Learning:** Using `.collect::<Vec<_>>().join("\n")` inside TUI render loops causes significant unnecessary intermediate heap allocations per frame, which violates zero-cost abstraction principles.
 **Action:** Replace `collect` and `join` with a pre-allocated `String` and `std::fmt::Write` loops to append directly, preventing intermediate vector allocations.
+**TUI Rendering Allocation Optimization**
+**Learning:** Using `.collect::<Vec<_>>()` to format and join strings inside TUI render loops causes significant unnecessary intermediate heap allocations per frame.
+**Action:** Use `iter().map(...)` with `std::fmt::Write` to construct strings iteratively in a single buffer, and directly pass iterators to TUI widgets (like `List::new`) that accept them.

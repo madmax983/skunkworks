@@ -1,5 +1,5 @@
-use chimera_lang::prelude::*;
 use chimera_lang::exec_prologue_tick;
+use chimera_lang::prelude::*;
 
 #[test]
 fn test_loom_push_to_warp() {

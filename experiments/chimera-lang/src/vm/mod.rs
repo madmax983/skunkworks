@@ -542,7 +542,6 @@ use crossbeam_channel::{Receiver, Sender};
 use resonance_audio::{AudioCommand, AudioSnapshot};
 
 #[cfg(feature = "nova")]
-
 #[cfg(feature = "nova")]
 use self::nova_chronos::Spore;
 
@@ -37130,47 +37129,47 @@ pub(crate) mod nova_pachinko;
 mod warden_overflow_test;
 
 // Re-export required modules for integration tests
-pub use nova_diffusion::*;
-pub use nova_signals::*;
-pub use prologue::*;
-pub use nova::*;
-pub use nova_sigil::*;
-pub use babel::*;
-pub use paradox::*;
-pub use nova_babel_live::*;
-pub use oracle::*;
-pub use nova_botany::*;
-pub use nova_genetics::*;
-pub use pandemonium::*;
-pub use memetics::*;
-pub use nova_biome::*;
-pub use evolution::*;
-pub use nova_fluid::*;
-pub use ipc::*;
-pub use nova_linguistics::*;
 pub use akashic::*;
-pub use nova_ballistics::*;
-pub use nova_alchemy_prime::*;
+pub use babel::*;
 pub use bard::*;
-pub use retina::*;
-pub use verbum::*;
+pub use evolution::*;
+pub use ipc::*;
+pub use memetics::*;
+pub use nova::*;
+pub use nova_alchemy_prime::*;
 pub use nova_attractor::*;
-pub use nova_hologram::*;
-pub use nova_metazoa::*;
-pub use nova_optics::*;
-pub use piet::*;
+pub use nova_babel_live::*;
+pub use nova_ballistics::*;
+pub use nova_biome::*;
+pub use nova_botany::*;
+pub use nova_diffusion::*;
+pub use nova_fluid::*;
 pub use nova_fractal::*;
 pub use nova_functional::*;
+pub use nova_genetics::*;
+pub use nova_hologram::*;
+pub use nova_linguistics::*;
+pub use nova_metazoa::*;
+pub use nova_optics::*;
+pub use nova_origami::*;
+pub use nova_physics::*;
 pub use nova_quipu::*;
 pub use nova_raku::*;
+pub use nova_security::*;
+pub use nova_semiotics::*;
+pub use nova_sigil::*;
+pub use nova_signals::*;
 pub use nova_simulation::*;
+pub use nova_strings::*;
+pub use nova_void::*;
+pub use oracle::*;
+pub use pandemonium::*;
+pub use paradox::*;
 #[cfg(feature = "phylogeny")]
 pub use phylogeny::*;
+pub use piet::*;
+pub use prologue::*;
+pub use retina::*;
 #[cfg(feature = "silicon")]
 pub use silicon::*;
-pub use nova_void::*;
-pub use nova_strings::*;
-pub use nova_semiotics::*;
-pub use nova_security::*;
-pub use nova_physics::*;
-pub use nova_origami::*;
+pub use verbum::*;

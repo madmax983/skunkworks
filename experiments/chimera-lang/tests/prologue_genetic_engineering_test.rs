@@ -1,5 +1,5 @@
-use chimera_lang::prelude::*;
 use chimera_lang::exec_prologue_tick;
+use chimera_lang::prelude::*;
 
 #[test]
 fn test_genetic_engineering_compose() {

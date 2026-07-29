@@ -1,6 +1,6 @@
 use arthropod::Button;
 use macroquad::prelude::*;
-use myco_transit::{World, Agent};
+use myco_transit::{Agent, World};
 
 fn conf() -> Conf {
     Conf {
@@ -36,8 +36,8 @@ async fn async_main() {
     let btn_add_city = Button::new("Add City (Pheromone Burst)", 20.0, 20.0, 250.0, 40.0)
         .with_colors(GREEN, LIME, DARKGREEN);
 
-    let btn_clear = Button::new("Clear Trails", 20.0, 70.0, 250.0, 40.0)
-        .with_colors(RED, ORANGE, DARKGRAY);
+    let btn_clear =
+        Button::new("Clear Trails", 20.0, 70.0, 250.0, 40.0).with_colors(RED, ORANGE, DARKGRAY);
 
     let mut frame_image = Image::gen_image_color(width as u16, height as u16, BLACK);
     let texture = Texture2D::from_image(&frame_image);
@@ -54,7 +54,13 @@ async fn async_main() {
             // Add some agents for the new city
             for _ in 0..100 {
                 let target_idx = rand::gen_range(0, world.cities.len());
-                let agent = Agent::new(x, y, rand::gen_range(0.0, std::f64::consts::PI * 2.0), world.cities.len() - 1, target_idx);
+                let agent = Agent::new(
+                    x,
+                    y,
+                    rand::gen_range(0.0, std::f64::consts::PI * 2.0),
+                    world.cities.len() - 1,
+                    target_idx,
+                );
                 agents.push(agent);
             }
         }
@@ -93,17 +99,23 @@ async fn async_main() {
             let py = cy as u32;
             for dy in -2..=2 {
                 for dx in -2..=2 {
-                    if px as i32 + dx >= 0 && px as i32 + dx < width as i32 &&
-                       py as i32 + dy >= 0 && py as i32 + dy < height as i32 {
-                           frame_image.set_pixel((px as i32 + dx) as u32, (py as i32 + dy) as u32, RED);
-                       }
+                    if px as i32 + dx >= 0
+                        && px as i32 + dx < width as i32
+                        && py as i32 + dy >= 0
+                        && py as i32 + dy < height as i32
+                    {
+                        frame_image.set_pixel(
+                            (px as i32 + dx) as u32,
+                            (py as i32 + dy) as u32,
+                            RED,
+                        );
+                    }
                 }
             }
         }
 
         texture.update(&frame_image);
         draw_texture(&texture, 0.0, 0.0, WHITE);
-
 
         next_frame().await;
     }

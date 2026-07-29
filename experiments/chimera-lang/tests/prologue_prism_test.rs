@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 #[cfg(feature = "nova")]
-use chimera_lang::opcode::OpCode;
-#[cfg(feature = "nova")]
 use chimera_lang::exec_prologue_tick;
+#[cfg(feature = "nova")]
+use chimera_lang::opcode::OpCode;
 #[cfg(feature = "nova")]
 use chimera_lang::vm::{ChimeraVM, Value};
 

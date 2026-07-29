@@ -4,9 +4,9 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::{Organelle, OrganelleType};
-    use chimera_lang::vm::nova_signals;
+
     use chimera_lang::vm::ChimeraVM;
+    use chimera_lang::{Organelle, OrganelleType};
 
     fn make_vm() -> ChimeraVM {
         // Use Push(0) so there is an argument to mutate
@@ -60,7 +60,7 @@ mod tests {
         }
 
         // 3. Process Signals
-        nova_signals::process_signals(&mut vm);
+        chimera_lang::process_signals(&mut vm);
 
         // 4. Assert Mutation Log
         let found = vm.output.iter().any(|s| s.contains("MUTATION: Resonance"));
@@ -76,7 +76,7 @@ mod tests {
         vm.resonance_grid[8][8] = (161.8, 50.0);
 
         // 2. Process
-        nova_signals::process_signals(&mut vm);
+        chimera_lang::process_signals(&mut vm);
 
         // 3. Assert Wisp Spawn
         let found = vm

@@ -103,7 +103,6 @@ fn test_oracle_generate() {
     // Logic: generate(match("Oracle"), ?Output).
     // Should bind ?Output = "Oracle".
 
-
     use std::collections::HashMap;
 
     let dna = Dna {

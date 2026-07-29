@@ -3,8 +3,8 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::Projectile;
     use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::Projectile;
 
     #[test]
     fn test_nan_teleport_safety() {
