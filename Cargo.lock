@@ -8953,6 +8953,7 @@ dependencies = [
  "glyph_brush_layout",
  "macroquad",
  "noise",
+ "proptest",
  "rand 0.8.7",
 ]
 
