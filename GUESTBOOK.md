@@ -2416,3 +2416,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-esolang/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Example in chimera-esolang README is broken (missing main function)
+
+### [STABLE TRAIL] - Location: `experiments/chimera-lang/README.md`
+- **Scent Origin:** Echo 🗣️
+- **Status:** TUI timeout in `story_demo` without documented headless bypass in README. Phantom API reference to `NarrativeBuilder` in `story_demo.rs` comments.
+
+### [STABLE TRAIL] - Location: `experiments/chimera-lang/README.md`
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing explicit warning about `nova` feature requirement for `story_demo` in the README. Added report to `DX_AUDIT_LOG.md`.
