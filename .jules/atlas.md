@@ -61,3 +61,6 @@
 **[Title] Enforce Module Boundaries via Facade in chimera-lang VM**
 **Tangle:** The `experiments/chimera-lang/src/vm/mod.rs` leaked numerous internal modules directly via `pub mod`, breaking the Facade pattern and exposing all implementation details.
 **Blueprint:** Replaced `pub mod` with `pub(crate) mod` across internal VM modules to enforce strict boundaries. Re-exported needed modules using `pub use` to maintain the API surface required by integration tests and binaries, preserving structural integrity.
+**[Title] Enforce Facade Pattern in quipu-serializer
+**Tangle:** The `experiments/quipu-serializer` leaked its internal `ser` module through its API, which led dependent crates like `ferrous-weaver` to import directly from `quipu_serializer::ser::to_quipu`. This bypassed the intended Facade pattern.
+**Blueprint:** Maintained `pub(crate) mod ser;` and `pub use ser::*;` in `experiments/quipu-serializer/src/lib.rs` and updated dependent usages in `ferrous-weaver` and documentation to import `quipu_serializer::to_quipu` instead, enforcing a clean boundary.

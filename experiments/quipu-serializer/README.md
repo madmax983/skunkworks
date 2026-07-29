@@ -21,7 +21,7 @@ cargo run -p quipu-serializer
 
 ### Use as Library
 ```rust
-use quipu_serializer::ser::to_quipu;
+use quipu_serializer::to_quipu;
 use serde::Serialize;
 
 #[derive(Serialize)]
