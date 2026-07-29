@@ -1,10 +1,10 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::prelude::*;
     use chimera_lang::exec_prologue_tick;
-    use chimera_lang::RealityMode;
+    use chimera_lang::prelude::*;
     use chimera_lang::vm::Value;
+    use chimera_lang::RealityMode;
 
     #[test]
     fn test_reality_weave_activation() {

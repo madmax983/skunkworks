@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
+    use chimera_lang::apply_storm;
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::apply_storm;
     use chimera_lang::vm::ChimeraVM;
 
     fn make_vm(len: usize) -> ChimeraVM {

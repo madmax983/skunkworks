@@ -1,5 +1,5 @@
-use chimera_lang::LogosEngine;
 use chimera_lang::vm::Value;
+use chimera_lang::LogosEngine;
 
 #[test]
 fn test_logos_regex_parsing() {

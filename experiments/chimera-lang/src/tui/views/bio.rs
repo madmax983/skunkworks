@@ -590,16 +590,26 @@ pub(crate) fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &A
         // Bottom: Code
         if !engine.population.is_empty() {
             let best = &engine.population[0];
-            let mut gene_items = Vec::new();
-            for gene in &best.genes {
-                let args: Vec<String> = gene.args.iter().map(|a| format!("{:?}", a)).collect();
-                let s = if args.is_empty() {
+            // ⚡ Bolt: Use `std::fmt::Write` directly into a pre-allocated string inside an iterator
+            // to avoid allocating intermediate `Vec<String>` and calling `.join()`, which prevents
+            // costly heap allocations per-frame during rendering.
+            let gene_items = best.genes.iter().map(|gene| {
+                let s = if gene.args.is_empty() {
                     format!("{}", gene.op)
                 } else {
-                    format!("{}({})", gene.op, args.join(", "))
+                    use std::fmt::Write;
+                    let mut s = format!("{}(", gene.op);
+                    for (i, a) in gene.args.iter().enumerate() {
+                        if i > 0 {
+                            s.push_str(", ");
+                        }
+                        let _ = write!(s, "{:?}", a);
+                    }
+                    s.push(')');
+                    s
                 };
-                gene_items.push(ListItem::new(s).style(Style::default().fg(Color::Cyan)));
-            }
+                ListItem::new(s).style(Style::default().fg(Color::Cyan))
+            });
             let list = List::new(gene_items).block(
                 Block::default()
                     .borders(Borders::ALL)

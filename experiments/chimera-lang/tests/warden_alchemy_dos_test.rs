@@ -63,11 +63,7 @@ mod tests {
         vm.stack.push(Value::Int(0));
         vm.stack.push(Value::Int(0));
 
-        chimera_lang::exec_absorb_geometry(
-            &mut vm,
-            OpCode::AbsorbGeometry,
-            &[],
-        );
+        chimera_lang::exec_absorb_geometry(&mut vm, OpCode::AbsorbGeometry, &[]);
 
         // Without fix: It allocates 4M items and succeeds (or creates a huge strand).
         // With fix: It should push an error to output and NOT create a strand.

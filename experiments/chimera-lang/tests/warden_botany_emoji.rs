@@ -1,5 +1,5 @@
 use chimera_lang::prelude::{Dna, Value};
-use chimera_lang::{Organelle, vm::ChimeraVM};
+use chimera_lang::{vm::ChimeraVM, Organelle};
 
 #[test]
 fn test_botany_emoji_crash_prevented() {

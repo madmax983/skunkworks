@@ -2,8 +2,8 @@
 mod tests {
     use chimera_lang::ast::{Dna, Helix};
     use chimera_lang::exec_prologue_tick;
-    use chimera_lang::AstralState;
     use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::AstralState;
 
     #[test]
     fn test_astral_agent_spawn_and_gravity() {
