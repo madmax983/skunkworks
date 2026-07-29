@@ -4524,3 +4524,30 @@ classDiagram
 
     ChimeraLangVmFacade ..> ChimeraLangVmInternal : encapsulates
 ```
+
+## Enforce Facade Pattern in quipu-serializer and ferrous-weaver (ADR 168)
+
+Enforcing the Facade pattern ensures that dependent crates like `ferrous-weaver` use the public API instead of leaking internal modules like `ser`.
+
+```mermaid
+classDiagram
+    direction TB
+    class FerrousWeaver {
+        <<Crate>>
+    }
+
+    namespace QuipuSerializer {
+        class QuipuSerializerFacade {
+            <<Facade>>
+            +to_quipu()
+        }
+
+        class QuipuSerializerSer {
+            <<Private Module: ser>>
+            +to_quipu()
+        }
+    }
+
+    FerrousWeaver --> QuipuSerializerFacade : Uses Public API
+    QuipuSerializerFacade ..> QuipuSerializerSer : Encapsulates
+```
