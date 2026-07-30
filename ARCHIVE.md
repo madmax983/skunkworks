@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **gray-origami**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation / Compilation Failure. Dependency mismatch causes fatal `mismatched types` errors. Grace period: 24h.
+- **origami-history**: Specimen condemned. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11/Wayland panic in CI. Grace period: 24h.
 ## ☠️ Executed
+- **gray-origami**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Compilation Failure. Dependency mismatch causes fatal `mismatched types` errors. Grace period expired. Moved to graveyard.
 - **chimera-roots**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Vestigial Organs. Missing headless bypass causes fatal X11 panic. Failed to implement headless bypass or remove vestigial dead code during grace period. Biomass returned to the void. Moved to graveyard.
 - **chimera-origami**: Specimen executed. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Panics in headless environments due to missing --headless bypass. Failed to improve during grace period. Moved to graveyard.
 - **gray-strings**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11 panic. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
