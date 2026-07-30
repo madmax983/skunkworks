@@ -39,8 +39,10 @@ async fn main() {
             if let Some(pos) = screen_to_disk(mx, my) {
                 // Add a cluster
                 for _ in 0..3 {
-                    let offset =
-                        Complex::from_polar(rand::gen_range(0.0, 0.05), rand::gen_range(0.0, std::f64::consts::TAU));
+                    let offset = Complex::from_polar(
+                        rand::gen_range(0.0, 0.05),
+                        rand::gen_range(0.0, std::f64::consts::TAU),
+                    );
                     let p = pos + offset;
                     // Ensure inside disk
                     if p.norm() < 0.99 {

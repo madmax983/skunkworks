@@ -7,6 +7,7 @@ use ratatui::{
     widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
+use std::fmt::Write;
 
 #[cfg(feature = "nova")]
 #[allow(dead_code)]
@@ -223,14 +224,18 @@ fn render_hermetic_rules(vm: &ChimeraVM) -> String {
     let mut s = String::from("## Hermetic Alchemy\n\n");
     #[cfg(feature = "nova")]
     #[cfg(feature = "nova")]
+    // ⚡ Bolt: Prevent intermediate O(N) vector and string allocations inside TUI render loops
+    // by streaming formatting directly into the pre-allocated string buffer `s`.
     for (i, rule) in vm.prologue_state.alchemy_book.iter().enumerate() {
-        let ingredients: Vec<String> = rule.ingredients.iter().map(|v| format!("{}", v)).collect();
-        s.push_str(&format!(
-            "{}. {} -> {}\n",
-            i + 1,
-            ingredients.join(" + "),
-            rule.result
-        ));
+        let _ = write!(&mut s, "{}. ", i + 1);
+        let mut iter = rule.ingredients.iter();
+        if let Some(first) = iter.next() {
+            let _ = write!(&mut s, "{}", first);
+            for item in iter {
+                let _ = write!(&mut s, " + {}", item);
+            }
+        }
+        let _ = writeln!(&mut s, " -> {}", rule.result);
     }
     s
 }
