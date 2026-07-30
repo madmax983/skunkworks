@@ -17,3 +17,6 @@
 **TUI Rendering Allocation Optimization**
 **Learning:** Using `.collect::<Vec<_>>()` to format and join strings inside TUI render loops causes significant unnecessary intermediate heap allocations per frame.
 **Action:** Use `iter().map(...)` with `std::fmt::Write` to construct strings iteratively in a single buffer, and directly pass iterators to TUI widgets (like `List::new`) that accept them.
+**[TUI Rendering String Joining Optimization]**
+**Learning:** Using `.map(|v| format!("{}", v)).collect::<Vec<_>>().join(" + ")` causes an intermediate vector allocation and multiple string allocations inside TUI render loops.
+**Action:** Replace `.collect::<Vec<_>>().join(" + ")` with `std::fmt::Write` loops to append directly into a mutable string buffer (`write!(&mut s, ...)`) avoiding the intermediate vector allocation completely.

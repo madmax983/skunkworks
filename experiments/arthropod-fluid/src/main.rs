@@ -50,9 +50,15 @@ pub struct Magnet {
 async fn async_main() {
     let mut platter = Platter::new(80, 60);
 
-    let btn_attract = Button::new("Spawn Attract", 20.0, 20.0, 150.0, 40.0).with_colors(RED, ORANGE, YELLOW);
-    let btn_repel = Button::new("Spawn Repel", 20.0, 70.0, 150.0, 40.0).with_colors(BLUE, Color::new(0.68, 0.85, 0.9, 1.0), WHITE);
-    let btn_clear = Button::new("Clear Magnets", 20.0, 120.0, 150.0, 40.0).with_colors(GRAY, LIGHTGRAY, WHITE);
+    let btn_attract =
+        Button::new("Spawn Attract", 20.0, 20.0, 150.0, 40.0).with_colors(RED, ORANGE, YELLOW);
+    let btn_repel = Button::new("Spawn Repel", 20.0, 70.0, 150.0, 40.0).with_colors(
+        BLUE,
+        Color::new(0.68, 0.85, 0.9, 1.0),
+        WHITE,
+    );
+    let btn_clear =
+        Button::new("Clear Magnets", 20.0, 120.0, 150.0, 40.0).with_colors(GRAY, LIGHTGRAY, WHITE);
 
     let mut particles = Vec::new();
     // Spawn particles
@@ -128,11 +134,7 @@ async fn async_main() {
             let gx = (p_pos.x / 10.0).round() as usize;
             let gy = (p_pos.y / 10.0).round() as usize;
 
-            if gx > 0
-                && gx < (platter.width() - 1)
-                && gy > 0
-                && gy < (platter.height() - 1)
-            {
+            if gx > 0 && gx < (platter.width() - 1) && gy > 0 && gy < (platter.height() - 1) {
                 // Gradient
                 let left = platter.get_magnetism(gx - 1, gy);
                 let right = platter.get_magnetism(gx + 1, gy);
@@ -182,7 +184,12 @@ async fn async_main() {
 
         // Draw Particles
         for p in &particles {
-            draw_circle(p.pos.x as f32, p.pos.y as f32, 2.0, Color::new(0.0, 1.0, 1.0, 1.0));
+            draw_circle(
+                p.pos.x as f32,
+                p.pos.y as f32,
+                2.0,
+                Color::new(0.0, 1.0, 1.0, 1.0),
+            );
         }
 
         // Draw buttons again so they're on top
