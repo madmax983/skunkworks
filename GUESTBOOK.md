@@ -2433,10 +2433,14 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Terminal Ecosystem Maladaptation / Compilation Failure. Grace period expired. Biomass returned to the void.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/origami-history
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11/Wayland panic in CI. Death approaches in 24 hours.
-
 ### [STABLE TRAIL] - Location: experiments/arthropod-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted `arthropod` immediate mode UI directly onto `ferrous-fluid` particle physics. Buttons successfully spawn magnetic attractors/repulsors, perturbing the fluid dynamics. Headless mode intact. Recombination complete.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/origami-history
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Moved to graveyard.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/gray-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Compilation Failure. Fails to build due to Option<usize> indexing. Death approaches in 24 hours.
