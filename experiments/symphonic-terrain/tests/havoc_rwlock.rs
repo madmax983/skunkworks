@@ -1,4 +1,5 @@
 #[path = "../src/audio.rs"]
+#[allow(dead_code)]
 pub(crate) mod audio;
 
 use std::sync::{Arc, RwLock};

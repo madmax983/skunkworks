@@ -9,6 +9,12 @@ pub struct SharedState {
     pub oscillators: Vec<Oscillator>,
 }
 
+impl Default for SharedState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SharedState {
     pub fn new() -> Self {
         Self {
