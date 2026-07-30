@@ -66,3 +66,8 @@
 **Bloat:** `Vec4Ext` trait in `graveyard/chimera-enigma/src/main.rs` implemented by exactly one struct (`Vec4` from an external crate).
 **Cut:** Eliminated the trait entirely. Converted the rotation methods (`rotate_xw`, `rotate_yw`, etc.) into standalone module-level functions (`fn rotate_xw(v: &Vec4, theta: f32) -> Vec4`).
 **Saved:** Unnecessary trait declaration and indirection for a single struct type, adhering strictly to the KISS principle.
+
+## [Reduction]
+**Bloat:** Unused import and missing Default implementations triggering Clippy lints in `symphonic-terrain`.
+**Cut:** Removed `std::io::Read` from `physics.rs`. Implemented `Default` for `SharedState` and `Universe` using `Self::new()`.
+**Saved:** Eliminated compiler warnings and improved idiomatic Rust compliance by providing expected trait implementations.

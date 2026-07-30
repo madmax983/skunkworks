@@ -1,5 +1,4 @@
 use macroquad::prelude::*;
-use std::io::Read;
 
 pub const G: f32 = 100.0; // Gravity constant (adjusted for 3D scale)
 
@@ -37,6 +36,12 @@ impl Body {
 
 pub struct Universe {
     pub bodies: Vec<Body>,
+}
+
+impl Default for Universe {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Universe {
