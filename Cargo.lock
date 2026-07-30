@@ -310,6 +310,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-fluid"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "ferrous-core",
+ "locus",
+ "macroquad",
+]
+
+[[package]]
 name = "arthropod-gray"
 version = "0.1.0"
 dependencies = [
