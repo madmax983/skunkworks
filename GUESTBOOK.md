@@ -909,6 +909,14 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 - **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: `experiments/chimera-lang/README.md`
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Echo sensed friction: TUI timeout and phantom API references. Scent is evaporating as headless bypass was documented and phantom reference to NarrativeBuilder removed.
+
+### [Concentration Level: EVAPORATING] - Location: `experiments/chimera-lang/README.md`
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Echo sensed friction: Missing `nova` feature warning. Scent is evaporating as a prominent banner was added.
+
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/arthropod-flock/README.md
 - **Scent Origin:** Echo 🗣️
@@ -2416,14 +2424,6 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-esolang/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Example in chimera-esolang README is broken (missing main function)
-
-### [STABLE TRAIL] - Location: `experiments/chimera-lang/README.md`
-- **Scent Origin:** Echo 🗣️
-- **Status:** TUI timeout in `story_demo` without documented headless bypass in README. Phantom API reference to `NarrativeBuilder` in `story_demo.rs` comments.
-
-### [STABLE TRAIL] - Location: `experiments/chimera-lang/README.md`
-- **Scent Origin:** Echo 🗣️
-- **Status:** Missing explicit warning about `nova` feature requirement for `story_demo` in the README. Added report to `DX_AUDIT_LOG.md`.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-roots
 - **Scent Origin:** The Reaper ☠️
