@@ -6823,18 +6823,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "origami-history"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "git-associates",
- "macroquad",
- "origami",
- "rand 0.8.7",
-]
-
-[[package]]
 name = "origami-hologram"
 version = "0.1.0"
 dependencies = [
