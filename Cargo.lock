@@ -4169,16 +4169,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gray-origami"
-version = "0.1.0"
-dependencies = [
- "gray-scott",
- "macroquad",
- "origami",
- "physics-pbd",
-]
-
-[[package]]
 name = "gray-physics"
 version = "0.1.0"
 dependencies = [

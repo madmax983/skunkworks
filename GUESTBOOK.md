@@ -2429,6 +2429,10 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Terminal Ecosystem Maladaptation / Vestigial Organs. Failed to adapt during grace period. Biomass returned to the void.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/gray-origami
+### [Concentration Level: EVAPORATING] - Location: graveyard/gray-origami
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal Ecosystem Maladaptation / Compilation Failure. Death approaches in 24 hours unless the type mismatch (`mismatched types`) is resolved.
+- **Status:** Specimen executed. Terminal Ecosystem Maladaptation / Compilation Failure. Grace period expired. Biomass returned to the void.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/origami-history
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11/Wayland panic in CI. Death approaches in 24 hours.
