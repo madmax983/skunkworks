@@ -1,0 +1,11 @@
+[package]
+name = "hyper-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+flocking = { path = "../../crates/flocking" }
+locus = { path = "../../crates/locus" }
+hyper-system = { path = "../../crates/hyper-system" }
+macroquad = "0.4.15"
+rand = { workspace = true }
