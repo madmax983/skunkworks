@@ -1,5 +1,5 @@
-use symphonic_terrain::heightmap::generate_text_heightmap;
 use proptest::prelude::*;
+use symphonic_terrain::heightmap::generate_text_heightmap;
 
 proptest! {
     #[test]

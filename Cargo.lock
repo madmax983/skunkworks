@@ -4521,6 +4521,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-flock"
+version = "0.1.0"
+dependencies = [
+ "flocking",
+ "hyper-system",
+ "locus",
+ "macroquad",
+ "rand 0.8.7",
+]
+
+[[package]]
 name = "hyper-fluid"
 version = "0.1.0"
 dependencies = [
