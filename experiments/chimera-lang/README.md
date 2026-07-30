@@ -377,7 +377,7 @@ fn main() {
 ```
 
 > 🚨 **REQUIRES WORKSPACE OR EXPLICIT DEPENDENCIES** 🚨
-See `examples/story_demo.rs` for a full example of an interactive TUI usage. Note that it launches a blocking interactive TUI and cannot run headlessly.
+See `examples/story_demo.rs` for a full example of an interactive TUI usage. Note that it launches a blocking interactive TUI by default, but can be run headlessly using the `--headless` flag.
 
 > 🚨 **REQUIRES FEATURE NOVA** 🚨
 > Advanced features (including the compiler, `incubate`, and `story_demo`) require the `nova` feature flag.

@@ -9,7 +9,7 @@ fn main() -> anyhow::Result<()> {
     };
     let mut vm = ChimeraVM::new(dna);
 
-    // 2. Write "Story Elements" to the Petri Dish using NarrativeBuilder
+    // 2. Write "Story Elements" to the Petri Dish using direct grid manipulation
     println!("✍️  Writing story elements to Petri Dish...");
 
     // Let's create a story: "Once upon a time, there were 10 dragons."
