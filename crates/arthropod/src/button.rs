@@ -79,6 +79,35 @@ impl Button {
         self
     }
 
+    /// Resolves the current background, border, and text colors based on interaction state.
+    fn resolve_colors(&self, is_down: bool, is_hover: bool) -> (Color, Color, Color) {
+        let bg_color = if is_down {
+            self.active_color
+        } else if is_hover {
+            self.hover_color
+        } else {
+            self.normal_color
+        };
+
+        let border_color = if is_down {
+            YELLOW
+        } else if is_hover {
+            WHITE
+        } else {
+            self.border_color
+        };
+
+        let text_color = if is_down {
+            YELLOW
+        } else if is_hover {
+            WHITE
+        } else {
+            self.text_color
+        };
+
+        (bg_color, border_color, text_color)
+    }
+
     /// Renders the button to the screen and evaluates mouse interactions.
     ///
     /// This method performs immediate-mode drawing logic:
@@ -116,29 +145,7 @@ impl Button {
         let is_clicked = is_hover && is_mouse_button_released(MouseButton::Left);
         let is_down = is_hover && is_mouse_button_down(MouseButton::Left);
 
-        let bg_color = if is_down {
-            self.active_color
-        } else if is_hover {
-            self.hover_color
-        } else {
-            self.normal_color
-        };
-
-        let border_color = if is_down {
-            YELLOW
-        } else if is_hover {
-            WHITE
-        } else {
-            self.border_color
-        };
-
-        let text_color = if is_down {
-            YELLOW
-        } else if is_hover {
-            WHITE
-        } else {
-            self.text_color
-        };
+        let (bg_color, border_color, text_color) = self.resolve_colors(is_down, is_hover);
 
         // Shadow (drawn fixed behind the button)
         draw_rectangle(
