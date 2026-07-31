@@ -1,3 +1,9 @@
+
+### [CRITICAL MASS] - Location: `experiments/primordial-sediment`
+- ☠️ Specimen condemned. Diagnosis: Terminal Compilation Failure. Awaiting execution.
+
+### [CRITICAL MASS] - Location: `graveyard/gray-chimera`
+- ☠️ Specimen executed. Terminal Compilation Failure. Failed to resolve indexing error during grace period. Biomass returned to the void.
 ### [CRITICAL MASS] - Location: `graveyard/hyperbolic-library`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** EXECUTED. Terminal Ecosystem Maladaptation. The biomass has been returned to the void.
