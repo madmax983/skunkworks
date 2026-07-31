@@ -7463,18 +7463,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "primordial-sediment"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "crossterm 0.27.0",
- "git2",
- "rand 0.8.7",
- "ratatui",
-]
-
-[[package]]
 name = "primordial-soup"
 version = "0.1.0"
 dependencies = [
