@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **primordial-sediment**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to build due to E0308 mismatched types in git.rs and unused imports. Grace period: 24h.
+- **cargo-rocket**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Unused fields and lack of deep biological emergent behaviors. Grace period: 24h.
 ## ☠️ Executed
+- **primordial-sediment**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to compile due to E0308 mismatched types in git.rs during grace period. Biomass returned to the void. Moved to graveyard.
 - **gray-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to resolve Option<usize> indexing compilation error during grace period. Moved to graveyard.
 - **origami-history**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Moved to graveyard.
 - **gray-origami**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Compilation Failure. Dependency mismatch causes fatal `mismatched types` errors. Grace period expired. Moved to graveyard.

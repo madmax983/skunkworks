@@ -1,6 +1,9 @@
 
-### [CRITICAL MASS] - Location: `experiments/primordial-sediment`
-- ☠️ Specimen condemned. Diagnosis: Terminal Compilation Failure. Awaiting execution.
+### [CRITICAL MASS] - Location: `experiments/cargo-rocket`
+- ☠️ Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Awaiting execution.
+
+### [EVAPORATING] - Location: `graveyard/primordial-sediment`
+- ☠️ Specimen executed. Terminal Compilation Failure. Failed to compile during grace period. Biomass returned to the void.
 
 ### [CRITICAL MASS] - Location: `graveyard/gray-chimera`
 - ☠️ Specimen executed. Terminal Compilation Failure. Failed to resolve indexing error during grace period. Biomass returned to the void.
