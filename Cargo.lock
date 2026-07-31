@@ -4092,18 +4092,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gray-chimera"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "gray-scott",
- "locus",
- "macroquad",
- "rand 0.8.7",
- "rayon",
-]
-
-[[package]]
 name = "gray-ddos"
 version = "0.1.0"
 dependencies = [

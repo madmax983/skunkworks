@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **gray-chimera**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to build due to `Option<usize>` indexing. Grace period: 24h.
+- **primordial-sediment**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to build due to E0308 mismatched types in git.rs and unused imports. Grace period: 24h.
 ## ☠️ Executed
+- **gray-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to resolve Option<usize> indexing compilation error during grace period. Moved to graveyard.
 - **origami-history**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Moved to graveyard.
 - **gray-origami**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Compilation Failure. Dependency mismatch causes fatal `mismatched types` errors. Grace period expired. Moved to graveyard.
 - **chimera-roots**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation / Vestigial Organs. Missing headless bypass causes fatal X11 panic. Failed to implement headless bypass or remove vestigial dead code during grace period. Biomass returned to the void. Moved to graveyard.
