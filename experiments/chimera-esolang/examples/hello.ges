@@ -7,6 +7,8 @@ strand main {
     swap
     print
     print
+    madness
+    orca
 }
 
 strand extra {

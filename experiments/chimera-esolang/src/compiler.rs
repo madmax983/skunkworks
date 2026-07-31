@@ -39,6 +39,9 @@ pub fn compile(program: &Program) -> Result<Dna> {
                         "crossover" => OpCode::EvoBreed,
                         "<<" => OpCode::Push,
                         ">>" => OpCode::Push,
+                        "madness" => OpCode::PrologueEsolang,
+                        "prologue" => OpCode::Prologue,
+                        "orca" => OpCode::Orca,
                         _ => {
                             if let Ok(chimera_op) = OpCode::from_str(op) {
                                 chimera_op
@@ -106,4 +109,22 @@ pub fn compile(program: &Program) -> Result<Dna> {
         helix,
         evolution_config: None,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::parse;
+
+    #[test]
+    fn test_esoteric_operators() {
+        let source = "strand test { madness orca prologue }";
+        let program = parse(source).expect("Failed to parse");
+        let dna = compile(&program).expect("Failed to compile");
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::PrologueEsolang);
+        assert_eq!(genes[1].op, OpCode::Orca);
+        assert_eq!(genes[2].op, OpCode::Prologue);
+    }
 }
