@@ -1,15 +1,10 @@
 use anyhow::{Context, Result};
-use chrono::{DateTime, TimeZone, Utc};
+use chrono::Utc;
 use git2::{BlameOptions, Repository};
 use std::path::Path;
 
 #[derive(Debug, Clone)]
 pub struct LineInfo {
-    pub line_number: usize,
-    pub commit_hash: String,
-    pub author: String,
-    pub date: DateTime<Utc>,
-    pub message: String,
     pub age_score: f64, // 0.0 (Oldest) to 1.0 (Newest)
 }
 
@@ -100,25 +95,22 @@ impl BlameAnalyzer {
         for hunk in blame.iter() {
             let commit_id = hunk.final_commit_id();
 
-            let (author_name, message, time, date, hash_str) = if commit_id.is_zero() {
+            let (_author_name, _message, time, _hash_str) = if commit_id.is_zero() {
                 (
                     "You (Uncommitted)".to_string(),
                     "Uncommitted changes".to_string(),
                     now,
-                    Utc::now(),
                     "00000000".to_string(),
                 )
             } else if let Ok(commit) = repo.find_commit(commit_id) {
                 let author = commit.author();
                 let author_name = author.name().unwrap_or("Unknown").to_string();
-                let message = commit.summary().unwrap_or("").to_string();
+                let message = commit.summary().unwrap_or(Some("")).unwrap().to_string();
                 let time = commit.time().seconds();
-                let date = Utc.timestamp_opt(time, 0).single().unwrap_or_default();
                 (
                     author_name,
                     message,
                     time,
-                    date,
                     commit_id.to_string()[..8].to_string(),
                 )
             } else {
@@ -126,25 +118,16 @@ impl BlameAnalyzer {
                     "Unknown".to_string(),
                     "Unknown commit".to_string(),
                     now,
-                    Utc::now(),
                     "????????".to_string(),
                 )
             };
 
             let age_score = (time - min_time) as f64 / range;
 
-            let start_line = hunk.final_start_line(); // 1-based
             let count = hunk.lines_in_hunk();
 
-            for i in 0..count {
-                lines.push(LineInfo {
-                    line_number: start_line + i,
-                    commit_hash: hash_str.clone(),
-                    author: author_name.clone(),
-                    date,
-                    message: message.clone(),
-                    age_score,
-                });
+            for _ in 0..count {
+                lines.push(LineInfo { age_score });
             }
         }
 

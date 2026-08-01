@@ -71,3 +71,8 @@
 **Bloat:** Unused import and missing Default implementations triggering Clippy lints in `symphonic-terrain`.
 **Cut:** Removed `std::io::Read` from `physics.rs`. Implemented `Default` for `SharedState` and `Universe` using `Self::new()`.
 **Saved:** Eliminated compiler warnings and improved idiomatic Rust compliance by providing expected trait implementations.
+
+## [Reduction]
+**Bloat:** Unused UI state fields in `App`, unused attributes in `LineInfo` and `Agent` spanning across `experiments/chron-compost`.
+**Cut:** Eliminated the dead state fields and methods, streamlining the structs to strictly necessary data and removing unused imports.
+**Saved:** Multiple lines of redundant parsing, storage logic, and structural overhead.

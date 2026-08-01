@@ -8,7 +8,6 @@ pub struct Agent {
     pub vm: ChimeraVM,
     pub x: usize,
     pub y: usize,
-    pub id: usize,
 }
 
 pub struct Simulation {
@@ -36,7 +35,7 @@ impl Simulation {
 
     pub fn spawn_agents(&mut self, count: usize) {
         let mut rng = rand::thread_rng();
-        for i in 0..count {
+        for _ in 0..count {
             let genes = vec![
                 Gene {
                     op: OpCode::Consume,
@@ -73,7 +72,6 @@ impl Simulation {
                 vm,
                 x: rng.gen_range(0..self.width.max(1)),
                 y: rng.gen_range(0..self.height.max(1)),
-                id: i,
             });
         }
     }
@@ -149,12 +147,10 @@ impl Simulation {
             }
 
             // 5. Modify Environment (Eating)
-            if is_old {
-                if agent.y < self.blame_info.len() {
-                    // Refactor! Reset the age score to 1.0 (hot/new)
-                    self.blame_info[agent.y].age_score = 1.0;
-                    agent.vm.energy += 5; // Reward
-                }
+            if is_old && agent.y < self.blame_info.len() {
+                // Refactor! Reset the age score to 1.0 (hot/new)
+                self.blame_info[agent.y].age_score = 1.0;
+                agent.vm.energy += 5; // Reward
             }
         }
     }
