@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "0.4.15"
+macroquad = "0.4"
 arthropod = { workspace = true }
-neuro-sim = { path = "../../crates/neuro-sim" }
+neuro-sim = { workspace = true }

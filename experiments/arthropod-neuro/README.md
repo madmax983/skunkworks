@@ -1,8 +1,16 @@
-# Arthropod × Neuro Sim (`arthropod-neuro`)
+# arthropod-neuro 🐜🧠
 
-A biological interactive UI hybrid.
+**Hybrid:** `arthropod` × `neuro-sim`
 
 ## Lineage
-- **Parent A (`arthropod`):** Provides the interactive immediate-mode `Button` UI widget, capturing discrete mouse clicks.
-- **Parent B (`neuro-sim`):** Provides the continuous biological simulation of an `Izhikevich` spiking neuron.
-- **Novel Trait:** The discrete UI clicks inject physical current ($I$) directly into the continuous biological model, translating human UI interaction into artificial neural spikes and mapping the membrane potential ($v$) back to the UI visual space.
+- **arthropod:** Provides the immediate-mode UI framework (`Button`), enabling interactive injection of events.
+- **neuro-sim:** Provides the biological Spiking Neural Network (SNN) engine, evaluating Izhikevich neuron potentials continuously.
+
+## Phenotype
+This hybrid allows a user to interactively "poke" biological neurons via a UI button, injecting instantaneous current into a continuous physics/biology simulation. This cross bridges the discrete world of GUI abstractions with the continuous wave propagation of biological thoughts.
+
+## Execution
+```bash
+cargo run -p arthropod-neuro
+cargo run -p arthropod-neuro -- --headless
+```
