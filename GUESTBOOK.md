@@ -2468,3 +2468,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [STABLE TRAIL] - Location: experiments/arthropod-git
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted `arthropod` immediate mode UI directly onto `git-associates` chronological history. Buttons successfully allow scrubbing through git commits in time. Headless mode intact. Recombination complete.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken (Requires feature `nova` for `NarrativeGenerator`).
