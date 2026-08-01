@@ -40,8 +40,8 @@ async fn async_main() {
     network.add_synapse(n1, n2, 30.0);
     network.add_synapse(n2, n3, 30.0);
 
-    let btn_poke = Button::new("Poke Neuron 1", 20.0, 20.0, 150.0, 40.0)
-        .with_colors(RED, ORANGE, DARKGRAY);
+    let btn_poke =
+        Button::new("Poke Neuron 1", 20.0, 20.0, 150.0, 40.0).with_colors(RED, ORANGE, DARKGRAY);
 
     loop {
         clear_background(color_u8!(20, 20, 30, 255)); // dark slate
@@ -56,11 +56,7 @@ async fn async_main() {
         network.step(&external_inputs);
 
         // Draw neurons
-        let neuron_positions = [
-            (200.0, 300.0),
-            (400.0, 300.0),
-            (600.0, 300.0),
-        ];
+        let neuron_positions = [(200.0, 300.0), (400.0, 300.0), (600.0, 300.0)];
 
         for i in 0..3 {
             let (x, y) = neuron_positions[i];
@@ -77,13 +73,19 @@ async fn async_main() {
             }
 
             draw_circle(x, y, 20.0, color_u8!(r, 50, b, 255));
-            draw_text(&format!("N{}: {:.1}mV", i+1, v), x - 20.0, y - 30.0, 20.0, WHITE);
+            draw_text(
+                &format!("N{}: {:.1}mV", i + 1, v),
+                x - 20.0,
+                y - 30.0,
+                20.0,
+                WHITE,
+            );
         }
 
         // Draw synapses
         for i in 0..2 {
             let (x1, y1) = neuron_positions[i];
-            let (x2, y2) = neuron_positions[i+1];
+            let (x2, y2) = neuron_positions[i + 1];
 
             let is_active = network.get_synapse_activity(i);
             let col = if is_active { YELLOW } else { GRAY };
