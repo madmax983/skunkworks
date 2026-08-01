@@ -1,6 +1,7 @@
 
-### [CRITICAL MASS] - Location: `experiments/cargo-rocket`
-- ☠️ Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Awaiting execution.
+### [Concentration Level: EVAPORATING] - Location: graveyard/cargo-rocket
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal Genericism / Skeletal Implementation. Grace period expired. Biomass returned to the void.
 
 ### [EVAPORATING] - Location: `graveyard/primordial-sediment`
 - ☠️ Specimen executed. Terminal Compilation Failure. Failed to compile during grace period. Biomass returned to the void.
@@ -91,8 +92,8 @@
 - **Status:** Getting Started example is broken (private module). Bard reinforcement required.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/symphonic-terrain
-- **Scent Origin:** Havoc 👹
-- **Status:** RwLock reader starvation vulnerability discovered between main and audio threads. Sentry reinforcement required to validate fairness.
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Skeletal Implementation (unused audio fields) and RwLock starvation vulnerability. Death approaches in 24 hours.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-syncopation
 - **Scent Origin:** Havoc 👹
@@ -277,8 +278,8 @@
 - **Status:** Quick Start example is broken (missing macroquad dependency). Bard reinforcement required.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/symphonic-terrain
-- **Scent Origin:** Havoc 👹
-- **Status:** RwLock reader starvation vulnerability discovered between main and audio threads. Sentry reinforcement required to validate fairness.
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Skeletal Implementation (unused audio fields) and RwLock starvation vulnerability. Death approaches in 24 hours.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-syncopation
 - **Scent Origin:** Havoc 👹

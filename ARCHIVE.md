@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **cargo-rocket**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Unused fields and lack of deep biological emergent behaviors. Grace period: 24h.
+- **symphonic-terrain**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Unused audio fields and RwLock starvation vulnerability. Grace period: 24h.
 ## ☠️ Executed
+- **cargo-rocket**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Unused fields and lack of deep biological emergent behaviors. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **primordial-sediment**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to compile due to E0308 mismatched types in git.rs during grace period. Biomass returned to the void. Moved to graveyard.
 - **gray-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to resolve Option<usize> indexing compilation error during grace period. Moved to graveyard.
 - **origami-history**: Specimen executed. Diagnosis: Terminal Ecosystem Maladaptation. Missing headless bypass causes fatal X11/Wayland panic in CI. Failed to implement headless bypass during grace period. Moved to graveyard.
