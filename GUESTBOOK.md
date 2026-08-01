@@ -2459,3 +2459,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-esolang
 - **Scent Origin:** Prologue ⚙️
 - **Status:** Evolved chimera-esolang to support native `madness` (PrologueEsolang) and `orca` operators, unleashing the Mad Scientist on the grid.
+
+### [STABLE TRAIL] - Location: experiments/arthropod-neuro
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Grafted `arthropod` immediate mode UI directly onto `neuro-sim` spiking neural networks. Buttons successfully inject current into the neurons, propagating biological waves. Headless mode intact. Recombination complete.
