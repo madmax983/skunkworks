@@ -5,8 +5,10 @@ use chimera_lang::opcode::OpCode;
 use std::str::FromStr;
 
 pub fn compile(program: &Program) -> Result<Dna> {
+    // ⚡ Bolt: Pre-allocate the strands vector to avoid O(log N) dynamic heap reallocations.
+    // By providing the exact capacity needed from the source program, we ensure only a single allocation occurs.
     let mut helix = Helix {
-        strands: Vec::new(),
+        strands: Vec::with_capacity(program.strands.len()),
     };
 
     // Very basic mapping for demo.
@@ -14,7 +16,9 @@ pub fn compile(program: &Program) -> Result<Dna> {
 
     #[allow(clippy::for_kv_map)]
     for (_name, strand) in &program.strands {
-        let mut genes = Vec::new();
+        // ⚡ Bolt: Pre-allocate the genes vector based on the known number of instructions.
+        // This avoids intermediate reallocation overhead when pushing translated opcodes.
+        let mut genes = Vec::with_capacity(strand.instructions.len());
 
         for instr in &strand.instructions {
             match instr {

@@ -20,3 +20,6 @@
 **[TUI Rendering String Joining Optimization]**
 **Learning:** Using `.map(|v| format!("{}", v)).collect::<Vec<_>>().join(" + ")` causes an intermediate vector allocation and multiple string allocations inside TUI render loops.
 **Action:** Replace `.collect::<Vec<_>>().join(" + ")` with `std::fmt::Write` loops to append directly into a mutable string buffer (`write!(&mut s, ...)`) avoiding the intermediate vector allocation completely.
+**Vector Allocation in AST Compilers**
+**Learning:** Using `Vec::new()` inside compiler loops where the expected size is already known (e.g., from the number of AST nodes or statements) causes unnecessary O(log N) dynamic heap reallocations.
+**Action:** Always use `Vec::with_capacity(known_len)` when transforming one collection into another, or allocating vectors based on a pre-parsed AST, to ensure exactly one heap allocation occurs.

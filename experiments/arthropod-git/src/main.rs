@@ -34,8 +34,8 @@ async fn async_main() {
     let btn_prev = Button::new("Previous Commit", 20.0, 20.0, 250.0, 40.0)
         .with_colors(BLUE, LIGHTGRAY, DARKGRAY);
 
-    let btn_next = Button::new("Next Commit", 290.0, 20.0, 250.0, 40.0)
-        .with_colors(RED, LIGHTGRAY, DARKGRAY);
+    let btn_next =
+        Button::new("Next Commit", 290.0, 20.0, 250.0, 40.0).with_colors(RED, LIGHTGRAY, DARKGRAY);
 
     loop {
         clear_background(BLACK);
@@ -53,10 +53,34 @@ async fn async_main() {
 
         if !commits.is_empty() {
             let commit = &commits[commit_index];
-            draw_text(&format!("Commit: {}", commit.short_hash), 20.0, 100.0, 30.0, WHITE);
-            draw_text(&format!("Author: {}", commit.author), 20.0, 140.0, 30.0, WHITE);
-            draw_text(&format!("Message: {}", commit.message), 20.0, 180.0, 30.0, WHITE);
-            draw_text(&format!("Date: {}", commit.timestamp), 20.0, 220.0, 30.0, WHITE);
+            draw_text(
+                &format!("Commit: {}", commit.short_hash),
+                20.0,
+                100.0,
+                30.0,
+                WHITE,
+            );
+            draw_text(
+                &format!("Author: {}", commit.author),
+                20.0,
+                140.0,
+                30.0,
+                WHITE,
+            );
+            draw_text(
+                &format!("Message: {}", commit.message),
+                20.0,
+                180.0,
+                30.0,
+                WHITE,
+            );
+            draw_text(
+                &format!("Date: {}", commit.timestamp),
+                20.0,
+                220.0,
+                30.0,
+                WHITE,
+            );
         } else {
             draw_text("No commits found.", 20.0, 100.0, 30.0, WHITE);
         }
