@@ -1,7 +1,7 @@
 # ADR 166: Encapsulate parsers and internal modules in various crates
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `experiments/chimera-lang`, `experiments/system-turbulence`, `experiments/chimera-esolang`, and `graveyard/git_rhythm` crates leaked various internal modules via `pub mod`. The `chimera-lang` crate specifically leaked compiler parser modules like `helixparser_mod`, `prologueesolangparser_mod`, `scriptparser_mod`, etc., and the `nova_pachinko` module.

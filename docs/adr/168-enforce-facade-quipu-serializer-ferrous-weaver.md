@@ -1,7 +1,7 @@
 # 168. Enforce Facade Pattern in quipu-serializer and ferrous-weaver
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `experiments/quipu-serializer` leaked its internal `ser` module through its API. This led dependent crates like `ferrous-weaver` to import directly from the internal module (`quipu_serializer::ser::to_quipu`), bypassing the intended Facade pattern and creating high coupling to the internal directory structure.

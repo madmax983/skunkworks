@@ -1,7 +1,7 @@
 # ADR 167: Enforce Module Boundaries via Facade in chimera-lang VM
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The `experiments/chimera-lang/src/vm/mod.rs` leaked numerous internal modules directly via `pub mod`, breaking the Facade pattern and exposing all implementation details.
