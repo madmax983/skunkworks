@@ -320,6 +320,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arthropod-git"
+version = "0.1.0"
+dependencies = [
+ "arthropod",
+ "git-associates",
+ "macroquad",
+]
+
+[[package]]
 name = "arthropod-gray"
 version = "0.1.0"
 dependencies = [
