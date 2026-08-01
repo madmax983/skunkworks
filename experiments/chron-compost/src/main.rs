@@ -44,7 +44,7 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     // App State
-    let app = App::new(file_path_str.to_string(), blame_info.clone())?;
+    let app = App::new(file_path_str.to_string())?;
 
     // Sim State
     let max_len = app.content.iter().map(|l| l.len()).max().unwrap_or(0);
@@ -66,9 +66,7 @@ fn main() -> Result<()> {
                         KeyCode::Char('q') | KeyCode::Esc => break,
                         KeyCode::Down | KeyCode::Char('j') => scroll_y += 1,
                         KeyCode::Up | KeyCode::Char('k') => {
-                            if scroll_y > 0 {
-                                scroll_y -= 1;
-                            }
+                            scroll_y = scroll_y.saturating_sub(1);
                         }
                         KeyCode::Char('r') => {
                             sim.spawn_agents(5);
