@@ -1,4 +1,3 @@
-
 ### [Concentration Level: EVAPORATING] - Location: graveyard/cargo-rocket
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Terminal Genericism / Skeletal Implementation. Grace period expired. Biomass returned to the void.
@@ -2464,3 +2463,8 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [STABLE TRAIL] - Location: experiments/arthropod-neuro
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted `arthropod` immediate mode UI directly onto `neuro-sim` spiking neural networks. Buttons successfully inject current into the neurons, propagating biological waves. Headless mode intact. Recombination complete.
+
+
+### [STABLE TRAIL] - Location: experiments/arthropod-git
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Grafted `arthropod` immediate mode UI directly onto `git-associates` chronological history. Buttons successfully allow scrubbing through git commits in time. Headless mode intact. Recombination complete.
