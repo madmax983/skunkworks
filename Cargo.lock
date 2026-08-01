@@ -1617,21 +1617,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cargo-rocket"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "cargo_metadata",
- "crossterm 0.28.1",
- "locus",
- "rand 0.8.7",
- "ratatui",
- "serde",
- "serde_json",
- "tui-shared",
-]
-
-[[package]]
 name = "cargo_metadata"
 version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2555,7 +2540,6 @@ dependencies = [
  "mio 1.2.2",
  "parking_lot",
  "rustix 0.38.44",
- "serde",
  "signal-hook",
  "signal-hook-mio",
  "winapi",
