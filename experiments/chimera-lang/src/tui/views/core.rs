@@ -191,9 +191,8 @@ pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_stat
                 ),
                 crate::vm::Value::Str(s) => {
                     let mut symbol = if s.starts_with("G:") {
-                        let parts: Vec<&str> = s.split(':').collect();
-                        if parts.len() >= 2 {
-                            match parts[1] {
+                        if let Some(part1) = s.split(':').nth(1) {
+                            match part1 {
                                 "AND" => "&",
                                 "OR" => "|",
                                 "XOR" => "^",

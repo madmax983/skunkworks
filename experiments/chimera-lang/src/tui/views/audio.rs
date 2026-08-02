@@ -124,10 +124,11 @@ pub(crate) fn render_choir(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
                     String::new()
                 };
 
-                let parts: Vec<&str> = state_str.split(':').collect();
-                let bpm = parts.get(1).unwrap_or(&"?");
-                let oct = parts.get(2).unwrap_or(&"?");
-                let buffer_str = parts.get(6).unwrap_or(&"");
+                let mut parts = state_str.split(':');
+                let _ = parts.next(); // Skip index 0
+                let bpm = parts.next().unwrap_or("?");
+                let oct = parts.next().unwrap_or("?");
+                let buffer_str = parts.nth(3).unwrap_or("");
 
                 let mut notes = String::new();
                 if !buffer_str.is_empty() {

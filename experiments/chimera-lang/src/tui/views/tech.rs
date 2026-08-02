@@ -35,9 +35,8 @@ pub(crate) fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                 crate::vm::Value::Int(3) => (".".to_string(), Style::default().fg(Color::Red)), // Tail
                 crate::vm::Value::Str(s) => {
                     if s.starts_with("G:") {
-                        let parts: Vec<&str> = s.split(':').collect();
-                        let sym = if parts.len() >= 2 {
-                            match parts[1] {
+                        let sym = if let Some(part1) = s.split(':').nth(1) {
+                            match part1 {
                                 "AND" => "&",
                                 "OR" => "≥",
                                 "XOR" => "=",
@@ -745,9 +744,8 @@ pub(crate) fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
                 crate::vm::Value::Int(3) => (".".to_string(), Style::default().fg(Color::Red)), // Tail
                 crate::vm::Value::Str(s) => {
                     if s.starts_with("G:") {
-                        let parts: Vec<&str> = s.split(':').collect();
-                        let sym = if parts.len() >= 2 {
-                            match parts[1] {
+                        let sym = if let Some(part1) = s.split(':').nth(1) {
+                            match part1 {
                                 "AND" => "&",
                                 "OR" => "≥",
                                 "XOR" => "=",
