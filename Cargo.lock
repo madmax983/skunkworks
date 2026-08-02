@@ -4563,6 +4563,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-platter"
+version = "0.1.0"
+dependencies = [
+ "hyper-system",
+ "macroquad",
+ "platter",
+]
+
+[[package]]
 name = "hyper-pollination"
 version = "0.1.0"
 dependencies = [
