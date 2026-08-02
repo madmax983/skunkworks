@@ -46,6 +46,7 @@ pub fn compile(program: &Program) -> Result<Dna> {
                         "madness" => OpCode::PrologueEsolang,
                         "prologue" => OpCode::Prologue,
                         "orca" => OpCode::Orca,
+                        "elektra" => OpCode::Electrogenesis,
                         _ => {
                             if let Ok(chimera_op) = OpCode::from_str(op) {
                                 chimera_op
@@ -122,7 +123,7 @@ mod tests {
 
     #[test]
     fn test_esoteric_operators() {
-        let source = "strand test { madness orca prologue }";
+        let source = "strand test { madness orca prologue elektra }";
         let program = parse(source).expect("Failed to parse");
         let dna = compile(&program).expect("Failed to compile");
         let genes = &dna.helix.strands[0].genes;
@@ -130,5 +131,6 @@ mod tests {
         assert_eq!(genes[0].op, OpCode::PrologueEsolang);
         assert_eq!(genes[1].op, OpCode::Orca);
         assert_eq!(genes[2].op, OpCode::Prologue);
+        assert_eq!(genes[3].op, OpCode::Electrogenesis);
     }
 }
