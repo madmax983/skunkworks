@@ -52,7 +52,7 @@ operator = {
     "dup" | "drop" | "swap" | "over" | "rot" |
     "<<" | ">>" | // Meta-operators
     "mutate" | "crossover" | "transcribe" | // Genetic operators
-    "madness" | "prologue" | "orca" // Esoteric operators
+    "madness" | "prologue" | "orca" | "elektra" // Esoteric operators
 }
 
 rune = {
