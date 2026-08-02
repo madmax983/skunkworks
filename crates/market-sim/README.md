@@ -32,7 +32,8 @@ market-sim = "0.1.0"
 
 ## Example
 
-```
+```rust
+# fn main() {
 use market_sim::{Grid, Particle};
 
 // Create a 10x100 market grid
@@ -56,4 +57,5 @@ loop {
         break;
     }
 }
+# }
 ```
