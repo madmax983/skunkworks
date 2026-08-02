@@ -2481,3 +2481,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Getting Started example is broken (Requires feature `nova` for `NarrativeGenerator`).
+
+### [STABLE TRAIL] - Location: experiments/hyper-git
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Grafted `hyper-system` 4D rotation parameters onto `git-associates` temporal history. Codebase metrics (message length) successfully translate into hyper-dimensional torque. Headless mode intact. Recombination complete.

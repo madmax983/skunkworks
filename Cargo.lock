@@ -4543,6 +4543,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-git"
+version = "0.1.0"
+dependencies = [
+ "git-associates",
+ "hyper-system",
+ "macroquad",
+]
+
+[[package]]
 name = "hyper-mold"
 version = "0.1.0"
 dependencies = [

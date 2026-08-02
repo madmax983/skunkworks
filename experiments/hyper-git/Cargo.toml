@@ -1,0 +1,9 @@
+[package]
+name = "hyper-git"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hyper-system = { path = "../../crates/hyper-system" }
+git-associates = { path = "../../crates/git-associates" }
+macroquad = "0.4"
