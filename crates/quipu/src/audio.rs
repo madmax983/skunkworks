@@ -131,6 +131,16 @@ struct ActiveSound {
 #[cfg(feature = "audio")]
 #[allow(dead_code)]
 impl ActiveSound {
+    fn new(kind: AudioEvent) -> Self {
+        let amp = match kind {
+            AudioEvent::Kick => 0.8,
+            AudioEvent::Snare => 0.6,
+            AudioEvent::HiHat => 0.4,
+            AudioEvent::Pluck(_) => 0.5,
+        };
+        Self { kind, t: 0.0, amp }
+    }
+
     fn generate_sample(&mut self, dt: f32) -> Option<f32> {
         self.t += dt;
         let s = match self.kind {
@@ -267,28 +277,7 @@ fn process_audio(
 ) {
     // 1. Process new events
     while let Ok(event) = rx.try_recv() {
-        match event {
-            AudioEvent::Kick => active_sounds.push(ActiveSound {
-                kind: event,
-                t: 0.0,
-                amp: 0.8,
-            }),
-            AudioEvent::Snare => active_sounds.push(ActiveSound {
-                kind: event,
-                t: 0.0,
-                amp: 0.6,
-            }),
-            AudioEvent::HiHat => active_sounds.push(ActiveSound {
-                kind: event,
-                t: 0.0,
-                amp: 0.4,
-            }),
-            AudioEvent::Pluck(_) => active_sounds.push(ActiveSound {
-                kind: event,
-                t: 0.0,
-                amp: 0.5,
-            }),
-        }
+        active_sounds.push(ActiveSound::new(event));
     }
 
     // 2. Generate audio
