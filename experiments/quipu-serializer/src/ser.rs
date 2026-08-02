@@ -4,10 +4,13 @@ use std::fmt::Display;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
+/// Quipu serialization errors.
 pub enum Error {
     #[error("Custom: {0}")]
+    /// A custom error string.
     Custom(String),
     #[error("Unsupported type: {0}")]
+    /// An unsupported type was encountered.
     Unsupported(String),
 }
 
@@ -17,8 +20,10 @@ impl ser::Error for Error {
     }
 }
 
+/// The Quipu Serde Serializer.
 pub struct Serializer;
 
+/// Serializes a value into a Quipu.
 pub fn to_quipu<T>(value: &T) -> Result<Quipu, Error>
 where
     T: Serialize + ?Sized,
@@ -226,6 +231,8 @@ impl ser::Serializer for &mut Serializer {
     }
 }
 
+/// An internal helper for serializing compound data structures.
+#[doc(hidden)]
 pub struct Compound {
     subsidiaries: Vec<Cord>,
     base_color: Color,

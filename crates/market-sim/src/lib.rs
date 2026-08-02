@@ -120,7 +120,9 @@ pub struct TradeEvent {
     /// Calculated from the Y-coordinate of the collision:
     /// $Price = Height - 1 - Y$
     pub price: f32,
+    /// The x coordinate of the trade.
     pub x: usize,
+    /// The y coordinate of the trade.
     pub y: usize,
 }
 

@@ -4,6 +4,7 @@ use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
 use std::str::FromStr;
 
+/// Compiles a parsed Program AST into runnable Chimera DNA.
 pub fn compile(program: &Program) -> Result<Dna> {
     // ⚡ Bolt: Pre-allocate the strands vector to avoid O(log N) dynamic heap reallocations.
     // By providing the exact capacity needed from the source program, we ensure only a single allocation occurs.

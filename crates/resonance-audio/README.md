@@ -31,6 +31,7 @@ The main entry point is the [`AudioModel`]. It runs on the audio thread, process
 commands from a channel and filling an output buffer.
 
 ```rust
+# fn main() {
 use resonance_audio::{AudioModel, AudioCommand};
 use crossbeam_channel::bounded;
 
@@ -48,4 +49,5 @@ cmd_tx.send(AudioCommand::Pluck { x: 50, y: 50, strength: 0.5 }).unwrap();
 // 4. Process audio (typically done in an audio callback)
 let mut buffer = vec![0.0; 512];
 model.process(&mut buffer);
+# }
 ```
