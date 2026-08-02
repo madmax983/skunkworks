@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **symphonic-terrain**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Unused audio fields and RwLock starvation vulnerability. Grace period: 24h.
+- **ferrous-tissue**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Dependency mismatch causes fatal `mismatched types` errors with glam versions. Grace period: 24h.
 ## ☠️ Executed
+- **symphonic-terrain**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Unused audio fields and RwLock starvation vulnerability. Grace period expired. Moved to graveyard.
 - **cargo-rocket**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Unused fields and lack of deep biological emergent behaviors. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **primordial-sediment**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to compile due to E0308 mismatched types in git.rs during grace period. Biomass returned to the void. Moved to graveyard.
 - **gray-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to resolve Option<usize> indexing compilation error during grace period. Moved to graveyard.

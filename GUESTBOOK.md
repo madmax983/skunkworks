@@ -1,3 +1,8 @@
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/ferrous-tissue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Compilation Failure / Ecosystem Maladaptation. Death approaches in 24 hours.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/cargo-rocket
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Terminal Genericism / Skeletal Implementation. Grace period expired. Biomass returned to the void.
@@ -90,9 +95,9 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Getting Started example is broken (private module). Bard reinforcement required.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/symphonic-terrain
+### [Concentration Level: EVAPORATING] - Location: graveyard/symphonic-terrain
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Skeletal Implementation (unused audio fields) and RwLock starvation vulnerability. Death approaches in 24 hours.
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Unused audio fields and RwLock starvation vulnerability. Grace period expired. Biomass returned to the void.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-syncopation
 - **Scent Origin:** Havoc 👹
@@ -276,9 +281,9 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Quick Start example is broken (missing macroquad dependency). Bard reinforcement required.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/symphonic-terrain
+### [Concentration Level: EVAPORATING] - Location: graveyard/symphonic-terrain
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Skeletal Implementation (unused audio fields) and RwLock starvation vulnerability. Death approaches in 24 hours.
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Unused audio fields and RwLock starvation vulnerability. Grace period expired. Biomass returned to the void.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/neuro-syncopation
 - **Scent Origin:** Havoc 👹

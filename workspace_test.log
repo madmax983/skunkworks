@@ -1,0 +1,396 @@
+warning: /app/experiments/chimera-esolang/Cargo.toml: `default-features` is ignored for hyper-system, since `default-features` was not specified for `workspace.dependencies.hyper-system`, this could become a hard error in the future
+warning: excluded package(s) `symphonic-terrain` not found in workspace `/app`
+warning: patch `bevy_reflect v0.14.2 (https://github.com/bevyengine/bevy?tag=v0.14.2#5c759a1b)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling bevy_render v0.13.2
+   Compiling proc-macro2 v1.0.106
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling ena v0.14.4
+   Compiling ordered-float v5.3.0
+   Compiling cpufeatures v0.2.17
+   Compiling downcast-rs v2.0.2
+   Compiling parry2d v0.22.1
+   Compiling glyph_brush_layout v0.2.4
+   Compiling sha2 v0.10.9
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen v0.2.126
+   Compiling slotmap v1.1.1
+   Compiling quipu-serializer v0.1.0 (/app/experiments/quipu-serializer)
+   Compiling grid v0.10.0
+   Compiling rapier2d v0.27.0
+   Compiling taffy v0.3.19
+   Compiling bevy_core_pipeline v0.13.2
+   Compiling syn v2.0.119
+   Compiling colony-concerto v0.1.0 (/app/experiments/colony-concerto)
+   Compiling bevy_sprite v0.13.2
+   Compiling bevy_text v0.13.2
+   Compiling accesskit_winit v0.17.0
+   Compiling myco-transit v0.1.0 (/app/experiments/myco-transit)
+   Compiling const-fnv1a-hash v1.1.0
+   Compiling glam v0.24.2
+   Compiling bevy_diagnostic v0.13.2
+   Compiling bevy_gizmos v0.13.2
+   Compiling bevy_winit v0.13.2
+   Compiling bevy_ui v0.13.2
+   Compiling js-sys v0.3.103
+   Compiling chaos-pendulum v0.1.0 (/app/graveyard/chaos-pendulum)
+   Compiling syncopated-threads v0.1.0 (/app/experiments/syncopated-threads)
+   Compiling system-attractor v0.1.0 (/app/experiments/system-attractor)
+   Compiling lensing-poetry v0.1.0 (/app/experiments/lensing-poetry)
+   Compiling miniz_oxide v0.9.1
+   Compiling beamterm-data v1.0.0
+   Compiling bevy_internal v0.13.2
+   Compiling harmonic-engine v0.1.0 (/app/experiments/harmonic-engine)
+   Compiling mandala-cipher v0.1.0 (/app/experiments/mandala-cipher)
+   Compiling spectral-scribe v0.1.0 (/app/experiments/spectral-scribe)
+   Compiling spqr-rsa v0.1.0 (/app/experiments/spqr-rsa)
+   Compiling beamterm-unicode v1.0.0
+   Compiling lru v0.16.4
+   Compiling hydrothermal-locks v0.1.0 (/app/experiments/hydrothermal-locks)
+   Compiling minimal-lexical v0.2.1
+   Compiling tap v1.0.1
+   Compiling glow v0.17.0
+   Compiling nom v7.1.3
+   Compiling beamterm-core v1.0.0
+   Compiling wyz v0.5.1
+   Compiling bevy v0.13.2
+   Compiling radium v0.7.0
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling web-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling funty v2.0.0
+   Compiling bitvec v1.1.1
+   Compiling dependency-karst v0.1.0 (/app/experiments/dependency-karst)
+   Compiling futures-executor v0.3.32
+   Compiling hologram-text v0.1.0 (/app/experiments/hologram-text)
+   Compiling beamterm-renderer v1.0.0
+   Compiling crystal-fs v0.1.0 (/app/experiments/crystal-fs)
+   Compiling chaos-hologram v0.1.0 (/app/experiments/chaos-hologram)
+   Compiling thermo-market v0.1.0 (/app/experiments/thermo-market)
+   Compiling maat-engine v0.1.0 (/app/experiments/maat-engine)
+   Compiling poincare-platter v0.1.0 (/app/experiments/poincare-platter)
+   Compiling chimera-esolang v0.1.0 (/app/experiments/chimera-esolang)
+   Compiling git-cantata v0.1.0 (/app/experiments/git-cantata)
+   Compiling mnem-bridge v0.1.0 (/app/experiments/mnem-bridge)
+   Compiling xattr v1.6.1
+   Compiling filetime v0.2.29
+   Compiling tar v0.4.46
+   Compiling ratzilla v0.3.1
+   Compiling futures v0.3.32
+   Compiling logos v0.14.4
+   Compiling ringbuf v0.3.3
+   Compiling itertools v0.13.0
+   Compiling git-locus v0.1.0 (/app/experiments/git-locus)
+   Compiling synaptic-pachinko v0.1.0 (/app/experiments/synaptic-pachinko)
+   Compiling codex-vulgaris v0.1.0 (/app/experiments/codex-vulgaris)
+   Compiling flock-market v0.1.0 (/app/experiments/flock-market)
+   Compiling luminous-flock-web v0.1.0 (/app/experiments/luminous-flock-web)
+warning: unused `Result` that must be used
+  --> experiments/luminous-flock-web/src/main.rs:29:5
+   |
+29 | /     terminal.on_key_event(move |key_event| {
+30 | |         if key_event.code == KeyCode::Char('r') {
+31 | |             *world_clone.borrow_mut() = World::new(world_width, world_...
+32 | |         }
+33 | |     });
+   | |______^
+   |
+   = note: this `Result` may be an `Err` variant, which should be handled
+   = note: `#[warn(unused_must_use)]` (part of `#[warn(unused)]`) on by default
+help: use `let _ = ...` to ignore the resulting value
+   |
+29 |     let _ = terminal.on_key_event(move |key_event| {
+   |     +++++++
+
+warning: `luminous-flock-web` (bin "luminous-flock-web" test) generated 1 warning
+   Compiling pixel-archivist v0.1.0 (/app/experiments/pixel-archivist)
+   Compiling turbulent-rhythms v0.1.0 (/app/experiments/turbulent-rhythms)
+   Compiling digital-sediment v0.1.0 (/app/experiments/digital-sediment)
+   Compiling chaos-resonance v0.1.0 (/app/experiments/chaos-resonance)
+warning: unused variable: `cmd_tx`
+  --> experiments/chaos-resonance/tests/havoc_contention.rs:11:14
+   |
+11 |         let (cmd_tx, cmd_rx) = crossbeam_channel::bounded(1024);
+   |              ^^^^^^ help: if this is intentional, prefix it with an underscore: `_cmd_tx`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `snap_rx`
+  --> experiments/chaos-resonance/tests/havoc_contention.rs:12:23
+   |
+12 |         let (snap_tx, snap_rx) = crossbeam_channel::bounded(1);
+   |                       ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_snap_rx`
+
+warning: `chaos-resonance` (test "havoc_contention") generated 2 warnings (run `cargo fix --test "havoc_contention" -p chaos-resonance` to apply 2 suggestions)
+   Compiling cosmic-strings v0.1.0 (/app/experiments/cosmic-strings)
+warning: unused imports: `Arc` and `Mutex`
+ --> experiments/cosmic-strings/tests/havoc_contention.rs:1:17
+  |
+1 | use std::sync::{Arc, Mutex};
+  |                 ^^^  ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `std::thread`
+ --> experiments/cosmic-strings/tests/havoc_contention.rs:2:5
+  |
+2 | use std::thread;
+  |     ^^^^^^^^^^^
+
+warning: unused import: `std::time::Duration`
+ --> experiments/cosmic-strings/tests/havoc_contention.rs:3:5
+  |
+3 | use std::time::Duration;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+   Compiling biomorphic-lexicon v0.1.0 (/app/experiments/biomorphic-lexicon)
+warning: `cosmic-strings` (test "havoc_contention") generated 3 warnings (run `cargo fix --test "havoc_contention" -p cosmic-strings` to apply 3 suggestions)
+   Compiling biomorphic-strings v0.1.0 (/app/experiments/biomorphic-strings)
+   Compiling memory-palace v0.1.0 (/app/experiments/memory-palace)
+   Compiling myco-resonance v0.1.0 (/app/experiments/myco-resonance)
+   Compiling arthropod-mycelium v0.1.0 (/app/experiments/arthropod-mycelium)
+   Compiling syntax-garden v0.1.0 (/app/experiments/syntax-garden)
+   Compiling heap-arena v0.1.0 (/app/experiments/heap-arena)
+   Compiling ferrous-weaver v0.1.0 (/app/experiments/ferrous-weaver)
+   Compiling circuit-sigil v0.1.0 (/app/experiments/circuit-sigil)
+   Compiling bio-chain v0.1.0 (/app/experiments/bio-chain)
+warning: unused import: `std::io::Read`
+  --> experiments/bio-chain/src/ui.rs:17:5
+   |
+17 | use std::io::Read;
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `bio-chain` (bin "bio-chain" test) generated 1 warning
+   Compiling chimera-runes v0.1.0 (/app/experiments/chimera-runes)
+   Compiling sonic-glacier v0.1.0 (/app/experiments/sonic-glacier)
+warning: unused import: `std::io::Read`
+ --> experiments/sonic-glacier/src/audio.rs:4:5
+  |
+4 | use std::io::Read;
+  |     ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling luminous-valley v0.1.0 (/app/experiments/luminous-valley)
+warning: unused import: `std::io::Read`
+ --> experiments/sonic-glacier/tests/../src/audio.rs:4:5
+  |
+4 | use std::io::Read;
+  |     ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `tx`
+  --> experiments/sonic-glacier/tests/havoc_contention.rs:33:14
+   |
+33 |         let (tx, _rx) = unbounded::<audio::Spectrum>();
+   |              ^^ help: if this is intentional, prefix it with an underscore: `_tx`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling etymological-mycelium v0.1.0 (/app/experiments/etymological-mycelium)
+warning: unused import: `std::io::Read`
+ --> experiments/etymological-mycelium/src/etymology.rs:3:5
+  |
+3 | use std::io::Read;
+  |     ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `etymological-mycelium` (bin "etymological-mycelium" test) generated 1 warning
+   Compiling lattice-brain v0.1.0 (/app/experiments/lattice-brain)
+warning: unused variable: `cmd_rx`
+  --> experiments/lattice-brain/src/audio.rs:46:22
+   |
+46 |         let (cmd_tx, cmd_rx) = unbounded::<AudioCommand>();
+   |                      ^^^^^^ help: if this is intentional, prefix it with an underscore: `_cmd_rx`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: fields `neurons` and `connections` are never read
+  --> experiments/lattice-brain/src/audio.rs:20:9
+   |
+19 |     UpdateNetwork {
+   |     ------------- fields in this variant
+20 |         neurons: Vec<Izhikevich>,
+   |         ^^^^^^^
+21 |         connections: Vec<Vec<(usize, f32)>>,
+   |         ^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: fields `index` and `current` are never read
+  --> experiments/lattice-brain/src/audio.rs:24:9
+   |
+23 |     Inject {
+   |     ------ fields in this variant
+24 |         index: usize,
+   |         ^^^^^
+25 |         current: f32,
+   |         ^^^^^^^
+
+warning: `lattice-brain` (bin "lattice-brain" test) generated 3 warnings (run `cargo fix --bin "lattice-brain" -p lattice-brain --tests` to apply 1 suggestion)
+   Compiling miura-interface v0.1.0 (/app/experiments/miura-interface)
+   Compiling hidden-brush v0.1.0 (/app/experiments/hidden-brush)
+warning: `sonic-glacier` (test "havoc_contention") generated 2 warnings (run `cargo fix --test "havoc_contention" -p sonic-glacier` to apply 1 suggestion)
+warning: `sonic-glacier` (bin "sonic-glacier") generated 1 warning
+   Compiling cymatic-ocean v0.1.0 (/app/experiments/cymatic-ocean)
+warning: unused imports: `Arc` and `Mutex`
+ --> experiments/cymatic-ocean/tests/havoc_contention.rs:1:17
+  |
+1 | use std::sync::{Arc, Mutex};
+  |                 ^^^  ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `std::thread`
+ --> experiments/cymatic-ocean/tests/havoc_contention.rs:2:5
+  |
+2 | use std::thread;
+  |     ^^^^^^^^^^^
+
+warning: unused import: `std::time::Duration`
+ --> experiments/cymatic-ocean/tests/havoc_contention.rs:3:5
+  |
+3 | use std::time::Duration;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: `cymatic-ocean` (test "havoc_contention") generated 3 warnings (run `cargo fix --test "havoc_contention" -p cymatic-ocean` to apply 3 suggestions)
+   Compiling miller-fs v0.1.0 (/app/experiments/miller-fs)
+warning: field `window` is never read
+  --> experiments/cymatic-ocean/src/state.rs:12:9
+   |
+ 6 | pub struct State {
+   |            ----- field in this struct
+...
+12 |     pub window: Arc<Window>,
+   |         ^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `sonic-glacier` (bin "sonic-glacier" test) generated 1 warning (1 duplicate)
+   Compiling crystal-defense v0.1.0 (/app/experiments/crystal-defense)
+warning: unused import: `std::io::Read`
+ --> experiments/crystal-defense/src/sim.rs:4:5
+  |
+4 | use std::io::Read;
+  |     ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `crystal-defense` (bin "crystal-defense" test) generated 1 warning
+   Compiling ferro-file v0.1.0 (/app/experiments/ferro-file)
+   Compiling quasicrystal-dungeon v0.1.0 (/app/experiments/quasicrystal-dungeon)
+   Compiling phase-engine v0.1.0 (/app/experiments/phase-engine)
+warning: field `grid_size` is never read
+  --> experiments/phase-engine/src/simulation.rs:14:9
+   |
+12 | pub struct Simulation {
+   |            ---------- field in this struct
+13 |     pub particles: Vec<Particle>,
+14 |     pub grid_size: u32,
+   |         ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cymatic-ocean` (bin "cymatic-ocean") generated 1 warning
+   Compiling miller-reaction v0.1.0 (/app/experiments/miller-reaction)
+warning: `phase-engine` (bin "phase-engine" test) generated 1 warning
+   Compiling cryo-colony v0.1.0 (/app/experiments/cryo-colony)
+warning: unused import: `cgmath::prelude`
+ --> experiments/cryo-colony/src/renderer.rs:3:5
+  |
+3 | use cgmath::prelude::*;
+  |     ^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cymatic-ocean` (bin "cymatic-ocean" test) generated 1 warning (1 duplicate)
+   Compiling chimera-syncopation v0.1.0 (/app/experiments/chimera-syncopation)
+warning: `cryo-colony` (bin "cryo-colony" test) generated 1 warning
+   Compiling arthropod-git v0.1.0 (/app/experiments/arthropod-git)
+   Compiling arthropod-flock v0.1.0 (/app/experiments/arthropod-flock)
+   Compiling arthropod-poincare v0.1.0 (/app/experiments/arthropod-poincare)
+   Compiling arthropod-physics v0.1.0 (/app/experiments/arthropod-physics)
+   Compiling arthropod-resonance v0.1.0 (/app/experiments/arthropod-resonance)
+   Compiling hyperbolic-finder v0.1.0 (/app/experiments/hyperbolic-finder)
+   Compiling arthropod-hyper v0.1.0 (/app/experiments/arthropod-hyper)
+   Compiling arthropod-neuro v0.1.0 (/app/experiments/arthropod-neuro)
+   Compiling arthropod-gray v0.1.0 (/app/experiments/arthropod-gray)
+   Compiling arthropod-lattice v0.1.0 (/app/graveyard/arthropod-lattice)
+   Compiling arthropod v0.1.0 (/app/crates/arthropod)
+   Compiling arthropod-market v0.1.0 (/app/experiments/arthropod-market)
+   Compiling arthropod-fluid v0.1.0 (/app/experiments/arthropod-fluid)
+   Compiling arthropod-quipu v0.1.0 (/app/experiments/arthropod-quipu)
+   Compiling arthropod-platter v0.1.0 (/app/experiments/arthropod-platter)
+   Compiling physics-resonance v0.1.0 (/app/experiments/physics-resonance)
+   Compiling flock-physics v0.1.0 (/app/experiments/flock-physics)
+   Compiling chron-fluid v0.1.0 (/app/experiments/chron-fluid)
+   Compiling gray-resonance v0.1.0 (/app/experiments/gray-resonance)
+error[E0308]: mismatched types
+   --> experiments/chron-fluid/src/blame.rs:114:58
+    |
+114 |                 let message = commit.summary().unwrap_or("").to_string();
+    |                                                --------- ^^ expected `Option<&str>`, found `&str`
+    |                                                |
+    |                                                arguments to this method are incorrect
+    |
+    = note:   expected enum `Option<&str>`
+            found reference `&'static str`
+help: the return type of this call is `&'static str` due to the type of the argument passed
+   --> experiments/chron-fluid/src/blame.rs:114:31
+    |
+114 |                 let message = commit.summary().unwrap_or("").to_string();
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^--^
+    |                                                          |
+    |                                                          this argument influences the return type of `unwrap_or`
+note: method defined here
+   --> /rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/core/src/result.rs:1590:17
+help: try wrapping the expression in `Some`
+    |
+114 |                 let message = commit.summary().unwrap_or(Some("")).to_string();
+    |                                                          +++++  +
+
+error[E0599]: the method `to_string` exists for enum `Option<&str>`, but its trait bounds were not satisfied
+   --> experiments/chron-fluid/src/blame.rs:114:62
+    |
+114 |                 let message = commit.summary().unwrap_or("").to_string();
+    |                                                              ^^^^^^^^^ method cannot be called on `Option<&str>` due to unsatisfied trait bounds
+    |
+    = note: the following trait bounds were not satisfied:
+            `Option<&str>: std::fmt::Display`
+            which is required by `Option<&str>: ToString`
+note: the method `to_string` exists on the type `&str`
+   --> /rustc/4a4ef493e3a1488c6e321570238084b38948f6db/library/alloc/src/string.rs:2882:4
+help: consider using `Option::expect` to unwrap the `&str` value, panicking if the value is an `Option::None`
+    |
+114 |                 let message = commit.summary().unwrap_or("").expect("REASON").to_string();
+    |                                                             +++++++++++++++++
+
+error[E0282]: type annotations needed
+   --> experiments/chron-fluid/src/blame.rs:142:34
+    |
+142 |                     commit_hash: hash_str.clone(),
+    |                                  ^^^^^^^^ cannot infer type
+
+error[E0282]: type annotations needed
+   --> experiments/chron-fluid/src/blame.rs:143:29
+    |
+143 |                     author: author_name.clone(),
+    |                             ^^^^^^^^^^^ cannot infer type
+
+error[E0282]: type annotations needed
+   --> experiments/chron-fluid/src/blame.rs:145:30
+    |
+145 |                     message: message.clone(),
+    |                              ^^^^^^^ cannot infer type
+
+Some errors have detailed explanations: E0282, E0308, E0599.
+For more information about an error, try `rustc --explain E0282`.
+error: could not compile `chron-fluid` (bin "chron-fluid" test) due to 5 previous errors
+warning: build failed, waiting for other jobs to finish...
