@@ -9,3 +9,6 @@
 **[Flattened Math Operations]**
 **Learning:** Refactoring deeply nested match statements in a virtual machine's op dispatcher often requires extracting specific sub-operations (like arithmetic and comparison logic) into isolated helper methods. Utilizing `matches!` macros, `if let` guard clauses, and early returns simplifies the reading path significantly and prevents the 'Pyramid of Doom'.
 **Action:** Always verify stack state before mutation in extracted helpers and ensure error messages are identical to preserve exact VM semantics.
+**[Replacing Enum Match Boilerplate with New/From]**
+**Learning:** Repetitive initialization logic that maps an enum to default struct fields (like default amplitude for different audio events) clutters the main logic loop.
+**Action:** Extract this logic into an implementation block `fn new(kind: AudioEvent) -> Self` or similar constructor. This separates the definition of defaults from the processing loop.
