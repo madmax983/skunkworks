@@ -3318,16 +3318,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ferrous-tissue"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "macroquad",
- "physics-pbd",
- "rand 0.8.7",
-]
-
-[[package]]
 name = "ferrous-weaver"
 version = "0.1.0"
 dependencies = [
