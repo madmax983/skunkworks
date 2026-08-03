@@ -175,17 +175,17 @@ async fn async_main() {
         );
 
         // UI
-        draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, WHITE);
-        draw_text(&format!("Step: {}", world.step), 10.0, 40.0, 20.0, WHITE);
+        draw_text(format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, WHITE);
+        draw_text(format!("Step: {}", world.step), 10.0, 40.0, 20.0, WHITE);
         draw_text(
-            &format!("Trades: {}", world.market.trade_count),
+            format!("Trades: {}", world.market.trade_count),
             10.0,
             60.0,
             20.0,
             YELLOW,
         );
         draw_text(
-            &format!(
+            format!(
                 "Bids: {} Asks: {}",
                 world.market.total_bids, world.market.total_asks
             ),

@@ -12,3 +12,6 @@
 **[Replacing Enum Match Boilerplate with New/From]**
 **Learning:** Repetitive initialization logic that maps an enum to default struct fields (like default amplitude for different audio events) clutters the main logic loop.
 **Action:** Extract this logic into an implementation block `fn new(kind: AudioEvent) -> Self` or similar constructor. This separates the definition of defaults from the processing loop.
+**[Unnecessary String Reference in `draw_text`]**
+**Learning:** Functions accepting `impl AsRef<str>` (such as `draw_text` in `macroquad`) do not require explicitly borrowing strings (`&format!(...)`). Explicitly borrowing creates a `&String` which is then coerced into a `&str`, making it an unnecessary borrow that clippy will flag.
+**Action:** When passing a `String` (like the output of `format!()`) to a function accepting `impl AsRef<str>`, pass the `String` directly without the `&` reference operator.
