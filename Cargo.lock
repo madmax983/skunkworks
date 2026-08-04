@@ -4593,16 +4593,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hyper-resonance"
-version = "0.1.0"
-dependencies = [
- "crossbeam-channel",
- "hyper-system",
- "macroquad",
- "resonance-audio",
-]
-
-[[package]]
 name = "hyper-system"
 version = "0.1.0"
 dependencies = [
