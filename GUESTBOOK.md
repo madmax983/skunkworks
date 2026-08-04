@@ -2495,3 +2495,11 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [STABLE TRAIL] - Location: experiments/hyper-git
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted `hyper-system` 4D rotation parameters onto `git-associates` temporal history. Codebase metrics (message length) successfully translate into hyper-dimensional torque. Headless mode intact. Recombination complete.
+
+### [STABLE TRAIL] - Location: experiments/arthropod-origami-lattice
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Grafted the discrete hierarchical tree structure of `miller-lattice` onto the continuous `origami` soft body mesh, all wrapped within an interactive `arthropod` interface. Headless bypass correctly implemented. Recombination complete.
+
+### [STABLE TRAIL] - Location: experiments/gray-poincare
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Grafted `gray-scott` continuous morphogenetic scalar field into the `poincare-disk` hyperbolic geometry. Turing patterns successfully warp and compress as they translate towards the non-Euclidean boundary. Headless mode intact. Recombination complete.
