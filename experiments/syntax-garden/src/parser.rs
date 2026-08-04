@@ -24,6 +24,24 @@ pub fn parse_directory(path: &str) -> Result<String> {
         let bytes_read = file.take(limit + 1).read_to_string(&mut content)?;
 
         if bytes_read as u64 <= limit {
+            let mut max_depth = 0;
+            let mut current_depth = 0;
+            for c in content.chars() {
+                if c == '{' || c == '(' || c == '[' {
+                    current_depth += 1;
+                    max_depth = max_depth.max(current_depth);
+                } else if c == '}' || c == ')' || c == ']' {
+                    current_depth = (current_depth - 1).max(0);
+                }
+            }
+            if max_depth > 128 {
+                eprintln!(
+                    "Skipping file {:?} (exceeds max nesting depth of 128)",
+                    file_path
+                );
+                continue;
+            }
+
             if let Ok(ast) = syn::parse_file(&content) {
                 genome.push('['); // Branch for each file
                 let file_dna = analyze_file(&ast);
