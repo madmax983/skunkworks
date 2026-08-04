@@ -1799,8 +1799,7 @@ fn tokenize(input: &str) -> Vec<String> {
             if c == '"' {
                 in_string = false;
                 current.push(c);
-                tokens.push(current.clone());
-                current.clear();
+                tokens.push(std::mem::take(&mut current));
             } else {
                 current.push(c);
             }
@@ -1808,15 +1807,13 @@ fn tokenize(input: &str) -> Vec<String> {
             match c {
                 '(' | ')' | '[' | ']' | '{' | '}' => {
                     if !current.is_empty() {
-                        tokens.push(current.clone());
-                        current.clear();
+                        tokens.push(std::mem::take(&mut current));
                     }
                     tokens.push(c.to_string());
                 }
                 '"' => {
                     if !current.is_empty() {
-                        tokens.push(current.clone());
-                        current.clear();
+                        tokens.push(std::mem::take(&mut current));
                     }
                     in_string = true;
                     current.push(c);
@@ -1824,8 +1821,7 @@ fn tokenize(input: &str) -> Vec<String> {
                 ';' => {
                     // Comment until newline
                     if !current.is_empty() {
-                        tokens.push(current.clone());
-                        current.clear();
+                        tokens.push(std::mem::take(&mut current));
                     }
                     while let Some(&next) = chars.peek() {
                         if next == '\n' {
@@ -1836,8 +1832,7 @@ fn tokenize(input: &str) -> Vec<String> {
                 }
                 c if c.is_whitespace() => {
                     if !current.is_empty() {
-                        tokens.push(current.clone());
-                        current.clear();
+                        tokens.push(std::mem::take(&mut current));
                     }
                 }
                 _ => current.push(c),
