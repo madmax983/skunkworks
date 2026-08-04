@@ -14,15 +14,11 @@ fn havoc_test_parse_bomb() {
         .status()
         .expect("Failed to execute subprocess");
 
-    if status.code() == Some(101)
-        || status.code().is_none()
-        || status.code() == Some(139)
-        || status.code() == Some(2)
-    {
-        println!("👺 Havoc: WRECKAGE! Parser DoS successful.");
+    if status.success() {
+        println!("👺 Havoc SUCCESS: parser survived deeply nested AST!");
     } else {
         panic!(
-            "Havoc failed to cause a crash! Exit code: {:?}",
+            "Havoc failed: parser crashed on deeply nested AST! Exit code: {:?}",
             status.code()
         );
     }
