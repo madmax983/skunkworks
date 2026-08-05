@@ -1,3 +1,7 @@
+//! # Poincaré Disk Property Tests
+//!
+//! Random generated tests checking Euclidean boundaries and Mobius logic.
+
 use num_complex::Complex;
 use poincare_disk::{hyperbolic_dist, mobius_add, Mobius, Point};
 

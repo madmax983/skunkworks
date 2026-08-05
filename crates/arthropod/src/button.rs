@@ -1,3 +1,8 @@
+//! # Interactive Immediate Mode Widgets
+//!
+//! Provides the primary interactive components, specifically the `Button`,
+//! designed for zero-boilerplate use in immediate mode UIs within `macroquad`.
+
 use macroquad::prelude::*;
 
 /// An interactive, immediate-mode button widget for `macroquad`.
