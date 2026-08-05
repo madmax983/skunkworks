@@ -12,29 +12,37 @@ pub struct Node {
     pub children: Vec<String>,
 }
 
+/// ⚡ Bolt: Pre-allocate vectors and move strings instead of cloning
+/// 💡 What: Replaced `.clone()` on strings with direct moves, and used `with_capacity(commits.len())`.
+/// 🎯 Why: Iterating over git commits and allocating new strings for every field was a memory bottleneck. Moving fields directly and pre-allocating avoids reallocation overhead and eliminates 5 heap allocations per commit.
 pub fn crawl(path: &str, limit: usize) -> Result<Vec<Node>> {
     let model = GitModel::open(path)?;
     let commits = model.history(limit)?;
 
-    let mut nodes = Vec::new();
+
+
+
+    let mut nodes = Vec::with_capacity(commits.len());
     // Use an index map to quickly find node by hash in the vector
-    let mut node_indices: HashMap<String, usize> = HashMap::new();
+    let mut node_indices: HashMap<String, usize> = HashMap::with_capacity(commits.len());
 
     for commit in commits {
         if node_indices.contains_key(&commit.hash) {
             continue;
         }
 
+        let hash = commit.hash.clone();
+
         let node = Node {
-            hash: commit.hash.clone(),
-            short_hash: commit.short_hash.clone(),
-            message: commit.message.clone(),
-            author: commit.author.clone(),
-            parents: commit.parents.clone(),
+            hash: commit.hash,
+            short_hash: commit.short_hash,
+            message: commit.message,
+            author: commit.author,
+            parents: commit.parents,
             children: Vec::new(),
         };
 
-        node_indices.insert(commit.hash.clone(), nodes.len());
+        node_indices.insert(hash, nodes.len());
         nodes.push(node);
     }
 
