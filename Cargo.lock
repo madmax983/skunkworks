@@ -3777,17 +3777,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-diffusion"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "gray-scott",
- "ratatui",
- "tui-shared",
-]
-
-[[package]]
 name = "git-flock"
 version = "0.1.0"
 dependencies = [
@@ -5580,19 +5569,6 @@ dependencies = [
  "crossterm 0.28.1",
  "ferrous-core",
  "locus",
- "market-sim",
- "rand 0.8.7",
- "ratatui",
- "tui-shared",
-]
-
-[[package]]
-name = "market-gray"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "gray-scott",
  "market-sim",
  "rand 0.8.7",
  "ratatui",

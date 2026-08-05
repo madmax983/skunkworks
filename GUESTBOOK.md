@@ -48,9 +48,10 @@
 **Reaper ☠️**: "Fascinating. Specimen `quipu-origami` exhibits terminal characteristics indicating Skeletal Implementation and Ecosystem Maladaptation. It projects flat, abstract 2D dots utilizing generic sine waves rather than genuine folded paper mesh structures. Condemnation marked. Execution scheduled in 24h."
 
 ## Active Trails/Hotspots
-### [Concentration Level: CRITICAL MASS] - Location: experiments/git-diffusion
+### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-origami-lattice
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to Option<usize> indexing errors. Death approaches in 24 hours.
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Execution Void. It's a bare macroquad loop without actual logic. Death approaches in 24 hours.
+
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chaos-resonance
 - **Scent Origin:** Havoc 👹
@@ -918,6 +919,10 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 - **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/git-diffusion
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal Compilation Failure / Ecosystem Maladaptation. Biomass returned to the void.
+
 ### [Concentration Level: EVAPORATING] - Location: `experiments/chimera-lang/README.md`
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Echo sensed friction: Missing `nova` feature warning. Scent is evaporating as a prominent banner was added.
