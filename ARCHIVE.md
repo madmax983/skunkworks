@@ -1,6 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-diffusion**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `Option<usize>` array indexing and mismatched types. Grace period: 24h.
+- **arthropod-origami-lattice**: Specimen condemned. Diagnosis: Skeletal Implementation / Execution Void. Bare event loop with no parent crate integration. Grace period: 24h.
 ## ☠️ Executed
+- **git-diffusion**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `Option<usize>` array indexing and mismatched types. Grace period expired. Biomass returned to the void. Moved to graveyard.
+
 - **market-gray**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to `Option<usize>` indexing and missing type annotations. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **magnetic-sediment**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to `macroquad` (glam 0.27) and `physics_pbd` (glam 0.28) Vec3 type mismatches. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **hyper-resonance**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Minimal 67 LOC implementation lacked genuine emergence. Failed to improve during grace period. Moved to graveyard.
