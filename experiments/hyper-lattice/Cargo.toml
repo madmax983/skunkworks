@@ -1,0 +1,13 @@
+[package]
+name = "hyper-lattice"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["macroquad_run"]
+macroquad_run = ["dep:macroquad", "hyper-system/macroquad"]
+
+[dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
+hyper-system = { path = "../../crates/hyper-system", default-features = false }
+macroquad = { version = "0.4", optional = true }

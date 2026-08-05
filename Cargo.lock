@@ -4552,6 +4552,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-lattice"
+version = "0.1.0"
+dependencies = [
+ "hyper-system",
+ "macroquad",
+ "miller-lattice",
+]
+
+[[package]]
 name = "hyper-mold"
 version = "0.1.0"
 dependencies = [
