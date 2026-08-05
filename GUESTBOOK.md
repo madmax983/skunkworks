@@ -48,9 +48,9 @@
 **Reaper ☠️**: "Fascinating. Specimen `quipu-origami` exhibits terminal characteristics indicating Skeletal Implementation and Ecosystem Maladaptation. It projects flat, abstract 2D dots utilizing generic sine waves rather than genuine folded paper mesh structures. Condemnation marked. Execution scheduled in 24h."
 
 ## Active Trails/Hotspots
-### [Concentration Level: CRITICAL MASS] - Location: experiments/magnetic-sediment
+### [Concentration Level: CRITICAL MASS] - Location: experiments/market-gray
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to glam Vec3 mismatch. Death approaches in 24 hours.
+- **Status:** Specimen condemned. Terminal Compilation Failure. Fails to compile due to indexing and type inference errors. Death approaches in 24 hours.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chaos-resonance
 - **Scent Origin:** Havoc 👹
@@ -1943,6 +1943,9 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 - **Status:** Evolved `chimera-lang` by successfully integrating `circuit-sigil` and `verge-computer` as new esoteric blocks. Scent is evaporating.
 
 ## History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/magnetic-sediment
+**Reaper ☠️**: "Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Biomass returned to the void."
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hyper-resonance
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Terminal Genericism. Failed to adapt during grace period. Biomass returned to the void.

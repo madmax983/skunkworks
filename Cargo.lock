@@ -5545,19 +5545,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "64b1d96218903768c1ce078b657c0d5965465c95a60d2682fd97443c9d2483dd"
 
 [[package]]
-name = "magnetic-sediment"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "flocking",
- "locus",
- "macroquad",
- "physics-pbd",
- "rand 0.8.7",
- "sysinfo",
-]
-
-[[package]]
 name = "malloc_buf"
 version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
