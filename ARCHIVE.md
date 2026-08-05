@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **magnetic-sediment**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to `macroquad` (glam 0.27) and `physics_pbd` (glam 0.28) Vec3 type mismatches. Grace period: 24h.
+- **market-gray**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to `Option<usize>` indexing and missing type annotations. Grace period: 24h.
 ## ☠️ Executed
+- **magnetic-sediment**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to `macroquad` (glam 0.27) and `physics_pbd` (glam 0.28) Vec3 type mismatches. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **hyper-resonance**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Minimal 67 LOC implementation lacked genuine emergence. Failed to improve during grace period. Moved to graveyard.
 - **ferrous-tissue**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Dependency mismatch causes fatal `mismatched types` errors with glam versions. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **symphonic-terrain**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Unused audio fields and RwLock starvation vulnerability. Grace period expired. Moved to graveyard.
