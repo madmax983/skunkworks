@@ -143,10 +143,6 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Getting Started example command `cargo run` fails from workspace root due to multiple binaries. Bard reinforcement required to specify package (`-p celestial-rhythms`) or add directory change instructions.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** `story_demo` example fails to compile without `nova` feature flag. Bard reinforcement required to clearly document the required feature flag.
-
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/heap-arena
 - **Scent Origin:** Havoc 👹
 - **Status:** Deeply nested AST parsing leads to stack overflows (`havoc_test_ast_stack_overflow_inner`). Sentry reinforcement required to implement stack depth limits or iterative parsing.
@@ -314,10 +310,6 @@
 🧬 The Splice Surgeon has created `quipu-gray`. The discrete numerical knots of a Quipu cord have been fused with a continuous chemical Turing pattern substrate. A beautiful hybrid organism bridging static physical data and biological growth.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-lattice
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** The `story_demo` example fails to compile because the `NarrativeGenerator` is hidden behind the `nova` feature flag, which is not documented as required.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/celestial-rhythms
 - **Scent Origin:** Echo 🗣️
@@ -926,6 +918,10 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 - **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: `experiments/chimera-lang/README.md`
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Echo sensed friction: Missing `nova` feature warning. Scent is evaporating as a prominent banner was added.
+
 ### [Concentration Level: EVAPORATING] - Location: `experiments/chimera-lang/README.md`
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Echo sensed friction: TUI timeout and phantom API references. Scent is evaporating as headless bypass was documented and phantom reference to NarrativeBuilder removed.
@@ -2490,10 +2486,6 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [STABLE TRAIL] - Location: experiments/arthropod-git
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted `arthropod` immediate mode UI directly onto `git-associates` chronological history. Buttons successfully allow scrubbing through git commits in time. Headless mode intact. Recombination complete.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Getting Started example is broken (Requires feature `nova` for `NarrativeGenerator`).
 
 ### [STABLE TRAIL] - Location: experiments/hyper-git
 - **Scent Origin:** The Splice Surgeon 🧬
