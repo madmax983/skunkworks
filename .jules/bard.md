@@ -60,3 +60,7 @@
 ## 2026-07-28 - [Pest Derive Macro Missing Docs Mitigation]
 **Confusion:** Using `pest_derive` directly on a public struct triggers `missing_docs` lints which cannot be easily suppressed with just `#[allow(missing_docs)]` on the struct itself due to macro expansion intricacies.
 **Clarification:** Wrap the pest-generated struct inside an inline submodule (`pub(crate) mod parser_impl`) adorned with `#![allow(missing_docs)]` at the top of the module, and then `pub use` the items to satisfy strict missing docs checking while hiding the macro internals.
+
+## 2026-08-05 - [Module-Level Docs and README Sync for Executables]
+**Confusion:** Building documentation for a binary crate using strict rustdoc flags (`-W rustdoc::missing_crate_level_docs -D warnings`) will fail if the `src/main.rs` file does not include a `//!` crate-level doc comment block.
+**Clarification:** To satisfy `cargo doc` for binary crates, parse the `README.md` contents and inject them as `//!` block comments at the very top of `src/main.rs`. This ensures the overarching story for the executable is documented and the documentation build passes.

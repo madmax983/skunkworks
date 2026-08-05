@@ -1,3 +1,9 @@
+//! # Narrative API
+//!
+//! Provides a fluent builder pattern to simplify the construction of a `ChimeraVM`
+//! populated with narrative elements, logic grids, and genes.
+//!
+//! This module abstracts away the low-level complexities of raw grid and AST manipulation.
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::value::Value;

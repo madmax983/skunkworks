@@ -19,9 +19,6 @@ pub fn crawl(path: &str, limit: usize) -> Result<Vec<Node>> {
     let model = GitModel::open(path)?;
     let commits = model.history(limit)?;
 
-
-
-
     let mut nodes = Vec::with_capacity(commits.len());
     // Use an index map to quickly find node by hash in the vector
     let mut node_indices: HashMap<String, usize> = HashMap::with_capacity(commits.len());
