@@ -1,0 +1,13 @@
+[package]
+name = "market-lattice"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["macroquad_run"]
+macroquad_run = ["dep:macroquad"]
+
+[dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
+market-sim = { path = "../../crates/market-sim" }
+macroquad = { version = "0.4", optional = true }
