@@ -1720,6 +1720,3 @@ pub use vm::*;
 
 pub mod prologue_esolang_compiler;
 pub use prologue_esolang_compiler::*;
-
-pub mod narrative;
-pub use narrative::NarrativeBuilder;

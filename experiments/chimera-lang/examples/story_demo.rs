@@ -1,18 +1,41 @@
 use chimera_lang::tui::{run_tui, ViewMode};
-use chimera_lang::NarrativeBuilder;
+use chimera_lang::{ChimeraVM, Dna, Gene, Helix, Nucleotide, OpCode, Strand, Value};
 
 fn main() -> anyhow::Result<()> {
     println!("✍️  Writing story elements to Petri Dish...");
 
     // Let's create a story: "Once upon a time, there were 10 dragons."
     // In Chimera: push(10) print()
-    // Using the high-level NarrativeBuilder API:
-    let mut vm = NarrativeBuilder::new()
-        .push_str("push")
-        .push_int(10)
-        .push_str("print")
-        .add_reader_strand()
-        .build();
+    let dna = Dna {
+        evolution_config: None,
+        helix: Helix {
+            strands: vec![Strand {
+                genes: vec![
+                    Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(3)],
+                    },
+                    Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(0)],
+                    },
+                    Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(0)],
+                    },
+                    Gene {
+                        op: OpCode::Incubate,
+                        args: vec![],
+                    },
+                ],
+            }],
+        },
+    };
+
+    let mut vm = ChimeraVM::new(dna);
+    vm.grid[0][0] = Value::Str("push".to_string());
+    vm.grid[0][1] = Value::Int(10);
+    vm.grid[0][2] = Value::Str("print".to_string());
 
     if std::env::args().any(|arg| arg == "--headless") {
         println!("🧪 Incubating narrative headlessly...");
