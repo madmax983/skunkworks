@@ -1876,3 +1876,11 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An emergent visualization where the static, rigid hierarchical structure of the codebase folds and intersects itself in non-Euclidean ways, spinning faster as the CPU works harder.
 - **Status**: experiments/hyper-lattice
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented. 3D atoms correctly map to 4D vertices and project down effectively.
+
+### market-lattice
+- **Parents**: crates/market-sim + crates/miller-lattice
+- **Concept**: Architectural Financial Resistance.
+- **Novel trait**: The structural crystal nodes of `miller-lattice` are injected directly into the continuous market grid of `market-sim`. The hierarchical file structures act as physical "walls" or constraints within the market, disrupting the flow of bids and asks.
+- **Predicted Phenotype**: An emergent financial structure where discrete trades must navigate the physical architecture of the codebase, exploring how architecture might constrain or channel financial pressure.
+- **Status**: experiments/market-lattice
+- **Evaluation**: Success. Compiled. Headless bypass implemented. Bids and asks effectively collide within architectural bounds.

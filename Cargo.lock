@@ -5591,6 +5591,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "market-lattice"
+version = "0.1.0"
+dependencies = [
+ "macroquad",
+ "market-sim",
+ "miller-lattice",
+]
+
+[[package]]
 name = "market-locus"
 version = "0.1.0"
 dependencies = [
