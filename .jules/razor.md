@@ -76,3 +76,8 @@
 **Bloat:** Unused UI state fields in `App`, unused attributes in `LineInfo` and `Agent` spanning across `experiments/chron-compost`.
 **Cut:** Eliminated the dead state fields and methods, streamlining the structs to strictly necessary data and removing unused imports.
 **Saved:** Multiple lines of redundant parsing, storage logic, and structural overhead.
+
+## [Reduction]
+**Bloat:** `NarrativeBuilder` in `experiments/chimera-lang/src/narrative.rs` providing an unnecessary and verbose Builder pattern for simple Grid mutations.
+**Cut:** Deleted `narrative.rs`, eliminated the Builder, and refactored examples to mutate the Grid memory and DNA Helix directly.
+**Saved:** 70+ lines of builder abstraction code and cognitive overhead.
