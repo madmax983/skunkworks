@@ -1,0 +1,9 @@
+[package]
+name = "locus-neuro"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+neuro-sim = { path = "../../crates/neuro-sim" }
+locus = { path = "../../crates/locus" }
+macroquad = "0.4"
