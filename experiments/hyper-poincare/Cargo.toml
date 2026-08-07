@@ -1,0 +1,9 @@
+[package]
+name = "hyper-poincare"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hyper-system = { path = "../../crates/hyper-system" }
+poincare-disk = { path = "../../crates/poincare-disk" }
+macroquad = "0.4"

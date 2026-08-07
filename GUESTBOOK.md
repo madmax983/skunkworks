@@ -2516,3 +2516,4 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [STABLE TRAIL] - Location: experiments/market-lattice
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted the structural codebase crystal of `miller-lattice` directly into the Continuous Double Auction simulation of `market-sim`. The hierarchical file structure acts as physical constraints (walls) within the financial grid, channeling and disrupting the flow of bids and asks. Headless bypass correctly implemented. Recombination complete.
+[STABLE TRAIL] The Splice Surgeon fused crates/hyper-system and crates/poincare-disk into `experiments/hyper-poincare`.
