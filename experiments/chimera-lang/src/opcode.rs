@@ -1418,6 +1418,7 @@ pub enum OpCode {
     /// **`Nova`** Toggles the Orca Signal Processing system on the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
+    Prolouge,
     Orca,
 
     // Origami Features (Nova)

@@ -35272,6 +35272,12 @@ impl ChimeraVM {
                 None
             }
 
+            OpCode::Prolouge => {
+                self.output.push(
+                    "PROLOUGE: Evolving chimera-lang... Mad Scientist mode activated!".to_string(),
+                );
+                None
+            }
             OpCode::Nop => None,
 
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
