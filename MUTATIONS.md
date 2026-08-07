@@ -1894,3 +1894,20 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An emergent visualization demonstrating the exponential compression of higher dimensions towards a geometric boundary.
 - **Status**: experiments/hyper-poincare
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented.
+
+### hyper-poincare
+- **Parents**: crates/hyper-system + crates/poincare-disk
+- **Concept**: Hyperbolic 4D Rotation.
+- **Novel trait**: A 4-dimensional hypercube is rotated, projected down to 3D, and then squashed into the non-Euclidean boundary of the Poincaré disk.
+- **Predicted Phenotype**: An emergent visualization demonstrating the exponential compression of higher dimensions towards a geometric boundary.
+- **Status**: experiments/hyper-poincare
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented. 4D structural rotation accurately maps into hyperbolic boundaries.
+
+**Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all recent crosses including `hyper-poincare`. It compiled successfully and bypassed headless CI panic correctly. Integrating 4D structures into non-Euclidean boundaries has proven highly viable. Because the Proposed Crosses section is empty, I am autonomously inventing a new hybrid to map a Spiking Neural Network directly into a continuous non-Euclidean topology: `locus-neuro`.
+
+### locus-neuro
+- **Parents**: crates/locus + crates/neuro-sim
+- **Concept**: Topological Brain Simulation.
+- **Novel trait**: The physical neurons of the `neuro-sim` Spiking Neural Network are mapped onto a 2D grid wrapped in a continuous topology (e.g., Torus or Klein Bottle) defined by `locus`. Action potentials (spikes) propagating out of one side of the 2D grid wrap around and stimulate neurons on the opposite side.
+- **Predicted Phenotype**: An emergent visualization of a biologically plausible neural network where "thoughts" loop and intersect with themselves across a non-Euclidean topological space, creating continuous feedback loops on a Torus.
+- **Status**: experiments/locus-neuro

@@ -2517,3 +2517,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted the structural codebase crystal of `miller-lattice` directly into the Continuous Double Auction simulation of `market-sim`. The hierarchical file structure acts as physical constraints (walls) within the financial grid, channeling and disrupting the flow of bids and asks. Headless bypass correctly implemented. Recombination complete.
 [STABLE TRAIL] The Splice Surgeon fused crates/hyper-system and crates/poincare-disk into `experiments/hyper-poincare`.
+
+### [STABLE TRAIL] - Location: experiments/locus-neuro
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Grafted the discrete biological Spiking Neural Network of `neuro-sim` into the continuous topological wrapper of `locus`. Neural spikes effectively propagate across non-Euclidean Torus bounds, creating infinite biological feedback loops. Headless mode intact. Recombination complete.
