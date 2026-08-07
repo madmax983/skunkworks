@@ -33,10 +33,7 @@ async fn run_sim() {
             return;
         }
     };
-    let commits = match model.history(50) {
-        Ok(commits) => commits,
-        Err(_) => vec![],
-    };
+    let commits = model.history(50).unwrap_or_default();
 
     let mut current_topology = Topology::Torus;
     let width = 800;
@@ -105,7 +102,7 @@ async fn run_sim() {
             WHITE,
         );
         draw_text(
-            &format!("Topology: {:?}", current_topology),
+            format!("Topology: {:?}", current_topology),
             20.0,
             50.0,
             20.0,

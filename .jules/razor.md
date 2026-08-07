@@ -81,3 +81,8 @@
 **Bloat:** `NarrativeBuilder` in `experiments/chimera-lang/src/narrative.rs` providing an unnecessary and verbose Builder pattern for simple Grid mutations.
 **Cut:** Deleted `narrative.rs`, eliminated the Builder, and refactored examples to mutate the Grid memory and DNA Helix directly.
 **Saved:** 70+ lines of builder abstraction code and cognitive overhead.
+
+## [Reduction]
+**Bloat:** Manual `match` on `Result` to return a default vector and unnecessary string borrow in `git-locus`.
+**Cut:** Flattened the match block to use `.unwrap_or_default()` and removed the `&` from `format!`.
+**Saved:** Reduced code verbosity and eliminated two clippy warnings.
