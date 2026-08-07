@@ -258,12 +258,7 @@ impl Snapshot {
             let v_str = v.to_string();
             let mut v_cell = Cell::new(&v_str);
 
-            v_cell = match v {
-                PropValue::Bool(true) => v_cell.fg(Color::Green),
-                PropValue::Bool(false) => v_cell.fg(Color::Yellow),
-                PropValue::Text(_) => v_cell.fg(Color::Magenta),
-                _ => v_cell.fg(Color::Blue),
-            };
+            v_cell = colorize_prop_cell(v_cell, v);
 
             metrics_table.add_row(vec![Cell::new(k).fg(Color::Yellow), v_cell]);
         }
@@ -304,12 +299,7 @@ impl Snapshot {
                         _ => v.to_string(),
                     };
                     let mut v_cell = Cell::new(&v_str);
-                    v_cell = match v {
-                        PropValue::Bool(true) => v_cell.fg(Color::Green),
-                        PropValue::Bool(false) => v_cell.fg(Color::Yellow),
-                        PropValue::Text(_) => v_cell.fg(Color::Magenta),
-                        _ => v_cell.fg(Color::Blue),
-                    };
+                    v_cell = colorize_prop_cell(v_cell, v);
                     props_table.add_row(vec![
                         Cell::new(k).fg(Color::Cyan),
                         Cell::new(":").fg(Color::DarkGrey),
@@ -328,6 +318,15 @@ impl Snapshot {
             ]);
         }
         writeln!(f, "\n{}", entities_table)
+    }
+}
+
+fn colorize_prop_cell(cell: comfy_table::Cell, value: &PropValue) -> comfy_table::Cell {
+    match value {
+        PropValue::Bool(true) => cell.fg(comfy_table::Color::Green),
+        PropValue::Bool(false) => cell.fg(comfy_table::Color::Yellow),
+        PropValue::Text(_) => cell.fg(comfy_table::Color::Magenta),
+        _ => cell.fg(comfy_table::Color::Blue),
     }
 }
 
