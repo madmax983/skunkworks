@@ -944,6 +944,13 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_genetics_instr(instr)?);
                 }
             }
+            Rule::prolouge_block => {
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String("MAD_SCIENTIST".to_string())],
+                ));
+                genes.push(Gene::new(OpCode::Prolouge, vec![]));
+            }
             Rule::lisp_block => {
                 // The lisp block has everything between { and } as a single chunk
                 let content = inner_block.as_str();

@@ -2,7 +2,7 @@ WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("#" ~ (!"\n" ~ ANY)*) }
 
 program = { SOI ~ section* ~ EOI }
-section = { git_associates_block | git_block | gray_scott_block | locus_block | neuro_block | platter_block | forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block | brainfuck_block | tui_block | tui_mod_block | mosaic_block | piet_block | chaos_block | regex_block | acoustic_block | befunge_block | reactor_block | quipu_block | origami_block | esolang_block | flocking_block | market_block | poincare_block | weave_block | fluid_block | madness_block | prologue_esolang_block | miller_block | hyper_block | physics_block | ferrous_block | tardis_block | pachinko_block | automaton_block | syncopation_block | choreography_block | runes_block | chaos_hologram_block | hologram_block | circuit_sigil_block | verge_block | cymatic_ocean_block | quantum_garden_block | hologram_text_block | entropic_rain_block | spectral_scribe_block | chromatic_code_block | spqr_rsa_block | soroban_specter_block | clockwork_concerto_block | genetic_luthier_block }
+section = { prolouge_block | git_associates_block | git_block | gray_scott_block | locus_block | neuro_block | platter_block | forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block | brainfuck_block | tui_block | tui_mod_block | mosaic_block | piet_block | chaos_block | regex_block | acoustic_block | befunge_block | reactor_block | quipu_block | origami_block | esolang_block | flocking_block | market_block | poincare_block | weave_block | fluid_block | madness_block | prologue_esolang_block | miller_block | hyper_block | physics_block | ferrous_block | tardis_block | pachinko_block | automaton_block | syncopation_block | choreography_block | runes_block | chaos_hologram_block | hologram_block | circuit_sigil_block | verge_block | cymatic_ocean_block | quantum_garden_block | hologram_text_block | entropic_rain_block | spectral_scribe_block | chromatic_code_block | spqr_rsa_block | soroban_specter_block | clockwork_concerto_block | genetic_luthier_block }
 
 soroban_specter_block = { "soroban_specter" ~ "{" ~ instruction* ~ "}" }
 clockwork_concerto_block = { "clockwork_concerto" ~ "{" ~ instruction* ~ "}" }
@@ -78,3 +78,4 @@ automaton_block = { "automaton" ~ "{" ~ instruction* ~ "}" }
 syncopation_block = { "syncopation" ~ "{" ~ instruction* ~ "}" }
 chromatic_code_block = { "chromatic_code" ~ "{" ~ instruction* ~ "}" }
 spqr_rsa_block = { "spqr_rsa" ~ "{" ~ instruction* ~ "}" }
+prolouge_block = { "prolouge" ~ "{" ~ (!"}" ~ ANY)* ~ "}" }
