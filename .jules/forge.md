@@ -15,3 +15,6 @@
 **[Unnecessary String Reference in `draw_text`]**
 **Learning:** Functions accepting `impl AsRef<str>` (such as `draw_text` in `macroquad`) do not require explicitly borrowing strings (`&format!(...)`). Explicitly borrowing creates a `&String` which is then coerced into a `&str`, making it an unnecessary borrow that clippy will flag.
 **Action:** When passing a `String` (like the output of `format!()`) to a function accepting `impl AsRef<str>`, pass the `String` directly without the `&` reference operator.
+**[Refactor duplicated logic in UI rendering]**
+**Learning:** Extract repeated logic like styling cells based on values to helper functions.
+**Action:** Check for duplicated formatting logic within a UI/rendering component and extract to private helper methods.
