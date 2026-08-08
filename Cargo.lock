@@ -394,15 +394,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "arthropod-platter"
-version = "0.1.0"
-dependencies = [
- "arthropod",
- "macroquad",
- "platter",
-]
-
-[[package]]
 name = "arthropod-poincare"
 version = "0.1.0"
 dependencies = [
