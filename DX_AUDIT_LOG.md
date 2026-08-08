@@ -1753,3 +1753,28 @@ I am a new user trying to add `Nova`'s story feature by running `story_demo`.
 *   🤦 **The Confusion:** "Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found."
 *   🕵️ **The Reality:** "Turns out I needed to enable feature `nova`."
 *   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES FEATURE NOVA'."
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/chimera-lang/README.md`
+**Date:** 2026-07-26
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a user trying to test the 'story_demo' example in a CI or non-interactive environment based on the Quick Start instructions."
+**Action:** Ran the `cargo run -p chimera-lang --features nova --example story_demo` command exactly as documented in the Quick Start section of `experiments/chimera-lang/README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Headless Execution Timeout:** The example provided in the quick start hangs indefinitely, waiting for TUI input in non-interactive environments.
+    - *Impact:* The command times out after a long period (e.g., 400 seconds in CI). This completely breaks automated testing and prevents users from running the demo without a blocking TUI if they blindly copy paste the top example.
+    - *Cause:* The quickstart example does not include the `--headless` flag, so it launches the interactive TUI.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: The `story_demo` example hangs in CI/headless environments
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `story_demo` example headlessly in my CI pipeline using `cargo run -p chimera-lang --features nova --example story_demo` as told in the quickstart. It just hung there forever and eventually timed out."
+*   🕵️ **The Reality:** "Turns out the example code launches a blocking TUI by default. Although there is a headless mode, the quickstart command does not mention or use the `--headless` flag."
+*   💡 **The Fix:** "Add instructions in the Quick Start on how to run it in a headless environment, or add the `--headless` flag."
