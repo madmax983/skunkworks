@@ -480,12 +480,12 @@ pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_stat
     f.render_widget(grid_paragraph, left_chunks[1]);
 
     // Cytoplasm (Stack)
-    let stack_items: Vec<ListItem> = vm
+    // ⚡ Bolt: Removed intermediate `.collect::<Vec<_>>()` allocation. `List::new` accepts an iterator, eliminating heap allocation per frame.
+    let stack_items = vm
         .stack
         .iter()
         .rev()
-        .map(|val| ListItem::new(format!("{}", val)))
-        .collect();
+        .map(|val| ListItem::new(format!("{}", val)));
 
     let stack_list = List::new(stack_items).block(
         Block::default()
@@ -495,66 +495,69 @@ pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_stat
     f.render_widget(stack_list, right_chunks[0]);
 
     // Output
-    let mut output_items: Vec<ListItem> = vm
-        .output
-        .iter()
-        .rev()
-        .map(|val| {
-            // Apply Babel Glitch
-            #[cfg(feature = "nova")]
-            let content = if vm.babel_state.integrity < 0.9 {
-                let mut rng = rand::thread_rng();
-                if rng.gen_bool(1.0 - vm.babel_state.integrity) {
-                    val.chars()
-                        .map(|c| {
-                            if rng.gen_bool(0.3) {
-                                let glitch_chars =
-                                    ['!', '@', '#', '$', '%', '^', '&', '*', '?', '¿', '¡'];
-                                glitch_chars[rng.gen_range(0..glitch_chars.len())]
-                            } else {
-                                c
-                            }
-                        })
-                        .collect()
-                } else {
-                    val.clone()
-                }
+    // ⚡ Bolt: Removed intermediate `.collect::<Vec<_>>()` allocation and `Vec::insert(0, ...)` overheads.
+    // Iterators are chained instead to avoid O(n) shifts and heap allocations per frame.
+    let status_item = if !app_state.status_msg.is_empty() {
+        Some(ListItem::new(Span::styled(
+            format!("STATUS: {}", app_state.status_msg),
+            Style::default().fg(Color::Yellow),
+        )))
+    } else {
+        None
+    };
+
+    let editing_item = if let InputMode::Editing = app_state.input_mode {
+        if app_state.view_mode == ViewMode::Grid {
+            Some(ListItem::new(Span::styled(
+                format!(
+                    "EDIT GRID [{},{}]: {}",
+                    app_state.grid_cursor.0, app_state.grid_cursor.1, app_state.input_buffer
+                ),
+                Style::default().fg(Color::Cyan),
+            )))
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
+    let base_output_items = vm.output.iter().rev().map(|val| {
+        // Apply Babel Glitch
+        #[cfg(feature = "nova")]
+        let content = if vm.babel_state.integrity < 0.9 {
+            let mut rng = rand::thread_rng();
+            if rng.gen_bool(1.0 - vm.babel_state.integrity) {
+                val.chars()
+                    .map(|c| {
+                        if rng.gen_bool(0.3) {
+                            let glitch_chars =
+                                ['!', '@', '#', '$', '%', '^', '&', '*', '?', '¿', '¡'];
+                            glitch_chars[rng.gen_range(0..glitch_chars.len())]
+                        } else {
+                            c
+                        }
+                    })
+                    .collect()
             } else {
                 val.clone()
-            };
-            #[cfg(not(feature = "nova"))]
-            let content = val.clone();
+            }
+        } else {
+            val.clone()
+        };
+        #[cfg(not(feature = "nova"))]
+        let content = val.clone();
 
-            ListItem::new(content)
-        })
-        .collect();
+        ListItem::new(content)
+    });
 
-    if !app_state.status_msg.is_empty() {
-        output_items.insert(
-            0,
-            ListItem::new(Span::styled(
-                format!("STATUS: {}", app_state.status_msg),
-                Style::default().fg(Color::Yellow),
-            )),
-        );
-    }
-    if let InputMode::Editing = app_state.input_mode {
-        if app_state.view_mode == ViewMode::Grid {
-            output_items.insert(
-                0,
-                ListItem::new(Span::styled(
-                    format!(
-                        "EDIT GRID [{},{}]: {}",
-                        app_state.grid_cursor.0, app_state.grid_cursor.1, app_state.input_buffer
-                    ),
-                    Style::default().fg(Color::Cyan),
-                )),
-            );
-        }
-    }
-
-    let output_list =
-        List::new(output_items).block(Block::default().borders(Borders::ALL).title("Output"));
+    let output_list = List::new(
+        editing_item
+            .into_iter()
+            .chain(status_item)
+            .chain(base_output_items),
+    )
+    .block(Block::default().borders(Borders::ALL).title("Output"));
     f.render_widget(output_list, right_chunks[1]);
 
     // Draw Injection Popup
