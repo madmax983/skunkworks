@@ -1,0 +1,9 @@
+[package]
+name = "neuro-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+neuro-sim = { path = "../../crates/neuro-sim" }
+origami = { path = "../../crates/origami" }
+macroquad = "0.4.15"

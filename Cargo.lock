@@ -6349,6 +6349,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "neuro-origami"
+version = "0.1.0"
+dependencies = [
+ "macroquad",
+ "neuro-sim",
+ "origami",
+]
+
+[[package]]
 name = "neuro-physics"
 version = "0.1.0"
 dependencies = [
