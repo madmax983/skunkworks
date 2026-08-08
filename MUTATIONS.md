@@ -1922,3 +1922,10 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An emergent structural visualization where biological neural activity directly translates into physical architectural deformation.
 - **Status**: experiments/neuro-origami
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Neural spikes translate smoothly into physical mesh deformation.
+### git-quipu
+- **Parents**: crates/git-associates + crates/quipu
+- **Concept**: Knotted Version Control.
+- **Novel trait**: The chronological code changes extracted by `git-associates` are serialized into the immutable physical knot ledger of `quipu`. Insertions are mapped as primary blue cords, while deletions hang as subsidiary red cords off the primary thread.
+- **Predicted Phenotype**: An emergent ancient structural visualization of modern repository history, allowing observers to feel the density of changes over time as physical knots rather than abstract diff lines.
+- **Status**: experiments/git-quipu
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Git stats map perfectly into knot clusters.

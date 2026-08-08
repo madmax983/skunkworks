@@ -3852,6 +3852,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "git-quipu"
+version = "0.1.0"
+dependencies = [
+ "git-associates",
+ "quipu",
+]
+
+[[package]]
 name = "git-tank"
 version = "0.1.0"
 dependencies = [

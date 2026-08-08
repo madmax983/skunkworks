@@ -1,0 +1,8 @@
+[package]
+name = "git-quipu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+git-associates = { path = "../../crates/git-associates" }
+quipu = { path = "../../crates/quipu" }
