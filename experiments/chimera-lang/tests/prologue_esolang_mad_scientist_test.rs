@@ -564,5 +564,8 @@ fn test_prologue_esolang_compiler_prologue() {
     let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
     let genes = &dna.helix.strands[0].genes;
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
-    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::PrologueMadScientist);
+    assert_eq!(
+        genes[1].op,
+        chimera_lang::opcode::OpCode::PrologueMadScientist
+    );
 }
