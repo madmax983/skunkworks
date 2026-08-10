@@ -559,10 +559,10 @@ fn test_prologue_esolang_compiler_clockwork_concerto() {
 }
 
 #[test]
-fn test_prologue_esolang_compiler_prolouge() {
-    let source = "prolouge { evolve }";
+fn test_prologue_esolang_compiler_prologue() {
+    let source = "prologue { evolve }";
     let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
     let genes = &dna.helix.strands[0].genes;
     assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
-    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::Prolouge);
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::PrologueMadScientist);
 }
