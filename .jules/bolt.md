@@ -14,3 +14,6 @@
 ## [Iterator Chaining for TUI Rendering]
 **Learning:** Avoid intermediate `.collect::<Vec<_>>()` allocations and `Vec::insert(0, ...)` overheads in hot TUI rendering loops. `ratatui::widgets::List::new` directly accepts an `IntoIterator`. Using `.into_iter().chain()` allows combining static prepends (like status messages) with dynamic iterators seamlessly without triggering heap allocations or $O(n)$ shifts.
 **Action:** When conditionally prepending or appending to lists meant for rendering, prefer building an iterator chain (`chain()`) over creating a `Vec` and shifting elements on the heap.
+## [Bolt: Direct BigUint Math for RSA Cryptography Modpow]
+**Learning:** Calling `.clone()` inside hot cryptographic math loops containing custom types (like `Roman`) causes severe allocation bottlenecks when those loops just rebuild types back to primitive big integers internally on each multiplication iteration.
+**Action:** When a type fundamentally delegates arithmetic to a Big Integer under the hood, extract the underlying integer *once*, run the intense `modpow` loop natively on the Big Integers avoiding intermediate types entirely, and parse back to the custom type strictly at the end.
