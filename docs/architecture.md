@@ -4251,6 +4251,139 @@ classDiagram
     ArthropodResonance --> WaveSimulation : Acoustic Excitation
 ```
 
+
+## Experiment: Market-Lattice (ADR 169)
+
+**Market-Lattice** explores "Architectural Financial Resistance" by crossing the discrete hierarchical file system structure (`miller-lattice`) with continuous trading dynamics (`market-sim`).
+
+### Hybrid Architecture
+
+The hybrid translates discrete structural crystal nodes into physical constraints within a continuous market grid, forcing bids and asks to navigate around the architecture.
+
+```mermaid
+classDiagram
+    direction TB
+    class MarketLattice {
+        +MillerSystem architecture
+        +MarketSystem market
+        +run()
+    }
+
+    class MillerSystem {
+        <<Library: miller-lattice>>
+        +Vec~Node~ crystal_nodes
+        +build_structure()
+    }
+
+    class MarketSystem {
+        <<Library: market-sim>>
+        +Vec~Order~ orders
+        +tick()
+    }
+
+    MarketLattice --> MillerSystem : Physical Bounds
+    MarketLattice --> MarketSystem : Liquid Flow
+```
+
+## Experiment: Hyper-Poincare (ADR 170)
+
+**Hyper-Poincare** explores "Hyperbolic 4D Rotation" by crossing 4D structural primitives (`hyper-system`) with a continuous non-Euclidean boundary space (`poincare-disk`).
+
+### Hybrid Architecture
+
+The hybrid projects a rotating 4-dimensional hypercube into 3D and then maps those coordinates onto the non-Euclidean boundary of the Poincaré disk.
+
+```mermaid
+classDiagram
+    direction TB
+    class HyperPoincare {
+        +HyperSystem hypercube
+        +PoincareDisk space
+        +run()
+    }
+
+    class HyperSystem {
+        <<Library: hyper-system>>
+        +Vec~Point4D~ vertices
+        +rotate()
+    }
+
+    class PoincareDisk {
+        <<Library: poincare-disk>>
+        +f32 radius
+        +project()
+    }
+
+    HyperPoincare --> HyperSystem : 4D Primitives
+    HyperPoincare --> PoincareDisk : Non-Euclidean Boundary
+```
+
+## Experiment: Locus-Neuro (ADR 171)
+
+**Locus-Neuro** explores a "Topological Brain Simulation" by crossing a continuous topological space (`locus`) with a biological Spiking Neural Network (`neuro-sim`).
+
+### Hybrid Architecture
+
+The hybrid maps discrete neurons onto a 2D grid wrapped in a continuous topology, allowing action potentials to loop across boundaries.
+
+```mermaid
+classDiagram
+    direction TB
+    class LocusNeuro {
+        +LocusTopology space
+        +NeuralNetwork brain
+        +run()
+    }
+
+    class LocusTopology {
+        <<Library: locus>>
+        +TopologyType shape
+        +wrap_coordinates()
+    }
+
+    class NeuralNetwork {
+        <<Library: neuro-sim>>
+        +Vec~Neuron~ neurons
+        +step()
+    }
+
+    LocusNeuro --> LocusTopology : Spatial Wraparound
+    LocusNeuro --> NeuralNetwork : Action Potentials
+```
+
+## Experiment: Neuro-Origami (ADR 172)
+
+**Neuro-Origami** explores "Neural Morphogenesis" by crossing a Spiking Neural Network (`neuro-sim`) with a procedural soft-body mesh (`origami`).
+
+### Hybrid Architecture
+
+The hybrid maps neural action potentials directly into structural extension factors, causing the mesh geometry to physically deform based on cognitive activity.
+
+```mermaid
+classDiagram
+    direction TB
+    class NeuroOrigami {
+        +NeuralNetwork brain
+        +OrigamiMesh structure
+        +run()
+    }
+
+    class NeuralNetwork {
+        <<Library: neuro-sim>>
+        +Vec~Neuron~ neurons
+        +step()
+    }
+
+    class OrigamiMesh {
+        <<Library: origami>>
+        +f32 extension_factor
+        +update_mesh()
+    }
+
+    NeuroOrigami --> NeuralNetwork : Spike Dynamics
+    NeuroOrigami --> OrigamiMesh : Structural Deformation
+```
+
 ## Hydrothermal Locks, Spectral Scribe, and Quipu Serializer Facade (ADR 159, 160, & 161)
 
 Enforcing the Facade pattern in `hydrothermal-locks`, `spectral-scribe`, and `quipu-serializer` prevents the leakage of their internal module structures, ensuring consumers rely only on the explicitly exported API.
