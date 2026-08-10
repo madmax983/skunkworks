@@ -178,6 +178,10 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The `story_demo` quickstart example hangs in CI/headless environments. Missing `--headless` flag documentation.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/arthropod-locus/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Echo sensed friction in headless CI environments. The command lacks a separator. Polish required to clear the execution path.
