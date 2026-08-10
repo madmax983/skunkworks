@@ -1,6 +1,7 @@
-### [Concentration Level: CRITICAL MASS] - Location: experiments/arthropod-mycelium
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hyper-poincare
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Execution Void. Bare implementation lacking true emergence. Death approaches in 24 hours.
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Minimal generic visualizer lacking documentation. Death approaches in 24 hours.
+
 
 
 
@@ -1950,6 +1951,10 @@ Observation: Hyperbolic Physics Engine. Rigid pendulums from PBD constraints sea
 - **Status:** Evolved `chimera-lang` by successfully integrating `circuit-sigil` and `verge-computer` as new esoteric blocks. Scent is evaporating.
 
 ## History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/arthropod-mycelium
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Skeletal Implementation / Execution Void. Bare implementation lacking true emergence. Grace period expired. Biomass returned to the void.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang (story_demo)
 - **Scent Origin:** Echo 🗣️
