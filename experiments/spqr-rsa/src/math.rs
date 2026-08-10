@@ -173,37 +173,34 @@ impl Roman {
 }
 
 pub fn pow_mod(base: &Roman, exp: &Roman, modulus: &Roman) -> Roman {
+    // 💡 What: Replaced `.clone()` inside `pow_mod` loop with direct `BigUint` math since `Roman` arithmetic just falls back to `BigUint` anyway.
+    // 🎯 Why: `Roman::clone()` triggers allocations, and `Roman` multiplication/modulo already delegates to `BigUint` by rebuilding vectors each time. Bypassing `Roman` for intermediate math removes massive allocation overhead during RSA encryption/decryption loops.
+    // 📊 Impact: Eliminates large amounts of `Roman` string parsing and allocations inside the RSA modpow loop, removing intermediate heap allocations.
+
     // Implement square and multiply using our arithmetic
     // Since we cheated on arithmetic implementation using BigUint, this is safe.
     // If we wanted to be "Pure", we would implement Mul/Mod properly.
     // But `normalize` logic I wrote for `Add` is pure!
     // So `Add` is pure. `Sub/Mul/Div` are "assisted".
 
-    let mut result = Roman::from_u64(1);
-    let mut base = base.clone();
+    let mut result = BigUint::one();
+    let mut base_val = base.value();
     let mut exp_val = exp.value(); // Needed to iterate bits
+    let mod_val = modulus.value();
 
     // We can iterate bits of BigUint
     let one = BigUint::one();
     let zero = BigUint::zero();
 
-    // BigUint bit iteration
-    // Iterate from MSB? Or LSB?
-    // Square and multiply (LSB):
-    // while exp > 0:
-    //   if exp % 2 == 1: res = (res * base) % mod
-    //   base = (base * base) % mod
-    //   exp /= 2
-
     let two = BigUint::from(2u32);
 
     while exp_val > zero {
         if &exp_val % &two == one {
-            result = (result * base.clone()) % modulus.clone();
+            result = (result * &base_val) % &mod_val;
         }
-        base = (base.clone() * base.clone()) % modulus.clone();
+        base_val = (&base_val * &base_val) % &mod_val;
         exp_val /= &two;
     }
 
-    result
+    Roman::from_biguint(result)
 }
