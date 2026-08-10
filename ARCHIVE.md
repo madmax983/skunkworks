@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **arthropod-mycelium**: Specimen condemned. Diagnosis: Skeletal Implementation / Execution Void. Bare implementation lacking true emergence. Grace period: 24h.
+- **hyper-poincare**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Minimal 111 LOC without README.md. Grace period: 24h.
 ## ☠️ Executed
+- **arthropod-mycelium**: Specimen executed. Diagnosis: Skeletal Implementation / Execution Void. Bare implementation lacking true emergence. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **arthropod-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Execution Void. Bare implementation lacking true emergence. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **arthropod-origami-lattice**: Specimen executed. Diagnosis: Skeletal Implementation / Execution Void. Bare event loop with no parent crate integration. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **git-diffusion**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `Option<usize>` array indexing and mismatched types. Grace period expired. Biomass returned to the void. Moved to graveyard.
