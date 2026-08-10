@@ -4559,15 +4559,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hyper-poincare"
-version = "0.1.0"
-dependencies = [
- "hyper-system",
- "macroquad",
- "poincare-disk",
-]
-
-[[package]]
 name = "hyper-pollination"
 version = "0.1.0"
 dependencies = [
