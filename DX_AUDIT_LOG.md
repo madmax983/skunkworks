@@ -1778,3 +1778,28 @@ I am a new user trying to add `Nova`'s story feature by running `story_demo`.
 *   🤦 **The Confusion:** "Tried to run the `story_demo` example headlessly in my CI pipeline using `cargo run -p chimera-lang --features nova --example story_demo` as told in the quickstart. It just hung there forever and eventually timed out."
 *   🕵️ **The Reality:** "Turns out the example code launches a blocking TUI by default. Although there is a headless mode, the quickstart command does not mention or use the `--headless` flag."
 *   💡 **The Fix:** "Add instructions in the Quick Start on how to run it in a headless environment, or add the `--headless` flag."
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/quantum-boids/README.md`
+**Date:** 2026-07-26
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the `quantum-boids` experiment."
+**Action:** Try to run the experiment based *only* on the public docs in `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing execution command:** The README explains the mechanics and controls but doesn't actually tell me how to start the simulation.
+    - *Impact:* New users don't know the package name or command to run it.
+    - *Fix:* Add a quick start section with the `cargo run -p quantum-boids` command.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing execution instructions for quantum-boids
+
+**Description:**
+*   🤦 **The Confusion:** "I wanted to run the `quantum-boids` simulation but there's no command in the README."
+*   🕵️ **The Reality:** "Turns out I just have to guess `cargo run -p quantum-boids`."
+*   💡 **The Fix:** "Add a 'Quick Start' or 'Running' section to the README with the exact cargo run command."
