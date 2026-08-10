@@ -558,7 +558,7 @@ fn main() -> Result<()> {
                 HashMap::new(),
                 Vec::new(),
             )
-        } else if extension == "plge" || extension == "prolouge" {
+        } else if extension == "plge" || extension == "prologue" {
             (
                 chimera_lang::prologue_esolang_compiler::compile(&unparsed_file)?,
                 None,
