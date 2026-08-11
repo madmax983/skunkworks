@@ -12,3 +12,6 @@
 **[Quipu Formatting Coverage]**
 **Learning:** Standard library `write!(f, ...)?` macros create implicit early return branches that show up as missing line coverage (e.g., `^0` markers) in `cargo llvm-cov` output. Attempting to test these requires mocking `fmt::Formatter`, which is not natively possible and often considered testing the standard library.
 **Action:** Focus on testing all logical branches (different node types, colors, nested subsidiaries) rather than attempting to achieve 100% line coverage on `fmt::Display` implementations when the remaining lines are purely the error propagation of `write!`.
+**[Title] Unreachable Panics from Incomplete Enum Matching**
+**Learning:** Hardcoding ranges (`0..=6`) to index and match against variants of an `enum` can lead to exposed `unreachable!()` panics if the `enum` definition expands or if specific variants (like `Sphere` and `Projective`) are intentionally omitted from property tests.
+**Action:** When mapping indices to enums in test setups, ensure the index range accurately reflects the entire bound of the enum, and avoid using `_ => unreachable!()` for missing variants if those variants actually exist in the production definition. Test every variant to ensure comprehensive robustness and confidence.
