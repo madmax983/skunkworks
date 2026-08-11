@@ -18,8 +18,17 @@ macroquad = "0.4"
 use arthropod::Button;
 use macroquad::prelude::*;
 
+// NOTE: To run this in CI or a headless server without X11, you must bypass macroquad.
+// For tests, you can skip execution entirely if `--headless` is passed.
+
+
 #[macroquad::main("UI Example")]
 async fn main() {
+    if std::env::args().any(|arg| arg == "--headless") {
+        println!("Running in headless mode, exiting immediately to avoid XOpenDisplay panic.");
+        return;
+    }
+
     let start_btn = Button::new("Start", 100.0, 100.0, 200.0, 50.0)
         .with_colors(GREEN, LIME, DARKGREEN);
 
