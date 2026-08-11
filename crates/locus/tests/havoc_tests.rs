@@ -9,7 +9,7 @@ proptest! {
         y in i64::MIN..=i64::MAX,
         width in 1usize..=10_000usize,
         height in 1usize..=10_000usize,
-        topo_idx in 0usize..7usize
+        topo_idx in 0usize..9usize
     ) {
         let topo = match topo_idx {
             0 => Topology::Plane,
@@ -19,7 +19,8 @@ proptest! {
             4 => Topology::Klein,
             5 => Topology::Mobius,
             6 => Topology::Hyperbolic,
-            _ => unreachable!(),
+            7 => Topology::Sphere,
+            _ => Topology::Projective,
         };
 
         // This should not panic
