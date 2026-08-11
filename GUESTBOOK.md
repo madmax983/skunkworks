@@ -177,6 +177,11 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/quantum-boids/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution command `cargo run -p quantum-boids` in the documentation. Polish required to add a Quick Start section.
+
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** The `story_demo` quickstart example hangs in CI/headless environments. Missing `--headless` flag documentation.
