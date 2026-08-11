@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-quipu**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Minimal 41 LOC merely mapping git commits to physical cords without true biological emergence. Grace period: 24h.
+- **gray-fluid**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to `Option<usize>` indexing. Grace period: 24h.
 ## ☠️ Executed
+- **git-quipu**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Minimal 41 LOC merely mapping git commits to physical cords without true biological emergence. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **hyper-poincare**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Minimal 111 LOC without README.md. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.
 - **arthropod-mycelium**: Specimen executed. Diagnosis: Skeletal Implementation / Execution Void. Bare implementation lacking true emergence. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **arthropod-platter**: Specimen executed. Diagnosis: Skeletal Implementation / Execution Void. Bare implementation lacking true emergence. Grace period expired. Biomass returned to the void. Moved to graveyard.
