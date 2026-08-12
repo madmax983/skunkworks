@@ -48,7 +48,7 @@
 **Reaper ☠️**: "Fascinating. Specimen `quipu-origami` exhibits terminal characteristics indicating Skeletal Implementation and Ecosystem Maladaptation. It projects flat, abstract 2D dots utilizing generic sine waves rather than genuine folded paper mesh structures. Condemnation marked. Execution scheduled in 24h."
 
 ## Active Trails/Hotspots
-### [Concentration Level: CRITICAL MASS] - Location: experiments/gray-fluid
+### [Concentration Level: EVAPORATING] - Location: graveyard/gray-fluid
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Biomass returned to the void.
 
@@ -2556,3 +2556,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [STABLE TRAIL] - Location: experiments/git-quipu
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted the chronological dataset of `git-associates` into the ancient knot ledger structure of `quipu`. Repository insertions now weave into primary blue cords, while deletions dangle as subsidiary red threads. Headless mode intact. Recombination complete.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hyper-tissue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Compilation Failure / Ecosystem Maladaptation. Fails to build due to private module access and missing Vec4 methods. Grace period: 24h.

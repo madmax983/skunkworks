@@ -4071,20 +4071,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gray-fluid"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "crossterm 0.28.1",
- "ferrous-core",
- "gray-scott",
- "locus",
- "rand 0.8.7",
- "ratatui",
- "tui-shared",
-]
-
-[[package]]
 name = "gray-hologram"
 version = "0.1.0"
 dependencies = [
