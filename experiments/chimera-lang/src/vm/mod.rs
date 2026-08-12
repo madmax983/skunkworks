@@ -35278,6 +35278,28 @@ impl ChimeraVM {
                 );
                 None
             }
+            OpCode::MadScientist => {
+                self.prologue_state.active = true;
+                self.prologue_state.orca_mode = true;
+                self.glitch_level = 100.0;
+                self.energy = self.energy.saturating_add(1000);
+                self.output.push("MAD SCIENTIST: Injecting extreme chaotic mutations and Orca signal bursts! ⚛️".to_string());
+
+                let mut rng = rand::thread_rng();
+                use rand::Rng;
+                for y in 0..crate::vm::GRID_SIZE {
+                    for x in 0..crate::vm::GRID_SIZE {
+                        if rng.gen_bool(0.15) {
+                            let runes = [
+                                "M", "ζ", "₣", "⚡", "O", "?", "!", "*", "~", "♻", "P", "c",
+                            ];
+                            let rune = runes[rng.gen_range(0..runes.len())];
+                            self.grid[y][x] = crate::vm::Value::Str(rune.to_string());
+                        }
+                    }
+                }
+                None
+            }
             OpCode::Nop => None,
 
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
