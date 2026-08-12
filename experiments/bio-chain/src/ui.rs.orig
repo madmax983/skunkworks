@@ -295,8 +295,6 @@ fn render_population_chart(f: &mut Frame, area: Rect, app: &App) {
 
 fn render_validators(f: &mut Frame, area: Rect, app: &App) {
     let item_count = app.network.validators.len().min(15);
-    // ⚡ Bolt Optimization: Avoided `.collect::<Vec<_>>()` on items.
-    // `List::new` takes an `IntoIterator`, so passing the lazy iterator directly avoids heap allocations per frame.
     let items = app.network.validators.iter().take(15).map(|v| {
         #[allow(unused_mut)]
         let mut marker = if v.is_malicious { "🔴" } else { "🟢" };

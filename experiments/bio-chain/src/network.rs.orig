@@ -137,8 +137,6 @@ impl Network {
     }
 
     /// Validators vote on pending blocks
-    /// ⚡ Bolt Optimization: Uses index-based loop instead of `.clone()` on `self.pending_blocks`
-    /// to avoid an O(N) heap allocation on every network tick without fighting the borrow checker.
     pub fn vote_on_blocks(&mut self) {
         for block_idx in 0..self.pending_blocks.len() {
             let channel = self.pending_blocks[block_idx].hash_as_channel();
@@ -202,8 +200,6 @@ impl Network {
     }
 
     /// Check for consensus and finalize blocks
-    /// ⚡ Bolt Optimization: Uses index-based loop instead of `.clone()` on `self.pending_blocks`
-    /// to avoid an O(N) heap allocation on every network tick without fighting the borrow checker.
     pub fn check_consensus(&mut self) {
         let threshold = self.consensus_threshold();
         let mut finalized_blocks = vec![];
@@ -532,8 +528,6 @@ impl Network {
         }
     }
 
-    /// ⚡ Bolt Optimization: Uses index-based loop instead of `.clone()` on `self.pending_blocks`
-    /// to avoid an O(N) heap allocation on every network tick without fighting the borrow checker.
     fn vote_on_blocks_silent(&mut self) {
         for block_idx in 0..self.pending_blocks.len() {
             let channel = self.pending_blocks[block_idx].hash_as_channel();
@@ -577,8 +571,6 @@ impl Network {
         }
     }
 
-    /// ⚡ Bolt Optimization: Uses index-based loop instead of `.clone()` on `self.pending_blocks`
-    /// to avoid an O(N) heap allocation on every network tick without fighting the borrow checker.
     fn check_consensus_silent(&mut self) {
         let threshold = self.consensus_threshold();
         let mut finalized_blocks = vec![];
