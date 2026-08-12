@@ -1418,10 +1418,12 @@ pub enum OpCode {
     /// **Effect:** Modifies hologram based on audio pressure.
     CymaticScan,
 
+    /// **`Prologue`** Toggles the Prologue Mad Scientist experiment mode.
+    PrologueMadScientist,
+
     /// **`Nova`** Toggles the Orca Signal Processing system on the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
-    PrologueMadScientist,
     Orca,
 
     // Origami Features (Nova)
