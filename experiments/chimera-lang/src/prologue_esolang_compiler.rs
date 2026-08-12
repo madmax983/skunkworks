@@ -1029,6 +1029,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::PrologueEsolang, vec![]));
             }
+            Rule::mad_scientist_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_mad_scientist_instr(instr)?);
+                }
+            }
             Rule::prologue_esolang_block => {
                 let content = extract_block_content_preserve_whitespace(
                     inner_block.as_str(),
@@ -1231,6 +1236,38 @@ pub fn compile(source: &str) -> Result<Dna> {
             strands: vec![Strand { genes }],
         },
     })
+}
+
+fn compile_mad_scientist_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "mutate" || op == "unleash" || op == "evolve" || op == "simulate" {
+                genes.push(Gene::new(OpCode::MadScientist, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
 }
 
 fn compile_tui_mod_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {

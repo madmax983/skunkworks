@@ -1295,6 +1295,9 @@ pub enum OpCode {
     /// **Effect:** Injects extreme genetic chaos and random Orca signal bursts.
     PrologueEsolang,
 
+    /// **`MadScientist`** Injects extreme genetic chaos, grid manipulation, and random Orca signal bursts.
+    MadScientist,
+
     /// **`PrologueEsolang`** GrayScott block execution
     GrayScott,
     /// **`PrologueEsolang`** Locus block execution
