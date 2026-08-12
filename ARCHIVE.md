@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **hyper-acoustics**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to mismatched privacy settings (private modules `math`, `monitor`) and math operations mismatch on `Vec4`. Grace period: 24h.
 - **hyper-tissue**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to mismatched privacy settings (private modules `math`, `monitor`, `physics`) and math operations mismatch in macroquad (`Vec4`). Grace period: 24h.
 
 ## ☠️ Executed
