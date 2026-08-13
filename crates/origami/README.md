@@ -25,7 +25,7 @@ origami = "0.1.0"
 ## Example
 
 ```rust
-# fn main() {
+fn main() {
 use origami::{generate_miura_mesh, MiuraParams, Orientation};
 
 // Define the fold parameters
@@ -40,5 +40,5 @@ let params = MiuraParams {
 let mesh = generate_miura_mesh(params, (10, 10), 0.5);
 
 assert_eq!(mesh.vertices.len(), 11 * 11); // (cols+1) * (rows+1)
-# }
+}
 ```

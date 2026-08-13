@@ -21,7 +21,7 @@ cargo run -p quipu-serializer
 
 ### Use as Library
 ```rust
-# fn main() {
+fn main() {
 use quipu_serializer::to_quipu;
 use serde::Serialize;
 
@@ -34,7 +34,7 @@ struct MyData {
 let data = MyData { id: 123, active: true };
 let quipu = to_quipu(&data).unwrap();
 println!("{}", quipu);
-# }
+}
 ```
 
 ## Knot System
