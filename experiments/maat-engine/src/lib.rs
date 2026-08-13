@@ -178,13 +178,13 @@ impl From<Ratio<BigUint>> for EgyptianFraction {
     }
 }
 
-fn gcd(a: BigUint, b: BigUint) -> BigUint {
-    let mut a = a;
-    let mut b = b;
+/// ⚡ Bolt Optimization:
+/// Avoids O(N) heap allocations for `BigUint` by utilizing `%=` and `std::mem::swap`,
+/// eliminating the need to `.clone()` intermediate variables on every iteration.
+fn gcd(mut a: BigUint, mut b: BigUint) -> BigUint {
     while !b.is_zero() {
-        let temp = b.clone();
-        b = a % b;
-        a = temp;
+        a %= &b;
+        std::mem::swap(&mut a, &mut b);
     }
     a
 }
