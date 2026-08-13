@@ -4,6 +4,12 @@
 
 A hybrid experiment combining **Luminous Flock** (Boids) and **Quantum Garden** (Qubits).
 
+## Quick Start
+
+```bash
+cargo run -p quantum-boids
+```
+
 ## Concept
 
 Each boid carries a **Qubit** state (`|ψ> = α|0> + β|1>`).
