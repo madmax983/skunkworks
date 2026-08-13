@@ -44,7 +44,7 @@ Genesis supports Forth-like stack manipulation (`dup`, `drop`, `swap`, `over`, `
 
 ## 🚀 Usage
 ```rust
-# fn main() {
+fn main() {
 use chimera_esolang::parse;
 use chimera_esolang::compile;
 use chimera_lang::vm::ChimeraVM;
@@ -53,7 +53,7 @@ let source = "strand main { \"Hello Genesis\" print }";
 let program = parse(source).unwrap();
 let dna = compile(&program).unwrap();
 let vm = ChimeraVM::new(dna);
-# }
+}
 ```
 
 ## ⚠️ Warning
