@@ -56,7 +56,7 @@ async fn run_sim(headless: bool) {
             macroquad::rand::gen_range(-1.0, 1.0),
             macroquad::rand::gen_range(-1.0, 1.0),
         ));
-        ids.push(i as usize);
+        ids.push(i);
     }
 
     if headless {
@@ -134,9 +134,9 @@ async fn run_sim(headless: bool) {
             // We'll draw a flash line at the price level.
             draw_line(
                 0.0,
-                trade.price as f32 * cell_h,
+                trade.price * cell_h,
                 screen_width(),
-                trade.price as f32 * cell_h,
+                trade.price * cell_h,
                 4.0,
                 YELLOW,
             );

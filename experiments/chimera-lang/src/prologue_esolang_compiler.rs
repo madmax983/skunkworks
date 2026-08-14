@@ -1243,7 +1243,6 @@ pub fn compile(source: &str) -> Result<Dna> {
     })
 }
 
-
 fn compile_frankenstein_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     let inner = pair
@@ -3082,7 +3081,6 @@ hologram_text {
         assert_eq!(genes.len(), 3);
         assert_eq!(genes[2].op, OpCode::HologramText);
     }
-
 
     #[test]
     fn test_frankenstein_block() {

@@ -18,3 +18,6 @@
 **[Extract God Function and Flatten Match Boilerplate]**
 **Learning:** Deeply nested match blocks with duplicate branches on enums or primitives create visual noise and errors over time. A massive `match` statement in a single God Function can often be radically simplified.
 **Action:** Search for large `matches!` invocations or repetitive `match` statements where a `HashSet`, static array scan, or functional extractor can replace the boilerplate. Extract logic out of God Functions into static helper functions when possible.
+**[Unnecessary Type Casts]
+**Learning:** Redundant `as` casts (`i as usize` for a `usize` loop variable, `trade.price as f32` for an `f32` struct field) clutter the code and get flagged by clippy.
+**Action:** Trust type inference and the actual field types. Remove redundant casts to improve clarity.
