@@ -1,8 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-acoustics**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to mismatched privacy settings (private modules `math`, `monitor`) and math operations mismatch on `Vec4`. Grace period: 24h.
-- **hyper-tissue**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to mismatched privacy settings (private modules `math`, `monitor`, `physics`) and math operations mismatch in macroquad (`Vec4`). Grace period: 24h.
+- **hyper-quipu**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to mismatched privacy settings (private modules `math`, `monitor`) and type annotation error (`cpu_usage`). Grace period: 24h.
 
 ## ☠️ Executed
+- **hyper-acoustics**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to mismatched privacy settings and math operations on Vec4. Grace period expired. Biomass returned to the void. Moved to graveyard.
+- **hyper-tissue**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to mismatched privacy settings and math operations mismatch. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **gray-fluid**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to `Option<usize>` indexing. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **git-quipu**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Minimal 41 LOC merely mapping git commits to physical cords without true biological emergence. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **hyper-poincare**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Minimal 111 LOC without README.md. Failed to improve during grace period. Biomass returned to the void. Moved to graveyard.

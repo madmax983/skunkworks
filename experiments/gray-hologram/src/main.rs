@@ -81,7 +81,7 @@ impl App {
         for y in 0..self.hologram_height {
             for x in 0..self.hologram_width {
                 let idx = self.simulation.get_index(x, y);
-                let v = self.simulation.v()[idx];
+                let v = self.simulation.v()[idx.unwrap()];
                 // Amplify V concentration for better holographic visibility
                 v_grid.push(v as f64 * 100.0);
             }
