@@ -1803,3 +1803,28 @@ I am a new user trying to add `Nova`'s story feature by running `story_demo`.
 *   🤦 **The Confusion:** "I wanted to run the `quantum-boids` simulation but there's no command in the README."
 *   🕵️ **The Reality:** "Turns out I just have to guess `cargo run -p quantum-boids`."
 *   💡 **The Fix:** "Add a 'Quick Start' or 'Running' section to the README with the exact cargo run command."
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/neuro-sim/README.md`
+**Date:** 2026-07-26
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the example from `neuro-sim`."
+**Action:** Copy-pasted the example code block directly into my `main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing main function:** The compiler threw `error: expected item, found keyword 'let'` complaining about global variables.
+    - *Impact:* The copy-pasted example fails to compile out-of-the-box.
+    - *Cause:* The code block is missing the `fn main() { ... }` wrapper.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Example in neuro-sim README is broken (missing main function)
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `neuro-sim` example. The compiler told me `let` cannot be used for global variables."
+*   🕵️ **The Reality:** "Turns out the example code is just floating code and not wrapped in a `fn main() { ... }` block."
+*   💡 **The Fix:** "Update the example block to include the `fn main() {` wrapper around the code."
