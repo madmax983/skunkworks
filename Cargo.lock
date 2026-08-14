@@ -5543,6 +5543,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "market-gray"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.27.0",
+ "gray-scott",
+ "market-sim",
+ "rand 0.8.7",
+ "ratatui",
+ "tui-shared",
+]
+
+[[package]]
 name = "market-hologram"
 version = "0.1.0"
 dependencies = [
