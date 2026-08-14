@@ -4,12 +4,12 @@
 //! into logical categories. Instead of cluttering the main VM code with hundreds of execution
 //! branches, these submodules handle specific domains of operations:
 //!
-//! * [`bio`] - Biological operations (e.g., replication, mutation, apoptosis).
-//! * [`flow`] - Control flow operations (e.g., jumps, branches, loops).
-//! * [`grid`] - Grid interaction operations (e.g., reading/writing cells, moving).
-//! * [`io`] - Input/Output operations (e.g., printing to logs).
-//! * [`math`] - Mathematical operations (e.g., arithmetic, comparisons).
-//! * [`stack`] - Stack manipulation operations (e.g., push, pop, dup, swap).
+//! * [`bio`](crate::vm::ops::bio) - Biological operations (e.g., replication, mutation, apoptosis).
+//! * [`flow`](crate::vm::ops::flow) - Control flow operations (e.g., jumps, branches, loops).
+//! * [`grid`](crate::vm::ops::grid) - Grid interaction operations (e.g., reading/writing cells, moving).
+//! * [`io`](crate::vm::ops::io) - Input/Output operations (e.g., printing to logs).
+//! * [`math`](crate::vm::ops::math) - Mathematical operations (e.g., arithmetic, comparisons).
+//! * [`stack`](crate::vm::ops::stack) - Stack manipulation operations (e.g., push, pop, dup, swap).
 
 /// The `bio` module.
 pub(crate) mod bio;
