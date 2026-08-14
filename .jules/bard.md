@@ -64,3 +64,6 @@
 ## 2026-08-05 - [Module-Level Docs and README Sync for Executables]
 **Confusion:** Building documentation for a binary crate using strict rustdoc flags (`-W rustdoc::missing_crate_level_docs -D warnings`) will fail if the `src/main.rs` file does not include a `//!` crate-level doc comment block.
 **Clarification:** To satisfy `cargo doc` for binary crates, parse the `README.md` contents and inject them as `//!` block comments at the very top of `src/main.rs`. This ensures the overarching story for the executable is documented and the documentation build passes.
+## 2024-08-14 - [Resolving Intra-Doc Links for Submodules]
+**Confusion:** When documenting a module that has submodules, using simple intra-doc links like ``[`bio`]`` will cause rustdoc resolution errors if the module does not explicitly export the item.
+**Clarification:** To ensure robust intra-doc linking within a parent module to its own submodules (e.g. `pub(crate) mod bio;`), use the explicit `self` path notation: ``[`bio`](self::bio)`` or ``[`bio`](crate::path::to::bio)``. This guarantees rustdoc resolves the target accurately without ambiguity.
