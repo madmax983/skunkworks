@@ -105,7 +105,11 @@ impl BlameAnalyzer {
             } else if let Ok(commit) = repo.find_commit(commit_id) {
                 let author = commit.author();
                 let author_name = author.name().unwrap_or("Unknown").to_string();
-                let message = commit.summary().unwrap_or(Some("")).unwrap().to_string();
+                let message = commit
+                    .summary()
+                    .unwrap_or(Some(""))
+                    .unwrap_or("")
+                    .to_string();
                 let time = commit.time().seconds();
                 (
                     author_name,
@@ -147,5 +151,70 @@ mod tests {
         let score = (time - min_time) as f64 / range;
 
         assert_eq!(score, 0.5);
+    }
+}
+
+#[cfg(test)]
+mod sentry_tests {
+    use super::BlameAnalyzer;
+    use git2::{Repository, Signature};
+    use std::fs;
+    use std::path::Path;
+
+    #[test]
+    fn test_blame_summary_unwrap() {
+        let temp_dir = std::env::temp_dir().join("chron-compost-sentry-test");
+        let _ = fs::remove_dir_all(&temp_dir);
+        fs::create_dir_all(&temp_dir).unwrap();
+
+        let repo = Repository::init(&temp_dir).unwrap();
+
+        let file_path = temp_dir.join("test.txt");
+        fs::write(&file_path, "line1\nline2").unwrap();
+
+        let mut index = repo.index().unwrap();
+        index.add_path(Path::new("test.txt")).unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+
+        let sig = Signature::now("Test", "test@example.com").unwrap();
+
+        // Commit with an invalid summary (e.g., only newlines or empty to trigger None summary)
+        repo.commit(Some("HEAD"), &sig, &sig, "", &tree, &[])
+            .unwrap();
+
+        let analyzer = BlameAnalyzer::new(temp_dir.to_str().unwrap());
+
+        // Should not panic on unwrap
+        let result = analyzer.analyze(&file_path);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_blame_analyzer_uncommitted_changes() {
+        let temp_dir = std::env::temp_dir().join("chron-compost-sentry-uncommitted-test");
+        let _ = fs::remove_dir_all(&temp_dir);
+        fs::create_dir_all(&temp_dir).unwrap();
+
+        let repo = Repository::init(&temp_dir).unwrap();
+
+        let file_path = temp_dir.join("test_uncommitted.txt");
+        fs::write(&file_path, "line1\nline2").unwrap();
+
+        let mut index = repo.index().unwrap();
+        index.add_path(Path::new("test_uncommitted.txt")).unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+
+        let sig = Signature::now("Test", "test@example.com").unwrap();
+        repo.commit(Some("HEAD"), &sig, &sig, "Initial", &tree, &[])
+            .unwrap();
+
+        let analyzer = BlameAnalyzer::new(temp_dir.to_str().unwrap());
+
+        // Test the blame functionality
+        let result = analyzer.analyze(&file_path).unwrap();
+
+        assert_eq!(result.len(), 2);
     }
 }
