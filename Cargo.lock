@@ -4437,19 +4437,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hyper-acoustics"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "cpal",
- "crossbeam-channel",
- "hyper-system",
- "macroquad",
- "rand 0.8.7",
- "sysinfo",
-]
-
-[[package]]
 name = "hyper-bridge"
 version = "0.1.0"
 dependencies = [
@@ -4567,16 +4554,6 @@ dependencies = [
  "proptest",
  "rand 0.8.7",
  "sysinfo",
-]
-
-[[package]]
-name = "hyper-tissue"
-version = "0.1.0"
-dependencies = [
- "chimera-lang",
- "hyper-system",
- "macroquad",
- "rand 0.8.7",
 ]
 
 [[package]]
