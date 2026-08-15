@@ -4684,3 +4684,37 @@ classDiagram
     FerrousWeaver --> QuipuSerializerFacade : Uses Public API
     QuipuSerializerFacade ..> QuipuSerializerSer : Encapsulates
 ```
+
+## Experiment: Gray-Locus (ADR 173)
+
+**Gray-Locus** explores "Topological Reaction-Diffusion" by crossing a continuous reaction-diffusion simulation (`gray-scott`) with a non-Euclidean topology (`locus`).
+
+### Hybrid Architecture
+
+The hybrid maps a chemical seed drifting through space onto a continuous topological boundary. As it moves, it continuously drops the `V` chemical into the morphogenetic substrate, with chemical interactions wrapping around the non-Euclidean domain.
+
+```mermaid
+classDiagram
+    direction TB
+    class GrayLocus {
+        +LocusTopology space
+        +GrayScott substrate
+        +run()
+    }
+
+    class LocusTopology {
+        <<Library: locus>>
+        +TopologyType shape
+        +wrap_coordinates()
+    }
+
+    class GrayScott {
+        <<Library: gray-scott>>
+        +Vec~f32~ u
+        +Vec~f32~ v
+        +step()
+    }
+
+    GrayLocus --> LocusTopology : Spatial Wraparound
+    GrayLocus --> GrayScott : Morphogenetic Substrate
+```
