@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-quipu**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to mismatched privacy settings (private modules `math`, `monitor`) and type annotation error (`cpu_usage`). Grace period: 24h.
+- **hyperbolic-quipu**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to type mismatch errors (`expected Result<&str, git2::Error>, found Option<_>`). Grace period: 24h.
 
 ## ☠️ Executed
 - **hyper-acoustics**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to mismatched privacy settings and math operations on Vec4. Grace period expired. Biomass returned to the void. Moved to graveyard.
