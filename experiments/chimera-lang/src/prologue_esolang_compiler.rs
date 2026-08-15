@@ -1168,7 +1168,11 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_chromatic_code_instr(instr)?);
                 }
             }
-
+            Rule::chimera_forge_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_chimera_forge_instr(instr)?);
+                }
+            }
             Rule::quipu_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_quipu_instr(instr)?);
@@ -3114,5 +3118,64 @@ hologram {
         assert_eq!(genes[0].op, OpCode::Push);
         assert_eq!(genes[1].op, OpCode::Push);
         assert_eq!(genes[2].op, OpCode::Hologram);
+    }
+}
+
+fn compile_chimera_forge_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "simulate" || op == "forge" || op == "smelt" || op == "anvil" {
+                genes.push(Gene::new(OpCode::ChimeraForge, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
+}
+
+#[cfg(test)]
+mod tests_chimera_forge {
+    use super::*;
+
+    #[test]
+    fn test_chimera_forge_block() {
+        let source = r#"
+        chimera_forge {
+            "Forging new construct"
+            100
+            forge
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("Forging new construct".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::Push);
+        assert_eq!(genes[1].args[0], Nucleotide::Number(100));
+        assert_eq!(genes[2].op, OpCode::ChimeraForge);
     }
 }

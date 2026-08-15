@@ -35272,6 +35272,13 @@ impl ChimeraVM {
                 None
             }
 
+            OpCode::ChimeraForge => {
+                self.energy = self.energy.saturating_add(500);
+                self.output.push(
+                    "CHIMERA FORGE: The anvil strikes! A new esoteric construct is born from the flames. ⚛️".to_string(),
+                );
+                None
+            }
             OpCode::PrologueMadScientist => {
                 self.output.push(
                     "PROLOGUE: Evolving chimera-lang... Mad Scientist mode activated!".to_string(),
