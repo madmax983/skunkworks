@@ -1,0 +1,13 @@
+[package]
+name = "gray-locus"
+version = "0.1.0"
+edition = "2021"
+description = "A hybrid experiment crossing gray-scott morphogenesis with locus topological boundaries"
+
+[dependencies]
+gray-scott = { path = "../../crates/gray-scott" }
+locus = { path = "../../crates/locus" }
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = "0.30"
+crossterm = "0.28"
+anyhow.workspace = true
