@@ -40,7 +40,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use hyper_system::{math::Vec4, monitor::SystemMonitor};
+use hyper_system::{Vec4, SystemMonitor};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -151,7 +151,7 @@ impl App {
                 break;
             }
 
-            let load = cpu.cpu_usage() / 100.0; // Normalize to 0.0 - 1.0
+            let load = cpu.cpu_usage() as f32 / 100.0; // Normalize to 0.0 - 1.0
             let cord = &mut self.cords[i];
 
             // Base position in circle
