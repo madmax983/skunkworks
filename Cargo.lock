@@ -4098,6 +4098,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "gray-locus"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "gray-scott",
+ "locus",
+ "ratatui",
+ "tui-shared",
+]
+
+[[package]]
 name = "gray-miller"
 version = "0.1.0"
 dependencies = [
