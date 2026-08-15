@@ -1419,6 +1419,8 @@ pub enum OpCode {
     CymaticScan,
 
     /// **`Prologue`** Toggles the Prologue Mad Scientist experiment mode.
+    /// **`PrologueEsolang`** Triggers the Chimera Forge mutation event.
+    ChimeraForge,
     PrologueMadScientist,
 
     /// **`Nova`** Toggles the Orca Signal Processing system on the grid.
