@@ -626,9 +626,21 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Rebirth => super::nova_quantum::exec_rebirth(vm),
         OpCode::Prologue => exec_prologue(vm),
         OpCode::PrologueEsolang => exec_prologue_esolang(vm),
+        OpCode::GlitchArt => exec_glitch_art(vm),
         OpCode::Rune => exec_rune(vm),
         _ => None,
     }
+}
+
+pub(crate) fn exec_glitch_art(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let value = if let Some(val) = vm.stack.pop() {
+        format!("{:?}", val)
+    } else {
+        "Empty".to_string()
+    };
+    vm.output
+        .push(format!("🎨 Glitch Art generated: {}", value));
+    None
 }
 
 pub(crate) fn exec_chaos_hologram(vm: &mut ChimeraVM) {
