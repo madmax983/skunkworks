@@ -4718,3 +4718,37 @@ classDiagram
     GrayLocus --> LocusTopology : Spatial Wraparound
     GrayLocus --> GrayScott : Morphogenetic Substrate
 ```
+
+## Experiment: Market-Gray (ADR 174)
+
+**Market-Gray** explores "Morphogenetic Financial Liquidity" by crossing a discrete Continuous Double Auction (CDA) market grid (`market-sim`) with a continuous reaction-diffusion substrate (`gray-scott`).
+
+### Hybrid Architecture
+
+The hybrid projects the discrete market grid into a continuous chemical substrate. Bids and asks act as active biological sources (U chemical) feeding the grid, while executed trades act as intense "kill" chemical drops (V chemical).
+
+```mermaid
+classDiagram
+    direction TB
+    class MarketGrayApp {
+        +MarketGrid market
+        +GrayScott gray_scott
+        +run()
+    }
+
+    class MarketGrid {
+        <<Library: market-sim>>
+        +Vec~Order~ orders
+        +step()
+    }
+
+    class GrayScott {
+        <<Library: gray-scott>>
+        +Vec~f32~ u
+        +Vec~f32~ v
+        +step()
+    }
+
+    MarketGrayApp --> MarketGrid : Bids and Asks
+    MarketGrayApp --> GrayScott : Chemical V Drops
+```
