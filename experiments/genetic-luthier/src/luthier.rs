@@ -160,7 +160,7 @@ impl LuthierString {
 
         // Draw frequency text
         draw_text(
-            &format!("{:.1}Hz", self.frequency),
+            format!("{:.1}Hz", self.frequency).as_str(),
             start.x - 20.0,
             end.y + 20.0,
             16.0,

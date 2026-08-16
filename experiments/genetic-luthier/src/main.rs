@@ -195,3 +195,16 @@ fn main() {
     }
     macroquad::Window::from_config(window_conf(), async_main());
 }
+
+#[cfg(test)]
+mod tests {
+    use super::calculate_consonance;
+
+    #[test]
+    fn test_calculate_consonance() {
+        assert_eq!(calculate_consonance(440.0, 440.0), 1.0); // Unison
+        assert!(calculate_consonance(440.0, 880.0) > 0.9); // Octave
+        assert!(calculate_consonance(440.0, 660.0) > 0.9); // Perfect fifth
+        assert_eq!(calculate_consonance(440.0, 466.16), 0.0); // Dissonant
+    }
+}
