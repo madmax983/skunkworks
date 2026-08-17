@@ -30,7 +30,7 @@ fn havoc_test_contention() {
 #[ignore]
 fn havoc_test_contention_inner() {
     if std::env::args().any(|arg| arg == "havoc_test_contention_inner") {
-        let (tx, _rx) = unbounded::<audio::Spectrum>();
+        let (_tx, _rx) = unbounded::<audio::Spectrum>();
         // In SonicEngine the fft_planner is inside a Mutex. Let's contend on it directly, as SonicEngine isn't designed to be easily manipulated by an external lock, but we know the Mutex is the weak point.
         let planner = Arc::new(Mutex::new(FftPlanner::<f32>::new()));
 

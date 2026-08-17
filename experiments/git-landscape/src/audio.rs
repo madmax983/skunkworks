@@ -1,4 +1,4 @@
-use git_associates::model::Commit;
+use git_associates::Commit;
 #[cfg(feature = "audio")]
 use rodio::{OutputStream, OutputStreamHandle, Sink, Source};
 #[cfg(feature = "audio")]

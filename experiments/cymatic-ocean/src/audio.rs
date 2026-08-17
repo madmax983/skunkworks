@@ -23,6 +23,7 @@ impl Default for Params {
     }
 }
 
+#[allow(dead_code)]
 pub struct AudioSystem {
     #[cfg(feature = "audio")]
     _stream: cpal::Stream,
@@ -30,6 +31,7 @@ pub struct AudioSystem {
 }
 
 impl AudioSystem {
+    #[allow(dead_code)]
     pub fn new() -> anyhow::Result<Self> {
         let params = Arc::new(Mutex::new(Params::default()));
 

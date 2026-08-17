@@ -29,7 +29,7 @@ impl World {
         let mut phase_nudges = vec![0.0; count];
 
         // 1. Calculate Flocking & Coupling
-        for i in 0..count {
+        for (i, n) in phase_nudges.iter_mut().enumerate().take(count) {
             let mut sep = Vec3::ZERO;
             let mut ali = Vec3::ZERO;
             let mut coh = Vec3::ZERO;
@@ -106,7 +106,7 @@ impl World {
             }
 
             forces.push(total_force);
-            phase_nudges[i] = nudge;
+            *n = nudge;
         }
 
         // 2. Apply Updates & Terrain Interaction

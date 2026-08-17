@@ -58,7 +58,7 @@ async fn async_main() {
         // Draw neurons
         let neuron_positions = [(200.0, 300.0), (400.0, 300.0), (600.0, 300.0)];
 
-        for i in 0..3 {
+        for (i, &_) in neuron_positions.iter().enumerate() {
             let (x, y) = neuron_positions[i];
             let v = network.neurons[i].v;
 
@@ -74,7 +74,7 @@ async fn async_main() {
 
             draw_circle(x, y, 20.0, color_u8!(r, 50, b, 255));
             draw_text(
-                &format!("N{}: {:.1}mV", i + 1, v),
+                format!("N{}: {:.1}mV", i + 1, v).as_str(),
                 x - 20.0,
                 y - 30.0,
                 20.0,

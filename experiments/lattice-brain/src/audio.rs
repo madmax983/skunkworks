@@ -1,4 +1,4 @@
-use crossbeam_channel::Receiver;
+
 use crossbeam_channel::{unbounded, Sender};
 use neuro_sim::Izhikevich;
 

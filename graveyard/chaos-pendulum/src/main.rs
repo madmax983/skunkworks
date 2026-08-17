@@ -257,28 +257,28 @@ async fn main() {
 
         draw_text("CHAOS PENDULUM", 20.0, 30.0, 30.0, WHITE);
         draw_text(
-            &format!(
+            format!(
                 "Nodes: {} | Ghosts: {}",
                 real_system.nodes.len(),
                 ghosts.len()
-            ),
+            ).as_str(),
             20.0,
             60.0,
             20.0,
             GRAY,
         );
         draw_text(
-            &format!(
+            format!(
                 "Gravity: {:.1} | Friction: {:.3}",
                 real_system.gravity.y, real_system.friction
-            ),
+            ).as_str(),
             20.0,
             80.0,
             20.0,
             LIGHTGRAY,
         );
         draw_text(
-            &format!("Divergence: {:.2}", avg_divergence),
+            format!("Divergence: {:.2}", avg_divergence).as_str(),
             20.0,
             100.0,
             20.0,

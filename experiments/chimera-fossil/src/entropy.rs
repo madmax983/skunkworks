@@ -64,10 +64,8 @@ pub fn fossilize(text: &str, age_factor: f64, seed: u64) -> Fossil {
 
                 if rng.gen::<f64>() < 0.7 {
                     // Redact
-                    for _ in 0..word_len {
-                        displayed_text.push('█');
-                        mask.push(false);
-                    }
+                    displayed_text.extend(std::iter::repeat_n('█', word_len));
+                    mask.extend(std::iter::repeat_n(false, word_len));
                 } else {
                     // Noise
                     for _ in 0..word_len {
@@ -78,15 +76,15 @@ pub fn fossilize(text: &str, age_factor: f64, seed: u64) -> Fossil {
                             _ => '@',
                         };
                         displayed_text.push(noise);
-                        mask.push(false);
                     }
+                    mask.extend(std::iter::repeat_n(false, word_len));
                 }
             } else {
                 // Keep word
-                for k in i..j {
-                    displayed_text.push(chars[k]);
-                    mask.push(true);
+                for &ch in chars[i..j].iter() {
+                    displayed_text.push(ch);
                 }
+                mask.extend(std::iter::repeat_n(true, j - i));
             }
 
             i = j;

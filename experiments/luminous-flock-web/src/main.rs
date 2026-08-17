@@ -61,7 +61,7 @@ fn main() -> std::io::Result<()> {
 
     // Handle keyboard input
     let world_clone = world.clone();
-    terminal.on_key_event(move |key_event| {
+    let _ = terminal.on_key_event(move |key_event| {
         if key_event.code == KeyCode::Char('r') {
             *world_clone.borrow_mut() = World::new(world_width, world_height);
         }

@@ -150,7 +150,7 @@ impl FerrousString {
 
         // Draw frequency text
         draw_text(
-            &format!("{:.1}Hz", self.frequency),
+            format!("{:.1}Hz", self.frequency).as_str(),
             start.x - 20.0,
             end.y + 20.0,
             16.0,
@@ -159,7 +159,7 @@ impl FerrousString {
 
         // Fitness
         draw_text(
-            &format!("Fit: {:.2}", self.fitness),
+            format!("Fit: {:.2}", self.fitness).as_str(),
             start.x - 20.0,
             end.y + 35.0,
             12.0,

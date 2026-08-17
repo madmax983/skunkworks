@@ -152,7 +152,7 @@ async fn async_main() {
         }
 
         draw_text(
-            &format!("Cord Value: {}", cord.value()),
+            format!("Cord Value: {}", cord.value()).as_str(),
             20.0,
             250.0,
             30.0,

@@ -3,6 +3,7 @@ use std::thread;
 use std::time::Duration;
 
 #[cfg(feature = "audio")]
+#[allow(dead_code)]
 struct SharedData {
     freq: f32,
     volume: f32,

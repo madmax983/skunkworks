@@ -492,10 +492,7 @@ impl State {
                 }
             } else {
                 // Unvisited
-                match dungeon.room_types.get(&i) {
-                    Some(RoomType::Goal) => color = [0.5, 0.0, 0.0, 0.3], // Dim Goal
-                    _ => {}
-                }
+                if let Some(RoomType::Goal) = dungeon.room_types.get(&i) { color = [0.5, 0.0, 0.0, 0.3]; }
             }
 
             let dist = p.to_vec().magnitude();

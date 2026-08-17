@@ -130,7 +130,7 @@ async fn async_main() {
             LIGHTGRAY,
         );
         draw_text(
-            &format!("CPU: {:.1}%", cpu * 100.0),
+            format!("CPU: {:.1}%", cpu * 100.0).as_str(),
             10.0,
             40.0,
             20.0,

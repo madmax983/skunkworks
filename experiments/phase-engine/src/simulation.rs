@@ -11,6 +11,7 @@ pub struct Particle {
 
 pub struct Simulation {
     pub particles: Vec<Particle>,
+    #[allow(dead_code)]
     pub grid_size: u32,
 }
 

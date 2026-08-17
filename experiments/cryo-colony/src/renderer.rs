@@ -1,6 +1,6 @@
 use crate::simulation::{AgentType, Simulation, State as SimState};
 use bytemuck::{Pod, Zeroable};
-use cgmath::prelude::*;
+
 use cgmath::{Deg, Matrix4, Point3, Vector3};
 use std::sync::Arc;
 use wgpu::util::DeviceExt;

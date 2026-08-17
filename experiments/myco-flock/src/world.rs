@@ -38,6 +38,7 @@ impl World {
         self.trails[y * w + x]
     }
 
+    #[allow(dead_code)]
     pub fn set_trail(&mut self, x: usize, y: usize, value: f64) {
         let w = self.width as usize;
         let h = self.height as usize;
