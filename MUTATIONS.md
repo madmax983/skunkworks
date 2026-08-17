@@ -381,6 +381,14 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/arthropod-physics
 - **Evaluation**: Success. Compiled. The TUI correctly modifies the continuous PBD constraints. Headless bypass correctly implemented.
 
+### neuro-poincare
+- **Parents**: crates/neuro-sim + crates/poincare-disk
+- **Concept**: Hyperbolic Neural Networks.
+- **Novel trait**: Biological firing sequences experience synaptic delays warped by hyperbolic distance constraints. Synapses that span across the disk or towards the boundary experience massive transmission delays, mimicking relativistic spatial warping.
+- **Predicted Phenotype**: An emergent bio-neural entity embedded in hyperbolic space. As signals propagate outwards toward the boundary, the hyperbolic distance increases exponentially. This causes massive synaptic transmission delays near the edge while the center fires rapidly, creating a temporal warping effect on biological brain waves.
+- **Status**: experiments/neuro-poincare
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented.
+
 ### git-quipu
 - **Parents**: crates/git-associates + crates/quipu
 - **Concept**: Codebase Knotted Ledger.
@@ -1903,6 +1911,22 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/hyper-poincare
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented. 4D structural rotation accurately maps into hyperbolic boundaries.
 
+### quipu-resonance
+- **Parents**: crates/quipu + crates/resonance-audio
+- **Concept**: Acoustic Knotted Data Storage.
+- **Novel trait**: The discrete values and positions of the Quipu knots directly into physical acoustic exciters on the continuous 2D FDTD grid.
+- **Predicted Phenotype**: An emergent acoustic visualization where ancient accounting structures act as dynamic acoustic generators, sonifying data into continuous wave mechanics.
+- **Status**: experiments/quipu-resonance
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented.
+
+### quipu-flock
+- **Parents**: crates/quipu + crates/flocking
+- **Concept**: Swarm-Driven Knotted Data Storage.
+- **Novel trait**: The boids dynamically act as data weavers. As the swarm navigates the 2D plane, groups of boids that stick together tightly generate continuous data integers that are encoded as new knots into a central quipu cord system.
+- **Predicted Phenotype**: Flocking behavior directly determines the sequence and magnitude of the encoded knots.
+- **Status**: experiments/quipu-flock
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented.
+
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all recent crosses including `hyper-poincare`. It compiled successfully and bypassed headless CI panic correctly. Integrating 4D structures into non-Euclidean boundaries has proven highly viable. Because the Proposed Crosses section is empty, I am autonomously inventing a new hybrid to map a Spiking Neural Network directly into a continuous non-Euclidean topology: `locus-neuro`.
 
 ### locus-neuro
@@ -1932,6 +1956,14 @@ I have checked all previous hybrids in this list.
 - **Predicted Phenotype**: An emergent structural visualization where biological neural activity directly translates into physical architectural deformation.
 - **Status**: experiments/neuro-origami
 - **Evaluation**: Success. Compiled. Headless bypass correctly implemented. Neural spikes translate smoothly into physical mesh deformation.
+### neuro-poincare
+- **Parents**: crates/neuro-sim + crates/poincare-disk
+- **Concept**: Hyperbolic Neural Networks.
+- **Novel trait**: Biological firing sequences experience synaptic delays warped by hyperbolic distance constraints. Synapses that span across the disk or towards the boundary experience massive transmission delays, mimicking relativistic spatial warping.
+- **Predicted Phenotype**: An emergent bio-neural entity embedded in hyperbolic space. As signals propagate outwards toward the boundary, the hyperbolic distance increases exponentially. This causes massive synaptic transmission delays near the edge while the center fires rapidly, creating a temporal warping effect on biological brain waves.
+- **Status**: experiments/neuro-poincare
+- **Evaluation**: Success. Compiled. Headless bypass correctly implemented.
+
 ### git-quipu
 - **Parents**: crates/git-associates + crates/quipu
 - **Concept**: Knotted Version Control.

@@ -83,6 +83,15 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> std::i
     let mut inputs = vec![0.0; NUM_NEURONS];
     let tick_rate = Duration::from_millis(50);
     let mut last_tick = Instant::now();
+    let is_headless = std::env::args().any(|arg| arg == "--headless");
+
+    if is_headless {
+        for _ in 0..10 {
+            network.step(&inputs);
+        }
+        println!("Headless execution completed successfully.");
+        return Ok(());
+    }
 
     loop {
         terminal.draw(|f| {
@@ -153,9 +162,9 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> std::i
                 }
                 if let KeyCode::Char(' ') = key.code {
                     // Inject random stimulus
-                    for i in 0..NUM_NEURONS {
+                    for input in inputs.iter_mut().take(NUM_NEURONS) {
                         if rng.gen_bool(0.1) {
-                            inputs[i] += 50.0;
+                            *input += 50.0;
                         }
                     }
                 }
@@ -164,9 +173,9 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> std::i
 
         if last_tick.elapsed() >= tick_rate {
             // Apply slight random noise
-            for i in 0..NUM_NEURONS {
+            for input in inputs.iter_mut().take(NUM_NEURONS) {
                 if rng.gen_bool(0.01) {
-                    inputs[i] += rng.gen_range(10.0..30.0);
+                    *input += rng.gen_range(10.0..30.0);
                 }
             }
 

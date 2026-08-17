@@ -40,7 +40,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use hyper_system::{Vec4, SystemMonitor};
+use hyper_system::{SystemMonitor, Vec4};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
