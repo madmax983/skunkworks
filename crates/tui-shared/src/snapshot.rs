@@ -343,7 +343,10 @@ impl std::fmt::Display for Snapshot {
             ]);
 
         if let Some(frame) = self.frame {
-            table.add_row(vec![Cell::new("Frame").fg(Color::White), Cell::new(frame.to_string())]);
+            table.add_row(vec![
+                Cell::new("Frame").fg(Color::White),
+                Cell::new(frame.to_string()),
+            ]);
         }
 
         if let Some((w, h)) = self.viewport {
@@ -354,7 +357,10 @@ impl std::fmt::Display for Snapshot {
         }
 
         if let Some(state) = &self.state {
-            table.add_row(vec![Cell::new("State").fg(Color::White), Cell::new(state).fg(Color::Green)]);
+            table.add_row(vec![
+                Cell::new("State").fg(Color::White),
+                Cell::new(state).fg(Color::Green),
+            ]);
         }
 
         writeln!(f, "{}", table)?;
