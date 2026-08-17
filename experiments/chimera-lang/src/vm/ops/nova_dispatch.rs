@@ -346,6 +346,7 @@ impl crate::vm::ChimeraVM {
             | OpCode::Prologue
             | OpCode::PrologueEsolang
             | OpCode::GlitchArt
+            | OpCode::OrcaWeaver
             | OpCode::Rune
             | OpCode::BioHack
             | OpCode::SelfReplicate

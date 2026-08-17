@@ -2799,6 +2799,9 @@ pub enum OpCode {
     GeneticLuthier,
     /// **[GlitchArt]** executes glitch art logic
     GlitchArt,
+
+    /// **`PrologueEsolang`** Weaves genetic sequences into Orca grids.
+    OrcaWeaver,
 }
 
 impl fmt::Display for OpCode {
@@ -2809,6 +2812,7 @@ impl fmt::Display for OpCode {
             OpCode::ClockworkConcerto => write!(f, "ClockworkConcerto"),
             OpCode::GeneticLuthier => write!(f, "GeneticLuthier"),
             OpCode::GlitchArt => write!(f, "GlitchArt"),
+            OpCode::OrcaWeaver => write!(f, "OrcaWeaver"),
             _ => write!(f, "{}", self.as_ref()),
         }
     }
