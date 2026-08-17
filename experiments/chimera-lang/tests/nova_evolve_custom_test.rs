@@ -84,19 +84,19 @@ fn test_evolve_default() {
 
     // Check center (5,6) should be alive
     if let Value::Int(v) = vm.grid[5][6] {
-        assert_eq!(v, 1);
+        assert_eq!(v, 1, "Expected cell to be alive but was {}", v);
     } else {
         panic!("Grid value mismatch");
     }
 
     // Check neighbors (4,6) and (6,6) should be alive (vertical)
     if let Value::Int(v) = vm.grid[4][6] {
-        assert_eq!(v, 1);
+        assert_eq!(v, 1, "Expected cell to be alive but was {}", v);
     } else {
         panic!("Grid value mismatch at 4,6");
     }
     if let Value::Int(v) = vm.grid[6][6] {
-        assert_eq!(v, 1);
+        assert_eq!(v, 1, "Expected cell to be alive but was {}", v);
     } else {
         panic!("Grid value mismatch at 6,6");
     }

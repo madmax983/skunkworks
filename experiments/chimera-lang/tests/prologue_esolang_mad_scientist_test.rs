@@ -610,3 +610,22 @@ fn test_prologue_esolang_compiler_glitch_art_block() {
     );
     assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::GlitchArt);
 }
+
+#[test]
+fn test_prologue_esolang_compiler_orca_weaver_block() {
+    let source = r#"
+    orca_weaver {
+        "weaving genetic threads"
+        weave
+    }
+    "#;
+    let dna = chimera_lang::prologue_esolang_compiler::compile(source).unwrap();
+    let genes = &dna.helix.strands[0].genes;
+
+    assert_eq!(genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(
+        genes[0].args[0],
+        chimera_lang::ast::Nucleotide::String("weaving genetic threads".to_string())
+    );
+    assert_eq!(genes[1].op, chimera_lang::opcode::OpCode::OrcaWeaver);
+}
