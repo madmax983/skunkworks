@@ -4670,19 +4670,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hyperbolic-quipu"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "git2",
- "macroquad",
- "num-complex",
- "poincare-disk",
- "quipu",
- "tempfile",
-]
-
-[[package]]
 name = "hyperbolic-rogue"
 version = "0.1.0"
 dependencies = [
