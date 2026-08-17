@@ -1,7 +1,7 @@
 use crossbeam_channel::Sender;
 use rustfft::{num_complex::Complex, FftPlanner};
 use std::f32::consts::PI;
-use std::io::Read;
+
 use std::sync::{Arc, Mutex};
 
 pub const SAMPLE_RATE: u32 = 44100;

@@ -8,8 +8,8 @@ use std::time::Duration;
 #[test]
 fn test_audio_model_contention() {
     if std::env::var("RUN_HAVOC_INNER").is_ok() {
-        let (cmd_tx, cmd_rx) = crossbeam_channel::bounded(1024);
-        let (snap_tx, snap_rx) = crossbeam_channel::bounded(1);
+        let (_cmd_tx, cmd_rx) = crossbeam_channel::bounded(1024);
+        let (snap_tx, _snap_rx) = crossbeam_channel::bounded(1);
 
         let model = AudioModel::new(64, 64, cmd_rx, snap_tx, None);
         let model_lock = Arc::new(Mutex::new(model));

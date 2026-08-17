@@ -1,7 +1,6 @@
 use crate::math::Quasicrystal;
 use rand::prelude::*;
 use rayon::prelude::*;
-use std::io::Read;
 use std::sync::Arc;
 
 const HEAT_DECAY_RATE: f32 = 0.98;

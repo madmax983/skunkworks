@@ -49,42 +49,38 @@ async fn async_main() {
     loop {
         clear_background(BLACK);
 
-        if btn_prev.draw() {
-            if commit_index > 0 {
-                commit_index -= 1;
-            }
+        if btn_prev.draw() && commit_index > 0 {
+            commit_index -= 1;
         }
-        if btn_next.draw() {
-            if !commits.is_empty() && commit_index < commits.len() - 1 {
-                commit_index += 1;
-            }
+        if btn_next.draw() && !commits.is_empty() && commit_index < commits.len() - 1 {
+            commit_index += 1;
         }
 
         if !commits.is_empty() {
             let commit = &commits[commit_index];
             draw_text(
-                &format!("Commit: {}", commit.short_hash),
+                format!("Commit: {}", commit.short_hash).as_str(),
                 20.0,
                 100.0,
                 30.0,
                 WHITE,
             );
             draw_text(
-                &format!("Author: {}", commit.author),
+                format!("Author: {}", commit.author).as_str(),
                 20.0,
                 140.0,
                 30.0,
                 WHITE,
             );
             draw_text(
-                &format!("Message: {}", commit.message),
+                format!("Message: {}", commit.message).as_str(),
                 20.0,
                 180.0,
                 30.0,
                 WHITE,
             );
             draw_text(
-                &format!("Date: {}", commit.timestamp),
+                format!("Date: {}", commit.timestamp).as_str(),
                 20.0,
                 220.0,
                 30.0,

@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use git2::{Oid, Repository};
-use std::io::Read;
+
 use std::path::Path;
 
 #[derive(Clone, Debug)]

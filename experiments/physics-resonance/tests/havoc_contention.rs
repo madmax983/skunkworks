@@ -34,8 +34,8 @@ fn havoc_test_contention() {
 #[ignore]
 fn havoc_test_contention_inner() {
     if std::env::args().any(|arg| arg == "havoc_test_contention_inner") {
-        let (cmd_tx, cmd_rx) = bounded(1024);
-        let (snap_tx, snap_rx) = bounded(1);
+        let (_cmd_tx, cmd_rx) = bounded(1024);
+        let (snap_tx, _snap_rx) = bounded(1);
 
         let model = AudioModel::new(60, 30, cmd_rx, snap_tx, None);
         let model_lock = Arc::new(Mutex::new(model));

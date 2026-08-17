@@ -111,17 +111,14 @@ async fn async_main() {
         });
 
         for c in &system.constraints {
-            match c {
-                Constraint::Distance { p1, p2, .. } => {
-                    let p1_pos = system.particles[*p1].pos;
-                    let p2_pos = system.particles[*p2].pos;
-                    draw_line_3d(
-                        vec3(p1_pos.x, p1_pos.y, p1_pos.z),
-                        vec3(p2_pos.x, p2_pos.y, p2_pos.z),
-                        Color::new(0.5, 0.5, 1.0, 1.0),
-                    );
-                }
-                _ => {}
+            if let Constraint::Distance { p1, p2, .. } = c {
+                let p1_pos = system.particles[*p1].pos;
+                let p2_pos = system.particles[*p2].pos;
+                draw_line_3d(
+                    vec3(p1_pos.x, p1_pos.y, p1_pos.z),
+                    vec3(p2_pos.x, p2_pos.y, p2_pos.z),
+                    Color::new(0.5, 0.5, 1.0, 1.0),
+                );
             }
         }
 

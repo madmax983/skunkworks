@@ -439,9 +439,9 @@ async fn main() {
             20.0,
             LIGHTGRAY,
         );
-        draw_text(&format!("FPS: {}", get_fps()), 20.0, 70.0, 20.0, LIGHTGRAY);
+        draw_text(format!("FPS: {}", get_fps()).as_str(), 20.0, 70.0, 20.0, LIGHTGRAY);
         draw_text(
-            &format!("Boids: {}", world.boids.len()),
+            format!("Boids: {}", world.boids.len()).as_str(),
             20.0,
             90.0,
             20.0,

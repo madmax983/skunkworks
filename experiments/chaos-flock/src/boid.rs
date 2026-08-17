@@ -55,6 +55,7 @@ impl Boid {
         }
     }
 
+    #[allow(dead_code)]
     pub fn position(&self) -> Vec2 {
         self.position
     }

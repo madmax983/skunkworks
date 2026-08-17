@@ -212,6 +212,7 @@ impl World {
         self.trails[y * self.width + x]
     }
 
+    #[allow(dead_code)]
     pub fn set_trail(&mut self, x: usize, y: usize, value: f64) {
         if x < self.width && y < self.height {
             self.trails[y * self.width + x] = value;

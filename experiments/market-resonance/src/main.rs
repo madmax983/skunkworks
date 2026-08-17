@@ -102,7 +102,7 @@ impl App {
         }
 
         // Ask for a snapshot periodically
-        if self.ticks % 2 == 0 {
+        if self.ticks.is_multiple_of(2) {
             // No RequestSnapshot in resonance-audio. Snapshots are sent automatically by the audio thread based on its sample counter (every 735 samples).
         }
 

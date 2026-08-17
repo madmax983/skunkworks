@@ -9,6 +9,7 @@ pub struct State {
     pub queue: wgpu::Queue,
     pub config: wgpu::SurfaceConfiguration,
     pub size: winit::dpi::PhysicalSize<u32>,
+    #[allow(dead_code)]
     pub window: Arc<Window>,
 
     compute_pipeline: wgpu::ComputePipeline,
