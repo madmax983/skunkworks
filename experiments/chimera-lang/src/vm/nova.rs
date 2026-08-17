@@ -633,7 +633,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
     }
 }
 
-
 pub(crate) fn exec_orca_weaver(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let value = if let Some(val) = vm.stack.pop() {
         format!("{:?}", val)
