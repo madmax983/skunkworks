@@ -9,3 +9,6 @@
 **[Title: Eliminated Intermediate .clone() Allocations in Euclidean Algorithm]**
 **Learning:** In numeric loops using big integers (like `BigUint` in `num-bigint`), creating a `.clone()` to act as a temporary swap variable leads to severe O(N) heap allocations, where N is the number of loop iterations. Leveraging `std::mem::swap(&mut a, &mut b)` in tandem with assignment operators (like `%=`) enables zero-allocation, in-place math.
 **Action:** When implementing mathematical loops (like `gcd`) with heap-allocated types, prefer in-place mutation and `std::mem::swap` over temporary cloned variables.
+**[Optimized Alchemy Genetic Splicing & Fusion]
+**Learning:** The `.extend(slice.clone())` pattern causes an unnecessary O(N) heap allocation of an intermediate `Vec`.
+**Action:** Used `extend_from_slice(&slice)` to clone elements directly into the target collection without the intermediate heap allocation, and utilized `Vec::with_capacity` in loop constructions.

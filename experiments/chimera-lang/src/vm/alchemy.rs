@@ -330,7 +330,8 @@ fn apply_genetic_modifier(vm: &mut ChimeraVM, idx: usize, mod_str: &str) -> (Opt
 fn apply_genetic_splice(vm: &mut ChimeraVM, idx_a: usize, idx_b: usize) -> (Option<Value>, i64) {
     let genes_a = &vm.dna.helix.strands[idx_a].genes;
     let genes_b = &vm.dna.helix.strands[idx_b].genes;
-    let mut new_genes = Vec::new();
+    // ⚡ Bolt: Pre-allocate capacity to avoid multiple O(log N) reallocations in the loop below.
+    let mut new_genes = Vec::with_capacity(genes_a.len() + genes_b.len());
     let max_len = genes_a.len().max(genes_b.len());
     for i in 0..max_len {
         if i < genes_a.len() {
@@ -378,7 +379,8 @@ fn handle_three_ingredients(vm: &mut ChimeraVM, ingredients: &[Value]) -> (Optio
             if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
                 // Fusion: Append B to A
                 let mut new_genes = vm.dna.helix.strands[idx_a].genes.clone();
-                new_genes.extend(vm.dna.helix.strands[idx_b].genes.clone());
+                // ⚡ Bolt: Use `extend_from_slice` instead of `.extend(...clone())` to avoid an intermediate O(N) heap allocation.
+                new_genes.extend_from_slice(&vm.dna.helix.strands[idx_b].genes);
 
                 let new_idx =
                     register_new_strand(vm, new_genes, Some(idx_a), "Alchemy: Fusion".to_string());
