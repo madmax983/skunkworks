@@ -95,8 +95,7 @@ use tui_shared::ratatui::{
     widgets::{Paragraph, Block, Borders}
 };
 
-# fn main() {
-fn test_ui() {
+fn main() {
     let backend = TestBackend::new(20, 10);
     let mut terminal = Terminal::new(backend).unwrap();
 
@@ -108,5 +107,4 @@ fn test_ui() {
     let buffer = terminal.backend().buffer();
     assert_eq!(buffer.get(1, 1).symbol(), "H");
 }
-# }
 ```
