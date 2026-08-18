@@ -1,0 +1,9 @@
+[package]
+name = "market-gray"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+market-sim = { path = "../../crates/market-sim" }
+gray-scott = { path = "../../crates/gray-scott" }
+rand = { workspace = true }
