@@ -3422,6 +3422,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "flock-resonance"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossbeam-channel",
+ "crossterm 0.28.1",
+ "flocking",
+ "locus",
+ "rand 0.8.7",
+ "ratatui",
+ "resonance-audio",
+ "tui-shared",
+]
+
+[[package]]
 name = "flocking"
 version = "0.1.0"
 dependencies = [

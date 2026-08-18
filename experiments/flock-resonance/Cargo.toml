@@ -1,0 +1,15 @@
+[package]
+name = "flock-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+flocking = { path = "../../crates/flocking" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+tui-shared = { path = "../../crates/tui-shared" }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+locus = { path = "../../crates/locus" }
+rand = { workspace = true }
+crossbeam-channel = "0.5"
+anyhow = { workspace = true }

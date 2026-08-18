@@ -1,5 +1,5 @@
 
-use crossbeam_channel::{unbounded, Sender};
+use crossbeam_channel::{unbounded, Sender, Receiver};
 use neuro_sim::Izhikevich;
 
 #[cfg(feature = "audio")]
@@ -15,6 +15,7 @@ pub struct Snapshot {
     ////////pub mean_field: f32,
 }
 
+#[allow(dead_code)]
 pub enum AudioCommand {
     UpdateNetwork {
         neurons: Vec<Izhikevich>,
@@ -43,7 +44,7 @@ pub struct AudioEngine {
 
 impl AudioEngine {
     pub fn new() -> anyhow::Result<Self> {
-        let (cmd_tx, cmd_rx) = unbounded::<AudioCommand>();
+        let (cmd_tx, _cmd_rx) = unbounded::<AudioCommand>();
 
         #[cfg(feature = "audio")]
         {
