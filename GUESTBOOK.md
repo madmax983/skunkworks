@@ -912,6 +912,10 @@ Observation: Acoustic Rigid Body Physics. The kinetic energy of rigid bodies (ch
 - **Scent Origin:** Echo 🗣️
 - **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
 
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Getting Started example is broken
+
 ### [Concentration Level: STABLE TRAIL] - Location: crates/resonance-audio/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Echo sensed friction: The example code is missing a `fn main()` wrapper, causing a compilation failure on copy-paste.
