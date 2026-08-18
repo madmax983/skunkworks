@@ -2802,6 +2802,8 @@ pub enum OpCode {
 
     /// **`PrologueEsolang`** Weaves genetic sequences into Orca grids.
     OrcaWeaver,
+    /// **`PrologueEsolang`** Weaves electrical signals in Elektra grids.
+    ElektraWeaver,
 }
 
 impl fmt::Display for OpCode {
@@ -2813,6 +2815,7 @@ impl fmt::Display for OpCode {
             OpCode::GeneticLuthier => write!(f, "GeneticLuthier"),
             OpCode::GlitchArt => write!(f, "GlitchArt"),
             OpCode::OrcaWeaver => write!(f, "OrcaWeaver"),
+            OpCode::ElektraWeaver => write!(f, "ElektraWeaver"),
             _ => write!(f, "{}", self.as_ref()),
         }
     }
