@@ -86,3 +86,8 @@
 **Bloat:** Manual `match` on `Result` to return a default vector and unnecessary string borrow in `git-locus`.
 **Cut:** Flattened the match block to use `.unwrap_or_default()` and removed the `&` from `format!`.
 **Saved:** Reduced code verbosity and eliminated two clippy warnings.
+
+## [Reduction]
+**Bloat:** Repetitive enum variant postfixes (`Cubic`) and deeply nested `if let Some` / `match` on VM stack popped values in `experiments/chimera-lattice`.
+**Cut:** Renamed enum variants to drop the redundant postfix (`Simple`, `BodyCentered`, etc.), and flattened the nested `match` into a concise `if let Some(Value::Int(n))` guard.
+**Saved:** Multiple lines of redundant nesting, reducing code verbosity and satisfying the `clippy::collapsible-match` and `clippy::enum-variant-names` lints.
