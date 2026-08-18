@@ -4752,3 +4752,36 @@ classDiagram
     MarketGrayApp --> MarketGrid : Bids and Asks
     MarketGrayApp --> GrayScott : Chemical V Drops
 ```
+
+## Experiment: Neuro-Poincare (ADR 175)
+
+**Neuro-Poincare** explores "Hyperbolic Neural Networks" by crossing biological spiking neurons (`neuro-sim`) with a non-Euclidean boundary space (`poincare-disk`).
+
+### Hybrid Architecture
+
+The hybrid maps Izhikevich neurons onto a Poincaré disk. Synaptic connections between neurons carry a transmission delay proportional to the hyperbolic distance between them. This creates a temporal warping effect on biological brain waves where synapses spanning across the disk or towards the boundary experience massive delays.
+
+```mermaid
+classDiagram
+    direction TB
+    class NeuroPoincareApp {
+        +Network network
+        +Vec~Node~ nodes
+        +run()
+    }
+
+    class Network {
+        <<Library: neuro-sim>>
+        +Vec~Neuron~ neurons
+        +Vec~Synapse~ synapses
+        +step()
+    }
+
+    class PoincareDisk {
+        <<Library: poincare-disk>>
+        +hyperbolic_dist()
+    }
+
+    NeuroPoincareApp --> Network : Neural Spikes
+    NeuroPoincareApp --> PoincareDisk : Hyperbolic Distances
+```
