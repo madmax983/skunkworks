@@ -55,9 +55,9 @@ use tui_shared::Tui;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum LatticeType {
-    SimpleCubic,
-    BodyCenteredCubic,
-    FaceCenteredCubic,
+    Simple,
+    BodyCentered,
+    FaceCentered,
 }
 
 struct Lattice3D {
@@ -77,17 +77,17 @@ impl Lattice3D {
                     let fz = z as f64;
 
                     match l_type {
-                        LatticeType::SimpleCubic => {
+                        LatticeType::Simple => {
                             points.push([fx, fy, fz]);
                         }
-                        LatticeType::BodyCenteredCubic => {
+                        LatticeType::BodyCentered => {
                             points.push([fx, fy, fz]);
                             // Center point
                             if x < range && y < range && z < range {
                                 points.push([fx + 0.5, fy + 0.5, fz + 0.5]);
                             }
                         }
-                        LatticeType::FaceCenteredCubic => {
+                        LatticeType::FaceCentered => {
                             points.push([fx, fy, fz]);
                             // Face centers
                             if x < range && y < range {
@@ -197,11 +197,8 @@ impl ChimeraAgent {
         // or pop it.
         // ChimeraVM doesn't have a public peek easily accessible, but stack is public.
 
-        let output = if let Some(val) = self.vm.stack.last() {
-            match val {
-                Value::Int(n) => *n as f64,
-                _ => 0.0,
-            }
+        let output = if let Some(Value::Int(n)) = self.vm.stack.last() {
+            *n as f64
         } else {
             0.0
         };
@@ -271,9 +268,9 @@ impl LatticeColony {
                 // BCC: dist = sqrt(0.75) (sq=0.75)
                 // FCC: dist = sqrt(0.5) (sq=0.5)
                 let threshold = match l_type {
-                    LatticeType::SimpleCubic => 1.1,
-                    LatticeType::BodyCenteredCubic => 0.8,
-                    LatticeType::FaceCenteredCubic => 0.6,
+                    LatticeType::Simple => 1.1,
+                    LatticeType::BodyCentered => 0.8,
+                    LatticeType::FaceCentered => 0.6,
                 };
 
                 if dist_sq <= threshold {
@@ -347,7 +344,7 @@ struct App {
 
 impl App {
     fn new() -> Result<Self> {
-        let colony = LatticeColony::new(LatticeType::BodyCenteredCubic, 2);
+        let colony = LatticeColony::new(LatticeType::BodyCentered, 2);
         Ok(Self {
             colony,
             camera: Camera::new(),
@@ -357,9 +354,9 @@ impl App {
 
     fn change_lattice(&mut self) {
         let (new_type, new_size) = match self.colony.lattice_type {
-            LatticeType::SimpleCubic => (LatticeType::BodyCenteredCubic, 2),
-            LatticeType::BodyCenteredCubic => (LatticeType::FaceCenteredCubic, 2),
-            LatticeType::FaceCenteredCubic => (LatticeType::SimpleCubic, 3), // Larger for SC
+            LatticeType::Simple => (LatticeType::BodyCentered, 2),
+            LatticeType::BodyCentered => (LatticeType::FaceCentered, 2),
+            LatticeType::FaceCentered => (LatticeType::Simple, 3), // Larger for SC
         };
         self.colony = LatticeColony::new(new_type, new_size);
     }
