@@ -4785,3 +4785,34 @@ classDiagram
     NeuroPoincareApp --> Network : Neural Spikes
     NeuroPoincareApp --> PoincareDisk : Hyperbolic Distances
 ```
+
+## Experiment: Flock-Resonance (ADR 176)
+
+**Flock-Resonance** explores "Swarm Sonification" by crossing the Boids flocking simulation (`flocking`) with the continuous FDTD grid (`resonance-audio`).
+
+### Hybrid Architecture
+
+The hybrid maps the continuous physical positions of the boid swarm to act as dynamic acoustic oscillators on a 2D FDTD wave grid. As the swarm navigates space, they inject tone frequencies directly into the acoustic field, generating continuous acoustic chords and interference patterns based on flocking dynamics.
+
+```mermaid
+classDiagram
+    direction TB
+    class FlockResonanceApp {
+        +run()
+    }
+
+    class Flocking {
+        <<Library: flocking>>
+        +compute_force()
+        +FlockingParams params
+    }
+
+    class ResonanceAudio {
+        <<Library: resonance-audio>>
+        +AudioModel audio_model
+        +AudioCommand::Oscillate command
+    }
+
+    FlockResonanceApp --> Flocking : Swarm Dynamics
+    FlockResonanceApp --> ResonanceAudio : Acoustic Chords
+```
