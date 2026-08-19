@@ -1,9 +1,10 @@
 [package]
 name = "arthropod-platter"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-arthropod = { version = "0.1.0", path = "../../crates/arthropod" }
-macroquad = "0.4"
-platter = { version = "0.1.0", path = "../../crates/platter" }
+arthropod = { path = "../../crates/arthropod" }
+platter = { path = "../../crates/platter" }
+macroquad = "0.4.15"
+rand = "0.8"
