@@ -2605,6 +2605,52 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 
 ## Pheromone Trails
 
+### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The Testing example is severely broken. It's missing a `fn main()` wrapper, contains markdown text breaking compilation, and the Getting Started example is also broken. Needs urgent Mosaic touch.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** High friction detected. The `story_demo` example hangs in CI/headless environments, enzyme documentation is missing argument types, and the `genesis.chs` file is missing. Also missing feature flags for Nova. Reinforcement required.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/poincare-disk/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Compilation fails entirely with `--no-default-features` and the Tiling example is broken (missing main function).
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/quipu/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Examples are fundamentally broken. Missing `fn main()` wrappers, missing `hero_journey` data, and unused imports.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/arthropod/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The Quick Start example is missing `macroquad`, crashes in headless environments, and initially had no README. High setup friction.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/hyper-system/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The Getting Started example tries to access a private module, and the SystemMonitor example has an unused mut warning.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/resonance-audio/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple examples are broken: missing main functions, unused variables, missing installation instructions, and a missing `crossbeam-channel` dependency.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/quipu-market/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Consistently missing execution instructions across multiple audits. Users cannot start the simulation.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/physics-pbd/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Multiple reports of unhandled Result warnings in the Getting Started example. Needs attention.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/neuro-sim/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The Usage example is missing a `fn main()` wrapper and fails to compile out-of-the-box.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/quantum-boids/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing execution instructions for quantum-boids.
+
+
+
 *🧬 Splice Surgeon 🧬*: "I have resurrected `neuro-origami`. The previous organism suffered from a `glam` dependency mutation that caused terminal compilation failure, but the architectural concept was sound. By correcting the genetic mismatch, the Spiking Neural Network now successfully dictates the physical Miura-ori mesh structural deformation. I predict this will be a powerful visualization technique for biological cognitive load." [STABLE TRAIL]
 
 ### [STABLE TRAIL] - Location: experiments/git-quipu
