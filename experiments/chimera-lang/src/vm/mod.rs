@@ -3648,15 +3648,15 @@ impl std::fmt::Display for ChimeraVM {
             .set_content_arrangement(ContentArrangement::Dynamic)
             .set_header(vec!["Component", "State"]);
 
-        // IP (Debug Info)
-        let ip_label = comfy_table::Cell::new("Instruction Pointer").fg(Color::Cyan);
+        // IP (Debug Info - recedes)
+        let ip_label = comfy_table::Cell::new("Instruction Pointer").fg(Color::DarkGrey);
         let ip_val = comfy_table::Cell::new(format!("Strand: {}, Gene: {}", self.ip.0, self.ip.1))
-            .fg(Color::Cyan);
+            .fg(Color::DarkGrey);
         table.add_row(vec![ip_label, ip_val]);
 
-        // Stack (Debug Info)
-        let stack_label = comfy_table::Cell::new("Stack Depth").fg(Color::Cyan);
-        let stack_val = comfy_table::Cell::new(format!("{}", self.stack.len())).fg(Color::Cyan);
+        // Stack (Debug Info - recedes)
+        let stack_label = comfy_table::Cell::new("Stack Depth").fg(Color::DarkGrey);
+        let stack_val = comfy_table::Cell::new(format!("{}", self.stack.len())).fg(Color::DarkGrey);
         table.add_row(vec![stack_label, stack_val]);
 
         // Energy (Colorized)
