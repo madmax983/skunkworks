@@ -1,5 +1,4 @@
-
-use crossbeam_channel::{unbounded, Sender, Receiver};
+use crossbeam_channel::{unbounded, Receiver, Sender};
 use neuro_sim::Izhikevich;
 
 #[cfg(feature = "audio")]

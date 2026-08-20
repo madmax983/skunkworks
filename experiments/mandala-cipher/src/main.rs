@@ -103,7 +103,13 @@ async fn async_main() {
         draw_mandala(&mandala, rotation);
 
         // UI
-        draw_text(format!("Payload: {}", payload).as_str(), 20.0, 30.0, 30.0, WHITE);
+        draw_text(
+            format!("Payload: {}", payload).as_str(),
+            20.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
         draw_text(
             "Type to encode... [S] to Save PNG",
             20.0,

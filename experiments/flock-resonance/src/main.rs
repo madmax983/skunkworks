@@ -52,7 +52,9 @@ fn main() -> Result<()> {
             new_velocities[i].x += force.x;
             new_velocities[i].y += force.y;
 
-            let speed = (new_velocities[i].x * new_velocities[i].x + new_velocities[i].y * new_velocities[i].y).sqrt();
+            let speed = (new_velocities[i].x * new_velocities[i].x
+                + new_velocities[i].y * new_velocities[i].y)
+                .sqrt();
             if speed > params.max_speed {
                 new_velocities[i].x = (new_velocities[i].x / speed) * params.max_speed;
                 new_velocities[i].y = (new_velocities[i].y / speed) * params.max_speed;

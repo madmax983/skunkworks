@@ -261,7 +261,8 @@ async fn main() {
                 "Nodes: {} | Ghosts: {}",
                 real_system.nodes.len(),
                 ghosts.len()
-            ).as_str(),
+            )
+            .as_str(),
             20.0,
             60.0,
             20.0,
@@ -271,7 +272,8 @@ async fn main() {
             format!(
                 "Gravity: {:.1} | Friction: {:.3}",
                 real_system.gravity.y, real_system.friction
-            ).as_str(),
+            )
+            .as_str(),
             20.0,
             80.0,
             20.0,

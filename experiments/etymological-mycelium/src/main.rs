@@ -203,7 +203,13 @@ async fn main() {
 
         // UI
         draw_text("Etymological Mycelium", 10.0, 30.0, 30.0, WHITE);
-        draw_text(format!("File: {}", file_path).as_str(), 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            format!("File: {}", file_path).as_str(),
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
         draw_text(
             format!("Spores: {}", mycelium.spores.len()).as_str(),
             10.0,

@@ -109,7 +109,8 @@ mod tests {
 
     #[test]
     fn test_parse_history_invalid_date_skipped() {
-        let output = "hash1|invalid-date|Author|Message\nhash2|2023-10-27T10:00:00Z|Author|Message2";
+        let output =
+            "hash1|invalid-date|Author|Message\nhash2|2023-10-27T10:00:00Z|Author|Message2";
         let commits = parse_history(output).unwrap();
         assert_eq!(commits.len(), 1);
         assert_eq!(commits[0].hash, "hash2");
