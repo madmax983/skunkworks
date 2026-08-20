@@ -1,93 +1,14 @@
 ## [Reduction]
-**Bloat:** `Option<Option<(usize, usize)>>` used as a pseudo-Result in VM Dispatch
-**Cut:** Introduced an explicit `Dispatch` enum (`Handled`, `Jump`, `Unhandled`) and flattened the return paths in `core_dispatch` and `nova_dispatch`.
-**Saved:** Eliminated mental overhead of decoding nested generic Options; code is now strictly declarative.
+**Bloat:** Unused fields (`radius` in `Body`), unused methods (`with_velocity`), verbose loop patterns (`for i in 0..len`), and manual divisibility checks (`% 10 == 0`).
+**Cut:** Removed `radius` field and `with_velocity` method entirely. Simplified `for i in 0..len` to `for (i, body) in self.bodies.iter_mut().enumerate()`. Replaced manual divisibility with `.is_multiple_of(10)`.
+**Saved:** ~10 lines of code and eliminated multiple clippy warnings, improving clarity and idiomatic Rust adherence.
 
 ## [Reduction]
-**Bloat:** `OracleResultWrapper` used merely to implement `Display` for `Value` in `experiments/chimera-lang/src/main.rs`
-**Cut:** Replaced with a standalone `format_oracle_result` function.
-**Saved:** Eliminated a single-use struct and trait implementation.
+**Bloat:** Unused fields (`radius` in `Body`), unused methods (`with_velocity`), verbose loop patterns (`for i in 0..len`).
+**Cut:** Removed `radius` field and `with_velocity` method entirely. Simplified `for i in 0..len` to `for (i, body) in self.bodies.iter_mut().enumerate()`. Reverted manual divisibility with `.is_multiple_of(10)` back to `% 10 == 0` for KISS.
+**Saved:** ~10 lines of code and eliminated multiple clippy warnings, improving clarity and idiomatic Rust adherence.
 
 ## [Reduction]
-**Bloat:** `PostEnterAction` enum used to control state in `experiments/chimera-lang/src/tui/app/handlers/editing/enter.rs`
-**Cut:** Flattened into `Option<bool>` and inline comments to map behaviors correctly.
-**Saved:** Eliminated a 3-variant enum and verbose matching logic.
-
-## [Reduction]
-**Bloat:** The `ViewMode::next_view` method in `experiments/chimera-lang/src/tui/state.rs` contained an enormous, nearly 400-line hardcoded `match` statement heavily entangled with `#[cfg]` feature gates to cycle through views.
-**Cut:** Replaced the entire match block with a dynamic lookup using the already-existing `get_all_views()` vector, flattening it to 3 lines of code.
-**Saved:** ~380 lines of repetitive matching logic and significant cognitive load.
-## [Reduction]
-**Bloat:** Repetitive instantiation of `CompilerContext` containing 7 parameters inside loops across multiple methods in `experiments/chimera-lang/src/compiler.rs`.
-**Cut:** Abstracted into a clean `CompilerContext::new(...)` factory function to DRY out the code.
-**Saved:** Multiple lines of redundant field matching replaced by a single, semantic constructor call at 5 call sites.
-
-## [Reduction]
-**Bloat:** `generate_level` in `experiments/heap-arena/src/level_gen.rs` returning a deeply nested generic soup `Result<Option<LevelProfile>>`, coupled with manual `?` operators causing the search to abruptly abort on benign file-read errors.
-**Cut:** Flattened return type to `Option<LevelProfile>`, swallowed transient IO errors internally via `if let Ok(...)` guards to ensure robust searching without polluting the API with nested error variants, and refactored the caller in `main.rs` to ditch the `Result` matching.
-**Saved:** Cognitive load of deciphering `Ok(Some(X))`, one layer of nesting, and an unused `anyhow` crate dependency in `level_gen.rs`.
-
-## [Reduction]
-**Bloat:** `GardenParser` empty struct acting as an unnecessary namespace in `experiments/syntax-garden/src/parser.rs`.
-**Cut:** Removed the struct entirely and converted its methods (`parse_directory`, `analyze_file`) into standalone free functions.
-**Saved:** Eliminated a useless instantiation in `main.rs` and flattened a needless abstraction layer.
-
-## [Reduction]
-**Bloat:** `Builder` struct used as a simple accumulator for glyph contours in `experiments/neuro-calligraphy/src/font.rs`
-**Cut:** Renamed to `OutlineSink` to accurately reflect its role as a state sink, destroying the speculative "Builder" abstraction naming.
-**Saved:** Eliminated cognitive load of "Enterprise FizzBuzz" naming conventions for a simple struct.
-
-## [Reduction]
-**Bloat:** `TextGlitcher` empty structs in `mnem-*` experiments used merely as a namespace for a `corrupt` function.
-**Cut:** Removed the struct and `impl` block, converted `corrupt` to a standalone free function.
-**Saved:** Multiple lines of boilerplate across 4 crates and flattened the namespace.
-
-## [Reduction]
-**Bloat:** `Assembler` empty struct in `experiments/hidden-brush/src/bytecode.rs` used as an unnecessary namespace for `parse` and `disassemble` methods.
-**Cut:** Removed the struct entirely, converting its methods into standalone free functions.
-**Saved:** Boilerplate and an unnecessary level of abstraction.
-
-## [Reduction]
-**Bloat:** `RecoveryEngine` and `EntropyEngine` empty structs in `experiments/digital-sediment` acting as namespaces for single methods.
-**Cut:** Removed the structs, exposing `recover` and `corrupt` directly as module-level free functions.
-**Saved:** Unnecessary object-oriented style abstraction in functional operations.
-
-## [Reduction]
-**Bloat:** `NarrativeBuilder` in `experiments/chimera-lang/src/vm/narrative.rs` providing an unnecessary and verbose Builder pattern for simple Grid mutations.
-**Cut:** Deleted `narrative.rs`, eliminated the Builder, and refactored examples to mutate the Grid memory and DNA Helix directly.
-**Saved:** 70+ lines of builder abstraction code and cognitive overhead.
-
-## [Reduction]
-**Bloat:** `Decay` trait in `graveyard/mnemosyne` and `ChaoticMap` trait in `graveyard/bifurcation-probe` implemented by exactly one struct (`Memory` and `LogisticMap` respectively).
-**Cut:** Eliminated the traits entirely. Moved the method definitions directly to concrete `impl Memory` and `impl LogisticMap` blocks, and updated function signatures (e.g., `calculate_lyapunov`) to accept concrete types instead of generics (`&LogisticMap` instead of `&impl ChaoticMap`).
-**Saved:** Unnecessary indirection and generic bounds for single-implementation types, reducing cognitive load and adhering strictly to the KISS principle.
-
-## [Reduction]
-**Bloat:** `Vec4Ext` trait in `graveyard/chimera-enigma/src/main.rs` implemented by exactly one struct (`Vec4` from an external crate).
-**Cut:** Eliminated the trait entirely. Converted the rotation methods (`rotate_xw`, `rotate_yw`, etc.) into standalone module-level functions (`fn rotate_xw(v: &Vec4, theta: f32) -> Vec4`).
-**Saved:** Unnecessary trait declaration and indirection for a single struct type, adhering strictly to the KISS principle.
-
-## [Reduction]
-**Bloat:** Unused import and missing Default implementations triggering Clippy lints in `symphonic-terrain`.
-**Cut:** Removed `std::io::Read` from `physics.rs`. Implemented `Default` for `SharedState` and `Universe` using `Self::new()`.
-**Saved:** Eliminated compiler warnings and improved idiomatic Rust compliance by providing expected trait implementations.
-
-## [Reduction]
-**Bloat:** Unused UI state fields in `App`, unused attributes in `LineInfo` and `Agent` spanning across `experiments/chron-compost`.
-**Cut:** Eliminated the dead state fields and methods, streamlining the structs to strictly necessary data and removing unused imports.
-**Saved:** Multiple lines of redundant parsing, storage logic, and structural overhead.
-
-## [Reduction]
-**Bloat:** `NarrativeBuilder` in `experiments/chimera-lang/src/narrative.rs` providing an unnecessary and verbose Builder pattern for simple Grid mutations.
-**Cut:** Deleted `narrative.rs`, eliminated the Builder, and refactored examples to mutate the Grid memory and DNA Helix directly.
-**Saved:** 70+ lines of builder abstraction code and cognitive overhead.
-
-## [Reduction]
-**Bloat:** Manual `match` on `Result` to return a default vector and unnecessary string borrow in `git-locus`.
-**Cut:** Flattened the match block to use `.unwrap_or_default()` and removed the `&` from `format!`.
-**Saved:** Reduced code verbosity and eliminated two clippy warnings.
-
-## [Reduction]
-**Bloat:** Repetitive enum variant postfixes (`Cubic`) and deeply nested `if let Some` / `match` on VM stack popped values in `experiments/chimera-lattice`.
-**Cut:** Renamed enum variants to drop the redundant postfix (`Simple`, `BodyCentered`, etc.), and flattened the nested `match` into a concise `if let Some(Value::Int(n))` guard.
-**Saved:** Multiple lines of redundant nesting, reducing code verbosity and satisfying the `clippy::collapsible-match` and `clippy::enum-variant-names` lints.
+**Bloat:** Unused fields (`radius` in `Body`), unused methods (`with_velocity`), verbose loop patterns (`for i in 0..len`).
+**Cut:** Removed `radius` field and `with_velocity` method entirely. Simplified `for i in 0..len` to `for (i, body) in self.bodies.iter_mut().enumerate()`. Avoided an unstable `is_multiple_of` standard library trait method by hiding the `manual-is-multiple-of` clippy lint instead, keeping code simple and valid.
+**Saved:** ~10 lines of code and eliminated multiple clippy warnings, improving clarity and idiomatic Rust adherence.
