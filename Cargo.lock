@@ -4510,6 +4510,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-market"
+version = "0.1.0"
+dependencies = [
+ "hyper-system",
+ "macroquad",
+ "market-sim",
+]
+
+[[package]]
 name = "hyper-mold"
 version = "0.1.0"
 dependencies = [

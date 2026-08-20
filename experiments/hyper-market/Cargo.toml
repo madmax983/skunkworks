@@ -1,0 +1,9 @@
+[package]
+name = "hyper-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hyper-system = { path = "../../crates/hyper-system" }
+market-sim = { path = "../../crates/market-sim" }
+macroquad = "0.4"
