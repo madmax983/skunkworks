@@ -189,10 +189,9 @@ fn run_app(tui: &mut Tui) -> Result<()> {
         let x = (rand::random::<f64>() - 0.5) * 100.0;
         let y = (rand::random::<f64>() - 0.5) * 100.0;
         let mass = 10.0 + rand::random::<f64>() * 20.0;
-        let radius = mass.sqrt();
         let color = Color::Cyan; // Initial color
 
-        let body = Body::new(x, y, mass, radius, color, dna.clone());
+        let body = Body::new(x, y, mass, color, dna.clone());
         universe.add_body(body);
     }
 

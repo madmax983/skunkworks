@@ -9,7 +9,6 @@ pub struct Body {
     pub vel: Vec2,
     pub acc: Vec2,
     pub mass: f64,
-    pub radius: f64,
     pub color: Color,
     pub magnetism: f64,
     pub vm: ChimeraVM,
@@ -17,23 +16,17 @@ pub struct Body {
 }
 
 impl Body {
-    pub fn new(x: f64, y: f64, mass: f64, radius: f64, color: Color, dna: Dna) -> Self {
+    pub fn new(x: f64, y: f64, mass: f64, color: Color, dna: Dna) -> Self {
         Self {
             pos: Vec2::new(x, y),
             vel: Vec2::zero(),
             acc: Vec2::zero(),
             mass,
-            radius,
             color,
             magnetism: 0.5, // Start neutral
             vm: ChimeraVM::new(dna),
             trail: Vec::with_capacity(50),
         }
-    }
-
-    pub fn with_velocity(mut self, vx: f64, vy: f64) -> Self {
-        self.vel = Vec2::new(vx, vy);
-        self
     }
 }
 
@@ -104,9 +97,7 @@ impl Universe {
         }
 
         // 2. Sensing & VM Step
-        for i in 0..len {
-            let body = &mut self.bodies[i];
-
+        for (i, body) in self.bodies.iter_mut().enumerate() {
             // Collect Inputs
             // Input 1: Neighbor Count (within radius 20.0)
             // let mut neighbor_count = 0;
@@ -173,6 +164,7 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Trail
+            #[allow(clippy::manual_is_multiple_of)]
             if rand::random::<u8>() % 10 == 0 {
                 body.trail.push(body.pos);
                 if body.trail.len() > 20 {
