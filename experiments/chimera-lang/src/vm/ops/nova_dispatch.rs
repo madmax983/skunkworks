@@ -348,6 +348,7 @@ impl crate::vm::ChimeraVM {
             | OpCode::GlitchArt
             | OpCode::OrcaWeaver
             | OpCode::ElektraWeaver
+            | OpCode::PrologWeaver
             | OpCode::Rune
             | OpCode::BioHack
             | OpCode::SelfReplicate

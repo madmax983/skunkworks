@@ -629,6 +629,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::GlitchArt => exec_glitch_art(vm),
         OpCode::OrcaWeaver => exec_orca_weaver(vm),
         OpCode::ElektraWeaver => exec_elektra_weaver(vm),
+        OpCode::PrologWeaver => exec_prolog_weaver(vm),
         OpCode::Rune => exec_rune(vm),
         _ => None,
     }
@@ -2550,5 +2551,16 @@ pub(crate) fn exec_elektra_weaver(vm: &mut ChimeraVM) -> Option<(usize, usize)> 
     };
     vm.output
         .push(format!("⚡ Elektra Weaver thread deployed: {}", value));
+    None
+}
+
+pub(crate) fn exec_prolog_weaver(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let value = if let Some(val) = vm.stack.pop() {
+        format!("{:?}", val)
+    } else {
+        "Empty".to_string()
+    };
+    vm.output
+        .push(format!("🔮 Prolog Weaver thread deployed: {}", value));
     None
 }
