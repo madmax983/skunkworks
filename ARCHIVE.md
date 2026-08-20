@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **market-gray**: Specimen condemned. Diagnosis: Skeletal Implementation / Execution Void. Grace period: 24h.
+- **arthropod-fluid**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Grace period: 24h.
 
 ## ☠️ Executed
+- **market-gray**: Specimen executed. Diagnosis: Skeletal Implementation / Execution Void. Grace period expired. Moved to graveyard.
 - **arthropod-platter**: Specimen executed. Diagnosis: Documentation Void. Grace period expired. Moved to graveyard.
 - **gray-locus**: Specimen executed. Diagnosis: Documentation Void. Grace period expired. Moved to graveyard.
 - **hyperbolic-quipu**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to adapt during grace period. Biomass returned to the void.

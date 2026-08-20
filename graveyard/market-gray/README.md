@@ -1,17 +1,15 @@
-# 🧬 Market Gray (market-gray)
+# market-gray
 
-**Lineage:** `crates/market-sim` × `crates/gray-scott`
+**Concept**: Morphogenetic Financial Liquidity.
 
-## Concept: Morphogenetic Financial Liquidity
+## Lineage
+- **Parent A**: `crates/market-sim` - Provides the discrete, continuous double auction grid simulating Bids and Asks moving toward collision.
+- **Parent B**: `crates/gray-scott` - Provides the continuous chemical reaction-diffusion substrate.
 
-This experiment projects a discrete Continuous Double Auction (CDA) market grid into a continuous Gray-Scott reaction-diffusion substrate. Bids and asks act as active biological sources feeding the grid, while executed trades act as intense "kill" chemical drops.
+## Novel Trait
+The discrete collisions (trades) in the market directly act as "V" chemical seeds in the morphogenetic substrate. This allows abstract financial pressure to literally bloom into continuous Turing patterns, visualizing market liquidity as organic growth.
 
-### Hybrid Vigor
-- **Market Dynamics (`market-sim`)**: Bids and asks flow across a 2D market grid, attempting to fulfill orders and providing market liquidity.
-- **Reaction-Diffusion (`gray-scott`)**: The chemical substrate allows us to view the "organic footprint" of the market. Rather than discrete data points, the market generates self-sustaining Turing patterns driven entirely by financial events.
-
-## Execution
-
+## Usage
 ```bash
-cargo run -p market-gray
+cargo run -p market-gray -- --headless
 ```
