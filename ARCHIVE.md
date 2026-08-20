@@ -1,7 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **arthropod-fluid**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Grace period: 24h.
-
+- **chaos-resonance**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Fragile OS Dependencies. Grace period: 24h.
 ## ☠️ Executed
+- **arthropod-fluid**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to mutable aliasing borrow checker errors. Grace period expired. Biomass returned to the void. Moved to graveyard.
 - **market-gray**: Specimen executed. Diagnosis: Skeletal Implementation / Execution Void. Grace period expired. Moved to graveyard.
 - **arthropod-platter**: Specimen executed. Diagnosis: Documentation Void. Grace period expired. Moved to graveyard.
 - **gray-locus**: Specimen executed. Diagnosis: Documentation Void. Grace period expired. Moved to graveyard.
