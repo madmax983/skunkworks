@@ -1186,6 +1186,12 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.append(&mut inner_genes);
                 }
             }
+            Rule::prolog_weaver_block => {
+                for inner_pair in inner_block.into_inner() {
+                    let mut inner_genes = compile_prolog_weaver_instr(inner_pair)?;
+                    genes.append(&mut inner_genes);
+                }
+            }
             Rule::glitch_art_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_glitch_art_instr(instr)?);
@@ -3317,5 +3323,63 @@ mod tests_elektra_weaver {
         assert_eq!(genes[1].op, OpCode::Push);
         assert_eq!(genes[1].args[0], Nucleotide::Number(100));
         assert_eq!(genes[2].op, OpCode::ElektraWeaver);
+    }
+}
+
+fn compile_prolog_weaver_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let inner = pair
+        .into_inner()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("Expected inner pair"))?;
+
+    match inner.as_rule() {
+        Rule::identifier => {
+            let op = inner.as_str().to_ascii_lowercase();
+            if op == "weave" || op == "simulate" {
+                genes.push(Gene::new(OpCode::PrologWeaver, vec![]));
+            } else if let Ok(opcode) = OpCode::from_str(&op) {
+                genes.push(Gene::new(opcode, vec![]));
+            } else {
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op)]));
+            }
+        }
+        Rule::number => {
+            let n: i64 = inner.as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(n)]));
+        }
+        Rule::string => {
+            let s = inner.as_str().trim_matches('"').to_string();
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(s)]));
+        }
+        _ => {}
+    }
+
+    Ok(genes)
+}
+
+#[cfg(test)]
+mod tests_prolog_weaver {
+    use super::*;
+    #[test]
+    fn test_prolog_weaver_block() {
+        let source = r#"
+        prolog_weaver {
+            "Weaving prolog construct"
+            100
+            weave
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("Weaving prolog construct".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::Push);
+        assert_eq!(genes[1].args[0], Nucleotide::Number(100));
+        assert_eq!(genes[2].op, OpCode::PrologWeaver);
     }
 }

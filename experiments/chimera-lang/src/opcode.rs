@@ -2804,6 +2804,8 @@ pub enum OpCode {
     OrcaWeaver,
     /// **`PrologueEsolang`** Weaves electrical signals in Elektra grids.
     ElektraWeaver,
+    /// **`PrologueEsolang`** Weaves logic signals in Prolog grids.
+    PrologWeaver,
 }
 
 impl fmt::Display for OpCode {
@@ -2816,6 +2818,7 @@ impl fmt::Display for OpCode {
             OpCode::GlitchArt => write!(f, "GlitchArt"),
             OpCode::OrcaWeaver => write!(f, "OrcaWeaver"),
             OpCode::ElektraWeaver => write!(f, "ElektraWeaver"),
+            OpCode::PrologWeaver => write!(f, "PrologWeaver"),
             _ => write!(f, "{}", self.as_ref()),
         }
     }
