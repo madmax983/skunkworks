@@ -28,3 +28,4 @@ docs/adr/116-quipu-gray-hybrid.md
 docs/adr/128-chimera-esoteric-blocks.md
 docs/adr/142-decouple-vector-math-literary-boids.md
 docs/adr/143-enforce-module-boundaries-graveyard-crates.md
+docs/adr/177-hyper-market-hybrid.md

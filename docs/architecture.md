@@ -4816,3 +4816,30 @@ classDiagram
     FlockResonanceApp --> Flocking : Swarm Dynamics
     FlockResonanceApp --> ResonanceAudio : Acoustic Chords
 ```
+
+## Experiment: Hyper-Market (ADR 177)
+
+**Hyper-Market** explores "4D Financial Liquidity" by crossing continuous 4D spatial projections (`hyper-system`) with discrete continuous double auction market physics (`market-sim`).
+
+### Hybrid Architecture
+
+The hybrid projects discrete trade volume from a Continuous Double Auction market directly into 4-dimensional angular momentum. Market volatility essentially spins the hypercube.
+
+```mermaid
+classDiagram
+    direction TB
+    class Grid {
+        <<Library: market-sim>>
+    }
+
+    class Particle {
+        <<Library: market-sim>>
+    }
+
+    class Vec4 {
+        <<Library: hyper-system>>
+    }
+
+    Grid --> Particle : Contains Bids and Asks
+    Grid --> Vec4 : Trade Volume Drives 4D Rotation
+```
