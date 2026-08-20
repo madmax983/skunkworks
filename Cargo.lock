@@ -310,16 +310,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "arthropod-fluid"
-version = "0.1.0"
-dependencies = [
- "arthropod",
- "ferrous-core",
- "locus",
- "macroquad",
-]
-
-[[package]]
 name = "arthropod-git"
 version = "0.1.0"
 dependencies = [
