@@ -37,7 +37,7 @@ This allows for:
 - **Grid**: Fixed size TUI grid.
 - **VM**: Each cell runs an isolated ChimeraVM instance.
 - **DNA**: Currently initializes with a Chimera Assembly implementation of Conway's Game of Life:
-    ```rust
+    ```text
     // Logic: Is3 || (Is2 && Self)
     GWrite(Self, 0, 0) // Store self state
     Add x 7            // Sum neighbors

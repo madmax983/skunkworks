@@ -25,31 +25,34 @@ neuro-sim = "0.1.0"
 ## Hero's Journey: Building a Brain
 
 ```rust
-use neuro_sim::Network;
+fn main() {
+    use neuro_sim::Network;
 
-// 1. Create a blank network
-let mut brain = Network::new();
+    // 1. Create a blank network
+    let mut brain = Network::new();
 
-// 2. Add two neurons
-let sensory = brain.add_neuron(); // Neuron 0
-let motor = brain.add_neuron();   // Neuron 1
+    // 2. Add two neurons
+    let sensory = brain.add_neuron(); // Neuron 0
+    let motor = brain.add_neuron();   // Neuron 1
 
-// 3. Connect them (Sensory -> Motor)
-//    Weight: 15.0 (Strong excitation)
-//    Delay: 0 (Immediate effect in next step)
-brain.add_synapse(sensory, motor, 15.0);
+    // 3. Connect them (Sensory -> Motor)
+    //    Weight: 15.0 (Strong excitation)
+    //    Delay: 0 (Immediate effect in next step)
+    brain.add_synapse(sensory, motor, 15.0);
 
-// 4. Simulate!
-// We'll inject current into the sensory neuron to make it fire.
-for t in 0..10 {
-    // Input: 20.0 units to Neuron 0, 0.0 to Neuron 1
-    brain.step(&[20.0, 0.0]);
+    // 4. Simulate!
+    // We'll inject current into the sensory neuron to make it fire.
+    for t in 0..10 {
+        // Input: 20.0 units to Neuron 0, 0.0 to Neuron 1
+        brain.step(&[20.0, 0.0]);
 
-    if brain.is_spiking(sensory) {
-        println!("t={}: Sensory Neuron Spiked! ⚡", t);
+        if brain.is_spiking(sensory) {
+            println!("t={}: Sensory Neuron Spiked! ⚡", t);
+        }
+        if brain.is_spiking(motor) {
+            println!("t={}: Motor Neuron Responded! 🦾", t);
+        }
     }
-    if brain.is_spiking(motor) {
-        println!("t={}: Motor Neuron Responded! 🦾", t);
-    }
+
 }
 ```
