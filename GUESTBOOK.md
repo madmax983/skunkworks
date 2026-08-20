@@ -2693,3 +2693,7 @@ Message: 🧬 The Splice Surgeon was here. Crossed `arthropod` and `physics-pbd`
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/hyper-market/README.md
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted continuous 4D geometric projections (`hyper-system`) onto the discrete double auction physics (`market-sim`). Trading volume successfully injects hyper-dimensional torque. Headless mode intact. Recombination complete.
+
+### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Testing example in tui-shared README is broken (missing main function)
