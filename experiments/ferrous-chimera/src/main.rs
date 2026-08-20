@@ -155,14 +155,8 @@ where
                     "Ferrous Chimera | Agents: {} | Magnetic Stigmergy Active",
                     universe.agents.len()
                 )))
-                .x_bounds([
-                    pan.x as f64 - 100.0 * zoom as f64,
-                    pan.x as f64 + 100.0 * zoom as f64,
-                ])
-                .y_bounds([
-                    pan.y as f64 - 100.0 * zoom as f64,
-                    pan.y as f64 + 100.0 * zoom as f64,
-                ])
+                .x_bounds([pan.x - 100.0 * zoom, pan.x + 100.0 * zoom])
+                .y_bounds([pan.y - 100.0 * zoom, pan.y + 100.0 * zoom])
                 .paint(|ctx| {
                     // Draw Platter (Magnetism)
                     let step = 4; // Faster render
@@ -189,10 +183,10 @@ where
                         // Trail
                         for i in 0..agent.body.trail.len().saturating_sub(1) {
                             ctx.draw(&Line {
-                                x1: agent.body.trail[i].x as f64,
-                                y1: agent.body.trail[i].y as f64,
-                                x2: agent.body.trail[i + 1].x as f64,
-                                y2: agent.body.trail[i + 1].y as f64,
+                                x1: agent.body.trail[i].x,
+                                y1: agent.body.trail[i].y,
+                                x2: agent.body.trail[i + 1].x,
+                                y2: agent.body.trail[i + 1].y,
                                 color: Color::Gray,
                             });
                         }
@@ -200,8 +194,8 @@ where
                         // Body
                         let symbol = if agent.vm.halted { "X" } else { "O" };
                         ctx.print(
-                            agent.body.pos.x as f64,
-                            agent.body.pos.y as f64,
+                            agent.body.pos.x,
+                            agent.body.pos.y,
                             Span::styled(symbol, Style::default().fg(agent.body.color)),
                         );
                     }

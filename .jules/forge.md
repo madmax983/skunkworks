@@ -21,3 +21,7 @@
 **[Unnecessary Type Casts]
 **Learning:** Redundant `as` casts (`i as usize` for a `usize` loop variable, `trade.price as f32` for an `f32` struct field) clutter the code and get flagged by clippy.
 **Action:** Trust type inference and the actual field types. Remove redundant casts to improve clarity.
+
+**[Extract God Function and Flatten Match Boilerplate]**
+**Learning:** Pyramids of doom and duplicated bounds-checking or conversion logic often show up in main loops. Dead code should be eliminated rather than hidden with `#[allow(dead_code)]`.
+**Action:** Extract repetitive coordinate mapping and wrap-around logic into pure functions. Extract nested stack-popping logic with `if let Some(Value::Int(v)) = ... else { 0.0 }` into helper methods to prevent 'God Functions'.

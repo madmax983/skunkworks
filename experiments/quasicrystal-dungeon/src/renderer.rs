@@ -492,7 +492,9 @@ impl State {
                 }
             } else {
                 // Unvisited
-                if let Some(RoomType::Goal) = dungeon.room_types.get(&i) { color = [0.5, 0.0, 0.0, 0.3]; }
+                if let Some(RoomType::Goal) = dungeon.room_types.get(&i) {
+                    color = [0.5, 0.0, 0.0, 0.3];
+                }
             }
 
             let dist = p.to_vec().magnitude();

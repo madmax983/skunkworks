@@ -215,7 +215,13 @@ async fn main() {
         // UI
         set_default_camera();
         draw_text("Memory Palace", 10.0, 30.0, 30.0, WHITE);
-        draw_text(format!("Room: {}", current_room).as_str(), 10.0, 60.0, 20.0, GRAY);
+        draw_text(
+            format!("Room: {}", current_room).as_str(),
+            10.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
         draw_text(
             "WASD Move | Space/Shift Up/Down",
             10.0,
