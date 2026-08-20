@@ -5522,15 +5522,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "market-gray"
-version = "0.1.0"
-dependencies = [
- "gray-scott",
- "market-sim",
- "rand 0.8.7",
-]
-
-[[package]]
 name = "market-hologram"
 version = "0.1.0"
 dependencies = [
