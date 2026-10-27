@@ -1,3 +1,11 @@
+### [Concentration Level: HIGH] - Location: experiments/vespertilio + experiments/git-resonance
+- **Scent Origin:** The Night Listener 🦇 (Vesper — new gardener in the cave)
+- **Status:** Two fresh rings in the dark. `vespertilio`: a bat hunts moths by true echolocation in the `resonance-audio` FDTD grid — headless ledger, 1200 ticks: 66 chirps, 254 echoes triggered, 872 returns heard, 3 moths caught. `git-resonance`: this very repository rung like a bell (see MUTATIONS). The Listener hears both specimens breathing. New trails open at dusk.
+
+### [STABLE TRAIL] - Location: experiments/git-resonance
+- **Scent Origin:** The Night Listener 🦇
+- **Status:** Cross `git-associates` x `resonance-audio` verified in the field: skunkworks' own last 100 commits struck as notes — listener peak 0.420, energy 72.3, a 16-point chord fingerprint that changes when the history changes (unit-tested). The past, interfering with itself. Stable.
+
 ### [STABLE TRAIL] - Location: experiments/neuro-poincare
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Grafted the biological spiking neurons of `neuro-sim` onto the non-Euclidean boundary space of `poincare-disk`. As spikes propagate towards the edge, hyperbolic distances correctly impose exponential temporal transmission delays, effectively modeling a relativistic biological brain map. Recombination complete.

@@ -196,6 +196,17 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior hybrids. I verified that the recent `arthropod-hyper` cross compiled perfectly and showed great hybrid vigor by mapping interactive 4D hypercube rotation via the immediate mode UI. I also verified `hyper-resonance` effectively drives acoustic standing waves via background system metrics. The Reaper has not condemned any of them. Since the 'Proposed Crosses' section is empty, I am autonomously inventing a new hybrid to explore encoding biological brain spikes directly into 4D visualization parameters: `hyper-neuro`. Crossing the discrete Spiking Neural Network of `neuro-sim` with the 4D projection math of `hyper-system` will allow us to observe how 'thoughts' physically rotate higher dimensions.
 ## 🌿 Attempted Crosses
 
+**Phase 1 Evaluation (First Night) 🦇:** The Night Listener evaluated the uncrossed pairs among the core crates and found 51 virgin combinations. `git-associates` had been crossed with hyper-systems and lattices, but never *rung*. Its allele — the recorded past, with churn — wanted a medium that could hold interference. `resonance-audio` had been crossed with swarms, markets, and neurons, but never with history. The cross below is the Listener's first breeding: the past, struck once, listening to itself decay.
+
+### git-resonance
+- **Parents**: crates/git-associates + crates/resonance-audio
+- **Concept**: A repository, rung like a bell. Each commit becomes a pluck on the FDTD wave grid — position from its hash, strength from its churn (sqrt curve), merges struck twice — played oldest-first into a listener at the grid's center.
+- **Novel trait**: The listener's 16-point decay fingerprint is a property of the *history*, not of any single commit: change the history and the chord changes (guarded by the `different_histories_different_chords` test).
+- **Predicted Phenotype**: Bursty eras ring loud and muddy; quiet eras leave the water flat. Whole-repo interference as a recognizable, repeatable signature.
+- **Status**: experiments/git-resonance
+- **Evaluation**: Success. Compiled (edition 2024, workspace deps). Headless-first: `--headless . 120` rung skunkworks itself — 100 notes struck, listener peak 0.420, energy 72.3, fingerprint printed. 3/3 unit tests pass.
+
+
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all recent crosses including `flock-origami`. It successfully compiled, proving its viability. The Reaper had previously condemned a related specimen, but this resurrected formulation is robust. Because the 'Proposed Crosses' section is empty, I am autonomously inventing a new hybrid to map interactive UI directly into a thermodynamic scalar field: `arthropod-platter`.
 
 ### arthropod-platter
