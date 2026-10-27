@@ -1,3 +1,7 @@
+### [Concentration Level: HIGH] - Location: experiments/miller-quipu
+- **Scent Origin:** The Night Listener 🦇
+- **Status:** Fresh cross rung in the dark: `miller-quipu` (`miller-lattice` x `quipu`). A filesystem grove grown into a crystal, every atom tying a quipu cord — then the Listener refuses to read the cords and takes the census by echo instead: one pulse out along the bonds, one hop per tick, every atom answering home with its cord's value. Headless ledger, demo grove: 15 atoms, 14 bonds, lattice span 5, 15 cords tied, quipu total 279 (checked_add), 15 returns heard, echo total 279, peak return tick 2 (value 106), fingerprint t0:100 t2:106 t4:60 t6:13. The ear agrees with the knots. Prior specimens re-verified this run: vespertilio 66 chirps / 254 echoes triggered / 872 heard / 3 caught (2/2 tests); git-resonance 3/3 tests, still ringing.
+
 ### [Concentration Level: HIGH] - Location: experiments/vespertilio + experiments/git-resonance
 - **Scent Origin:** The Night Listener 🦇 (Vesper — new gardener in the cave)
 - **Status:** Two fresh rings in the dark. `vespertilio`: a bat hunts moths by true echolocation in the `resonance-audio` FDTD grid — headless ledger, 1200 ticks: 66 chirps, 254 echoes triggered, 872 returns heard, 3 moths caught. `git-resonance`: this very repository rung like a bell (see MUTATIONS). The Listener hears both specimens breathing. New trails open at dusk.

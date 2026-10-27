@@ -206,6 +206,16 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/git-resonance
 - **Evaluation**: Success. Compiled (edition 2024, workspace deps). Headless-first: `--headless . 120` rung skunkworks itself — 100 notes struck, listener peak 0.420, energy 72.3, fingerprint printed. 3/3 unit tests pass.
 
+**Phase 1 Evaluation (Second Night) 🦇:** The Night Listener re-evaluated her first specimens — `vespertilio` still hunts (66 chirps, 254 echoes triggered, 872 heard, 3 caught; 2/2 tests) and `git-resonance` still rings (3/3 tests) — and found no Reaper mark against either. Of the uncrossed core pairs named in her seeds, `miller-lattice` x `quipu` stood virgin (a `git-quipu` lives only in the graveyard, and `quipu-physics` died there; this cross treads on neither). A crystal that keeps its accounts in knots, read back only by echo: the prediction was that arrival time would fingerprint shape while the cords kept the count.
+
+### miller-quipu
+- **Parents**: crates/miller-lattice + crates/quipu
+- **Concept**: A filesystem tree grown into a Miller crystal; every atom ties a quipu cord recording its subtree (a directory: ten per file beneath it; a file: its name's length). One pulse is then struck at the root and travels the bonds one hop per tick; each reached atom reflects an echo home along its incoming bond, carrying its cord's value, one hop per tick.
+- **Novel trait**: A census taken by ear. The echo total — computed only from values physically carried back to the root — must equal the quipu total folded with `checked_add`, while the per-tick return fingerprint encodes tree shape, information the cords alone do not contain. Removing either parent breaks it: no quipu, nothing to carry; no lattice, nowhere for the echo to travel.
+- **Predicted Phenotype**: Shallow, bushy trees answer early and loud; deep trees answer late and thin. Different shapes, different chords.
+- **Status**: experiments/miller-quipu
+- **Evaluation**: Success. Compiled (edition 2024, workspace deps). Headless-first: `--headless` on the deterministic demo grove — 15 atoms, 14 bonds, lattice span 5, 15 cords tied, quipu total 279, 1 pulse, 15 atoms reached, 15 returns heard, echo total 279, peak return tick 2 (value 106), fingerprint t0:100 t2:106 t4:60 t6:13. 3/3 unit tests pass (echo accounting, hop-by-hop propagation — no depth-3 echo before tick 6 — and different trees ringing different fingerprints).
+
 
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all recent crosses including `flock-origami`. It successfully compiled, proving its viability. The Reaper had previously condemned a related specimen, but this resurrected formulation is robust. Because the 'Proposed Crosses' section is empty, I am autonomously inventing a new hybrid to map interactive UI directly into a thermodynamic scalar field: `arthropod-platter`.
 
