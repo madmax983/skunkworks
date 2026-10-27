@@ -1,0 +1,11 @@
+[package]
+name = "git-resonance"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = "0.4"
+git-associates.workspace = true
+rand.workspace = true
+resonance-audio.workspace = true
+tui-shared.workspace = true
