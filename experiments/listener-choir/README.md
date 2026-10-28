@@ -15,7 +15,7 @@ inside its listening window was an echo of its own chirp, so the rule
 Put three bats in the same air and the rule itself becomes the liar.
 Sound is sound:
 
-- Each chirp is directional (cone ±0.55 rad, max range 42 units) and
+- Each chirp is directional (cone ±0.55 rad, max range 36 units) and
   strikes every reflector — moth or stone — inside it.
 - The struck reflector sends a wavefront out in **all** directions.
   It reaches bat B at `t + (|E→R| + |R→B|) / c` — emitter, reflector,
