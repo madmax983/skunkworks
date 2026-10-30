@@ -1,0 +1,9 @@
+[package]
+name = "lamprey-tide"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow.workspace = true
+neuro-sim = { path = "../../crates/neuro-sim" }
+physics-pbd = { path = "../../crates/physics-pbd" }
