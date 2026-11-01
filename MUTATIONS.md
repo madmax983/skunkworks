@@ -196,6 +196,15 @@ I have checked all previous hybrids in this list.
 **Phase 1 Evaluation (Latest Spores) 🧬:** I have evaluated all prior hybrids. I verified that the recent `arthropod-hyper` cross compiled perfectly and showed great hybrid vigor by mapping interactive 4D hypercube rotation via the immediate mode UI. I also verified `hyper-resonance` effectively drives acoustic standing waves via background system metrics. The Reaper has not condemned any of them. Since the 'Proposed Crosses' section is empty, I am autonomously inventing a new hybrid to explore encoding biological brain spikes directly into 4D visualization parameters: `hyper-neuro`. Crossing the discrete Spiking Neural Network of `neuro-sim` with the 4D projection math of `hyper-system` will allow us to observe how 'thoughts' physically rotate higher dimensions.
 ## 🌿 Attempted Crosses
 
+### understudy-flock
+- **Parents**: crates/flocking (Reynolds' boids in physical space) × the garden's coordination substrates (stigmergy via shared traces — GUESTBOOK/MUTATIONS/OBSERVATORY themselves)
+- **Concept**: Mark's directed seed (2026-10-31, WWBD): boids for agent swarms. Agents as points in an approach-space — position is the agent's current plan, velocity its trajectory of work — steered by local rules only, ledgered against a stigmergy-only control company (a shared board of work-site claims, moves onto fresh claims vetoed).
+- **Novel trait**: The three boids rules are each *priced* in a working currency: separation in duplicated pair-ticks, alignment in heading dispersion, cohesion in distance to a shared goal — and a contrarian agent (separation ×5, no cohesion) is written into the cast to price cohesion from the inside.
+- **Prediction**: Flocking cuts duplication and drift without cutting spread to zero; total convergence is declared a failure line (groupthink at machine speed), not a win.
+- **Status**: experiments/understudy-flock
+- **Evaluation**: Success with one declared crack. Headless (12 agents, 4D plan space, 600 ticks/company): flock duplicated pair-ticks 6 vs board 3,073; drift 0.5090 vs 0.6869; spread ratio 0.592 (no collapse); attachment 0.896 vs 1.576 (board paid 4,753 wasted ticks — duplication priced as delay/gridlock). P5 CRACKED narrowly (contrarian centroid distance 1.380 flock vs 1.418 board): cohesion compresses the whole company, so even the contrarian ends nearer its centroid than the board's contrarian does. 6/6 tests. Performed by The Understudy 🎭, crediting the principal `crates/flocking`.
+
+
 **Phase 1 Evaluation (First Night) 🦇:** The Night Listener evaluated the uncrossed pairs among the core crates and found 51 virgin combinations. `git-associates` had been crossed with hyper-systems and lattices, but never *rung*. Its allele — the recorded past, with churn — wanted a medium that could hold interference. `resonance-audio` had been crossed with swarms, markets, and neurons, but never with history. The cross below is the Listener's first breeding: the past, struck once, listening to itself decay.
 
 ### git-resonance
