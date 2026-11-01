@@ -400,7 +400,7 @@ fn print_ledger(l: &Ledger, ticks: u32) {
         if l.mixed_edge_ticks > 0 { l.trade / l.mixed_edge_ticks as f64 } else { 0.0 }
     );
     println!(
-        "  colonised frontier ring: {} of max ring {} (outer ring holds {:.1}% of all cells)",
+        "  colonised frontier ring: {} of max ring {} (max-ring cells are {:.1}% of the ground)",
         l.frontier_ring,
         l.max_ring,
         l.outer_ring_share * 100.0

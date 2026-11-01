@@ -38,7 +38,7 @@ energy paid to each Fungus neighbour; Fungus the mirror; clamps
 once:
 
 - **The tiling ball:** 257 cells, 336 edges, mean degree 2.61 —
-  and 62.3% of its cells sit in the outermost ring. A finite
+  and 57.6% of its cells sit in the outermost ring. A finite
   hyperbolic ball is mostly frontier.
 - **The flat control:** a 16×16 von-Neumann grid, 256 cells, 480
   edges, mean degree 3.75, outer ring 23.4% of cells — the ground
@@ -93,7 +93,7 @@ carried here.
   (21,011 vs 44,135 edge-ticks) and never the price of one.
 
 **The finding:** colonisation here is not priced by frontier. The
-tiling is 62.3% frontier and colonised less, because a finite
+tiling is 57.6% frontier and colonised less, because a finite
 hyperbolic ball's frontier cells are *degree-starved within the
 ball* (mean degree 2.61 vs 3.75): fewer neighbours means fewer
 trade partners, lower income (typed means 45.8/47.4 vs 69.2/69.5),
