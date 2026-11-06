@@ -1,0 +1,1570 @@
+//! # Waning Moths \U0001f4a1
+//!
+//! Brought by The Moth Keeper. Parent: `crates/resonance-audio`
+//! (`PhysicsGrid`, a 2D FDTD wave solver), via `fading-moths`.
+//!
+//! `fading-moths` taxed caution at the dawn boundary and named
+//! the succession taken up verbatim here: *a within-night decay
+//! clock -- caution taxed continuously (a unit expires N ticks
+//! after it is earned or taught) instead of at the dawn boundary
+//! -- to price the half-life in ticks rather than in nights.*
+//! The dawn survey found the two pools do not fade alike
+//! (taught taxed: expired 41, burns 13; earned taxed: expired
+//! 13, burns 10 -- the scarce pool was never the one doing the
+//! carrying; both taxed: burns 15, the channel starved 943 ->
+//! 393 events). But a dawn tax is a cliff, not a clock: a unit
+//! gained at tick 1490 of a night and a unit gained at tick 10
+//! are taxed identically, though one is a night old and the
+//! other is minutes from its first flight. No room has ever
+//! priced caution by its AGE.
+//!
+//! The change, exactly one per new room: caution is booked by
+//! source exactly as in `fading-moths` (earned pool: own burns
+//! and witnessed burns; taught pool: re-judged evidence
+//! packets, spent first by acquittals) -- and every unit also
+//! carries the global tick it was gained at, on a clock that
+//! runs across dawns and never resets. A unit expires the
+//! moment its age reaches the room's LIFETIME, mid-night or
+//! mid-check, wherever the age falls. There is no dawn tax in
+//! these rooms; the dawn is not special. Four twin rooms price
+//! the lifetime:
+//!
+//! - **waning-1500** -- a unit lives one full night (1500
+//!   ticks): the gentlest clock, the dawn tax's nearest kin.
+//! - **waning-750** -- half a night.
+//! - **waning-375** -- a quarter night: a lesson learned at a
+//!   night's start is gone before its middle.
+//! - **waning-150** -- a tenth of a night, one aversion long:
+//!   caution barely outlives the recoil it arrived with.
+//!
+//! The packets, the re-judgement, the aversion, and the
+//! acquittal rule are the evidence room's, verbatim. Fifteen
+//! twin rooms, same seed: the eleven parents, unchanged, plus
+//! the four waning rooms.
+//!
+//! Predictions, declared before the first run:
+//! P1: the channel works waning -- in each waning room,
+//! packets are witnessed in both kinds (irregular > 0,
+//! steady > 0) and waning-first learners number > 0.
+//! P2: the clock doses -- total expired units strictly
+//! increase as the lifetime shrinks:
+//! expired(150) > expired(375) > expired(750) >
+//! expired(1500) > 0.
+//! P3 (claim A): waning-150 burns exceed the evidence room's
+//! 12 -- a 150-tick lifetime forgets faster than any dawn
+//! tax and the forgetting costs burns.
+//! P4 (claim B): waning-1500 burns do not exceed
+//! fading-both's 15 -- a full-night lifetime is gentler than
+//! expiring everything at dawn regardless of age, because a
+//! unit gained late in a night survives into the next.
+//! P5 (the dose claim): burns are non-increasing in the
+//! lifetime -- burns(150) >= burns(375) >= burns(750) >=
+//! burns(1500). If the curve is not monotone, the half-life
+//! is not a single number and the ledger says where it bends.
+//! P6: feeding holds near the evidence room's level
+//! (>= 40) in each waning room: forgetting is not starvation.
+//!
+//! *Every lamp is a claim. Check the claim -- and ask how
+//! old the checking is.*
+
+use anyhow::Result;
+use std::collections::VecDeque;
+use rand::{Rng, SeedableRng};
+use rand::rngs::StdRng;
+use resonance_audio::{Material, PhysicsGrid};
+
+/// Room width in cells.
+const WIDTH: usize = 56;
+/// Room height in cells.
+const HEIGHT: usize = 28;
+/// The honest lamp's position (west wall).
+const HONEST_POS: (usize, usize) = (9, 14);
+/// The decoy lamp's position (east wall).
+const DECOY_POS: (usize, usize) = (46, 14);
+/// The honest lamp's emission period, in ticks. Perfectly regular.
+const HONEST_PERIOD: u64 = 16;
+/// The honest lamp's pluck strength — modest wattage.
+const HONEST_STRENGTH: f32 = 0.9;
+/// The decoy's alternating emission intervals. Their mean equals
+/// the honest period; their *disagreement* is the signature.
+const DECOY_SHORT: u64 = 6;
+/// See [`DECOY_SHORT`].
+const DECOY_LONG: u64 = 26;
+/// The decoy's pluck strength — the brighter claim.
+const DECOY_STRENGTH: f32 = 2.2;
+/// Moths in the room each night.
+const MOTHS: usize = 24;
+/// Nights observed. The population carries its burns — and its
+/// caution — from night to night; only positions reset.
+const NIGHTS: usize = 3;
+/// Ticks per night.
+const NIGHT_TICKS: u64 = 1500;
+/// Distance from a lamp centre at which the keeper applies the
+/// lamp's outcome (feed or burn). The moths never see this number.
+const ARRIVE_RADIUS: f64 = 2.4;
+/// Smoothed brightness at a moth's cell that says "a lamp is loud
+/// here" — loud enough to be worth a cautious moth's stopped time.
+const CHECK_TRIGGER: f32 = 0.10;
+/// How long a checking moth stands still and listens, at most.
+const CHECK_TICKS: u64 = 96;
+/// Peak-interval coefficient of variation above which a flicker is
+/// judged irregular — a decoy's signature.
+const FLICKER_CV: f64 = 0.35;
+/// Brightness peak threshold for flicker timing (on the moth's
+/// smoothed, saturation-clipped perception).
+const PEAK_THRESH: f32 = 0.16;
+/// The moth sensor's saturation point: brightness above this is
+/// clipped, so the decoy's extra wattage buys it no extra *detail* —
+/// only extra pull on moths too far away to be saturated.
+const SENSOR_SATURATION: f32 = 1.0;
+/// Health a burn costs.
+const BURN_DAMAGE: i32 = 35;
+/// Health a feeding restores.
+const FEED_RESTORE: i32 = 25;
+/// Ticks a refused moth flees and will not re-approach.
+const AVERSION_TICKS: u64 = 150;
+/// Ticks after a check before the same moth will stop to check again.
+const CHECK_COOLDOWN: u64 = 220;
+/// Distance (cells) from a burn at which a moth can witness it:
+/// see the flash and the knockback, earn caution, pay no health.
+/// Beyond this radius a burn is private. Witnessing teaches
+/// *that* a claim can burn, never *which* lamp did it.
+const WITNESS_RADIUS: f64 = 12.0;
+/// Distance (cells) from a refusal at which a moth can witness it:
+/// see a neighbour stop, judge, and flee. Chain witnessing teaches
+/// *that* a claim was refused nearby, never which lamp it was.
+const CHAIN_RADIUS: f64 = 12.0;
+
+/// Coefficient of variation of a peak-interval sample: the
+/// flicker judge every moth uses, first-hand or by evidence.
+fn cv_of(iv: &[u64]) -> f64 {
+    if iv.len() < 2 { return 0.0; }
+    let mean = iv.iter().sum::<u64>() as f64 / iv.len() as f64;
+    if mean <= 0.0 { return 0.0; }
+    let var = iv.iter().map(|&v| (v as f64 - mean).powi(2)).sum::<f64>() / iv.len() as f64;
+    var.sqrt() / mean
+}
+
+/// Tuition system under test.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Tuition {
+    /// keeper-moths rule: caution only from your own burns.
+    Solo,
+    /// Caution also from witnessed burns within radius.
+    Witness,
+    /// Caution also from witnessed burns AND witnessed refusals.
+    Chain,
+    /// Caution also from witnessed refusals, with the recoil
+    /// directed away from the refused lamp (the refuser's
+    /// gradient direction at refusal), not the refuser's place.
+    Placed,
+    /// Evidence packets from every completed check: witnesses
+    /// re-judge the transmitted peak intervals themselves.
+    Evidence,
+    /// Evidence packets, throttled: a checker transmits only its
+    /// first completed check each night; later checks are
+    /// withheld from the room.
+    Throttled,
+    /// Evidence packets, unshoved: every completed check transmits
+    /// its peak intervals exactly as in the evidence room, and
+    /// witnesses re-judge them -- but an irregular verdict earns
+    /// caution WITHOUT the 150-tick aversion. Caution as
+    /// information, not as a recoil.
+    Unshoved,
+    /// Evidence packets, shoved: every completed check transmits
+    /// its peak intervals exactly as in the evidence room, and
+    /// witnesses re-judge them -- but an irregular verdict earns
+    /// the 150-tick aversion WITHOUT caution. The shove travels;
+    /// the lesson does not. No checker is recruited, and a steady
+    /// verdict earns nothing (no acquittal channel: no hearsay
+    /// caution exists in this room to acquit).
+    Shoved,
+    /// Evidence packets, fading-taught: witnesses re-judge
+    /// exactly as in the evidence room and taught caution is
+    /// booked in its own pool -- and at each dawn after the
+    /// first, the taught pool expires to zero. Earned caution
+    /// (own burns, witnessed burns) persists.
+    FadingTaught,
+    /// Evidence packets, fading-earned: the mirror tax -- at
+    /// each dawn the earned pool expires to zero and taught
+    /// caution persists.
+    FadingEarned,
+    /// Evidence packets, fading-both: at each dawn both pools
+    /// expire; only scars and health carry across the dawn.
+    FadingBoth,
+    /// Evidence packets, waning-1500: caution booked by source
+    /// as in the fading rooms, but every unit expires exactly
+    /// 1500 ticks after it was gained, on a clock that runs
+    /// across dawns. No dawn tax.
+    Waning1500,
+    /// Evidence packets, waning-750: unit lifetime 750 ticks.
+    Waning750,
+    /// Evidence packets, waning-375: unit lifetime 375 ticks.
+    Waning375,
+    /// Evidence packets, waning-150: unit lifetime 150 ticks.
+    Waning150,
+}
+
+impl Tuition {
+    /// The within-night decay clock: the lifetime, in ticks, of
+    /// a caution unit in a waning room; `None` everywhere else.
+    fn waning_lifetime(self) -> Option<u64> {
+        match self {
+            Tuition::Waning1500 => Some(1500),
+            Tuition::Waning750 => Some(750),
+            Tuition::Waning375 => Some(375),
+            Tuition::Waning150 => Some(150),
+            _ => None,
+        }
+    }
+
+    fn is_waning(self) -> bool {
+        self.waning_lifetime().is_some()
+    }
+}
+
+/// What the keeper (never the moth) knows happened in a night.
+#[derive(Debug, Default, Clone, Copy)]
+struct NightLedger {
+    fed: usize,
+    decoy_arrivals: usize,
+    burns: usize,
+    deaths: usize,
+    checks: usize,
+    refusals: usize,
+    steady_verdicts: usize,
+    alive_end: usize,
+    witness_events: usize,
+    new_witness_learners: usize,
+    chain_events: usize,
+    new_chain_learners: usize,
+    placed_events: usize,
+    new_placed_learners: usize,
+    evidence_events: usize,
+    new_evidence_learners: usize,
+    evidence_acquittals: usize,
+    evidence_irregular: usize,
+    evidence_steady: usize,
+    throttled_events: usize,
+    new_throttled_learners: usize,
+    throttled_acquittals: usize,
+    throttled_irregular: usize,
+    throttled_steady: usize,
+    throttled_packets_sent: usize,
+    throttled_suppressed: usize,
+    unshoved_events: usize,
+    new_unshoved_learners: usize,
+    unshoved_acquittals: usize,
+    unshoved_irregular: usize,
+    unshoved_steady: usize,
+    shoved_events: usize,
+    new_shoved_first: usize,
+    shoved_acquittals: usize,
+    shoved_irregular: usize,
+    shoved_steady: usize,
+    fading_events: usize,
+    new_fading_learners: usize,
+    fading_acquittals: usize,
+    fading_irregular: usize,
+    fading_steady: usize,
+    expired_taught: usize,
+    expired_earned: usize,
+    waning_events: usize,
+    new_waning_learners: usize,
+    waning_acquittals: usize,
+    waning_irregular: usize,
+    waning_steady: usize,
+    waning_expired_taught: usize,
+    waning_expired_earned: usize,
+}
+
+#[derive(Clone, Debug)]
+struct Moth {
+    x: f64,
+    y: f64,
+    vx: f64,
+    vy: f64,
+    health: i32,
+    /// Burns survived. Caution is *earned*, never granted.
+    caution: u32,
+    personal_burns: u32,
+    witnessed_burns: u32,
+    /// True once this moth's first caution came from witnessing,
+    /// before any burn of its own.
+    witness_first: bool,
+    witnessed_refusals: u32,
+    /// True once this moth's first caution came from a witnessed
+    /// refusal, before any burn or burn-witness of its own.
+    chain_first: bool,
+    witnessed_placed: u32,
+    /// True once this moth's first caution came from a placed
+    /// (direction-carrying) witnessed refusal.
+    placed_first: bool,
+    witnessed_evidence: u32,
+    /// True once this moth's first caution came from re-judging
+    /// a transmitted evidence packet as irregular.
+    evidence_first: bool,
+    witnessed_throttled: u32,
+    /// True once this moth's first caution came from re-judging
+    /// a transmitted throttled packet as irregular.
+    throttled_first: bool,
+    witnessed_unshoved: u32,
+    /// True once this moth's first caution came from re-judging
+    /// a transmitted unshoved packet as irregular.
+    unshoved_first: bool,
+    witnessed_shoved: u32,
+    /// True once this moth's first taught shove came from
+    /// re-judging a transmitted shoved packet as irregular,
+    /// before any burn of its own. (A shove is not a caution;
+    /// the flag only records that the push arrived first.)
+    shoved_first: bool,
+    witnessed_fading: u32,
+    /// True once this moth's first caution came from re-judging
+    /// a transmitted fading packet as irregular.
+    fading_first: bool,
+    /// The taught pool: caution currently held that came from
+    /// re-judging evidence packets (fading rooms only; always
+    /// zero elsewhere). Earned caution is `caution` minus this.
+    taught_caution: u32,
+    witnessed_waning: u32,
+    /// True once this moth's first caution came from re-judging
+    /// a transmitted waning packet as irregular.
+    waning_first: bool,
+    /// Gain ticks (on the room's global, dawn-crossing clock)
+    /// of the earned caution units this moth currently holds,
+    /// oldest first (waning rooms only; always empty elsewhere).
+    /// Invariant in a waning room: `caution` equals
+    /// `earned_units.len() + taught_units.len()`.
+    earned_units: VecDeque<u64>,
+    /// Gain ticks of the taught caution units currently held,
+    /// oldest first (waning rooms only).
+    taught_units: VecDeque<u64>,
+    /// True once this moth has transmitted a packet this night.
+    transmitted_this_night: bool,
+    /// Smoothed brightness perceived at its own cell (saturating).
+    glow: f32,
+    prev_glow: f32,
+    /// Ticks since the last perceived brightness peak.
+    since_peak: u64,
+    peak_intervals: Vec<u64>,
+    /// Some(ticks remaining) while standing still, listening.
+    checking: Option<u64>,
+    check_cooldown: u64,
+    aversion: u64,
+    settled: bool,
+    dead: bool,
+}
+
+impl Moth {
+    fn new(rng: &mut StdRng) -> Self {
+        // Spawn in the middle dark, equidistant-ish from both lamps.
+        let x = 28.0 + rng.gen_range(-6.0..6.0);
+        let y = 14.0 + rng.gen_range(-6.0..6.0);
+        Self {
+            x,
+            y,
+            vx: 0.0,
+            vy: 0.0,
+            health: 100,
+            caution: 0,
+            personal_burns: 0,
+            witnessed_burns: 0,
+            witness_first: false,
+            witnessed_refusals: 0,
+            chain_first: false,
+            witnessed_placed: 0,
+            placed_first: false,
+            witnessed_evidence: 0,
+            evidence_first: false,
+            witnessed_throttled: 0,
+            throttled_first: false,
+            witnessed_unshoved: 0,
+            unshoved_first: false,
+            witnessed_shoved: 0,
+            shoved_first: false,
+            witnessed_fading: 0,
+            fading_first: false,
+            taught_caution: 0,
+            witnessed_waning: 0,
+            waning_first: false,
+            earned_units: VecDeque::new(),
+            taught_units: VecDeque::new(),
+            transmitted_this_night: false,
+            glow: 0.0,
+            prev_glow: 0.0,
+            since_peak: 0,
+            peak_intervals: Vec::new(),
+            checking: None,
+            check_cooldown: 0,
+            aversion: 0,
+            settled: false,
+            dead: false,
+        }
+    }
+}
+
+struct Room {
+    tuition: Tuition,
+    grid: PhysicsGrid,
+    moths: Vec<Moth>,
+    tick: u64,
+    /// The dawn-crossing clock: ticks since the room opened,
+    /// never reset at a dawn. Caution units are aged on this
+    /// clock in waning rooms (and it ticks, unread, elsewhere).
+    global_tick: u64,
+    nights_done: u32,
+    next_decoy_in: u64,
+    decoy_short_next: bool,
+    rng: StdRng,
+}
+
+impl Room {
+    fn new(seed: u64, tuition: Tuition) -> Self {
+        let mut grid = PhysicsGrid::new(WIDTH, HEIGHT);
+        for x in 0..WIDTH {
+            grid.set_material(x, 0, Material::Wall);
+            grid.set_material(x, HEIGHT - 1, Material::Wall);
+        }
+        for y in 0..HEIGHT {
+            grid.set_material(0, y, Material::Wall);
+            grid.set_material(WIDTH - 1, y, Material::Wall);
+        }
+        let mut rng = StdRng::seed_from_u64(seed);
+        let moths = (0..MOTHS).map(|_| Moth::new(&mut rng)).collect();
+        Self {
+            tuition,
+            grid,
+            moths,
+            tick: 0,
+            global_tick: 0,
+            nights_done: 0,
+            next_decoy_in: 3,
+            decoy_short_next: true,
+            rng,
+        }
+    }
+
+    fn cell_of(m: &Moth) -> (usize, usize) {
+        (
+            (m.x.round() as i64).clamp(1, WIDTH as i64 - 2) as usize,
+            (m.y.round() as i64).clamp(1, HEIGHT as i64 - 2) as usize,
+        )
+    }
+
+    fn brightness_at(&self, x: usize, y: usize) -> f32 {
+        self.grid.get(x, y).abs().min(SENSOR_SATURATION)
+    }
+
+    fn run_night(&mut self) -> NightLedger {
+        let mut ledger = NightLedger::default();
+        // Dawn decay (fading rooms only): caution carried across
+        // the dawn is taxed by source before the new night
+        // begins. The expiries are booked into the new night's
+        // ledger -- the dawn is where the loss is discovered.
+        if self.nights_done > 0 {
+            match self.tuition {
+                Tuition::FadingTaught => {
+                    for m in &mut self.moths {
+                        ledger.expired_taught += m.taught_caution as usize;
+                        m.caution = m.caution.saturating_sub(m.taught_caution);
+                        m.taught_caution = 0;
+                    }
+                }
+                Tuition::FadingEarned => {
+                    for m in &mut self.moths {
+                        let earned = m.caution.saturating_sub(m.taught_caution);
+                        ledger.expired_earned += earned as usize;
+                        m.caution = m.taught_caution;
+                    }
+                }
+                Tuition::FadingBoth => {
+                    for m in &mut self.moths {
+                        ledger.expired_taught += m.taught_caution as usize;
+                        ledger.expired_earned +=
+                            m.caution.saturating_sub(m.taught_caution) as usize;
+                        m.caution = 0;
+                        m.taught_caution = 0;
+                    }
+                }
+                _ => {}
+            }
+        }
+        // Fresh dark: clear the field, respawn the living unsettled
+        // at the centre. Caution, health and scars carry over.
+        self.grid.clear_waves();
+        self.tick = 0;
+        self.next_decoy_in = 3;
+        self.decoy_short_next = true;
+        for m in &mut self.moths {
+            if !m.dead {
+                m.x = 28.0 + self.rng.gen_range(-6.0..6.0);
+                m.y = 14.0 + self.rng.gen_range(-6.0..6.0);
+                m.vx = 0.0;
+                m.vy = 0.0;
+                m.settled = false;
+                m.checking = None;
+                m.aversion = 0;
+                m.check_cooldown = 0;
+                m.transmitted_this_night = false;
+                m.peak_intervals.clear();
+                m.glow = 0.0;
+                m.prev_glow = 0.0;
+            }
+        }
+
+        for _ in 0..NIGHT_TICKS {
+            self.tick += 1;
+            self.global_tick += 1;
+            // Waning: caution expires by age, not by dawn. Each
+            // unit's queue is oldest-first, so expiry pops from
+            // the front until the front unit is still young.
+            // The loss is booked into the night in which the
+            // unit's age runs out -- a night, like a moth,
+            // discovers its forgetting mid-flight.
+            if let Some(lifetime) = self.tuition.waning_lifetime() {
+                for m in &mut self.moths {
+                    while let Some(&g) = m.taught_units.front() {
+                        if self.global_tick >= g + lifetime {
+                            m.taught_units.pop_front();
+                            m.taught_caution = m.taught_caution.saturating_sub(1);
+                            m.caution = m.caution.saturating_sub(1);
+                            ledger.waning_expired_taught += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                    while let Some(&g) = m.earned_units.front() {
+                        if self.global_tick >= g + lifetime {
+                            m.earned_units.pop_front();
+                            m.caution = m.caution.saturating_sub(1);
+                            ledger.waning_expired_earned += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+            // --- The lamps speak into the field. ---
+            if self.tick % HONEST_PERIOD == 0 {
+                self.grid.pluck(HONEST_POS.0, HONEST_POS.1, HONEST_STRENGTH);
+            }
+            if self.tick >= self.next_decoy_in {
+                self.grid.pluck(DECOY_POS.0, DECOY_POS.1, DECOY_STRENGTH);
+                let interval = if self.decoy_short_next { DECOY_SHORT } else { DECOY_LONG };
+                self.decoy_short_next = !self.decoy_short_next;
+                self.next_decoy_in = self.tick + interval;
+            }
+            self.grid.step();
+
+            // --- The moths perceive, decide, move. ---
+            let mut outcomes: Vec<(usize, bool)> = Vec::new(); // (moth idx, honest?)
+            let mut refusal_events: Vec<(usize, f64, f64)> = Vec::new(); // (moth idx, gradient x, gradient y at refusal)
+            let mut check_packets: Vec<(usize, Vec<u64>)> = Vec::new(); // (checker idx, peak intervals it heard) — evidence room only
+            for i in 0..self.moths.len() {
+                if self.moths[i].dead || self.moths[i].settled {
+                    continue;
+                }
+                // Perceive before taking the mutable borrow: the
+                // field is read whole, the moth is written.
+                let (cx, cy) = Self::cell_of(&self.moths[i]);
+                let raw = self.brightness_at(cx, cy);
+                let gx = self.brightness_at((cx + 1).min(WIDTH - 2), cy)
+                    - self.brightness_at(cx.saturating_sub(1).max(1), cy);
+                let gy = self.brightness_at(cx, (cy + 1).min(HEIGHT - 2))
+                    - self.brightness_at(cx, cy.saturating_sub(1).max(1));
+                let m = &mut self.moths[i];
+                m.prev_glow = m.glow;
+                m.glow = m.glow * 0.80 + raw * 0.20;
+
+                // Peak timing, for any moth that is listening.
+                m.since_peak += 1;
+                if m.checking.is_some()
+                    && m.prev_glow <= PEAK_THRESH
+                    && m.glow > PEAK_THRESH
+                    && m.since_peak > 3
+                {
+                    m.peak_intervals.push(m.since_peak);
+                    m.since_peak = 0;
+                }
+
+                if m.check_cooldown > 0 {
+                    m.check_cooldown -= 1;
+                }
+
+                // Checking: stand still, listen, then judge.
+                if let Some(left) = m.checking {
+                    if left <= 1 || m.peak_intervals.len() >= 5 {
+                        if self.tuition == Tuition::Evidence || self.tuition == Tuition::Unshoved || self.tuition == Tuition::Shoved || matches!(self.tuition, Tuition::FadingTaught | Tuition::FadingEarned | Tuition::FadingBoth | Tuition::Waning1500 | Tuition::Waning750 | Tuition::Waning375 | Tuition::Waning150) {
+                            check_packets.push((i, m.peak_intervals.clone()));
+                        } else if self.tuition == Tuition::Throttled {
+                            if !m.transmitted_this_night {
+                                check_packets.push((i, m.peak_intervals.clone()));
+                                m.transmitted_this_night = true;
+                                ledger.throttled_packets_sent += 1;
+                            } else {
+                                ledger.throttled_suppressed += 1;
+                            }
+                        }
+                        // Judge the flicker.
+                        if m.peak_intervals.len() >= 3 {
+                            let iv = &m.peak_intervals;
+                            let mean = iv.iter().sum::<u64>() as f64 / iv.len() as f64;
+                            let var = iv
+                                .iter()
+                                .map(|&v| (v as f64 - mean).powi(2))
+                                .sum::<f64>()
+                                / iv.len() as f64;
+                            let cv = if mean > 0.0 { var.sqrt() / mean } else { 0.0 };
+                            if cv > FLICKER_CV {
+                                ledger.refusals += 1;
+                                refusal_events.push((i, gx as f64, gy as f64));
+                                m.aversion = AVERSION_TICKS;
+                                // Flee down-gradient: reverse heading.
+                                m.vx = -m.vx - 0.3;
+                                m.vy = -m.vy;
+                            } else {
+                                ledger.steady_verdicts += 1;
+                            }
+                        } else {
+                            ledger.steady_verdicts += 1;
+                        }
+                        m.checking = None;
+                        m.check_cooldown = CHECK_COOLDOWN;
+                        m.peak_intervals.clear();
+                    } else {
+                        m.checking = Some(left - 1);
+                        continue; // standing still is the cost
+                    }
+                }
+
+                // A cautious moth that hears a loud claim stops to check it.
+                if m.caution > 0
+                    && m.checking.is_none()
+                    && m.check_cooldown == 0
+                    && m.aversion == 0
+                    && m.glow > CHECK_TRIGGER
+                {
+                    m.checking = Some(CHECK_TICKS);
+                    m.peak_intervals.clear();
+                    m.since_peak = 0;
+                    ledger.checks += 1;
+                    continue;
+                }
+
+                // Flight: steer up the local brightness gradient
+                // (sampled above, before the borrow), with jitter —
+                // moth flight, not missile guidance.
+                let pull = if m.aversion > 0 { -1.0 } else { 1.0 };
+                if m.aversion > 0 {
+                    m.aversion -= 1;
+                }
+                let jx = self.rng.gen_range(-0.05..0.05);
+                let jy = self.rng.gen_range(-0.05..0.05);
+                m.vx = (m.vx + pull * gx as f64 * 1.4 + jx) * 0.88;
+                m.vy = (m.vy + pull * gy as f64 * 1.4 + jy) * 0.88;
+                let speed = (m.vx * m.vx + m.vy * m.vy).sqrt();
+                let max_speed = 0.55;
+                if speed > max_speed {
+                    m.vx *= max_speed / speed;
+                    m.vy *= max_speed / speed;
+                }
+                m.x = (m.x + m.vx).clamp(1.5, WIDTH as f64 - 2.5);
+                m.y = (m.y + m.vy).clamp(1.5, HEIGHT as f64 - 2.5);
+
+                // Arrival: the keeper, not the moth, applies it.
+                let dh = ((m.x - HONEST_POS.0 as f64).powi(2)
+                    + (m.y - HONEST_POS.1 as f64).powi(2))
+                .sqrt();
+                let dd = ((m.x - DECOY_POS.0 as f64).powi(2)
+                    + (m.y - DECOY_POS.1 as f64).powi(2))
+                .sqrt();
+                if dh <= ARRIVE_RADIUS {
+                    outcomes.push((i, true));
+                } else if dd <= ARRIVE_RADIUS {
+                    outcomes.push((i, false));
+                }
+            }
+
+            let waning = self.tuition.is_waning();
+            let gtick = self.global_tick;
+            for (i, honest) in outcomes {
+                let m = &mut self.moths[i];
+                if honest {
+                    ledger.fed += 1;
+                    m.health = (m.health + FEED_RESTORE).min(100);
+                    m.settled = true;
+                } else {
+                    ledger.decoy_arrivals += 1;
+                    ledger.burns += 1;
+                    // The burned moth's own account is settled in
+                    // this scope; the borrow ends before witnesses
+                    // are taught (they are other moths entirely).
+                    {
+                        let m = &mut self.moths[i];
+                        m.health -= BURN_DAMAGE;
+                        m.caution += 1;
+                        if waning {
+                            m.earned_units.push_back(gtick);
+                        }
+                        m.personal_burns += 1;
+                        if m.health <= 0 {
+                            m.dead = true;
+                            ledger.deaths += 1;
+                        } else {
+                            // Knocked back into the dark, wiser.
+                            m.x = 28.0 + self.rng.gen_range(-5.0..5.0);
+                            m.y = 14.0 + self.rng.gen_range(-5.0..5.0);
+                            m.vx = 0.0;
+                            m.vy = 0.0;
+                            m.check_cooldown = 0;
+                        }
+                    }
+                    if self.tuition != Tuition::Solo {
+                        // A burn is a local event. Collect the
+                        // witnesses first (distance from the burn
+                        // site, i.e. the decoy), then teach them:
+                        // caution only, no lamp identity, no map.
+                        let witnesses: Vec<usize> = self
+                            .moths
+                            .iter()
+                            .enumerate()
+                            .filter(|(j, w)| {
+                                *j != i && !w.dead && !w.settled && {
+                                    let d = ((w.x - DECOY_POS.0 as f64).powi(2)
+                                        + (w.y - DECOY_POS.1 as f64).powi(2))
+                                    .sqrt();
+                                    d <= WITNESS_RADIUS
+                                }
+                            })
+                            .map(|(j, _)| j)
+                            .collect();
+                        for j in witnesses {
+                            let w = &mut self.moths[j];
+                            ledger.witness_events += 1;
+                            if w.personal_burns == 0 && !w.witness_first && !w.chain_first {
+                                w.witness_first = true;
+                                ledger.new_witness_learners += 1;
+                            }
+                            w.witnessed_burns += 1;
+                            w.caution += 1;
+                            if waning {
+                                w.earned_units.push_back(gtick);
+                            }
+                            // A witness also recoils: it saw
+                            // *where* the burn happened, close
+                            // by, and flees down-gradient for a
+                            // while — the same aversion a refused
+                            // claim earns, paid in distance.
+                            w.aversion = AVERSION_TICKS;
+                        }
+                    }
+                }
+            }
+            // Chain link: a refusal is a local event in Chain and
+            // Placed rooms. In Placed rooms the witness also
+            // inherits the refusal's direction: the refuser's
+            // gradient at refusal points toward the judged lamp,
+            // so the witness recoils along its negative.
+            if self.tuition == Tuition::Chain || self.tuition == Tuition::Placed {
+                for &(ri, rgx, rgy) in &refusal_events {
+                    let (rx, ry) = (self.moths[ri].x, self.moths[ri].y);
+                    let glen = (rgx * rgx + rgy * rgy).sqrt();
+                    let witnesses: Vec<usize> = self.moths.iter().enumerate()
+                        .filter(|(j, w)| *j != ri && !w.dead && !w.settled && {
+                            let d = ((w.x - rx).powi(2) + (w.y - ry).powi(2)).sqrt();
+                            d <= CHAIN_RADIUS
+                        }).map(|(j, _)| j).collect();
+                    for j in witnesses {
+                        let w = &mut self.moths[j];
+                        if self.tuition == Tuition::Placed {
+                            ledger.placed_events += 1;
+                            if w.personal_burns == 0 && w.witnessed_burns == 0 && !w.placed_first && !w.witness_first && !w.chain_first {
+                                w.placed_first = true;
+                                ledger.new_placed_learners += 1;
+                            }
+                            w.witnessed_placed += 1;
+                            w.caution += 1;
+                            w.aversion = AVERSION_TICKS;
+                            // Direction away from the refused lamp:
+                            // negative gradient at the refuser; if
+                            // that gradient is ~zero, fall back to
+                            // away from the refuser's position.
+                            let dir = if glen > 1e-6 {
+                                (-rgx / glen, -rgy / glen)
+                            } else {
+                                let (dx, dy) = (w.x - rx, w.y - ry);
+                                let l = (dx * dx + dy * dy).sqrt();
+                                if l > 1e-6 { (dx / l, dy / l) } else { (0.0, 0.0) }
+                            };
+                            // The direction is delivered as one
+                            // shove at the teaching moment; the
+                            // ordinary scalar aversion (down the
+                            // witness's own gradient) does the
+                            // rest, exactly as in the chain room.
+                            // A sustained directed recoil was tried
+                            // first and struck — see the README.
+                            w.vx += dir.0 * 0.6;
+                            w.vy += dir.1 * 0.6;
+                        } else {
+                            ledger.chain_events += 1;
+                            if w.personal_burns == 0 && w.witnessed_burns == 0 && !w.chain_first && !w.witness_first {
+                                w.chain_first = true;
+                                ledger.new_chain_learners += 1;
+                            }
+                            w.witnessed_refusals += 1;
+                            w.caution += 1;
+                            w.aversion = AVERSION_TICKS;
+                        }
+                    }
+                }
+            }
+            // Evidence link: a completed check is a local event
+            // in the Evidence room. Witnesses receive the actual
+            // peak intervals and re-judge them: irregular earns
+            // caution; steady can acquit hearsay caution (a moth
+            // with no personal burn whose caution > 0 loses one).
+            // The checker's own verdict is never told to them.
+            if self.tuition == Tuition::Evidence {
+                for (ci, intervals) in &check_packets {
+                    let (cx2, cy2) = (self.moths[*ci].x, self.moths[*ci].y);
+                    let cv = cv_of(intervals);
+                    let irregular = intervals.len() >= 3 && cv > FLICKER_CV;
+                    let witnesses: Vec<usize> = self.moths.iter().enumerate()
+                        .filter(|(j, w)| *j != *ci && !w.dead && !w.settled && {
+                            let d = ((w.x - cx2).powi(2) + (w.y - cy2).powi(2)).sqrt();
+                            d <= CHAIN_RADIUS
+                        }).map(|(j, _)| j).collect();
+                    for j in witnesses {
+                        let w = &mut self.moths[j];
+                        ledger.evidence_events += 1;
+                        w.witnessed_evidence += 1;
+                        if irregular {
+                            ledger.evidence_irregular += 1;
+                            if w.personal_burns == 0 && w.witnessed_burns == 0 && !w.evidence_first && !w.witness_first && !w.chain_first && !w.placed_first {
+                                w.evidence_first = true;
+                                ledger.new_evidence_learners += 1;
+                            }
+                            w.caution += 1;
+                            w.aversion = AVERSION_TICKS;
+                        } else {
+                            ledger.evidence_steady += 1;
+                            if w.personal_burns == 0 && w.caution > 0 {
+                                w.caution -= 1;
+                                ledger.evidence_acquittals += 1;
+                            }
+                        }
+                    }
+                }
+            }
+            // Throttled link: same packets, same re-judgement, but
+            // only the first check per checker per night was ever
+            // sent (gated above). Witnesses re-judge exactly as in
+            // the evidence room; the ledger counts are separate so
+            // the two rooms can be compared packet for packet.
+            if self.tuition == Tuition::Throttled {
+                for (ci, intervals) in &check_packets {
+                    let (cx2, cy2) = (self.moths[*ci].x, self.moths[*ci].y);
+                    let cv = cv_of(intervals);
+                    let irregular = intervals.len() >= 3 && cv > FLICKER_CV;
+                    let witnesses: Vec<usize> = self.moths.iter().enumerate()
+                        .filter(|(j, w)| *j != *ci && !w.dead && !w.settled && {
+                            let d = ((w.x - cx2).powi(2) + (w.y - cy2).powi(2)).sqrt();
+                            d <= CHAIN_RADIUS
+                        }).map(|(j, _)| j).collect();
+                    for j in witnesses {
+                        let w = &mut self.moths[j];
+                        ledger.throttled_events += 1;
+                        w.witnessed_throttled += 1;
+                        if irregular {
+                            ledger.throttled_irregular += 1;
+                            if w.personal_burns == 0 && w.witnessed_burns == 0 && !w.throttled_first && !w.witness_first && !w.chain_first && !w.placed_first && !w.evidence_first {
+                                w.throttled_first = true;
+                                ledger.new_throttled_learners += 1;
+                            }
+                            w.caution += 1;
+                            w.aversion = AVERSION_TICKS;
+                        } else {
+                            ledger.throttled_steady += 1;
+                            if w.personal_burns == 0 && w.caution > 0 {
+                                w.caution -= 1;
+                                ledger.throttled_acquittals += 1;
+                            }
+                        }
+                    }
+                }
+            }
+            // Unshoved link: the evidence room's packets and
+            // re-judgement, verbatim, with exactly one change --
+            // an irregular verdict earns the witness caution and
+            // NO aversion. The lesson arrives as information.
+            // A steady verdict acquits hearsay caution exactly as
+            // in the evidence room (an acquittal never shoved).
+            if self.tuition == Tuition::Unshoved {
+                for (ci, intervals) in &check_packets {
+                    let (cx2, cy2) = (self.moths[*ci].x, self.moths[*ci].y);
+                    let cv = cv_of(intervals);
+                    let irregular = intervals.len() >= 3 && cv > FLICKER_CV;
+                    let witnesses: Vec<usize> = self.moths.iter().enumerate()
+                        .filter(|(j, w)| *j != *ci && !w.dead && !w.settled && {
+                            let d = ((w.x - cx2).powi(2) + (w.y - cy2).powi(2)).sqrt();
+                            d <= CHAIN_RADIUS
+                        }).map(|(j, _)| j).collect();
+                    for j in witnesses {
+                        let w = &mut self.moths[j];
+                        ledger.unshoved_events += 1;
+                        w.witnessed_unshoved += 1;
+                        if irregular {
+                            ledger.unshoved_irregular += 1;
+                            if w.personal_burns == 0 && w.witnessed_burns == 0 && !w.unshoved_first && !w.witness_first && !w.chain_first && !w.placed_first && !w.evidence_first && !w.throttled_first {
+                                w.unshoved_first = true;
+                                ledger.new_unshoved_learners += 1;
+                            }
+                            w.caution += 1;
+                            // NO aversion: that is the experiment.
+                        } else {
+                            ledger.unshoved_steady += 1;
+                            if w.personal_burns == 0 && w.caution > 0 {
+                                w.caution -= 1;
+                                ledger.unshoved_acquittals += 1;
+                            }
+                        }
+                    }
+                }
+            }
+            // Shoved link: the evidence room's packets and
+            // re-judgement, verbatim, with exactly the opposite
+            // change from the unshoved room -- an irregular
+            // verdict earns the witness the 150-tick aversion
+            // and NO caution. The push travels; the lesson does
+            // not: no witness is recruited as a checker by a
+            // packet, and a steady verdict earns nothing at all
+            // (there is no hearsay caution in this room for a
+            // steady packet to acquit, so the acquittal count
+            // stays at zero by construction and is reported,
+            // not asserted, outside the tests).
+            if self.tuition == Tuition::Shoved {
+                for (ci, intervals) in &check_packets {
+                    let (cx2, cy2) = (self.moths[*ci].x, self.moths[*ci].y);
+                    let cv = cv_of(intervals);
+                    let irregular = intervals.len() >= 3 && cv > FLICKER_CV;
+                    let witnesses: Vec<usize> = self.moths.iter().enumerate()
+                        .filter(|(j, w)| *j != *ci && !w.dead && !w.settled && {
+                            let d = ((w.x - cx2).powi(2) + (w.y - cy2).powi(2)).sqrt();
+                            d <= CHAIN_RADIUS
+                        }).map(|(j, _)| j).collect();
+                    for j in witnesses {
+                        let w = &mut self.moths[j];
+                        ledger.shoved_events += 1;
+                        w.witnessed_shoved += 1;
+                        if irregular {
+                            ledger.shoved_irregular += 1;
+                            if w.personal_burns == 0 && !w.shoved_first {
+                                w.shoved_first = true;
+                                ledger.new_shoved_first += 1;
+                            }
+                            // The shove, and only the shove:
+                            // NO caution is earned here.
+                            w.aversion = AVERSION_TICKS;
+                        } else {
+                            ledger.shoved_steady += 1;
+                            // No acquittal: nothing was taught,
+                            // so there is nothing to un-teach.
+                        }
+                    }
+                }
+            }
+
+            // Fading link: the evidence room's packets and
+            // re-judgement, verbatim, with exactly one change --
+            // taught caution is booked in its own pool
+            // (taught_caution) so the dawn can tax each source
+            // separately. An irregular verdict earns caution AND
+            // taught_caution, plus the evidence room's aversion;
+            // a steady verdict acquits hearsay caution, spending
+            // the taught pool first.
+            if matches!(self.tuition, Tuition::FadingTaught | Tuition::FadingEarned | Tuition::FadingBoth) {
+                for (ci, intervals) in &check_packets {
+                    let (cx2, cy2) = (self.moths[*ci].x, self.moths[*ci].y);
+                    let cv = cv_of(intervals);
+                    let irregular = intervals.len() >= 3 && cv > FLICKER_CV;
+                    let witnesses: Vec<usize> = self.moths.iter().enumerate()
+                        .filter(|(j, w)| *j != *ci && !w.dead && !w.settled && {
+                            let d = ((w.x - cx2).powi(2) + (w.y - cy2).powi(2)).sqrt();
+                            d <= CHAIN_RADIUS
+                        }).map(|(j, _)| j).collect();
+                    for j in witnesses {
+                        let w = &mut self.moths[j];
+                        ledger.fading_events += 1;
+                        w.witnessed_fading += 1;
+                        if irregular {
+                            ledger.fading_irregular += 1;
+                            if w.personal_burns == 0 && w.witnessed_burns == 0 && !w.fading_first && !w.witness_first && !w.chain_first && !w.placed_first && !w.evidence_first {
+                                w.fading_first = true;
+                                ledger.new_fading_learners += 1;
+                            }
+                            w.caution += 1;
+                            w.taught_caution += 1;
+                            w.aversion = AVERSION_TICKS;
+                        } else {
+                            ledger.fading_steady += 1;
+                            if w.personal_burns == 0 && w.caution > 0 {
+                                w.caution -= 1;
+                                if w.taught_caution > 0 {
+                                    w.taught_caution -= 1;
+                                }
+                                ledger.fading_acquittals += 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Waning link: the evidence room's packets and
+            // re-judgement, verbatim, with exactly one change --
+            // taught caution is booked in its own pool AND every
+            // unit, taught or earned, carries its gain tick on
+            // the room's global clock, to be expired by age at
+            // the top of some future tick (see run_night). An
+            // acquittal spends the taught pool first, exactly
+            // as in the fading rooms, and pops that unit's tick
+            // with it; if no taught unit remains, the oldest
+            // earned unit is spent.
+            if self.tuition.is_waning() {
+                for (ci, intervals) in &check_packets {
+                    let (cx2, cy2) = (self.moths[*ci].x, self.moths[*ci].y);
+                    let cv = cv_of(intervals);
+                    let irregular = intervals.len() >= 3 && cv > FLICKER_CV;
+                    let witnesses: Vec<usize> = self.moths.iter().enumerate()
+                        .filter(|(j, w)| *j != *ci && !w.dead && !w.settled && {
+                            let d = ((w.x - cx2).powi(2) + (w.y - cy2).powi(2)).sqrt();
+                            d <= CHAIN_RADIUS
+                        }).map(|(j, _)| j).collect();
+                    for j in witnesses {
+                        let w = &mut self.moths[j];
+                        ledger.waning_events += 1;
+                        w.witnessed_waning += 1;
+                        if irregular {
+                            ledger.waning_irregular += 1;
+                            if w.personal_burns == 0 && w.witnessed_burns == 0 && !w.waning_first && !w.witness_first && !w.chain_first && !w.placed_first && !w.evidence_first {
+                                w.waning_first = true;
+                                ledger.new_waning_learners += 1;
+                            }
+                            w.caution += 1;
+                            w.taught_caution += 1;
+                            w.taught_units.push_back(self.global_tick);
+                            w.aversion = AVERSION_TICKS;
+                        } else {
+                            ledger.waning_steady += 1;
+                            if w.personal_burns == 0 && w.caution > 0 {
+                                w.caution -= 1;
+                                if w.taught_caution > 0 {
+                                    w.taught_caution -= 1;
+                                    w.taught_units.pop_front();
+                                } else {
+                                    w.earned_units.pop_front();
+                                }
+                                ledger.waning_acquittals += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        self.nights_done += 1;
+        ledger.alive_end = self.moths.iter().filter(|m| !m.dead).count();
+        ledger
+    }
+}
+
+fn run_all(seed: u64, tuition: Tuition) -> Vec<NightLedger> {
+    let mut room = Room::new(seed, tuition);
+    (0..NIGHTS).map(|_| room.run_night()).collect()
+}
+
+const SEED: u64 = 0x4D4F_5448;
+
+fn print_regime(name: &str, nights: &[NightLedger]) {
+    println!("  regime '{name}':");
+    for (n, l) in nights.iter().enumerate() {
+        println!(
+            "    night {}: fed {}, burns {}, deaths {}, checks {}, refusals {}, steady verdicts {}, witness events {}, new witness learners {}, chain events {}, new chain learners {}, placed events {}, new placed learners {}, evidence events {}, new evidence learners {}, evidence acquittals {}, evidence irregular {}, evidence steady {}, throttled events {}, new throttled learners {}, throttled acquittals {}, throttled irregular {}, throttled steady {}, throttled packets sent {}, throttled suppressed {}, unshoved events {}, new unshoved learners {}, unshoved acquittals {}, unshoved irregular {}, unshoved steady {}, shoved events {}, new shoved-first {}, shoved acquittals {}, shoved irregular {}, shoved steady {}, fading events {}, new fading learners {}, fading acquittals {}, fading irregular {}, fading steady {}, expired taught {}, expired earned {}, waning events {}, new waning learners {}, waning acquittals {}, waning irregular {}, waning steady {}, waning expired taught {}, waning expired earned {}, alive at dawn {}",
+            n + 1, l.fed, l.burns, l.deaths, l.checks, l.refusals,
+            l.steady_verdicts, l.witness_events, l.new_witness_learners, l.chain_events, l.new_chain_learners, l.placed_events, l.new_placed_learners, l.evidence_events, l.new_evidence_learners, l.evidence_acquittals, l.evidence_irregular, l.evidence_steady, l.throttled_events, l.new_throttled_learners, l.throttled_acquittals, l.throttled_irregular, l.throttled_steady, l.throttled_packets_sent, l.throttled_suppressed, l.unshoved_events, l.new_unshoved_learners, l.unshoved_acquittals, l.unshoved_irregular, l.unshoved_steady, l.shoved_events, l.new_shoved_first, l.shoved_acquittals, l.shoved_irregular, l.shoved_steady, l.fading_events, l.new_fading_learners, l.fading_acquittals, l.fading_irregular, l.fading_steady, l.expired_taught, l.expired_earned, l.waning_events, l.new_waning_learners, l.waning_acquittals, l.waning_irregular, l.waning_steady, l.waning_expired_taught, l.waning_expired_earned, l.alive_end
+        );
+    }
+    let burns: usize = nights.iter().map(|l| l.burns).sum();
+    let fed: usize = nights.iter().map(|l| l.fed).sum();
+    let refusals: usize = nights.iter().map(|l| l.refusals).sum();
+    println!("    totals: fed {fed}, burns {burns}, refusals {refusals}");
+}
+
+fn main() -> Result<()> {
+    let args: Vec<String> = std::env::args().collect();
+    // --headless is handled before anything else: this experiment
+    // has no TUI, and none is ever initialised on this path.
+    let headless = args.iter().any(|a| a == "--headless");
+    let solo = run_all(SEED, Tuition::Solo);
+    let witness = run_all(SEED, Tuition::Witness);
+    let chain = run_all(SEED, Tuition::Chain);
+    let placed = run_all(SEED, Tuition::Placed);
+    let evidence = run_all(SEED, Tuition::Evidence);
+    let throttled = run_all(SEED, Tuition::Throttled);
+    let unshoved = run_all(SEED, Tuition::Unshoved);
+    let shoved = run_all(SEED, Tuition::Shoved);
+    let fading_taught = run_all(SEED, Tuition::FadingTaught);
+    let fading_earned = run_all(SEED, Tuition::FadingEarned);
+    let fading_both = run_all(SEED, Tuition::FadingBoth);
+    let waning_1500 = run_all(SEED, Tuition::Waning1500);
+    let waning_750 = run_all(SEED, Tuition::Waning750);
+    let waning_375 = run_all(SEED, Tuition::Waning375);
+    let waning_150 = run_all(SEED, Tuition::Waning150);
+    println!("waning-moths headless: one cave, fifteen tuition systems");
+    println!("  honest lamp: period {HONEST_PERIOD} ticks, strength {HONEST_STRENGTH} \u{2014} steady");
+    println!("  decoy lamp: intervals {DECOY_SHORT}/{DECOY_LONG} ticks (same mean), strength {DECOY_STRENGTH} \u{2014} brighter, irregular");
+    println!("  moths: {MOTHS} per room, {NIGHTS} nights, {NIGHT_TICKS} ticks per night; witness radius {WITNESS_RADIUS} cells; chain radius {CHAIN_RADIUS} cells");
+    print_regime("solo (caution only from your own burns)", &solo);
+    print_regime("witness (caution also from a neighbour's burn, within radius)", &witness);
+    print_regime("chain (caution also from a neighbour's refusal, within radius)", &chain);
+    print_regime("placed (chain, but the refusal carries its lamp direction)", &placed);
+    print_regime("evidence (every check transmits its peak intervals; witnesses re-judge)", &evidence);
+    print_regime("throttled (only each checker's first check per night transmits; witnesses re-judge)", &throttled);
+    print_regime("unshoved (every check transmits its peak intervals; witnesses re-judge; irregular teaches caution with NO aversion)", &unshoved);
+    print_regime("shoved (every check transmits its peak intervals; witnesses re-judge; irregular teaches the aversion with NO caution)", &shoved);
+    print_regime("fading-taught (evidence teaching; taught caution expires at each dawn, earned persists)", &fading_taught);
+    print_regime("fading-earned (evidence teaching; earned caution expires at each dawn, taught persists)", &fading_earned);
+    print_regime("fading-both (evidence teaching; both caution pools expire at each dawn)", &fading_both);
+    print_regime("waning-1500 (evidence teaching; every caution unit expires 1500 ticks after it is gained; no dawn tax)", &waning_1500);
+    print_regime("waning-750 (evidence teaching; unit lifetime 750 ticks; no dawn tax)", &waning_750);
+    print_regime("waning-375 (evidence teaching; unit lifetime 375 ticks; no dawn tax)", &waning_375);
+    print_regime("waning-150 (evidence teaching; unit lifetime 150 ticks; no dawn tax)", &waning_150);
+    let sb: usize = solo.iter().map(|l| l.burns).sum();
+    let wb: usize = witness.iter().map(|l| l.burns).sum();
+    let cb: usize = chain.iter().map(|l| l.burns).sum();
+    let we: usize = witness.iter().map(|l| l.witness_events).sum();
+    let wl: usize = witness.iter().map(|l| l.new_witness_learners).sum();
+    let ce: usize = chain.iter().map(|l| l.chain_events).sum();
+    let cl: usize = chain.iter().map(|l| l.new_chain_learners).sum();
+    let cf: usize = chain.iter().map(|l| l.fed).sum();
+    let pb: usize = placed.iter().map(|l| l.burns).sum();
+    let pf: usize = placed.iter().map(|l| l.fed).sum();
+    let pe: usize = placed.iter().map(|l| l.placed_events).sum();
+    let pl: usize = placed.iter().map(|l| l.new_placed_learners).sum();
+    let pc: usize = placed.iter().map(|l| l.checks).sum();
+    let cc: usize = chain.iter().map(|l| l.checks).sum();
+    let eb: usize = evidence.iter().map(|l| l.burns).sum();
+    let ef: usize = evidence.iter().map(|l| l.fed).sum();
+    let ee: usize = evidence.iter().map(|l| l.evidence_events).sum();
+    let el: usize = evidence.iter().map(|l| l.new_evidence_learners).sum();
+    let ea: usize = evidence.iter().map(|l| l.evidence_acquittals).sum();
+    let ei: usize = evidence.iter().map(|l| l.evidence_irregular).sum();
+    let es: usize = evidence.iter().map(|l| l.evidence_steady).sum();
+    let ec: usize = evidence.iter().map(|l| l.checks).sum();
+    let tb: usize = throttled.iter().map(|l| l.burns).sum();
+    let tf: usize = throttled.iter().map(|l| l.fed).sum();
+    let te: usize = throttled.iter().map(|l| l.throttled_events).sum();
+    let tl: usize = throttled.iter().map(|l| l.new_throttled_learners).sum();
+    let ta: usize = throttled.iter().map(|l| l.throttled_acquittals).sum();
+    let ti: usize = throttled.iter().map(|l| l.throttled_irregular).sum();
+    let ts: usize = throttled.iter().map(|l| l.throttled_steady).sum();
+    let tc: usize = throttled.iter().map(|l| l.checks).sum();
+    let tps: usize = throttled.iter().map(|l| l.throttled_packets_sent).sum();
+    let tsup: usize = throttled.iter().map(|l| l.throttled_suppressed).sum();
+    let ub: usize = unshoved.iter().map(|l| l.burns).sum();
+    let uf: usize = unshoved.iter().map(|l| l.fed).sum();
+    let ue: usize = unshoved.iter().map(|l| l.unshoved_events).sum();
+    let ul: usize = unshoved.iter().map(|l| l.new_unshoved_learners).sum();
+    let ua: usize = unshoved.iter().map(|l| l.unshoved_acquittals).sum();
+    let ui: usize = unshoved.iter().map(|l| l.unshoved_irregular).sum();
+    let us: usize = unshoved.iter().map(|l| l.unshoved_steady).sum();
+    let uc: usize = unshoved.iter().map(|l| l.checks).sum();
+    let hb: usize = shoved.iter().map(|l| l.burns).sum();
+    let hf: usize = shoved.iter().map(|l| l.fed).sum();
+    let he: usize = shoved.iter().map(|l| l.shoved_events).sum();
+    let hl: usize = shoved.iter().map(|l| l.new_shoved_first).sum();
+    let ha: usize = shoved.iter().map(|l| l.shoved_acquittals).sum();
+    let hi: usize = shoved.iter().map(|l| l.shoved_irregular).sum();
+    let hs: usize = shoved.iter().map(|l| l.shoved_steady).sum();
+    let hc: usize = shoved.iter().map(|l| l.checks).sum();
+    println!("  comparison: total burns solo {sb}, witness {wb}, chain {cb}, placed {pb}, evidence {eb}, throttled {tb}, unshoved {ub}, shoved {hb}; witness events (witness room) {we}; moths whose first caution was witnessed {wl}; chain events {ce}; moths whose first caution was a witnessed refusal {cl}; chain fed {cf}; placed events {pe}; moths whose first caution was a placed refusal {pl}; placed fed {pf}; checks chain {cc}, placed {pc}; evidence events {ee}, evidence-first learners {el}, evidence acquittals {ea}, evidence irregular {ei}, evidence steady {es}, evidence fed {ef}, evidence checks {ec}; throttled events {te}, throttled-first learners {tl}, throttled acquittals {ta}, throttled irregular {ti}, throttled steady {ts}, throttled fed {tf}, throttled checks {tc}, throttled packets sent {tps}, throttled suppressed {tsup}; unshoved events {ue}, unshoved-first learners {ul}, unshoved acquittals {ua}, unshoved irregular {ui}, unshoved steady {us}, unshoved fed {uf}, unshoved burns {ub}, unshoved checks {uc}; shoved events {he}, shoved-first {hl}, shoved acquittals {ha}, shoved irregular {hi}, shoved steady {hs}, shoved fed {hf}, shoved burns {hb}, shoved checks {hc}");
+    let ftb: usize = fading_taught.iter().map(|l| l.burns).sum();
+    let ftf: usize = fading_taught.iter().map(|l| l.fed).sum();
+    let ftc: usize = fading_taught.iter().map(|l| l.checks).sum();
+    let fte: usize = fading_taught.iter().map(|l| l.fading_events).sum();
+    let ftl: usize = fading_taught.iter().map(|l| l.new_fading_learners).sum();
+    let fta: usize = fading_taught.iter().map(|l| l.fading_acquittals).sum();
+    let fxt: usize = fading_taught.iter().map(|l| l.expired_taught).sum();
+    let fxe_t: usize = fading_taught.iter().map(|l| l.expired_earned).sum();
+    let feb: usize = fading_earned.iter().map(|l| l.burns).sum();
+    let fef: usize = fading_earned.iter().map(|l| l.fed).sum();
+    let fec: usize = fading_earned.iter().map(|l| l.checks).sum();
+    let fee: usize = fading_earned.iter().map(|l| l.fading_events).sum();
+    let fel: usize = fading_earned.iter().map(|l| l.new_fading_learners).sum();
+    let fea: usize = fading_earned.iter().map(|l| l.fading_acquittals).sum();
+    let fxt_e: usize = fading_earned.iter().map(|l| l.expired_taught).sum();
+    let fxe: usize = fading_earned.iter().map(|l| l.expired_earned).sum();
+    let fbb: usize = fading_both.iter().map(|l| l.burns).sum();
+    let fbf: usize = fading_both.iter().map(|l| l.fed).sum();
+    let fbc: usize = fading_both.iter().map(|l| l.checks).sum();
+    let fbe: usize = fading_both.iter().map(|l| l.fading_events).sum();
+    let fbl: usize = fading_both.iter().map(|l| l.new_fading_learners).sum();
+    let fba: usize = fading_both.iter().map(|l| l.fading_acquittals).sum();
+    let fxt_b: usize = fading_both.iter().map(|l| l.expired_taught).sum();
+    let fxe_b: usize = fading_both.iter().map(|l| l.expired_earned).sum();
+    println!("  fading comparison: fading-taught burns {ftb}, fed {ftf}, checks {ftc}, fading events {fte}, fading-first learners {ftl}, acquittals {fta}, expired taught {fxt}, expired earned {fxe_t}; fading-earned burns {feb}, fed {fef}, checks {fec}, fading events {fee}, fading-first learners {fel}, acquittals {fea}, expired taught {fxt_e}, expired earned {fxe}; fading-both burns {fbb}, fed {fbf}, checks {fbc}, fading events {fbe}, fading-first learners {fbl}, acquittals {fba}, expired taught {fxt_b}, expired earned {fxe_b}; evidence burns {eb}, evidence checks {ec}");
+    for (label, nights) in [("waning-1500", &waning_1500), ("waning-750", &waning_750), ("waning-375", &waning_375), ("waning-150", &waning_150)] {
+        let b: usize = nights.iter().map(|l| l.burns).sum();
+        let f: usize = nights.iter().map(|l| l.fed).sum();
+        let c: usize = nights.iter().map(|l| l.checks).sum();
+        let ev: usize = nights.iter().map(|l| l.waning_events).sum();
+        let ln: usize = nights.iter().map(|l| l.new_waning_learners).sum();
+        let aq: usize = nights.iter().map(|l| l.waning_acquittals).sum();
+        let ir: usize = nights.iter().map(|l| l.waning_irregular).sum();
+        let st: usize = nights.iter().map(|l| l.waning_steady).sum();
+        let xt: usize = nights.iter().map(|l| l.waning_expired_taught).sum();
+        let xe: usize = nights.iter().map(|l| l.waning_expired_earned).sum();
+        println!("  waning comparison: {label} burns {b}, fed {f}, checks {c}, waning events {ev}, waning-first learners {ln}, acquittals {aq}, irregular {ir}, steady {st}, expired taught {xt}, expired earned {xe}");
+    }
+    if !headless {
+        println!("  (count it headless any time: --headless)");
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_decoy_still_fools_the_naive() {
+        let solo = run_all(SEED, Tuition::Solo);
+        assert!(solo[0].burns > 0, "decoy fooled no one night 1 solo: {solo:?}");
+    }
+
+    #[test]
+    fn solo_and_witness_controls_reproduce() {
+        let s = run_all(SEED, Tuition::Solo);
+        assert_eq!(s.iter().map(|l| l.burns).sum::<usize>(), 12);
+        assert_eq!(s.iter().map(|l| l.fed).sum::<usize>(), 45);
+        let w = run_all(SEED, Tuition::Witness);
+        assert_eq!(w.iter().map(|l| l.burns).sum::<usize>(), 8);
+        assert_eq!(w.iter().map(|l| l.fed).sum::<usize>(), 43);
+    }
+
+    #[test]
+    fn chain_control_reproduces() {
+        let c = run_all(SEED, Tuition::Chain);
+        assert_eq!(c.iter().map(|l| l.burns).sum::<usize>(), 13);
+        assert_eq!(c.iter().map(|l| l.fed).sum::<usize>(), 42);
+        assert_eq!(c.iter().map(|l| l.chain_events).sum::<usize>(), 495);
+        assert_eq!(c.iter().map(|l| l.new_chain_learners).sum::<usize>(), 18);
+    }
+
+    #[test]
+    fn placed_refusals_are_witnessed_with_direction() {
+        let p = run_all(SEED, Tuition::Placed);
+        assert!(p.iter().map(|l| l.placed_events).sum::<usize>() > 0, "no placed refusal witnessed: {p:?}");
+        assert!(p.iter().map(|l| l.new_placed_learners).sum::<usize>() > 0, "no moth first learned from a placed refusal: {p:?}");
+    }
+
+    #[test]
+    fn placed_control_reproduces() {
+        let p = run_all(SEED, Tuition::Placed);
+        assert_eq!(p.iter().map(|l| l.burns).sum::<usize>(), 13);
+        assert_eq!(p.iter().map(|l| l.fed).sum::<usize>(), 39);
+        assert_eq!(p.iter().map(|l| l.placed_events).sum::<usize>(), 618);
+        assert_eq!(p.iter().map(|l| l.new_placed_learners).sum::<usize>(), 20);
+    }
+
+    #[test]
+    fn evidence_packets_are_transmitted_and_rejudged() {
+        let e = run_all(SEED, Tuition::Evidence);
+        assert!(e.iter().map(|l| l.evidence_events).sum::<usize>() > 0, "no evidence packet witnessed: {e:?}");
+        let irr = e.iter().map(|l| l.evidence_irregular).sum::<usize>();
+        let stdy = e.iter().map(|l| l.evidence_steady).sum::<usize>();
+        assert!(irr > 0 && stdy > 0, "evidence must carry both verdict kinds: irregular {irr}, steady {stdy}");
+    }
+
+    #[test]
+    fn evidence_room_still_feeds_and_lives() {
+        let e = run_all(SEED, Tuition::Evidence);
+        assert!(e[NIGHTS - 1].alive_end > 0);
+        assert!(e.iter().map(|l| l.fed).sum::<usize>() > 0);
+        assert!(e.iter().map(|l| l.burns).sum::<usize>() > 0, "decoy fooled no one in evidence room");
+    }
+
+    #[test]
+    fn placed_room_still_feeds_and_lives() {
+        let p = run_all(SEED, Tuition::Placed);
+        assert!(p[NIGHTS - 1].alive_end > 0);
+        assert!(p.iter().map(|l| l.fed).sum::<usize>() > 0);
+    }
+
+    #[test]
+    fn placed_room_diverges_from_chain_room() {
+        // The direction must change *something* measurable; the
+        // headless ledger, not this test, judges whether it helps.
+        let c = run_all(SEED, Tuition::Chain);
+        let p = run_all(SEED, Tuition::Placed);
+        let cb = c.iter().map(|l| l.burns).sum::<usize>();
+        let pb = p.iter().map(|l| l.burns).sum::<usize>();
+        let cc = c.iter().map(|l| l.checks).sum::<usize>();
+        let pc = p.iter().map(|l| l.checks).sum::<usize>();
+        let cf = c.iter().map(|l| l.fed).sum::<usize>();
+        let pf = p.iter().map(|l| l.fed).sum::<usize>();
+        assert!(cb != pb || cc != pc || cf != pf, "placed identical to chain: burns {cb}/{pb} checks {cc}/{pc} fed {cf}/{pf}");
+    }
+
+    #[test]
+    fn throttled_packets_are_transmitted_and_rejudged() {
+        let t = run_all(SEED, Tuition::Throttled);
+        assert!(t.iter().map(|l| l.throttled_events).sum::<usize>() > 0, "no throttled packet witnessed: {t:?}");
+        let irr = t.iter().map(|l| l.throttled_irregular).sum::<usize>();
+        let stdy = t.iter().map(|l| l.throttled_steady).sum::<usize>();
+        assert!(irr > 0 && stdy > 0, "throttled evidence must carry both verdict kinds: irregular {irr}, steady {stdy}");
+        assert!(t.iter().map(|l| l.throttled_packets_sent).sum::<usize>() <= MOTHS * NIGHTS, "throttle leaked: packets sent exceed one per moth per night");
+        assert!(t.iter().map(|l| l.throttled_suppressed).sum::<usize>() > 0, "throttle suppressed nothing: {t:?}");
+    }
+
+    #[test]
+    fn throttled_room_still_feeds_and_lives() {
+        let t = run_all(SEED, Tuition::Throttled);
+        assert!(t[NIGHTS - 1].alive_end > 0);
+        assert!(t.iter().map(|l| l.fed).sum::<usize>() > 0);
+        assert!(t.iter().map(|l| l.burns).sum::<usize>() > 0, "decoy fooled no one in throttled room");
+    }
+
+    #[test]
+    fn throttled_room_thins_the_flood() {
+        let e = run_all(SEED, Tuition::Evidence);
+        let t = run_all(SEED, Tuition::Throttled);
+        let ee = e.iter().map(|l| l.evidence_events).sum::<usize>();
+        let te = t.iter().map(|l| l.throttled_events).sum::<usize>();
+        assert!(te < ee, "throttling did not thin the flood: throttled events {te} vs evidence {ee}");
+    }
+
+    #[test]
+    fn throttled_control_reproduces() {
+        let t = run_all(SEED, Tuition::Throttled);
+        assert_eq!(t.iter().map(|l| l.burns).sum::<usize>(), 12);
+        assert_eq!(t.iter().map(|l| l.fed).sum::<usize>(), 44);
+        assert_eq!(t.iter().map(|l| l.throttled_events).sum::<usize>(), 534);
+        assert_eq!(t.iter().map(|l| l.new_throttled_learners).sum::<usize>(), 18);
+        assert_eq!(t.iter().map(|l| l.throttled_acquittals).sum::<usize>(), 122);
+        assert_eq!(t.iter().map(|l| l.throttled_packets_sent).sum::<usize>(), 55);
+        assert_eq!(t.iter().map(|l| l.throttled_suppressed).sum::<usize>(), 105);
+    }
+    #[test]
+    fn unshoved_packets_are_transmitted_and_rejudged() {
+        let u = run_all(SEED, Tuition::Unshoved);
+        assert!(u.iter().map(|l| l.unshoved_events).sum::<usize>() > 0, "no unshoved packet witnessed: {u:?}");
+        let irr = u.iter().map(|l| l.unshoved_irregular).sum::<usize>();
+        let stdy = u.iter().map(|l| l.unshoved_steady).sum::<usize>();
+        assert!(irr > 0 && stdy > 0, "unshoved evidence must carry both verdict kinds: irregular {irr}, steady {stdy}");
+        assert!(u.iter().map(|l| l.new_unshoved_learners).sum::<usize>() > 0, "no moth first learned from an unshoved packet: {u:?}");
+    }
+
+    #[test]
+    fn unshoved_room_still_feeds_and_lives() {
+        let u = run_all(SEED, Tuition::Unshoved);
+        assert!(u[NIGHTS - 1].alive_end > 0);
+        assert!(u.iter().map(|l| l.fed).sum::<usize>() > 0);
+        assert!(u.iter().map(|l| l.burns).sum::<usize>() > 0, "decoy fooled no one in unshoved room");
+    }
+
+    #[test]
+    fn unshoved_room_diverges_from_evidence_room() {
+        // Removing the shove must change *something* measurable;
+        // the headless ledger, not this test, judges whether it helps.
+        let e = run_all(SEED, Tuition::Evidence);
+        let u = run_all(SEED, Tuition::Unshoved);
+        let eb = e.iter().map(|l| l.burns).sum::<usize>();
+        let ub = u.iter().map(|l| l.burns).sum::<usize>();
+        let ec = e.iter().map(|l| l.checks).sum::<usize>();
+        let uc = u.iter().map(|l| l.checks).sum::<usize>();
+        let ef = e.iter().map(|l| l.fed).sum::<usize>();
+        let uf = u.iter().map(|l| l.fed).sum::<usize>();
+        assert!(eb != ub || ec != uc || ef != uf, "unshoved identical to evidence: burns {eb}/{ub} checks {ec}/{uc} fed {ef}/{uf}");
+    }
+    #[test]
+    fn unshoved_control_reproduces() {
+        let u = run_all(SEED, Tuition::Unshoved);
+        assert_eq!(u.iter().map(|l| l.burns).sum::<usize>(), 18);
+        assert_eq!(u.iter().map(|l| l.fed).sum::<usize>(), 39);
+        assert_eq!(u.iter().map(|l| l.unshoved_events).sum::<usize>(), 1605);
+        assert_eq!(u.iter().map(|l| l.new_unshoved_learners).sum::<usize>(), 18);
+        assert_eq!(u.iter().map(|l| l.unshoved_acquittals).sum::<usize>(), 439);
+    }
+
+    #[test]
+    fn shoved_packets_are_transmitted_and_rejudged() {
+        let h = run_all(SEED, Tuition::Shoved);
+        assert!(h.iter().map(|l| l.shoved_events).sum::<usize>() > 0, "no shoved packet witnessed: {h:?}");
+        let irr = h.iter().map(|l| l.shoved_irregular).sum::<usize>();
+        let stdy = h.iter().map(|l| l.shoved_steady).sum::<usize>();
+        assert!(irr > 0 && stdy > 0, "shoved evidence must carry both verdict kinds: irregular {irr}, steady {stdy}");
+        assert!(h.iter().map(|l| l.new_shoved_first).sum::<usize>() > 0, "no moth's first shove was taught: {h:?}");
+    }
+
+    #[test]
+    fn shoved_room_still_feeds_and_lives() {
+        let h = run_all(SEED, Tuition::Shoved);
+        assert!(h[NIGHTS - 1].alive_end > 0);
+        assert!(h.iter().map(|l| l.fed).sum::<usize>() > 0);
+        assert!(h.iter().map(|l| l.burns).sum::<usize>() > 0, "decoy fooled no one in shoved room");
+    }
+
+    #[test]
+    fn shoved_teaches_the_push_not_the_lesson() {
+        // The separation itself, measured: a steady packet in the
+        // shoved room acquits nobody (nothing was taught), and
+        // with no checker recruited by any packet, the room's
+        // checks stay far below the evidence room's, where every
+        // taught moth goes on to check for itself.
+        let h = run_all(SEED, Tuition::Shoved);
+        assert_eq!(h.iter().map(|l| l.shoved_acquittals).sum::<usize>(), 0);
+        let e = run_all(SEED, Tuition::Evidence);
+        let hc = h.iter().map(|l| l.checks).sum::<usize>();
+        let ec = e.iter().map(|l| l.checks).sum::<usize>();
+        assert!(hc < ec, "shoved checks {hc} not below evidence checks {ec}: recruitment leaked");
+    }
+
+    #[test]
+    fn shoved_control_reproduces() {
+        // The measured ledger of the eighth room, pinned as
+        // found -- including the lineage's first death (night 3).
+        // The burns comparison against the claim (P4) is reported
+        // in the README, not asserted here.
+        let h = run_all(SEED, Tuition::Shoved);
+        assert_eq!(h.iter().map(|l| l.burns).sum::<usize>(), 14);
+        assert_eq!(h.iter().map(|l| l.fed).sum::<usize>(), 44);
+        assert_eq!(h.iter().map(|l| l.checks).sum::<usize>(), 136);
+        assert_eq!(h.iter().map(|l| l.shoved_events).sum::<usize>(), 867);
+        assert_eq!(h.iter().map(|l| l.new_shoved_first).sum::<usize>(), 20);
+        assert_eq!(h.iter().map(|l| l.shoved_acquittals).sum::<usize>(), 0);
+        assert_eq!(h.iter().map(|l| l.shoved_irregular).sum::<usize>(), 266);
+        assert_eq!(h.iter().map(|l| l.shoved_steady).sum::<usize>(), 601);
+        assert_eq!(h.iter().map(|l| l.deaths).sum::<usize>(), 1);
+        assert_eq!(h[NIGHTS - 1].alive_end, 23);
+    }
+
+    #[test]
+    fn shoved_room_diverges_from_evidence_and_unshoved() {
+        // Removing the lesson must change *something* measurable;
+        // the headless ledger, not this test, judges whether the
+        // push alone protects.
+        let e = run_all(SEED, Tuition::Evidence);
+        let u = run_all(SEED, Tuition::Unshoved);
+        let h = run_all(SEED, Tuition::Shoved);
+        let eb = e.iter().map(|l| l.burns).sum::<usize>();
+        let ub = u.iter().map(|l| l.burns).sum::<usize>();
+        let hb = h.iter().map(|l| l.burns).sum::<usize>();
+        let ec = e.iter().map(|l| l.checks).sum::<usize>();
+        let uc = u.iter().map(|l| l.checks).sum::<usize>();
+        let hc = h.iter().map(|l| l.checks).sum::<usize>();
+        let ef = e.iter().map(|l| l.fed).sum::<usize>();
+        let uf = u.iter().map(|l| l.fed).sum::<usize>();
+        let hf = h.iter().map(|l| l.fed).sum::<usize>();
+        assert!(eb != hb || ec != hc || ef != hf, "shoved identical to evidence: burns {eb}/{hb} checks {ec}/{hc} fed {ef}/{hf}");
+        assert!(ub != hb || uc != hc || uf != hf, "shoved identical to unshoved: burns {ub}/{hb} checks {uc}/{hc} fed {uf}/{hf}");
+    }
+
+    #[test]
+    fn fading_packets_are_transmitted_and_rejudged() {
+        for t in [Tuition::FadingTaught, Tuition::FadingEarned, Tuition::FadingBoth] {
+            let f = run_all(SEED, t);
+            assert!(f.iter().map(|l| l.fading_events).sum::<usize>() > 0, "no fading packet witnessed in {t:?}: {f:?}");
+            let irr = f.iter().map(|l| l.fading_irregular).sum::<usize>();
+            let stdy = f.iter().map(|l| l.fading_steady).sum::<usize>() ;
+            assert!(irr > 0 && stdy > 0, "fading evidence must carry both verdict kinds in {t:?}: irregular {irr}, steady {stdy}");
+            assert!(f.iter().map(|l| l.new_fading_learners).sum::<usize>() > 0, "no moth first learned from a fading packet in {t:?}: {f:?}");
+        }
+    }
+
+    #[test]
+    fn fading_night_one_is_evidence_night_one() {
+        // No dawn has passed before night 1 ends, so the dawn
+        // tax cannot have fired: each fading room's first night
+        // is the evidence room's first night, field for field.
+        let e = run_all(SEED, Tuition::Evidence);
+        for t in [Tuition::FadingTaught, Tuition::FadingEarned, Tuition::FadingBoth] {
+            let f = run_all(SEED, t);
+            assert_eq!(f[0].fed, e[0].fed, "night 1 fed diverged in {t:?}");
+            assert_eq!(f[0].burns, e[0].burns, "night 1 burns diverged in {t:?}");
+            assert_eq!(f[0].checks, e[0].checks, "night 1 checks diverged in {t:?}");
+            assert_eq!(f[0].refusals, e[0].refusals, "night 1 refusals diverged in {t:?}");
+            assert_eq!(f[0].expired_taught + f[0].expired_earned, 0, "a dawn tax fired inside night 1 in {t:?}");
+        }
+    }
+
+    #[test]
+    fn dawn_decay_fires_by_source_as_booked() {
+        let ft = run_all(SEED, Tuition::FadingTaught);
+        assert!(ft.iter().map(|l| l.expired_taught).sum::<usize>() > 0, "taught pool never taxed in fading-taught: {ft:?}");
+        assert_eq!(ft.iter().map(|l| l.expired_earned).sum::<usize>(), 0, "earned pool taxed in fading-taught");
+        let fe = run_all(SEED, Tuition::FadingEarned);
+        assert!(fe.iter().map(|l| l.expired_earned).sum::<usize>() > 0, "earned pool never taxed in fading-earned: {fe:?}");
+        assert_eq!(fe.iter().map(|l| l.expired_taught).sum::<usize>(), 0, "taught pool taxed in fading-earned");
+        let fb = run_all(SEED, Tuition::FadingBoth);
+        assert!(fb.iter().map(|l| l.expired_taught).sum::<usize>() > 0, "taught pool never taxed in fading-both: {fb:?}");
+        assert!(fb.iter().map(|l| l.expired_earned).sum::<usize>() > 0, "earned pool never taxed in fading-both: {fb:?}");
+        // And the parents are never taxed at all.
+        let e = run_all(SEED, Tuition::Evidence);
+        assert_eq!(e.iter().map(|l| l.expired_taught + l.expired_earned).sum::<usize>(), 0);
+    }
+
+    #[test]
+    fn waning_packets_are_transmitted_and_rejudged() {
+        for t in [Tuition::Waning1500, Tuition::Waning750, Tuition::Waning375, Tuition::Waning150] {
+            let w = run_all(SEED, t);
+            assert!(w.iter().map(|l| l.waning_events).sum::<usize>() > 0, "no waning packet witnessed in {t:?}: {w:?}");
+            let irr = w.iter().map(|l| l.waning_irregular).sum::<usize>();
+            let stdy = w.iter().map(|l| l.waning_steady).sum::<usize>();
+            assert!(irr > 0 && stdy > 0, "waning evidence must carry both verdict kinds in {t:?}: irregular {irr}, steady {stdy}");
+            assert!(w.iter().map(|l| l.new_waning_learners).sum::<usize>() > 0, "no moth first learned from a waning packet in {t:?}: {w:?}");
+        }
+    }
+
+    #[test]
+    fn waning_clock_fires_and_doses() {
+        // The instrument check: expiry fires in every waning
+        // room, the dawn tax never fires there, and at lifetime
+        // 1500 no unit can expire inside night 1 (no unit is
+        // that old yet). The expired totals themselves are
+        // reported in the README, not asserted: P2's declared
+        // dose monotonicity CRACKED as measured (62 / 85 / 78 /
+        // 49 -- the clock taxes the teaching channel that
+        // produces the units, so the shortest clocks have
+        // fewer units left to expire), and a keeper does not
+        // edit the ledger to save a claim.
+        for t in [Tuition::Waning1500, Tuition::Waning750, Tuition::Waning375, Tuition::Waning150] {
+            let w = run_all(SEED, t);
+            let exp: usize = w.iter().map(|l| l.waning_expired_taught + l.waning_expired_earned).sum();
+            assert!(exp > 0, "no unit ever expired in {t:?}: {w:?}");
+            // The dawn tax never fires in a waning room.
+            assert_eq!(w.iter().map(|l| l.expired_taught + l.expired_earned).sum::<usize>(), 0, "a dawn tax fired in waning room {t:?}");
+        }
+        let w = run_all(SEED, Tuition::Waning1500);
+        assert_eq!(w[0].waning_expired_taught + w[0].waning_expired_earned, 0, "a unit expired inside night 1 at lifetime 1500: {w:?}");
+    }
+
+    #[test]
+    fn waning_rooms_still_feed_and_live() {
+        for t in [Tuition::Waning1500, Tuition::Waning750, Tuition::Waning375, Tuition::Waning150] {
+            let w = run_all(SEED, t);
+            assert!(w[NIGHTS - 1].alive_end > 0, "waning room {t:?} died out");
+            assert!(w.iter().map(|l| l.fed).sum::<usize>() > 0, "waning room {t:?} never fed");
+            assert!(w.iter().map(|l| l.burns).sum::<usize>() > 0, "decoy fooled no one in waning room {t:?}");
+        }
+    }
+
+    #[test]
+    fn fading_rooms_still_feed_and_live() {
+        for t in [Tuition::FadingTaught, Tuition::FadingEarned, Tuition::FadingBoth] {
+            let f = run_all(SEED, t);
+            assert!(f[NIGHTS - 1].alive_end > 0, "fading room {t:?} died out");
+            assert!(f.iter().map(|l| l.fed).sum::<usize>() > 0, "fading room {t:?} never fed");
+            assert!(f.iter().map(|l| l.burns).sum::<usize>() > 0, "decoy fooled no one in fading room {t:?}");
+        }
+    }
+}
+
