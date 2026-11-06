@@ -1,0 +1,10 @@
+[package]
+name = "scarecrow-crowd"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow.workspace = true
+flocking.workspace = true
+locus.workspace = true
+resonance-audio.workspace = true
