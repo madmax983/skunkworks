@@ -1,0 +1,1928 @@
+//! physarum-sixthseason 🗺️
+//!
+//! The Cartographer's twenty-eighth survey: a season of 12,000
+//! ticks on the disk - the first-fallen's tenure, priced. City 1
+//! fell first, at tick 591, and by the fifth length it had become
+//! the haunting's loudest voice; this survey asks whether a crown
+//! taken that late is held, or merely borrowed.
+//!
+//! `physarum-valleywall` (the Cartographer's twenty-seventh
+//! survey) widened the tick ledger west and dated the valley's
+//! beginning at 8,660 exactly. Beneath that survey stands the
+//! tenure its parent priced: in `physarum-migration`'s slices,
+//! city 1 - dark at 591, the disk's first fall - collected
+//! nothing for four slices of the past window, then 333, then
+//! nothing twice, then 383 in the final 300 ticks of the 9,600
+//! season: the haunting's loudest voice, ahead of city 5's 373,
+//! with city 6 at 15 and the last-fallen city 8 silent at 0.
+//! The standing seed, taken up verbatim: *the first-fallen's
+//! tenure - city 1 (dark at 591, the disk's first fall) ends the
+//! fifth length as the haunting's loudest voice (383 in the
+//! final 300): a sixth length (12,000 ticks) - does the
+//! first-fallen hold the sound, or does the tenure migrate
+//! again, and is there an apron it never reaches?*
+//!
+//! This cross carries valleywall's machinery whole - Mobius
+//! movement and sensing, diffusion on the projection with the
+//! void drinking at the rim, the mold's boundary rule, the
+//! opposed channels stone for stone, the same seed, the same
+//! nine cities, migration's 300-tick slice ledger entire,
+//! cliffdate's 100-tick fine ledger entire, clifftenth's
+//! 10-tick tenth ledger entire, and the tick ledger entire
+//! (8,600..8,710) - and extends the season once more, to
+//! 12,000 ticks, in three new rooms. The 1,200-, 2,400-,
+//! 4,800-, 7,200- and 9,600-tick rooms stand as controls and
+//! must reproduce their pinned ledgers exact; a flat sixth
+//! room stands beside them so the disk's answer is read
+//! against its own ground's. No new instrument is declared:
+//! the parent's per-city final-300 ghost ledger is the
+//! instrument this seed prices, read at a sixth length, its
+//! 300-tick slice ledger already runs the whole sixth window,
+//! and the window itself (ticks 9,600..12,000) is priced by
+//! difference across rooms, exact by the truncation identity
+//! - a window in which every visit on the disk is a ghost
+//! visit, because nothing in it was ever lit.
+//!
+//! Eighteen rooms, one seed, one city map, two grounds, six lengths:
+//!   OpposedDepleted        - flat, 1,200 ticks, the parent verbatim.
+//!   OpposedLongDepleted    - flat, 2,400 ticks, longseason verbatim.
+//!   OpposedFarDepleted     - flat, 4,800 ticks, farseason verbatim.
+//!   OpposedLastDepleted    - flat, 7,200 ticks, lastseason verbatim.
+//!   OpposedPastDepleted    - flat, 9,600 ticks, pastseason verbatim.
+//!   CurvedOpposedEternal   - disk, 1,200 ticks, curved verbatim.
+//!   CurvedOpposedDepleted  - disk, 1,200 ticks, curved verbatim.
+//!   CurvedLongEternal      - disk, 2,400 ticks, stocks in shadow.
+//!   CurvedLongDepleted     - disk, 2,400 ticks, longseason verbatim.
+//!   CurvedFarEternal       - disk, 4,800 ticks, stocks in shadow.
+//!   CurvedFarDepleted      - disk, 4,800 ticks, farseason verbatim.
+//!   CurvedLastEternal      - disk, 7,200 ticks, stocks in shadow.
+//!   CurvedLastDepleted     - disk, 7,200 ticks, lastseason verbatim.
+//!   CurvedPastEternal      - disk, 9,600 ticks, stocks in shadow.
+//!   CurvedPastDepleted     - disk, 9,600 ticks, pastseason verbatim.
+//!   OpposedSixthDepleted   - flat, 12,000 ticks: the control ground
+//!                            has had no survivors since 2,400; the
+//!                            sixth room prices only the haunting.
+//!   CurvedSixthEternal     - disk, 12,000 ticks, stocks in shadow:
+//!                            the shadow floor, a sixth length on.
+//!   CurvedSixthDepleted    - disk, 12,000 ticks, stock gating: the
+//!                            first-fallen's tenure, held or lost.
+//!
+//! Predictions, declared before the first run (see README):
+//!   B1 the flat 1,200 room reproduces physarum-opposed's pinned
+//!      ledger exact. B2 the fifteen carried rooms reproduce
+//!      physarum-valleywall's pinned ledgers exact at all five
+//!      earlier lengths, including migration's slices, cliffdate's
+//!      fine ledger, clifftenth's tenth ledger, and the tick
+//!      ledger entire.
+//!   P1 length is the only difference, a fifth time: each sixth
+//!      room's first 9,600 ticks are its past twin's whole season,
+//!      sample for sample (mass series and first_dark).
+//!   P2 the tenure holds: in CurvedSixthDepleted's final 300
+//!      ticks city 1's ghost count still exceeds city 5's - the
+//!      first-fallen, loudest at the fifth length by 383 to 373,
+//!      is still the haunting's loudest voice at the sixth.
+//!   P3 no third voice: no city other than 1 and 5 exceeds 25
+//!      ghost visits in the sixth room's final 300 (city 6 read
+//!      15 at the fifth length; every other city read 0).
+//!   P4 the haunting thins: the sixth room's final-300 total
+//!      stands between 350 and 770 - strictly below the fifth
+//!      length's 771, the traffic that feeds the haunting still
+//!      thinning, but nowhere near silence.
+//!   P5 the crown sits on a bursty tenant: city 1 collects zero
+//!      ghost visits in at least 3 of the sixth window's eight
+//!      300-tick slices - in the past window it was silent in
+//!      five of eight (0 / 0 / 0 / 0 / 333 / 0 / 0 / 383), a
+//!      voice that returns, not a presence that stays.
+//!   P6 the shadow floor holds a sixth length: in
+//!      CurvedSixthEternal city 8's shadow stock ends between
+//!      4.0 and 10.84 - below the past length's 10.84, still
+//!      unspent - on between 1,600 and 2,000 visits.
+//!   P7 the sixth window's scale: total ghost visits in
+//!      CurvedSixthDepleted grow by 6,000 to 10,500 over the
+//!      past room's 37,282 (the past window added 9,976; the
+//!      rate is thinning), and the sixth room's loud ghost
+//!      share stays inside 35% to 45% (38.9% at the fifth).
+
+use std::f32::consts::PI;
+
+// ---- the corpse's constants, verbatim (flat ground) ----
+const SENSOR_ANGLE: f32 = PI / 4.0; // 45 degrees
+const SENSOR_DIST: f32 = 9.0;
+const ROTATION_ANGLE: f32 = PI / 8.0; // 22.5 degrees
+const AGENT_SPEED: f32 = 2.0;
+const DEPOSIT: f32 = 0.5;
+const DECAY: f32 = 0.95;
+const CITY_RADIUS: isize = 3;
+
+// ---- the parent's bookkeeping, planted here ----
+const STOCK0: f32 = 25.0; // opening stock per city
+const EAT: f32 = 0.004; // stock per feeding agent per tick
+const FEED_RADIUS2: f32 = 12.25; // 3.5^2, the stamped disc's apron
+
+// ---- the opposed channels, the parent's numbers verbatim ----
+const LOUD_STAMP: f32 = 1.0; // quality's rich stamp, the corpse's own
+const QUIET_STAMP: f32 = 0.40; // quality's plain stamp
+const EAT_LOUD: f32 = EAT; // slow mouth: the uniform rate 0.004
+const EAT_QUIET: f32 = 0.010; // quick mouth: appetite's rich rate
+
+// ---- the mold's ground: the Poincaré disk ----
+// Sensor and step lengths are hyperbolic (Möbius) distances, scaled
+// from the mold's own 0.05 / 0.01 to this lineage's grid: at the disk's
+// centre a Möbius step of δ moves δ in chart coordinates, and the flat
+// ground's sensor/step are 9 and 2 cells on a 96-wide chart whose
+// half-width is 48 cells — 0.1875 and 0.0417 chart units. The values
+// below (0.15 / 0.035) keep the curved sensor a little shorter than
+// the flat one, because a hyperbolic step of fixed length reaches
+// *less* chart distance everywhere off-centre; that shortfall is the
+// curvature under test, not a calibration to hide it.
+const SENSOR_DIST_H: f32 = 0.15;
+const MOVE_H: f32 = 0.035;
+const DISK_R2_MAX: f32 = 0.98; // the mold's boundary rule, verbatim
+const SPAWN_R2: f32 = 0.81; // spawn inside radius 0.9
+const CITY_SCALE: f32 = 0.85; // fractional addresses -> disk coords
+const FEED_RADIUS2_DISK: f32 = 0.005_314; // (3.5/48)^2 in chart units
+const STAMP_RADIUS_DISK: f32 = 0.0625; // 3/48 in chart units
+
+// ---- the season ----
+const W: usize = 96;
+const H: usize = 64;
+const AGENTS: usize = 1200;
+const TICKS: usize = 1200;
+const LONG_TICKS: usize = 2400;
+const FAR_TICKS: usize = 4800;
+const LAST_TICKS: usize = 7200;
+const PAST_TICKS: usize = 9600;
+const SIXTH_TICKS: usize = 12000;
+const SEED: u64 = 0x5059_5341_5255_4D80; // "PHYSARUM" + 0
+
+// The curved season, pinned as found on the first shipped run
+// (test-only constants; see the test below).
+#[cfg(test)]
+const CURVED_ETERNAL_LOUD_VISITS: u64 = 36226;
+#[cfg(test)]
+const CURVED_ETERNAL_QUIET_VISITS: u64 = 4712;
+#[cfg(test)]
+const CURVED_ETERNAL_MASS: f32 = 1124.80;
+#[cfg(test)]
+const CURVED_ETERNAL_COVERAGE: usize = 1908;
+#[cfg(test)]
+const CURVED_DEPLETED_DARK: usize = 4;
+#[cfg(test)]
+const CURVED_DEPLETED_MASS: f32 = 921.05;
+#[cfg(test)]
+const CURVED_DEPLETED_COVERAGE: usize = 1557;
+#[cfg(test)]
+const LONG_DARK: usize = 7;
+#[cfg(test)]
+const LONG_MASS: f32 = 940.62;
+#[cfg(test)]
+const LONG_COVERAGE: usize = 1540;
+#[cfg(test)]
+const FLAT_LONG_DARK: usize = 9;
+#[cfg(test)]
+const FAR_DARK: usize = 8;
+#[cfg(test)]
+const FAR_MASS: f32 = 452.64;
+#[cfg(test)]
+const FAR_COVERAGE: usize = 733;
+#[cfg(test)]
+const FLAT_FAR_DARK: usize = 9;
+#[cfg(test)]
+const LAST_DARK: usize = 9;
+#[cfg(test)]
+const LAST_MASS: f32 = 509.72;
+#[cfg(test)]
+const LAST_COVERAGE: usize = 831;
+#[cfg(test)]
+const FLAT_LAST_DARK: usize = 9;
+#[cfg(test)]
+const PAST_DARK: usize = 9;
+#[cfg(test)]
+const PAST_MASS: f32 = 657.11;
+#[cfg(test)]
+const PAST_COVERAGE: usize = 1099;
+#[cfg(test)]
+const FLAT_PAST_DARK: usize = 9;
+#[cfg(test)]
+const SIXTH_DARK: usize = 9;
+#[cfg(test)]
+const SIXTH_MASS: f32 = 695.59;
+#[cfg(test)]
+const SIXTH_COVERAGE: usize = 1092;
+#[cfg(test)]
+const FLAT_SIXTH_DARK: usize = 9;
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Regime {
+    OpposedDepleted,
+    OpposedLongDepleted,
+    OpposedFarDepleted,
+    CurvedOpposedEternal,
+    CurvedOpposedDepleted,
+    CurvedLongEternal,
+    CurvedLongDepleted,
+    CurvedFarEternal,
+    CurvedFarDepleted,
+    OpposedLastDepleted,
+    CurvedLastEternal,
+    CurvedLastDepleted,
+    OpposedPastDepleted,
+    CurvedPastEternal,
+    CurvedPastDepleted,
+    OpposedSixthDepleted,
+    CurvedSixthEternal,
+    CurvedSixthDepleted,
+}
+
+impl Regime {
+    fn name(self) -> &'static str {
+        match self {
+            Regime::OpposedDepleted => "opposed-depleted",
+            Regime::OpposedLongDepleted => "opposed-long-depleted",
+            Regime::OpposedFarDepleted => "opposed-far-depleted",
+            Regime::CurvedOpposedEternal => "curved-opposed-eternal",
+            Regime::CurvedOpposedDepleted => "curved-opposed-depleted",
+            Regime::CurvedLongEternal => "curved-long-eternal",
+            Regime::CurvedLongDepleted => "curved-long-depleted",
+            Regime::CurvedFarEternal => "curved-far-eternal",
+            Regime::CurvedFarDepleted => "curved-far-depleted",
+            Regime::OpposedLastDepleted => "opposed-last-depleted",
+            Regime::CurvedLastEternal => "curved-last-eternal",
+            Regime::CurvedLastDepleted => "curved-last-depleted",
+            Regime::OpposedPastDepleted => "opposed-past-depleted",
+            Regime::CurvedPastEternal => "curved-past-eternal",
+            Regime::CurvedPastDepleted => "curved-past-depleted",
+            Regime::OpposedSixthDepleted => "opposed-sixth-depleted",
+            Regime::CurvedSixthEternal => "curved-sixth-eternal",
+            Regime::CurvedSixthDepleted => "curved-sixth-depleted",
+        }
+    }
+    fn gates(self) -> bool {
+        matches!(
+            self,
+            Regime::OpposedDepleted
+                | Regime::OpposedLongDepleted
+                | Regime::OpposedFarDepleted
+                | Regime::CurvedOpposedDepleted
+                | Regime::CurvedLongDepleted
+                | Regime::CurvedFarDepleted
+                | Regime::OpposedLastDepleted
+                | Regime::CurvedLastDepleted
+                | Regime::OpposedPastDepleted
+                | Regime::CurvedPastDepleted
+                | Regime::OpposedSixthDepleted
+                | Regime::CurvedSixthDepleted
+        )
+    }
+    fn opposed(self) -> bool {
+        true // every room in this cross carries the opposed channels
+    }
+    fn curved(self) -> bool {
+        matches!(
+            self,
+            Regime::CurvedOpposedEternal
+                | Regime::CurvedOpposedDepleted
+                | Regime::CurvedLongEternal
+                | Regime::CurvedLongDepleted
+                | Regime::CurvedFarEternal
+                | Regime::CurvedFarDepleted
+                | Regime::CurvedLastEternal
+                | Regime::CurvedLastDepleted
+                | Regime::CurvedPastEternal
+                | Regime::CurvedPastDepleted
+                | Regime::CurvedSixthEternal
+                | Regime::CurvedSixthDepleted
+        )
+    }
+    fn ticks(self) -> usize {
+        match self {
+            Regime::OpposedSixthDepleted
+            | Regime::CurvedSixthEternal
+            | Regime::CurvedSixthDepleted => SIXTH_TICKS,
+            Regime::OpposedPastDepleted
+            | Regime::CurvedPastEternal
+            | Regime::CurvedPastDepleted => PAST_TICKS,
+            Regime::OpposedLastDepleted
+            | Regime::CurvedLastEternal
+            | Regime::CurvedLastDepleted => LAST_TICKS,
+            Regime::OpposedFarDepleted
+            | Regime::CurvedFarEternal
+            | Regime::CurvedFarDepleted => FAR_TICKS,
+            Regime::OpposedLongDepleted
+            | Regime::CurvedLongEternal
+            | Regime::CurvedLongDepleted => LONG_TICKS,
+            _ => TICKS,
+        }
+    }
+    fn eat_rate(self, loud: bool) -> f32 {
+        if self.opposed() && !loud { EAT_QUIET } else { EAT_LOUD }
+    }
+    fn stamp(self, loud: bool) -> f32 {
+        if self.opposed() && !loud { QUIET_STAMP } else { LOUD_STAMP }
+    }
+}
+
+/// Deterministic SplitMix64 stream — one per purpose, as the
+/// Cartographer's revivals keep them.
+#[derive(Clone)]
+struct SplitMix {
+    state: u64,
+}
+
+impl SplitMix {
+    fn new(seed: u64) -> Self {
+        Self { state: seed }
+    }
+    fn next_u64(&mut self) -> u64 {
+        self.state = self.state.wrapping_add(0x9E37_79B9_7F4A_7C15);
+        let mut z = self.state;
+        z = (z ^ (z >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+        z = (z ^ (z >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
+        z ^ (z >> 31)
+    }
+    fn next_f32(&mut self) -> f32 {
+        (self.next_u64() >> 40) as f32 / (1u64 << 24) as f32
+    }
+}
+
+/// A point in the disk, as a pair (re, im) — the mold's Complex<f64>
+/// kept in f32 so the curved rooms share the lineage's arithmetic.
+type Z = (f32, f32);
+
+fn z_add(a: Z, b: Z) -> Z {
+    (a.0 + b.0, a.1 + b.1)
+}
+
+fn z_mul(a: Z, b: Z) -> Z {
+    (a.0 * b.0 - a.1 * b.1, a.0 * b.1 + a.1 * b.0)
+}
+
+fn z_conj(a: Z) -> Z {
+    (a.0, -a.1)
+}
+
+fn z_norm2(a: Z) -> f32 {
+    a.0 * a.0 + a.1 * a.1
+}
+
+/// Möbius addition a ⊕ b = (a + b) / (1 + conj(a)·b) — the mold's
+/// geodesic translation, the disk's only road.
+fn mobius_add(a: Z, b: Z) -> Z {
+    let num = z_add(a, b);
+    let den = z_add((1.0, 0.0), z_mul(z_conj(a), b));
+    let d2 = z_norm2(den);
+    let q = z_mul(num, z_conj(den));
+    (q.0 / d2, q.1 / d2)
+}
+
+fn z_polar(r: f32, ang: f32) -> Z {
+    (r * ang.cos(), r * ang.sin())
+}
+
+/// The chart: disk point -> grid cell (the mold's projection).
+fn chart_cell(z: Z, w: usize, h: usize) -> Option<(usize, usize)> {
+    if z_norm2(z) >= 1.0 {
+        return None;
+    }
+    let x = ((z.0 + 1.0) * 0.5 * w as f32) as usize;
+    let y = ((z.1 + 1.0) * 0.5 * h as f32) as usize;
+    if x < w && y < h { Some((x, y)) } else { None }
+}
+
+/// The chart read backwards: a grid cell's centre as a disk point.
+fn cell_centre(x: usize, y: usize, w: usize, h: usize) -> Z {
+    (
+        (x as f32 + 0.5) / w as f32 * 2.0 - 1.0,
+        (y as f32 + 0.5) / h as f32 * 2.0 - 1.0,
+    )
+}
+
+#[derive(Clone, Copy, Debug)]
+struct Agent {
+    x: f32,
+    y: f32,
+    angle: f32,
+}
+
+#[derive(Clone, Debug)]
+struct City {
+    x: f32,
+    y: f32,
+    loud: bool,
+    stock: f32,
+    lit: bool,
+    visits: u64,
+    ghost_visits: u64,
+    dark_ticks: u64,
+    first_dark: Option<usize>,
+}
+
+impl City {
+    fn new(x: f32, y: f32, loud: bool) -> Self {
+        Self {
+            x,
+            y,
+            loud,
+            stock: STOCK0,
+            lit: true,
+            visits: 0,
+            ghost_visits: 0,
+            dark_ticks: 0,
+            first_dark: None,
+        }
+    }
+}
+
+fn city_map(w: usize, h: usize) -> Vec<(f32, f32, bool)> {
+    // Nine cities, hand-surveyed: a ring of eight and a centre —
+    // the lineage's map verbatim (flat ground).
+    let (wf, hf) = (w as f32, h as f32);
+    vec![
+        (wf * 0.50, hf * 0.50, true),
+        (wf * 0.17, hf * 0.25, true),
+        (wf * 0.50, hf * 0.16, false),
+        (wf * 0.83, hf * 0.25, true),
+        (wf * 0.92, hf * 0.62, false),
+        (wf * 0.75, hf * 0.84, true),
+        (wf * 0.50, hf * 0.88, false),
+        (wf * 0.17, hf * 0.78, true),
+        (wf * 0.08, hf * 0.50, false),
+    ]
+}
+
+fn city_map_disk() -> Vec<(f32, f32, bool)> {
+    // The same nine addresses read as disk coordinates: the flat
+    // map's fractional position (fx, fy) becomes the disk point
+    // ((2fx-1)·s, (2fy-1)·s) with s = CITY_SCALE, so the ring stands
+    // inside the disk (outermost |z| = 0.743, city 4) and the centre
+    // city stands at the origin, untaxed by construction. Classes
+    // unchanged stone for stone.
+    city_map(2, 2)
+        .into_iter()
+        .map(|(fx, fy, loud)| {
+            (
+                (fx - 1.0) * CITY_SCALE,
+                (fy - 1.0) * CITY_SCALE,
+                loud,
+            )
+        })
+        .collect()
+}
+
+fn sense_on(grid: &[f32], w: usize, h: usize, a: &Agent, offset: f32) -> f32 {
+    let ang = a.angle + offset;
+    let sx = a.x + ang.cos() * SENSOR_DIST;
+    let sy = a.y + ang.sin() * SENSOR_DIST;
+    let x = (sx.round() as isize).rem_euclid(w as isize) as usize;
+    let y = (sy.round() as isize).rem_euclid(h as isize) as usize;
+    grid[y * w + x]
+}
+
+fn sense_disk(grid: &[f32], w: usize, h: usize, a: &Agent, offset: f32) -> f32 {
+    // The mold's sensing: the sensor's position is the agent's
+    // position Möbius-translated by the sensor vector. Outside the
+    // disk the chart reads 0 — the void has no smell.
+    let s = mobius_add((a.x, a.y), z_polar(SENSOR_DIST_H, a.angle + offset));
+    match chart_cell(s, w, h) {
+        Some((x, y)) => grid[y * w + x],
+        None => 0.0,
+    }
+}
+
+struct World {
+    w: usize,
+    h: usize,
+    grid: Vec<f32>,
+    agents: Vec<Agent>,
+    cities: Vec<City>,
+    steer: SplitMix,
+    regime: Regime,
+    tick: usize,
+}
+
+impl World {
+    fn new(w: usize, h: usize, n_agents: usize, regime: Regime, seed: u64) -> Self {
+        let mut spawn = SplitMix::new(seed);
+        let mut agents = Vec::with_capacity(n_agents);
+        if regime.curved() {
+            // Spawn uniform in the disk by rejection from the same
+            // seeded stream (draws in agent order; a rejected pair is
+            // consumed, never redrawn from a second stream).
+            for _ in 0..n_agents {
+                loop {
+                    let u = spawn.next_f32() * 2.0 - 1.0;
+                    let v = spawn.next_f32() * 2.0 - 1.0;
+                    if u * u + v * v < SPAWN_R2 {
+                        agents.push(Agent {
+                            x: u,
+                            y: v,
+                            angle: spawn.next_f32() * 2.0 * PI,
+                        });
+                        break;
+                    }
+                }
+            }
+        } else {
+            for _ in 0..n_agents {
+                agents.push(Agent {
+                    x: spawn.next_f32() * w as f32,
+                    y: spawn.next_f32() * h as f32,
+                    angle: spawn.next_f32() * 2.0 * PI,
+                });
+            }
+        }
+        let cities = if regime.curved() {
+            city_map_disk()
+        } else {
+            city_map(w, h)
+        }
+        .into_iter()
+        .map(|(x, y, loud)| City::new(x, y, loud))
+        .collect();
+        Self {
+            w,
+            h,
+            grid: vec![0.0; w * h],
+            agents,
+            cities,
+            steer: SplitMix::new(seed ^ 0x57EE_12),
+            regime,
+            tick: 0,
+        }
+    }
+
+    fn sense(&self, a: &Agent, offset: f32) -> f32 {
+        if self.regime.curved() {
+            sense_disk(&self.grid, self.w, self.h, a, offset)
+        } else {
+            sense_on(&self.grid, self.w, self.h, a, offset)
+        }
+    }
+
+    fn in_disk(&self, x: usize, y: usize) -> bool {
+        z_norm2(cell_centre(x, y, self.w, self.h)) < 1.0
+    }
+
+    fn step(&mut self) {
+        let curved = self.regime.curved();
+        // 1. Agents sense and move. All sensing reads the field as
+        //    the tick found it. Flat: the corpse's steering verbatim.
+        //    Curved: the same steering, but the roads are Möbius
+        //    translations and the mold's boundary rule turns an agent
+        //    around rather than letting it leave the disk.
+        let mut moved: Vec<Agent> = Vec::with_capacity(self.agents.len());
+        for a in &self.agents {
+            let mut a = *a;
+            let left = self.sense(&a, -SENSOR_ANGLE);
+            let center = self.sense(&a, 0.0);
+            let right = self.sense(&a, SENSOR_ANGLE);
+            // The corpse drew its random steer every update.
+            let random_steer = self.steer.next_f32();
+            if center > left && center > right {
+                // keep direction
+            } else if center < left && center < right {
+                if random_steer < 0.5 {
+                    a.angle -= ROTATION_ANGLE;
+                } else {
+                    a.angle += ROTATION_ANGLE;
+                }
+            } else if left < right {
+                a.angle += ROTATION_ANGLE;
+            } else if right < left {
+                a.angle -= ROTATION_ANGLE;
+            }
+            if curved {
+                let nz = mobius_add((a.x, a.y), z_polar(MOVE_H, a.angle));
+                if z_norm2(nz) < DISK_R2_MAX {
+                    a.x = nz.0;
+                    a.y = nz.1;
+                } else {
+                    a.angle += PI; // the mold's boundary rule, verbatim
+                }
+            } else {
+                a.x += a.angle.cos() * AGENT_SPEED;
+                a.y += a.angle.sin() * AGENT_SPEED;
+                if a.x < 0.0 {
+                    a.x += self.w as f32;
+                }
+                if a.x >= self.w as f32 {
+                    a.x -= self.w as f32;
+                }
+                if a.y < 0.0 {
+                    a.y += self.h as f32;
+                }
+                if a.y >= self.h as f32 {
+                    a.y -= self.h as f32;
+                }
+            }
+            moved.push(a);
+        }
+        self.agents = moved;
+
+        // 2. Agents deposit — the corpse's 0.5, capped at 1.0. On the
+        //    disk the deposit lands on the projection, as the mold had it.
+        for i in 0..self.agents.len() {
+            let a = self.agents[i];
+            if curved {
+                if let Some((x, y)) = chart_cell((a.x, a.y), self.w, self.h) {
+                    let idx = y * self.w + x;
+                    self.grid[idx] = (self.grid[idx] + DEPOSIT).min(1.0);
+                }
+            } else {
+                let x = a.x as usize;
+                let y = a.y as usize;
+                if x < self.w && y < self.h {
+                    let idx = y * self.w + x;
+                    self.grid[idx] = (self.grid[idx] + DEPOSIT).min(1.0);
+                }
+            }
+        }
+
+        // 3. Feeding: agents in a city's apron eat from its stock.
+        //    The stock falls in every regime; only gating differs.
+        //    Flat aprons wrap on the torus; disk aprons are chart
+        //    distances (the projection is where the mouth lives).
+        for ci in 0..self.cities.len() {
+            let (cx, cy) = (self.cities[ci].x, self.cities[ci].y);
+            let mut feeders = 0u64;
+            for a in &self.agents {
+                let d2 = if curved {
+                    let dx = a.x - cx;
+                    let dy = a.y - cy;
+                    dx * dx + dy * dy
+                } else {
+                    let mut dx = (a.x - cx).abs();
+                    if dx > self.w as f32 / 2.0 {
+                        dx = self.w as f32 - dx;
+                    }
+                    let mut dy = (a.y - cy).abs();
+                    if dy > self.h as f32 / 2.0 {
+                        dy = self.h as f32 - dy;
+                    }
+                    dx * dx + dy * dy
+                };
+                let in_apron = if curved {
+                    d2 <= FEED_RADIUS2_DISK
+                } else {
+                    d2 <= FEED_RADIUS2
+                };
+                if in_apron {
+                    feeders += 1;
+                }
+            }
+            if feeders > 0 {
+                let rate = self.regime.eat_rate(self.cities[ci].loud);
+                let city = &mut self.cities[ci];
+                city.visits += feeders;
+                if !city.lit {
+                    city.ghost_visits += feeders;
+                }
+                city.stock = (city.stock - rate * feeders as f32).max(0.0);
+            }
+        }
+
+        // 4. Bookkeeping: darkness.
+        for city in &mut self.cities {
+            if self.regime.gates() {
+                if city.lit && city.stock <= 0.0 {
+                    city.lit = false;
+                    if city.first_dark.is_none() {
+                        city.first_dark = Some(self.tick);
+                    }
+                }
+                if !city.lit {
+                    city.dark_ticks += 1;
+                }
+            } else if city.first_dark.is_none() && city.stock <= 0.0 {
+                // Eternal's shadow ledger: record, never gate.
+                city.first_dark = Some(self.tick);
+            }
+        }
+
+        // 5. Lit cities stamp their disc — gated. Flat: the corpse's
+        //    disc on the torus. Curved: every chart cell whose centre
+        //    lies within the stamp radius of the city's disk point.
+        if curved {
+            let stamps: Vec<(f32, f32, f32)> = self
+                .cities
+                .iter()
+                .filter(|c| c.lit || !self.regime.gates())
+                .map(|c| (c.x, c.y, self.regime.stamp(c.loud)))
+                .collect();
+            for (cx, cy, v) in stamps {
+                for y in 0..self.h {
+                    for x in 0..self.w {
+                        let c = cell_centre(x, y, self.w, self.h);
+                        let dx = c.0 - cx;
+                        let dy = c.1 - cy;
+                        if dx * dx + dy * dy <= STAMP_RADIUS_DISK * STAMP_RADIUS_DISK {
+                            self.grid[y * self.w + x] = v;
+                        }
+                    }
+                }
+            }
+        } else {
+            let stamps: Vec<(f32, f32, f32)> = self
+                .cities
+                .iter()
+                .filter(|c| c.lit || !self.regime.gates())
+                .map(|c| (c.x, c.y, self.regime.stamp(c.loud)))
+                .collect();
+            for (cx, cy, v) in stamps {
+                let (cxi, cyi) = (cx as isize, cy as isize);
+                for dy in -CITY_RADIUS..=CITY_RADIUS {
+                    for dx in -CITY_RADIUS..=CITY_RADIUS {
+                        if dx * dx + dy * dy <= CITY_RADIUS * CITY_RADIUS {
+                            let nx = (cxi + dx).rem_euclid(self.w as isize) as usize;
+                            let ny = (cyi + dy).rem_euclid(self.h as isize) as usize;
+                            self.grid[ny * self.w + nx] = v;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 6. Diffuse (3×3 mean) and decay ×0.95. Flat: the corpse,
+        //    verbatim, on the torus. Curved: the mold's hybrid — the
+        //    diffusion lives on the projection; cells outside the
+        //    disk are void and read 0 in every neighbourhood, so the
+        //    rim bleeds field into the void each tick.
+        let old = self.grid.clone();
+        let (w, h) = (self.w, self.h);
+        for y in 0..h {
+            for x in 0..w {
+                if curved && !self.in_disk(x, y) {
+                    self.grid[y * w + x] = 0.0;
+                    continue;
+                }
+                let mut sum = 0.0f32;
+                for dy in -1isize..=1 {
+                    for dx in -1isize..=1 {
+                        if curved {
+                            let nx = x as isize + dx;
+                            let ny = y as isize + dy;
+                            if nx < 0 || ny < 0 || nx >= w as isize || ny >= h as isize {
+                                continue; // void neighbour reads 0
+                            }
+                            let (ux, uy) = (nx as usize, ny as usize);
+                            if !self.in_disk(ux, uy) {
+                                continue; // void neighbour reads 0
+                            }
+                            sum += old[uy * w + ux];
+                        } else {
+                            let nx = (x as isize + dx).rem_euclid(w as isize) as usize;
+                            let ny = (y as isize + dy).rem_euclid(h as isize) as usize;
+                            sum += old[ny * w + nx];
+                        }
+                    }
+                }
+                self.grid[y * w + x] = (sum / 9.0) * DECAY;
+            }
+        }
+
+        self.tick += 1;
+    }
+
+    fn mass(&self) -> f32 {
+        self.grid.iter().sum()
+    }
+
+    fn coverage(&self) -> usize {
+        self.grid.iter().filter(|&&v| v > 0.2).count()
+    }
+
+    fn first_dark(&self) -> Option<usize> {
+        self.cities.iter().filter_map(|c| c.first_dark).min()
+    }
+}
+
+struct Season {
+    regime: Regime,
+    mass_series: Vec<f32>, // every 100 ticks, plus the final tick
+    first_dark: Option<usize>,
+    mass_at_first_dark: Option<f32>,
+    final_mass: f32,
+    final_coverage: usize,
+    cities: Vec<City>,
+    ghost_last300: u64,
+    ghost_last300_cities: Vec<u64>, // per city, final 300 ticks only
+    ghost_slices: Vec<Vec<u64>>, // per 300-tick slice from tick 7,200, per city (past rooms)
+    ghost_fine: Vec<Vec<u64>>, // per 100-tick slice inside 8,400..9,000, per city (past rooms)
+    ghost_tenth: Vec<Vec<u64>>, // per 10-tick slice inside 8,600..8,800, per city (past rooms)
+    ghost_tick: Vec<Vec<u64>>, // per tick inside 8,600..8,710, per city (past rooms)
+}
+
+fn run_season(regime: Regime) -> Season {
+    let ticks = regime.ticks();
+    let mut world = World::new(W, H, AGENTS, regime, SEED);
+    let mut mass_series = Vec::new();
+    let mut mass_at_first_dark = None;
+    let mut ghost_at_900 = 0u64;
+    let mut ghost_cities_at_900: Vec<u64> = vec![0; world.cities.len()];
+    let mut ghost_snaps: Vec<Vec<u64>> = Vec::new();
+    let mut fine_snaps: Vec<Vec<u64>> = Vec::new();
+    let mut tenth_snaps: Vec<Vec<u64>> = Vec::new();
+    let mut tick_snaps: Vec<Vec<u64>> = Vec::new();
+    for t in 0..ticks {
+        world.step();
+        if t + 1 >= 7200 && (t + 1) % 300 == 0 {
+            ghost_snaps.push(world.cities.iter().map(|c| c.ghost_visits).collect());
+        }
+        if (8400..=9000).contains(&(t + 1)) && (t + 1) % 100 == 0 {
+            fine_snaps.push(world.cities.iter().map(|c| c.ghost_visits).collect());
+        }
+        if (8600..=8800).contains(&(t + 1)) && (t + 1) % 10 == 0 {
+            tenth_snaps.push(world.cities.iter().map(|c| c.ghost_visits).collect());
+        }
+        if (8600..=8710).contains(&(t + 1)) {
+            tick_snaps.push(world.cities.iter().map(|c| c.ghost_visits).collect());
+        }
+        if (t + 1) % 100 == 0 {
+            mass_series.push(world.mass());
+        }
+        if mass_at_first_dark.is_none() {
+            if let Some(fd) = world.first_dark() {
+                if fd == t {
+                    mass_at_first_dark = Some(world.mass());
+                }
+            }
+        }
+        if t + 1 == ticks - 300 {
+            ghost_at_900 = world.cities.iter().map(|c| c.ghost_visits).sum();
+            ghost_cities_at_900 = world.cities.iter().map(|c| c.ghost_visits).collect();
+        }
+    }
+    let ghost_total: u64 = world.cities.iter().map(|c| c.ghost_visits).sum();
+    let ghost_slices: Vec<Vec<u64>> = ghost_snaps
+        .windows(2)
+        .map(|w| w[1].iter().zip(w[0].iter()).map(|(a, b)| a - b).collect())
+        .collect();
+    let ghost_fine: Vec<Vec<u64>> = fine_snaps
+        .windows(2)
+        .map(|w| w[1].iter().zip(w[0].iter()).map(|(a, b)| a - b).collect())
+        .collect();
+    let ghost_tenth: Vec<Vec<u64>> = tenth_snaps
+        .windows(2)
+        .map(|w| w[1].iter().zip(w[0].iter()).map(|(a, b)| a - b).collect())
+        .collect();
+    let ghost_tick: Vec<Vec<u64>> = tick_snaps
+        .windows(2)
+        .map(|w| w[1].iter().zip(w[0].iter()).map(|(a, b)| a - b).collect())
+        .collect();
+    Season {
+        regime,
+        mass_series,
+        first_dark: world.first_dark(),
+        mass_at_first_dark,
+        final_mass: world.mass(),
+        final_coverage: world.coverage(),
+        cities: world.cities.clone(),
+        ghost_last300: ghost_total - ghost_at_900,
+        ghost_last300_cities: world
+            .cities
+            .iter()
+            .zip(ghost_cities_at_900.iter())
+            .map(|(c, g0)| c.ghost_visits - g0)
+            .collect(),
+        ghost_slices,
+        ghost_fine,
+        ghost_tenth,
+        ghost_tick,
+    }
+}
+
+fn class_stats(cities: &[City], loud: bool) -> (u64, u64, f32, i64, usize) {
+    // (visits, ghost visits, mean first_dark, min first_dark, dark at end)
+    let sel: Vec<&City> = cities.iter().filter(|c| c.loud == loud).collect();
+    let visits: u64 = sel.iter().map(|c| c.visits).sum();
+    let ghost: u64 = sel.iter().map(|c| c.ghost_visits).sum();
+    let darks: Vec<usize> = sel.iter().filter_map(|c| c.first_dark).collect();
+    let mean_fd = if darks.is_empty() {
+        -1.0
+    } else {
+        darks.iter().sum::<usize>() as f32 / darks.len() as f32
+    };
+    let min_fd = darks.iter().min().map(|t| *t as i64).unwrap_or(-1);
+    let dark_end = sel.iter().filter(|c| !c.lit).count();
+    (visits, ghost, mean_fd, min_fd, dark_end)
+}
+
+fn effective_mean_fd(cities: &[City], loud: bool, ticks: usize) -> f32 {
+    // Mean first-dark tick counting a never-dark city as the season
+    // length - the parent's P2 yardstick, priced per room.
+    let sel: Vec<&City> = cities.iter().filter(|c| c.loud == loud).collect();
+    let sum: usize = sel
+        .iter()
+        .map(|c| c.first_dark.unwrap_or(ticks))
+        .sum();
+    sum as f32 / sel.len() as f32
+}
+
+fn headless() {
+    println!("physarum-sixthseason \u{2014} headless ledger");
+    println!(
+        "config: grid {}x{}, agents {}, ticks {} (long rooms {}, far rooms {}, last rooms {}, past rooms {}, sixth rooms {}), cities {} (loud-slow 5, quiet-quick 4), stock0 {:.1}, stamp_loud {:.2}, stamp_quiet {:.2}, eat_loud {:.3}, eat_quiet {:.3}, seed {:#018x}; curved rooms: poincare disk, sensor_h {:.3}, move_h {:.3}, boundary |z|^2 < {:.2}, city_scale {:.2}",
+        W, H, AGENTS, TICKS, LONG_TICKS, FAR_TICKS, LAST_TICKS, PAST_TICKS, SIXTH_TICKS, 9, STOCK0, LOUD_STAMP, QUIET_STAMP, EAT_LOUD, EAT_QUIET, SEED,
+        SENSOR_DIST_H, MOVE_H, DISK_R2_MAX, CITY_SCALE
+    );
+    let seasons: Vec<Season> = [
+        Regime::OpposedDepleted,
+        Regime::OpposedLongDepleted,
+        Regime::CurvedOpposedEternal,
+        Regime::CurvedOpposedDepleted,
+        Regime::CurvedLongEternal,
+        Regime::CurvedLongDepleted,
+        Regime::OpposedFarDepleted,
+        Regime::CurvedFarEternal,
+        Regime::CurvedFarDepleted,
+        Regime::OpposedLastDepleted,
+        Regime::CurvedLastEternal,
+        Regime::CurvedLastDepleted,
+        Regime::OpposedPastDepleted,
+        Regime::CurvedPastEternal,
+        Regime::CurvedPastDepleted,
+        Regime::OpposedSixthDepleted,
+        Regime::CurvedSixthEternal,
+        Regime::CurvedSixthDepleted,
+    ]
+    .into_iter()
+    .map(run_season)
+    .collect();
+    for s in &seasons {
+        let visits: u64 = s.cities.iter().map(|c| c.visits).sum();
+        let ghost: u64 = s.cities.iter().map(|c| c.ghost_visits).sum();
+        let dark_ticks: u64 = s.cities.iter().map(|c| c.dark_ticks).sum();
+        let stock_left: f32 = s.cities.iter().map(|c| c.stock).sum();
+        println!(
+            "regime {}: visits {}, ghost {}, ghost_last300 {}, first_dark {}, mass_at_first_dark {}, dark_cities_end {}, dark_ticks {}, stock_left {:.2}, final_mass {:.2}, final_coverage {}",
+            s.regime.name(),
+            visits,
+            ghost,
+            s.ghost_last300,
+            s.first_dark.map(|t| t as i64).unwrap_or(-1),
+            s.mass_at_first_dark
+                .map(|m| format!("{:.2}", m))
+                .unwrap_or_else(|| "none".to_string()),
+            s.cities.iter().filter(|c| !c.lit && s.regime.gates()).count(),
+            dark_ticks,
+            stock_left,
+            s.final_mass,
+            s.final_coverage
+        );
+        for (label, loud) in [("loud", true), ("quiet", false)] {
+            let (v, g, mean_fd, min_fd, dark_end) = class_stats(&s.cities, loud);
+            println!(
+                "  class {}: visits {}, ghost {}, mean_first_dark {:.1}, eff_mean_first_dark {:.1}, min_first_dark {}, dark_end {}",
+                label, v, g, mean_fd, effective_mean_fd(&s.cities, loud, s.regime.ticks()), min_fd, dark_end
+            );
+        }
+        if s.regime.opposed() {
+            let (lv, _, _, _, _) = class_stats(&s.cities, true);
+            let (qv, _, _, _, _) = class_stats(&s.cities, false);
+            let ratio = (lv as f32 / 5.0) / (qv as f32 / 4.0);
+            let ghost_total = ghost as f32;
+            let loud_ghost = class_stats(&s.cities, true).1 as f32;
+            println!(
+                "  per-city visit ratio loud/quiet: {:.2}; loud ghost share: {}",
+                ratio,
+                if ghost_total > 0.0 {
+                    format!("{:.1}%", 100.0 * loud_ghost / ghost_total)
+                } else {
+                    "n/a".to_string()
+                }
+            );
+        }
+        println!(
+            "  mass_series[100..{}]: {}", s.regime.ticks(),
+            s.mass_series
+                .iter()
+                .map(|m| format!("{:.1}", m))
+                .collect::<Vec<_>>()
+                .join(" ")
+        );
+        for (i, c) in s.cities.iter().enumerate() {
+            println!(
+                "  city {} ({}): visits {}, ghost {}, first_dark {}, dark_ticks {}, stock {:.2}, lit {}",
+                i,
+                if c.loud { "loud" } else { "quiet" },
+                c.visits,
+                c.ghost_visits,
+                c.first_dark.map(|t| t as i64).unwrap_or(-1),
+                c.dark_ticks,
+                c.stock,
+                c.lit
+            );
+        }
+    }
+    // The lineage's identity, in both spellings (printed; a test
+    // asserts the truncation one):
+    for (e, d) in [
+        (&seasons[2], &seasons[3]),
+        (&seasons[4], &seasons[5]),
+        (&seasons[7], &seasons[8]),
+    ] {
+        let shared = match d.first_dark {
+            Some(fd) => {
+                let n = (fd + 1) / 100;
+                let upto = n.min(e.mass_series.len()).min(d.mass_series.len());
+                (0..upto).all(|i| e.mass_series[i] == d.mass_series[i])
+            }
+            None => e.mass_series == d.mass_series,
+        };
+        println!(
+            "identity {}=={} on mass samples before first_dark: {}",
+            e.regime.name(),
+            d.regime.name(),
+            shared
+        );
+    }
+    // Truncation identities: a long room's first 1,200 ticks are the
+    // short room's whole season, sample for sample - the long rooms
+    // differ only in being allowed to continue.
+    for (short, long) in [
+        (&seasons[0], &seasons[1]),
+        (&seasons[3], &seasons[5]),
+        (&seasons[1], &seasons[6]),
+        (&seasons[5], &seasons[8]),
+    ] {
+        let upto = short.mass_series.len().min(long.mass_series.len());
+        let same = (0..upto).all(|i| short.mass_series[i] == long.mass_series[i])
+            && short.first_dark == long.first_dark;
+        println!(
+            "truncation {}=={}[0..1200]: {}",
+            long.regime.name(),
+            short.regime.name(),
+            same
+        );
+    }
+    for (far, last) in [
+        (&seasons[6], &seasons[9]),
+        (&seasons[8], &seasons[11]),
+    ] {
+        let upto = far.mass_series.len().min(last.mass_series.len());
+        let same = (0..upto).all(|i| far.mass_series[i] == last.mass_series[i])
+            && far.first_dark == last.first_dark;
+        println!(
+            "truncation {}=={}[0..4800]: {}",
+            last.regime.name(),
+            far.regime.name(),
+            same
+        );
+    }
+    for (e, d) in [(&seasons[10], &seasons[11])] {
+        let shared = match d.first_dark {
+            Some(fd) => {
+                let n = (fd + 1) / 100;
+                let upto = n.min(e.mass_series.len()).min(d.mass_series.len());
+                (0..upto).all(|i| e.mass_series[i] == d.mass_series[i])
+            }
+            None => e.mass_series == d.mass_series,
+        };
+        println!(
+            "identity {}=={} on mass samples before first_dark: {}",
+            e.regime.name(),
+            d.regime.name(),
+            shared
+        );
+    }
+    for (last, past) in [
+        (&seasons[9], &seasons[12]),
+        (&seasons[11], &seasons[14]),
+    ] {
+        let upto = last.mass_series.len().min(past.mass_series.len());
+        let same = (0..upto).all(|i| last.mass_series[i] == past.mass_series[i])
+            && last.first_dark == past.first_dark;
+        println!(
+            "truncation {}=={}[0..7200]: {}",
+            past.regime.name(),
+            last.regime.name(),
+            same
+        );
+    }
+    for (e, d) in [(&seasons[13], &seasons[14])] {
+        let shared = match d.first_dark {
+            Some(fd) => {
+                let n = (fd + 1) / 100;
+                let upto = n.min(e.mass_series.len()).min(d.mass_series.len());
+                (0..upto).all(|i| e.mass_series[i] == d.mass_series[i])
+            }
+            None => e.mass_series == d.mass_series,
+        };
+        println!(
+            "identity {}=={} on mass samples before first_dark: {}",
+            e.regime.name(),
+            d.regime.name(),
+            shared
+        );
+    }
+    for (past, sixth) in [
+        (&seasons[12], &seasons[15]),
+        (&seasons[14], &seasons[17]),
+    ] {
+        let upto = past.mass_series.len().min(sixth.mass_series.len());
+        let same = (0..upto).all(|i| past.mass_series[i] == sixth.mass_series[i])
+            && past.first_dark == sixth.first_dark;
+        println!(
+            "truncation {}=={}[0..9600]: {}",
+            sixth.regime.name(),
+            past.regime.name(),
+            same
+        );
+    }
+    for (e, d) in [(&seasons[16], &seasons[17])] {
+        let shared = match d.first_dark {
+            Some(fd) => {
+                let n = (fd + 1) / 100;
+                let upto = n.min(e.mass_series.len()).min(d.mass_series.len());
+                (0..upto).all(|i| e.mass_series[i] == d.mass_series[i])
+            }
+            None => e.mass_series == d.mass_series,
+        };
+        println!(
+            "identity {}=={} on mass samples before first_dark: {}",
+            e.regime.name(),
+            d.regime.name(),
+            shared
+        );
+    }
+    // The far window, priced by difference (exact by the truncation
+    // identities above): what ticks 2,400..4,800 did to each city.
+    let long_d = &seasons[5];
+    let far_d = &seasons[8];
+    for (i, (fc, lc)) in far_d.cities.iter().zip(long_d.cities.iter()).enumerate() {
+        println!(
+            "  far-window city {} ({}): visits_2400_4800 {}, visits_0_2400 {}, first_dark {}, stock_at_4800 {:.2}, lit {}",
+            i,
+            if fc.loud { "loud" } else { "quiet" },
+            fc.visits - lc.visits,
+            lc.visits,
+            fc.first_dark.map(|t| t as i64).unwrap_or(-1),
+            fc.stock,
+            fc.lit
+        );
+    }
+    // The last window, priced by difference (exact by the truncation
+    // identities above): what ticks 4,800..7,200 did to each city.
+    let far_d2 = &seasons[8];
+    let last_d = &seasons[11];
+    for (i, (lc, fc)) in last_d.cities.iter().zip(far_d2.cities.iter()).enumerate() {
+        println!(
+            "  last-window city {} ({}): visits_4800_7200 {}, visits_0_4800 {}, first_dark {}, stock_at_7200 {:.2}, lit {}",
+            i,
+            if lc.loud { "loud" } else { "quiet" },
+            lc.visits - fc.visits,
+            fc.visits,
+            lc.first_dark.map(|t| t as i64).unwrap_or(-1),
+            lc.stock,
+            lc.lit
+        );
+    }
+    // The last sound, priced city by city: ghost visits in the
+    // final 300 ticks of the last depleted room.
+    for (i, g) in last_d.ghost_last300_cities.iter().enumerate() {
+        println!(
+            "  last300 ghost city {} ({}): {}",
+            i,
+            if last_d.cities[i].loud { "loud" } else { "quiet" },
+            g
+        );
+    }
+    // The shadow footnote at the last length: city 8's gated fall
+    // against its shadow exhaustion in the last eternal room.
+    let last_e = &seasons[10];
+    println!(
+        "  city 8 at the last length: gated first_dark {}, shadow first_dark {}, shadow stock {:.2}, shadow visits {}",
+        last_d.cities[8].first_dark.map(|t| t as i64).unwrap_or(-1),
+        last_e.cities[8].first_dark.map(|t| t as i64).unwrap_or(-1),
+        last_e.cities[8].stock,
+        last_e.cities[8].visits
+    );
+    // The past window, priced by difference (exact by the truncation
+    // identities above): what ticks 7,200..9,600 did to each city.
+    // Every visit in this window is a ghost visit on the disk: the
+    // last city fell at tick 5,204, a full season before it opened.
+    let last_d2 = &seasons[11];
+    let past_d = &seasons[14];
+    for (i, (pc, lc)) in past_d.cities.iter().zip(last_d2.cities.iter()).enumerate() {
+        println!(
+            "  past-window city {} ({}): visits_7200_9600 {}, ghost_7200_9600 {}, visits_0_7200 {}, first_dark {}, stock_at_9600 {:.2}, lit {}",
+            i,
+            if pc.loud { "loud" } else { "quiet" },
+            pc.visits - lc.visits,
+            pc.ghost_visits - lc.ghost_visits,
+            lc.visits,
+            pc.first_dark.map(|t| t as i64).unwrap_or(-1),
+            pc.stock,
+            pc.lit
+        );
+    }
+    // The duet, priced at both ends of the past season: ghost visits
+    // in the final 300 ticks of the last room (ticks 6,900..7,200)
+    // against the final 300 ticks of the past room (9,300..9,600).
+    for (i, (g_last, g_past)) in last_d2
+        .ghost_last300_cities
+        .iter()
+        .zip(past_d.ghost_last300_cities.iter())
+        .enumerate()
+    {
+        println!(
+            "  duet ghost city {} ({}): final300_at_7200 {}, final300_at_9600 {}",
+            i,
+            if past_d.cities[i].loud { "loud" } else { "quiet" },
+            g_last,
+            g_past
+        );
+    }
+    // The shadow floor at the past length: city 8's gated fall
+    // against its shadow exhaustion in the past eternal room.
+    let past_e = &seasons[13];
+    println!(
+        "  city 8 at the past length: gated first_dark {}, shadow first_dark {}, shadow stock {:.2}, shadow visits {}",
+        past_d.cities[8].first_dark.map(|t| t as i64).unwrap_or(-1),
+        past_e.cities[8].first_dark.map(|t| t as i64).unwrap_or(-1),
+        past_e.cities[8].stock,
+        past_e.cities[8].visits
+    );
+    // The migration, dated: ghost visits per city per 300-tick
+    // slice across the past window (ticks 7,200..9,600), read in
+    // CurvedPastDepleted - the instrument this survey adds.
+    println!("  migration slices (CurvedPastDepleted, ghost visits per 300 ticks):");
+    for (k, slice) in past_d.ghost_slices.iter().enumerate() {
+        let lo = 7200 + 300 * k;
+        let total: u64 = slice.iter().sum();
+        let top = slice
+            .iter()
+            .enumerate()
+            .max_by_key(|(_, v)| *v)
+            .map(|(i, _)| i)
+            .unwrap_or(0);
+        println!(
+            "  slice {} [{}..{}): total {}, argmax city {}, city8 {}, city1 {}, city5 {}, city6 {}",
+            k, lo, lo + 300, total, top, slice[8], slice[1], slice[5], slice[6]
+        );
+        for (i, g) in slice.iter().enumerate() {
+            println!(
+                "  slice{} ghost city {} ({}): {}",
+                k,
+                i,
+                if past_d.cities[i].loud { "loud" } else { "quiet" },
+                g
+            );
+        }
+    }
+    // The cliff, dated at hundred-tick grain: ghost visits per
+    // city per 100 ticks inside 8,400..9,000, spanning the
+    // parent's slices 4 and 5 - the instrument this survey adds.
+    println!("  cliff fine slices (CurvedPastDepleted, ghost visits per 100 ticks):");
+    for (k, slice) in past_d.ghost_fine.iter().enumerate() {
+        let lo = 8400 + 100 * k;
+        let total: u64 = slice.iter().sum();
+        let top = slice
+            .iter()
+            .enumerate()
+            .max_by_key(|(_, v)| *v)
+            .map(|(i, _)| i)
+            .unwrap_or(0);
+        println!(
+            "  fine {} [{}..{}): total {}, argmax city {}, city8 {}, city1 {}, city5 {}, city6 {}",
+            k, lo, lo + 100, total, top, slice[8], slice[1], slice[5], slice[6]
+        );
+        for (i, g) in slice.iter().enumerate() {
+            println!(
+                "  fine{} ghost city {} ({}): {}",
+                k,
+                i,
+                if past_d.cities[i].loud { "loud" } else { "quiet" },
+                g
+            );
+        }
+    }
+
+    // The step at ten-tick grain: ghost visits per city per 10
+    // ticks inside 8,600..8,800, spanning the parent's fine
+    // slices 2 and 3 - the instrument this survey adds.
+    println!("  cliff tenth slices (CurvedPastDepleted, ghost visits per 10 ticks):");
+    for (k, slice) in past_d.ghost_tenth.iter().enumerate() {
+        let lo = 8600 + 10 * k;
+        let total: u64 = slice.iter().sum();
+        println!(
+            "  tenth {} [{}..{}): total {}, city8 {}, city1 {}, city5 {}",
+            k, lo, lo + 10, total, slice[8], slice[1], slice[5]
+        );
+    }
+    let c8t: Vec<u64> = past_d.ghost_tenth.iter().map(|sl| sl[8]).collect();
+    let c1t: Vec<u64> = past_d.ghost_tenth.iter().map(|sl| sl[1]).collect();
+    if c8t.len() == 20 {
+        let max_post = *c8t[10..].iter().max().unwrap_or(&0);
+        let mut max_drop: i64 = 0;
+        let mut max_drop_at = 0usize;
+        for k in 1..20 {
+            let d = c8t[k - 1] as i64 - c8t[k] as i64;
+            if d > max_drop {
+                max_drop = d;
+                max_drop_at = k;
+            }
+        }
+        println!(
+            "  tenth summary: city8 plateau cells {:?}, city8 fall cells {:?}, largest fall cell {}, last plateau cell {}, first fall cell {}, largest single-cell drop {} at cell {}, city1 plateau max {}, city1 fall total {}",
+            &c8t[..10], &c8t[10..], max_post, c8t[9], c8t[10], max_drop, max_drop_at,
+            c1t[..10].iter().max().unwrap_or(&0), c1t[10..].iter().sum::<u64>()
+        );
+    }
+
+    // The valley's other wall: ghost visits per city per
+    // tick inside 8,600..8,710, spanning the parent's tenth
+    // cells 0..10 - the instrument this survey widens. The
+    // eastern fifty slices reproduce clifftick's ledger; the
+    // western sixty date the descent's beginning.
+    println!("  valley tick slices (CurvedPastDepleted, ghost visits per tick):");
+    for (k, slice) in past_d.ghost_tick.iter().enumerate() {
+        let lo = 8600 + k;
+        let total: u64 = slice.iter().sum();
+        println!(
+            "  tick {} [{}..{}): total {}, city8 {}, city1 {}, city5 {}",
+            k, lo, lo + 1, total, slice[8], slice[1], slice[5]
+        );
+    }
+    let c8k: Vec<u64> = past_d.ghost_tick.iter().map(|sl| sl[8]).collect();
+    let c1k: Vec<u64> = past_d.ghost_tick.iter().map(|sl| sl[1]).collect();
+    let c5k: Vec<u64> = past_d.ghost_tick.iter().map(|sl| sl[5]).collect();
+    if c8k.len() == 110 {
+        let west = &c8k[..60]; // 8,600..8,660
+        let west_max = *west.iter().max().unwrap_or(&0);
+        let west_min = *west.iter().min().unwrap_or(&0);
+        let west_ascents = west.windows(2).filter(|w| w[1] > w[0]).count();
+        let last_hot = (0..60).rev().find(|&j| west[j] >= 10).map(|j| 8600 + j);
+        let c1_west_silent = c1k[..60].iter().filter(|v| **v == 0).count();
+        let c1_west_total: u64 = c1k[..60].iter().sum();
+        let c5_total: u64 = c5k.iter().sum();
+        println!(
+            "  westwall summary: city8 west ticks {:?}, west max {}, west min {}, west ascents {}, last west tick >=10 at {:?}, city1 west silent {}, city1 west total {}, city5 window total {}, city8 east ticks {:?}",
+            west, west_max, west_min, west_ascents, last_hot, c1_west_silent,
+            c1_west_total, c5_total, &c8k[60..]
+        );
+    }
+    // The sixth window, priced by difference (exact by the truncation
+    // identities above): what ticks 9,600..12,000 did to each city.
+    // Every visit in this window is a ghost visit on the disk: the
+    // last city fell at tick 5,204, two full seasons before it opened.
+    let past_d3 = &seasons[14];
+    let sixth_d = &seasons[17];
+    for (i, (sc, pc)) in sixth_d.cities.iter().zip(past_d3.cities.iter()).enumerate() {
+        println!(
+            "  sixth-window city {} ({}): visits_9600_12000 {}, ghost_9600_12000 {}, visits_0_9600 {}, first_dark {}, stock_at_12000 {:.2}, lit {}",
+            i,
+            if sc.loud { "loud" } else { "quiet" },
+            sc.visits - pc.visits,
+            sc.ghost_visits - pc.ghost_visits,
+            pc.visits,
+            sc.first_dark.map(|t| t as i64).unwrap_or(-1),
+            sc.stock,
+            sc.lit
+        );
+    }
+    // The tenure, priced at both ends of the sixth season: ghost
+    // visits in the final 300 ticks of the past room (9,300..9,600)
+    // against the final 300 ticks of the sixth room (11,700..12,000).
+    for (i, (g_past, g_sixth)) in past_d3
+        .ghost_last300_cities
+        .iter()
+        .zip(sixth_d.ghost_last300_cities.iter())
+        .enumerate()
+    {
+        println!(
+            "  tenure ghost city {} ({}): final300_at_9600 {}, final300_at_12000 {}",
+            i,
+            if sixth_d.cities[i].loud { "loud" } else { "quiet" },
+            g_past,
+            g_sixth
+        );
+    }
+    // The sixth window's slices: ghost visits per city per 300
+    // ticks across ticks 9,600..12,000 (slices 8..16 of the sixth
+    // room's slice ledger, which runs from tick 7,200).
+    println!("  sixth-window slices (CurvedSixthDepleted, ghost visits per 300 ticks):");
+    let mut c1_silent_slices = 0usize;
+    let mut sixth_window_ghost = 0u64;
+    for (k, slice) in sixth_d.ghost_slices.iter().enumerate().skip(8) {
+        let lo = 7200 + 300 * k;
+        let total: u64 = slice.iter().sum();
+        sixth_window_ghost += total;
+        if slice[1] == 0 {
+            c1_silent_slices += 1;
+        }
+        let top = slice
+            .iter()
+            .enumerate()
+            .max_by_key(|(_, v)| *v)
+            .map(|(i, _)| i)
+            .unwrap_or(0);
+        println!(
+            "  slice {} [{}..{}): total {}, argmax city {}, city8 {}, city1 {}, city5 {}, city6 {}",
+            k, lo, lo + 300, total, top, slice[8], slice[1], slice[5], slice[6]
+        );
+    }
+    println!(
+        "  sixth-window summary: ghost total {}, city1 silent slices {} of 8, city1 final300 {}, city5 final300 {}",
+        sixth_window_ghost,
+        c1_silent_slices,
+        sixth_d.ghost_last300_cities[1],
+        sixth_d.ghost_last300_cities[5]
+    );
+    // The shadow floor at the sixth length: city 8's gated fall
+    // against its shadow exhaustion in the sixth eternal room.
+    let sixth_e = &seasons[16];
+    println!(
+        "  city 8 at the sixth length: gated first_dark {}, shadow first_dark {}, shadow stock {:.2}, shadow visits {}",
+        sixth_d.cities[8].first_dark.map(|t| t as i64).unwrap_or(-1),
+        sixth_e.cities[8].first_dark.map(|t| t as i64).unwrap_or(-1),
+        sixth_e.cities[8].stock,
+        sixth_e.cities[8].visits
+    );
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|a| a == "--headless") {
+        headless();
+        return;
+    }
+    // No TUI in this revival: a window was half of both corpses'
+    // death certificates. Headless is the only mouth.
+    headless();
+}
+
+#[cfg(test)]
+mod tests {
+    const FINE_C8: [u64; 6] = [688, 665, 613, 121, 87, 4];
+    const FINE_C1: [u64; 6] = [0, 216, 117, 0, 0, 0];
+    const FINE_C5: [u64; 6] = [0, 8, 0, 0, 8, 185];
+    const MIGRATION_C8: [u64; 8] = [378, 1469, 1654, 1650, 1966, 212, 17, 0];
+    const MIGRATION_C1: [u64; 8] = [0, 0, 0, 0, 333, 0, 0, 383];
+    const MIGRATION_C5: [u64; 8] = [541, 125, 92, 299, 8, 193, 172, 373];
+    use super::*;
+
+    #[test]
+    fn splitmix_is_deterministic() {
+        let mut a = SplitMix::new(42);
+        let mut b = SplitMix::new(42);
+        for _ in 0..100 {
+            assert_eq!(a.next_u64(), b.next_u64());
+        }
+        let mut c = SplitMix::new(42);
+        for _ in 0..1000 {
+            let v = c.next_f32();
+            assert!((0.0..1.0).contains(&v));
+        }
+    }
+
+    #[test]
+    fn mobius_addition_is_the_disks_road() {
+        // Identity: 0 ⊕ b = b, a ⊕ 0 = a.
+        let b = (0.3f32, -0.4f32);
+        let r = mobius_add((0.0, 0.0), b);
+        assert!((r.0 - b.0).abs() < 1e-6 && (r.1 - b.1).abs() < 1e-6);
+        let a = (-0.2f32, 0.55f32);
+        let r = mobius_add(a, (0.0, 0.0));
+        assert!((r.0 - a.0).abs() < 1e-6 && (r.1 - a.1).abs() < 1e-6);
+        // Closure: the disk is closed under ⊕ for points inside it.
+        let mut rng = SplitMix::new(7);
+        for _ in 0..1000 {
+            let p = (rng.next_f32() * 1.8 - 0.9, rng.next_f32() * 1.8 - 0.9);
+            let q = (rng.next_f32() * 0.4 - 0.2, rng.next_f32() * 0.4 - 0.2);
+            if z_norm2(p) < 0.98 && z_norm2(q) < 1.0 {
+                assert!(z_norm2(mobius_add(p, q)) < 1.0);
+            }
+        }
+        // Compression: the same step travels less chart distance
+        // near the rim than at the centre — the curvature itself.
+        let step = z_polar(MOVE_H, 0.0);
+        let centre = mobius_add((0.0, 0.0), step);
+        let rim = mobius_add((0.85, 0.0), step);
+        let d_centre = (centre.0).abs();
+        let d_rim = (rim.0 - 0.85).abs();
+        assert!(d_rim < d_centre, "rim step {} !< centre step {}", d_rim, d_centre);
+    }
+
+    #[test]
+    fn disk_spawn_and_cities_live_inside() {
+        let world = World::new(W, H, AGENTS, Regime::CurvedOpposedDepleted, SEED);
+        assert!(world.agents.iter().all(|a| z_norm2((a.x, a.y)) < SPAWN_R2));
+        assert!(world.cities.iter().all(|c| z_norm2((c.x, c.y)) < 1.0));
+        // City 0 stands at the origin; the outermost city is city 4.
+        assert!(z_norm2((world.cities[0].x, world.cities[0].y)) < 1e-9);
+        let r4 = z_norm2((world.cities[4].x, world.cities[4].y)).sqrt();
+        assert!((r4 - 0.743).abs() < 0.01, "city 4 radius {}", r4);
+        // Classes unchanged: five loud, four quiet, same order as flat.
+        let flat = World::new(W, H, AGENTS, Regime::OpposedDepleted, SEED);
+        for (dc, fc) in world.cities.iter().zip(flat.cities.iter()) {
+            assert_eq!(dc.loud, fc.loud);
+        }
+    }
+
+    #[test]
+    fn disk_agents_never_leave_the_disk() {
+        let mut world = World::new(48, 32, 200, Regime::CurvedOpposedEternal, 7);
+        for _ in 0..200 {
+            world.step();
+            assert!(
+                world.agents.iter().all(|a| z_norm2((a.x, a.y)) < DISK_R2_MAX),
+                "an agent escaped the disk"
+            );
+        }
+        // And the void stays void: no field outside the disk.
+        for y in 0..world.h {
+            for x in 0..world.w {
+                if !world.in_disk(x, y) {
+                    assert_eq!(world.grid[y * world.w + x], 0.0);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn steering_follows_the_corpse_flat() {
+        let mut world = World::new(32, 32, 0, Regime::OpposedDepleted, 7);
+        let a = Agent { x: 16.0, y: 16.0, angle: 0.0 };
+        world.grid[16 * 32 + 25] = 1.0; // centre sensor at (25,16)
+        let l = world.sense(&a, -SENSOR_ANGLE);
+        let c = world.sense(&a, 0.0);
+        let r = world.sense(&a, SENSOR_ANGLE);
+        assert!(c > l && c > r);
+    }
+
+    #[test]
+    fn agent_moves_and_deposits_flat() {
+        let mut world = World::new(32, 32, 0, Regime::OpposedDepleted, 7);
+        world.agents.push(Agent { x: 10.0, y: 10.0, angle: 0.0 });
+        world.cities.clear();
+        world.step();
+        let a = world.agents[0];
+        assert!(a.x > 10.0, "agent advanced: {}", a.x);
+        assert!(world.mass() > 0.0, "a deposit survived diffusion");
+    }
+
+    #[test]
+    fn lit_city_stamps_dark_city_does_not_flat() {
+        let mut lit_world = World::new(32, 32, 0, Regime::OpposedDepleted, 7);
+        lit_world.agents.clear();
+        lit_world.step();
+        let (cx, cy) = (lit_world.cities[0].x, lit_world.cities[0].y);
+        let idx = cy as usize * 32 + cx as usize;
+        assert!(lit_world.grid[idx] > 0.9, "lit city stamped: {}", lit_world.grid[idx]);
+
+        let mut dark_world = World::new(32, 32, 0, Regime::OpposedDepleted, 7);
+        dark_world.agents.clear();
+        for c in &mut dark_world.cities {
+            c.stock = 0.0;
+            c.lit = false;
+        }
+        dark_world.step();
+        assert_eq!(dark_world.mass(), 0.0, "no lit city, no agents: field stays dark");
+    }
+
+    #[test]
+    fn feeding_drains_stock_and_darkens_flat() {
+        let mut world = World::new(32, 32, 0, Regime::OpposedDepleted, 7);
+        let (cx, cy) = (world.cities[0].x, world.cities[0].y);
+        for _ in 0..10 {
+            world.agents.push(Agent { x: cx, y: cy, angle: 0.0 });
+        }
+        world.step();
+        let city = &world.cities[0];
+        assert!(city.visits >= 10, "visits {}", city.visits);
+        let expected = STOCK0 - EAT * city.visits as f32;
+        assert!((city.stock - expected).abs() < 1e-4, "stock {} vs {}", city.stock, expected);
+    }
+
+    #[test]
+    fn opposed_channels_are_the_only_difference_flat() {
+        // Same seed, same spawn: in an opposed room the loud centre
+        // stamps 1.0 and the quiet centre 0.40 before diffusion mixes
+        // them; measured through the parent's own probe — after one
+        // tick with no agents, loud centre 0.95, quiet centre 0.38.
+        let mut world = World::new(W, H, 0, Regime::OpposedDepleted, SEED);
+        world.agents.clear();
+        world.step();
+        let (lx, ly) = (world.cities[0].x as usize, world.cities[0].y as usize);
+        let (qx, qy) = (world.cities[2].x as usize, world.cities[2].y as usize);
+        assert!((world.grid[ly * W + lx] - 0.95).abs() < 0.02, "loud centre {}", world.grid[ly * W + lx]);
+        assert!((world.grid[qy * W + qx] - 0.38).abs() < 0.02, "quiet centre {}", world.grid[qy * W + qx]);
+        // Per-visit drain: loud at EAT_LOUD, quiet at EAT_QUIET.
+        assert_eq!(Regime::OpposedDepleted.eat_rate(true), 0.004);
+        assert_eq!(Regime::OpposedDepleted.eat_rate(false), 0.010);
+        assert_eq!(Regime::CurvedOpposedDepleted.eat_rate(true), 0.004);
+        assert_eq!(Regime::CurvedOpposedDepleted.eat_rate(false), 0.010);
+    }
+
+    #[test]
+    fn flat_opposed_baseline_reproduces_the_parent() {
+        let d = run_season(Regime::OpposedDepleted);
+        let (dlv, dg, dmean, _, dde) = class_stats(&d.cities, true);
+        let (_, qg, _, _, qde) = class_stats(&d.cities, false);
+        assert_eq!(dlv, 73231);
+        assert!((dmean - 268.2).abs() < 0.05, "loud mean dark {}", dmean);
+        assert_eq!(dg + qg, 53800);
+        assert_eq!(dg, 41917);
+        assert_eq!(dde + qde, 8);
+        assert!((d.final_mass - 2237.22).abs() < 0.5, "mass {}", d.final_mass);
+        assert_eq!(d.final_coverage, 3410);
+        // City 8: the parent's immortal, lit with 4.28 unspent.
+        assert!(d.cities[8].lit);
+        assert!((d.cities[8].stock - 4.28).abs() < 0.01);
+    }
+
+    #[test]
+    fn long_rooms_truncate_to_the_short_seasons() {
+        // A long room's first 1,200 ticks are the short room's whole
+        // season, sample for sample: length is the only difference.
+        let short = run_season(Regime::CurvedOpposedDepleted);
+        let long = run_season(Regime::CurvedLongDepleted);
+        assert_eq!(short.first_dark, long.first_dark);
+        assert_eq!(short.mass_series.len(), 12);
+        assert_eq!(long.mass_series.len(), 24);
+        for i in 0..12 {
+            assert_eq!(short.mass_series[i], long.mass_series[i], "sample {}", i);
+        }
+    }
+
+    #[test]
+    fn long_season_pinned_as_found() {
+        // Filled in from the first shipped headless run; the numbers
+        // are the finding, not a target.
+        let d = run_season(Regime::CurvedLongDepleted);
+        assert_eq!(d.cities.iter().filter(|c| !c.lit).count(), LONG_DARK);
+        assert!((d.final_mass - LONG_MASS).abs() < 0.5, "mass {}", d.final_mass);
+        assert_eq!(d.final_coverage, LONG_COVERAGE);
+        let f = run_season(Regime::OpposedLongDepleted);
+        assert_eq!(f.cities.iter().filter(|c| !c.lit).count(), FLAT_LONG_DARK);
+    }
+
+    #[test]
+    fn far_rooms_truncate_to_the_long_seasons() {
+        // A far room's first 2,400 ticks are the long room's whole
+        // season, sample for sample: length is the only difference.
+        let long = run_season(Regime::CurvedLongDepleted);
+        let far = run_season(Regime::CurvedFarDepleted);
+        assert_eq!(long.first_dark, far.first_dark);
+        assert_eq!(long.mass_series.len(), 24);
+        assert_eq!(far.mass_series.len(), 48);
+        for i in 0..24 {
+            assert_eq!(long.mass_series[i], far.mass_series[i], "sample {}", i);
+        }
+    }
+
+    #[test]
+    fn far_season_pinned_as_found() {
+        // Filled in from the first shipped headless run; the numbers
+        // are the finding, not a target.
+        let d = run_season(Regime::CurvedFarDepleted);
+        assert_eq!(d.cities.iter().filter(|c| !c.lit).count(), FAR_DARK);
+        assert!((d.final_mass - FAR_MASS).abs() < 0.5, "mass {}", d.final_mass);
+        assert_eq!(d.final_coverage, FAR_COVERAGE);
+        let f = run_season(Regime::OpposedFarDepleted);
+        assert_eq!(f.cities.iter().filter(|c| !c.lit).count(), FLAT_FAR_DARK);
+    }
+
+    #[test]
+    fn last_rooms_truncate_to_the_far_seasons() {
+        // A last room's first 4,800 ticks are the far room's whole
+        // season, sample for sample: length is the only difference.
+        let far = run_season(Regime::CurvedFarDepleted);
+        let last = run_season(Regime::CurvedLastDepleted);
+        assert_eq!(far.first_dark, last.first_dark);
+        assert_eq!(far.mass_series.len(), 48);
+        assert_eq!(last.mass_series.len(), 72);
+        for i in 0..48 {
+            assert_eq!(far.mass_series[i], last.mass_series[i], "sample {}", i);
+        }
+    }
+
+    #[test]
+    fn last_season_pinned_as_found() {
+        // Filled in from the first shipped headless run; the numbers
+        // are the finding, not a target.
+        let d = run_season(Regime::CurvedLastDepleted);
+        assert_eq!(d.cities.iter().filter(|c| !c.lit).count(), LAST_DARK);
+        assert!((d.final_mass - LAST_MASS).abs() < 0.5, "mass {}", d.final_mass);
+        assert_eq!(d.final_coverage, LAST_COVERAGE);
+        let f = run_season(Regime::OpposedLastDepleted);
+        assert_eq!(f.cities.iter().filter(|c| !c.lit).count(), FLAT_LAST_DARK);
+    }
+
+    #[test]
+    fn past_rooms_truncate_to_the_last_seasons() {
+        // A past room's first 7,200 ticks are the last room's whole
+        // season, sample for sample: length is the only difference.
+        let last = run_season(Regime::CurvedLastDepleted);
+        let past = run_season(Regime::CurvedPastDepleted);
+        assert_eq!(last.first_dark, past.first_dark);
+        assert_eq!(last.mass_series.len(), 72);
+        assert_eq!(past.mass_series.len(), 96);
+        for i in 0..72 {
+            assert_eq!(last.mass_series[i], past.mass_series[i], "sample {}", i);
+        }
+    }
+
+    #[test]
+    fn migration_slices_sum_to_the_window() {
+        // The slice instrument is exact: per city, the eight slices
+        // sum to the past window's ghost count (past minus last),
+        // and the last slice is the final-300 ledger itself.
+        let past = run_season(Regime::CurvedPastDepleted);
+        let last = run_season(Regime::CurvedLastDepleted);
+        assert_eq!(past.ghost_slices.len(), 8);
+        for i in 0..9 {
+            let sum: u64 = past.ghost_slices.iter().map(|sl| sl[i]).sum();
+            assert_eq!(sum, past.cities[i].ghost_visits - last.cities[i].ghost_visits);
+            assert_eq!(past.ghost_slices[7][i], past.ghost_last300_cities[i]);
+        }
+        let total: u64 = past.ghost_slices.iter().flat_map(|sl| sl.iter()).sum();
+        assert_eq!(total, 9976);
+    }
+
+    #[test]
+    fn migration_slices_pinned_as_found() {
+        // Filled in from the first shipped headless run.
+        let past = run_season(Regime::CurvedPastDepleted);
+        let c8: Vec<u64> = past.ghost_slices.iter().map(|sl| sl[8]).collect();
+        let c1: Vec<u64> = past.ghost_slices.iter().map(|sl| sl[1]).collect();
+        let c5: Vec<u64> = past.ghost_slices.iter().map(|sl| sl[5]).collect();
+        assert_eq!(c8, MIGRATION_C8);
+        assert_eq!(c1, MIGRATION_C1);
+        assert_eq!(c5, MIGRATION_C5);
+    }
+
+    #[test]
+    fn fine_slices_sum_to_the_parent_slices() {
+        // The fine instrument is exact: per city, the six fine
+        // slices sum to the parent's slice-4 + slice-5 counts,
+        // and the fine total is 2,307 + 405 = 2,712.
+        let past = run_season(Regime::CurvedPastDepleted);
+        assert_eq!(past.ghost_fine.len(), 6);
+        for i in 0..9 {
+            let sum: u64 = past.ghost_fine.iter().map(|sl| sl[i]).sum();
+            assert_eq!(sum, past.ghost_slices[4][i] + past.ghost_slices[5][i]);
+        }
+        let total: u64 = past.ghost_fine.iter().flat_map(|sl| sl.iter()).sum();
+        assert_eq!(total, 2712);
+    }
+
+    #[test]
+    fn fine_slices_pinned_as_found() {
+        // Filled in from the first shipped headless run.
+        let past = run_season(Regime::CurvedPastDepleted);
+        let c8: Vec<u64> = past.ghost_fine.iter().map(|sl| sl[8]).collect();
+        let c1: Vec<u64> = past.ghost_fine.iter().map(|sl| sl[1]).collect();
+        let c5: Vec<u64> = past.ghost_fine.iter().map(|sl| sl[5]).collect();
+        assert_eq!(c8, FINE_C8);
+        assert_eq!(c1, FINE_C1);
+        assert_eq!(c5, FINE_C5);
+    }
+
+    #[test]
+    #[test]
+    fn tenth_slices_sum_to_the_fine_slices() {
+        // The tenth instrument is exact: per city, its first ten
+        // slices sum to the parent's fine slice 2 (8,600..8,700)
+        // and its last ten to fine slice 3 (8,700..8,800); the
+        // tenth total is 730 + 121 = 851.
+        let past = run_season(Regime::CurvedPastDepleted);
+        assert_eq!(past.ghost_tenth.len(), 20);
+        for i in 0..9 {
+            let a: u64 = past.ghost_tenth[..10].iter().map(|sl| sl[i]).sum();
+            let b: u64 = past.ghost_tenth[10..].iter().map(|sl| sl[i]).sum();
+            assert_eq!(a, past.ghost_fine[2][i], "city {} plateau tenth sum", i);
+            assert_eq!(b, past.ghost_fine[3][i], "city {} fall tenth sum", i);
+        }
+        let total: u64 = past.ghost_tenth.iter().flat_map(|sl| sl.iter()).sum();
+        assert_eq!(total, 851);
+    }
+
+    #[test]
+    fn tenth_slices_pinned_as_found() {
+        // Filled in from the first shipped headless run; the
+        // numbers are the finding, not a target.
+        let past = run_season(Regime::CurvedPastDepleted);
+        let c8: Vec<u64> = past.ghost_tenth.iter().map(|sl| sl[8]).collect();
+        let c1: Vec<u64> = past.ghost_tenth.iter().map(|sl| sl[1]).collect();
+        let c5: Vec<u64> = past.ghost_tenth.iter().map(|sl| sl[5]).collect();
+        assert_eq!(
+            c8,
+            vec![56, 63, 87, 79, 71, 68, 68, 34, 38, 49, 56, 21, 12, 0, 5, 2, 13, 11, 1, 0]
+        );
+        assert_eq!(
+            c1,
+            vec![45, 46, 9, 8, 6, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        );
+        assert_eq!(c5, vec![0; 20]);
+    }
+
+    fn past_season_pinned_as_found() {
+        // Filled in from the first shipped headless run; the numbers
+        // are the finding, not a target.
+        let d = run_season(Regime::CurvedPastDepleted);
+        assert_eq!(d.cities.iter().filter(|c| !c.lit).count(), PAST_DARK);
+        assert!((d.final_mass - PAST_MASS).abs() < 0.5, "mass {}", d.final_mass);
+        assert_eq!(d.final_coverage, PAST_COVERAGE);
+        let f = run_season(Regime::OpposedPastDepleted);
+        assert_eq!(f.cities.iter().filter(|c| !c.lit).count(), FLAT_PAST_DARK);
+    }
+
+    #[test]
+    fn tick_slices_sum_to_the_tenth_cells() {
+        // The widened tick instrument is exact: per city, its
+        // eleven blocks of ten ticks sum to the parent's tenth
+        // cells 0..10 (8,600..8,710); the window total is
+        // 786 = 669 (city 8) + 117 (city 1) + 0 (city 5) - the
+        // 669 declared in the README priced city 8's ledger
+        // alone and is reported cracked there, in those terms.
+        let past = run_season(Regime::CurvedPastDepleted);
+        assert_eq!(past.ghost_tick.len(), 110);
+        for i in 0..9 {
+            for b in 0..11 {
+                let sum: u64 = past.ghost_tick[b * 10..b * 10 + 10]
+                    .iter()
+                    .map(|sl| sl[i])
+                    .sum();
+                assert_eq!(sum, past.ghost_tenth[b][i], "city {} block {}", i, b);
+            }
+        }
+        let total: u64 = past.ghost_tick.iter().flat_map(|sl| sl.iter()).sum();
+        assert_eq!(total, 786);
+    }
+
+    #[test]
+    fn tick_slices_pinned_as_found() {
+        // Filled in from the first shipped headless run; the
+        // numbers are the finding, not a target. The eastern
+        // fifty city-8 slices are clifftick's pinned ledger,
+        // carried as control.
+        let past = run_season(Regime::CurvedPastDepleted);
+        let c8: Vec<u64> = past.ghost_tick.iter().map(|sl| sl[8]).collect();
+        let c1: Vec<u64> = past.ghost_tick.iter().map(|sl| sl[1]).collect();
+        let c5: Vec<u64> = past.ghost_tick.iter().map(|sl| sl[5]).collect();
+        assert_eq!(c8, vec![7, 6, 7, 7, 5, 6, 6, 5, 4, 3, 5, 3, 4, 4, 4, 5, 10, 11, 8, 9, 10, 11, 8, 9, 8, 8, 7, 7, 9, 10, 8, 9, 9, 7, 5, 7, 8, 9, 8, 9, 11, 9, 10, 8, 6, 5, 4, 5, 7, 6, 6, 7, 8, 5, 4, 5, 8, 7, 7, 11, 10, 10, 8, 8, 6, 8, 6, 5, 4, 3, 2, 1, 2, 3, 3, 4, 5, 6, 4, 4, 6, 5, 4, 2, 2, 3, 3, 3, 3, 7, 5, 3, 4, 6, 7, 5, 5, 6, 4, 4, 7, 7, 8, 8, 6, 4, 4, 3, 5, 4]);
+        assert_eq!(c1, vec![3, 4, 4, 4, 4, 4, 6, 6, 5, 5, 6, 6, 6, 7, 5, 4, 4, 4, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(c5, vec![0; 110]);
+    }
+
+    #[test]
+    fn sixth_rooms_truncate_to_the_past_seasons() {
+        // A sixth room's first 9,600 ticks are the past room's whole
+        // season, sample for sample: length is the only difference.
+        let past = run_season(Regime::CurvedPastDepleted);
+        let sixth = run_season(Regime::CurvedSixthDepleted);
+        assert_eq!(past.first_dark, sixth.first_dark);
+        assert_eq!(past.mass_series.len(), 96);
+        assert_eq!(sixth.mass_series.len(), 120);
+        for i in 0..96 {
+            assert_eq!(past.mass_series[i], sixth.mass_series[i], "sample {}", i);
+        }
+    }
+
+    #[test]
+    fn sixth_window_slices_sum_to_the_window() {
+        // The slice ledger runs on into the sixth window: per city,
+        // slices 8..16 sum to the sixth window's ghost count (sixth
+        // minus past), and the last slice is the final-300 ledger
+        // itself - the tenure is read off a ledger that reconciles.
+        let sixth = run_season(Regime::CurvedSixthDepleted);
+        let past = run_season(Regime::CurvedPastDepleted);
+        assert_eq!(sixth.ghost_slices.len(), 16);
+        for i in 0..9 {
+            let sum: u64 = sixth.ghost_slices[8..].iter().map(|sl| sl[i]).sum();
+            assert_eq!(sum, sixth.cities[i].ghost_visits - past.cities[i].ghost_visits);
+            assert_eq!(sixth.ghost_slices[15][i], sixth.ghost_last300_cities[i]);
+        }
+    }
+
+    #[test]
+    fn sixth_season_pinned_as_found() {
+        // Filled in from the first shipped headless run; the numbers
+        // are the finding, not a target.
+        let d = run_season(Regime::CurvedSixthDepleted);
+        assert_eq!(d.cities.iter().filter(|c| !c.lit).count(), SIXTH_DARK);
+        assert!((d.final_mass - SIXTH_MASS).abs() < 0.5, "mass {}", d.final_mass);
+        assert_eq!(d.final_coverage, SIXTH_COVERAGE);
+        let f = run_season(Regime::OpposedSixthDepleted);
+        assert_eq!(f.cities.iter().filter(|c| !c.lit).count(), FLAT_SIXTH_DARK);
+    }
+
+    #[test]
+    fn curved_season_pinned_as_found() {
+        // Filled in from the first shipped headless run; the numbers
+        // are the finding, not a target.
+        let e = run_season(Regime::CurvedOpposedEternal);
+        let (lv, _, _, _, _) = class_stats(&e.cities, true);
+        let (qv, _, _, _, _) = class_stats(&e.cities, false);
+        assert_eq!(lv, CURVED_ETERNAL_LOUD_VISITS);
+        assert_eq!(qv, CURVED_ETERNAL_QUIET_VISITS);
+        assert!((e.final_mass - CURVED_ETERNAL_MASS).abs() < 0.5, "mass {}", e.final_mass);
+        assert_eq!(e.final_coverage, CURVED_ETERNAL_COVERAGE);
+        let d = run_season(Regime::CurvedOpposedDepleted);
+        assert_eq!(d.cities.iter().filter(|c| !c.lit).count(), CURVED_DEPLETED_DARK);
+        assert!((d.final_mass - CURVED_DEPLETED_MASS).abs() < 0.5, "mass {}", d.final_mass);
+        assert_eq!(d.final_coverage, CURVED_DEPLETED_COVERAGE);
+    }
+}
